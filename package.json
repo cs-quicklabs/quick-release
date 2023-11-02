@@ -7,13 +7,17 @@
     "build": "vite build && vite build --ssr",
     "dev": "vite dev",
     "start": "remix-serve ./build/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "generate-types": "npx supabase gen types typescript --project-id qgrsonqvscfpzhznardg > app/utils/db_types/index.ts"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^2.2.0",
     "@remix-run/node": "^2.2.0",
     "@remix-run/react": "^2.2.0",
     "@remix-run/serve": "^2.2.0",
+    "@supabase/auth-helpers-remix": "^0.2.4",
+    "@supabase/supabase-js": "^2.38.4",
+    "dotenv": "^16.3.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
