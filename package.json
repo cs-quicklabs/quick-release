@@ -8,7 +8,10 @@
     "dev": "vite dev",
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
-    "generate-types": "npx supabase gen types typescript --project-id qgrsonqvscfpzhznardg > app/utils/db_types/index.ts"
+    "generate-types": "npx supabase gen types typescript --project-id qgrsonqvscfpzhznardg > app/utils/db_types/index.ts",
+    "db:generate": "drizzle-kit generate:pg --config=./app/drizzle/drizzle.config.ts",
+    "db:pull": "drizzle-kit introspect:pg --config=./app/drizzle/drizzle.config.ts",
+    "db:push": "drizzle-kit push:pg --config=./app/drizzle/drizzle.config.ts"
   },
   "dependencies": {
     "@remix-run/css-bundle": "^2.2.0",
@@ -20,7 +23,17 @@
     "dotenv": "^16.3.1",
     "isbot": "^3.6.8",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "@headlessui/react": "^1.7.17",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.6",
+    "drizzle-orm": "^0.28.6",
+    "postgres": "^3.4.2",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.11.0",
+    "react-trix": "^0.10.2",
+    "trix": "^2.0.7",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.2.0",
@@ -30,7 +43,9 @@
     "eslint": "^8.38.0",
     "typescript": "^5.1.6",
     "vite": "^4.5.0",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "drizzle-kit": "^0.19.13",
+    "tailwindcss": "^3.3.5"
   },
   "engines": {
     "node": ">=18.0.0"
