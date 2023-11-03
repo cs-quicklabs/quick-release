@@ -11,5 +11,5 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const { supabase }: any = useOutletContext();
   console.log(supabase);
-  return <></>;
+  return <div>Welcome to the Remix Project</div>;
 }
