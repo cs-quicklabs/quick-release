@@ -18,11 +18,14 @@ import { supabaseClient } from "./utils/supabase.server";
 import { useEffect, useState } from "react";
 import { createBrowserClient } from "@supabase/auth-helpers-remix";
 import dotenv from "dotenv";
+import stylesheet from "./styles/tailwind.css?inline";
 
 dotenv.config();
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  ...(cssBundleHref
+    ? [{ rel: "stylesheet", href: cssBundleHref }]
+    : [{ rel: "stylesheet", type: "text/css", href: stylesheet }]),
 ];
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
@@ -45,8 +48,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function App() {
   const { env, session } = useLoaderData<typeof loader>();
   const { revalidate } = useRevalidator();
-  console.log(env);
-
+  ``;
   const [supabase] = useState(() =>
     createBrowserClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY)
   );
@@ -66,14 +68,14 @@ export default function App() {
     };
   }, [supabase.auth, serverAccessToken, revalidate]);
   return (
-    <html lang="en">
+    <html lang="en" className="h-full bg-white">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="h-full">
         <Outlet context={{ supabase, session }} />
         <ScrollRestoration />
         <LiveReload />
