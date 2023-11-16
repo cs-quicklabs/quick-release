@@ -1,15 +1,14 @@
 // app/utils/supabase.server.ts
 import { createServerClient } from "@supabase/auth-helpers-remix";
-import type { Database } from "./db_types/index";
 
-export const supabaseClient = ({
+export default ({
   request,
   response,
 }: {
   request: Request;
   response: Response;
 }) =>
-  createServerClient<Database>(
+  createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!,
     { request, response }
