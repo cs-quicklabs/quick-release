@@ -1,0 +1,8 @@
+{
+  "/page": "app/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/allLogs/page": "app/allLogs/page.js",
+  "/changeLog/add/page": "app/changeLog/add/page.js",
+  "/api/changelogs/create/route": "app/api/changelogs/create/route.js",
+  "/changeLog/[id]/page": "app/changeLog/[id]/page.js"
+}
