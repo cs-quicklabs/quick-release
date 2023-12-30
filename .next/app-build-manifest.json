@@ -1,9 +1,9 @@
 {
   "pages": {
-    "/page": [
+    "/reset-password/[token]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/page.js"
+      "static/chunks/app/reset-password/[token]/page.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -11,20 +11,20 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
+    "/forget-password/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/forget-password/page.js"
+    ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
+    ],
     "/allLogs/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/allLogs/page.js"
-    ],
-    "/changeLog/add/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/changeLog/add/page.js"
-    ],
-    "/changeLog/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/changeLog/[id]/page.js"
     ]
   }
 }

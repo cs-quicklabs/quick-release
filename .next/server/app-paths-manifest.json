@@ -1,8 +1,7 @@
 {
+  "/reset-password/[token]/page": "app/reset-password/[token]/page.js",
+  "/forget-password/page": "app/forget-password/page.js",
   "/page": "app/page.js",
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
   "/allLogs/page": "app/allLogs/page.js",
-  "/changeLog/add/page": "app/changeLog/add/page.js",
-  "/api/changelogs/create/route": "app/api/changelogs/create/route.js",
-  "/changeLog/[id]/page": "app/changeLog/[id]/page.js"
+  "/api/reset-password/route": "app/api/reset-password/route.js"
 }

@@ -34,6 +34,8 @@ model User {
   orgName   String   @unique
   createdAt DateTime @default(now())
   password  String
+  resetToken String? @unique
+  resetTokenExpiry String?
 }
 
 model Organisation {

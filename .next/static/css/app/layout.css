@@ -1029,6 +1029,10 @@ video {
 .border-solid {
   border-style: solid;
 }
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity));
+}
 .border-destructive {
   border-color: hsl(var(--destructive));
 }
@@ -1240,6 +1244,10 @@ video {
 }
 .tracking-widest {
   letter-spacing: 0.1em;
+}
+.text-\[\#64748B\] {
+  --tw-text-opacity: 1;
+  color: rgb(100 116 139 / var(--tw-text-opacity));
 }
 .text-black {
   --tw-text-opacity: 1;
