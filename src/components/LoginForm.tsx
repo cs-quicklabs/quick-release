@@ -11,7 +11,6 @@ import { z } from "zod";
 import Link from "next/link";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-
 import {
   FormField,
   FormItem,
@@ -82,7 +81,14 @@ const LoginForm = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <div className="flex justify-between items-center">
+                      <FormLabel>Email</FormLabel>
+                      <Link href="/forget-password">
+                        <span className="text-sm text-[#64748B]">
+                          Forgot Password ?
+                        </span>
+                      </Link>
+                    </div>
                     <FormControl>
                       <Input
                         placeholder="abc@gmail.com"

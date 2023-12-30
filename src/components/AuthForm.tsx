@@ -4,8 +4,8 @@ import React from "react";
 
 interface AuthFormProps {
   children: React.ReactElement;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   isLoginForm?: boolean;
 }
 

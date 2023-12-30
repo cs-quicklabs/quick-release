@@ -1,4 +1,4 @@
-// File: /Users/crownstack/quick-release-r/src/app/allLogs/page.tsx
+// File: /Users/crownstack/quick-release/src/app/allLogs/page.tsx
 import * as entry from '../../../../src/app/allLogs/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
