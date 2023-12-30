@@ -17,6 +17,7 @@ import { ModeToggle } from "./ModeToggle";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -29,12 +30,20 @@ const components: { title: string; href: string; description: string }[] = [
 
 export function Navbar() {
   const router = useRouter();
+  const [loader, setLoader] = React.useState(false);
   const handleLogout = async () => {
-    const data = await signOut({
-      redirect: false,
-    });
-    router.push("/");
-    router.refresh();
+    setLoader(true);
+    try {
+      const data = await signOut({
+        redirect: false,
+      });
+      setLoader(false);
+      router.push("/");
+      router.refresh();
+    } catch (e) {
+      console.log(e);
+      setLoader(false);
+    }
   };
   return (
     <div className="flex justify-around items-center my-4">
@@ -47,11 +56,14 @@ export function Navbar() {
               <NavigationMenuContent>
                 <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[250px] ">
                   {components.map((component) => (
-                    <ListItem
-                      onClick={handleLogout}
-                      key={component.title}
-                      title={component.title}
-                    ></ListItem>
+                    <div className="flex items-center">
+                      <ListItem
+                        onClick={handleLogout}
+                        key={component.title}
+                        title={component.title}
+                      ></ListItem>
+                      {loader ? <Loader /> : null}
+                    </div>
                   ))}
                 </ul>
               </NavigationMenuContent>
