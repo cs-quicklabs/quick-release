@@ -54,7 +54,7 @@ const LoginForm = () => {
         password: values.password,
         redirect: false,
       });
-      router.push("/allLogs");
+      if (!res?.error) router.push("/allLogs");
       if (res?.error) {
         toast({
           title: res?.error as string,
