@@ -1,7 +1,0 @@
-{
-  "/reset-password/[token]/page": "app/reset-password/[token]/page.js",
-  "/forget-password/page": "app/forget-password/page.js",
-  "/page": "app/page.js",
-  "/allLogs/page": "app/allLogs/page.js",
-  "/api/reset-password/route": "app/api/reset-password/route.js"
-}
