@@ -6,25 +6,45 @@ interface AuthFormProps {
   children: React.ReactElement;
   title?: string;
   description?: string;
-  isLoginForm?: boolean;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
   children,
   title,
   description,
-  isLoginForm,
 }) => {
   return (
     <>
-      <div
-        className={`${
-          isLoginForm ? "h-[550px] mt-16 md:mt-0" : "h-[800px] mt-4 md:mt-0"
-        } border-2 border-slate-100 shadow-lg rounded-md container relative md:h-[800px] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0`}
-      >
-        <div className="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex">
-          <div className="absolute inset-0 bg-zinc-900" />
-          <div className="relative z-20 flex items-center text-lg font-medium">
+      <div className="md:grid md:grid-cols-12 overflow-hidden md:mt-[-5px] flex flex-col h-[100vh] justify-center ">
+        <div className="col-span-6 bg-black hidden md:block">
+          <div className="flex flex-col justify-between md:h-[100vh] text-white cursor-pointer">
+            <div className="flex items-center px-8">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="mr-2 h-6 w-6"
+              >
+                <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+              </svg>
+              <Link href="/" className="cursor-pointer py-4">
+                <p className="text-white py-4 text-xl text-center">
+                  Quick Release
+                </p>
+              </Link>
+            </div>
+            <p className="text-white py-6 text-xl px-4">
+              "Application to save hours of work and make adding changelogs for
+              your product easier"
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col justify-center md:hidden ">
+          <div className="md:hidden bg-black flex items-center justify-center text-white cursor-pointer">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -37,31 +57,34 @@ const AuthForm: React.FC<AuthFormProps> = ({
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            <Link href="/">Quick Release</Link>
-          </div>
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+            <Link href="/" className="cursor-pointer">
+              <p className="text-white py-4 text-xl text-center">
+                Quick Release
               </p>
-              <footer className="text-sm">Sofia Davis</footer>
-            </blockquote>
+            </Link>
+          </div>
+          <div className="border-2 md:col-span-6 flex flex-col items-center justify-center">
+            <p className="text-2xl text-black font-bold pt-2 md:pt-0">
+              {title}
+            </p>
+            <p className="text-sm text-gray-400 font-bold py-2">
+              {description}
+            </p>
+            <div className="md:w-80">{children}</div>
           </div>
         </div>
-        <div className="lg:p-8 pt-16">
-          <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-            <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
-              <p className="text-sm text-muted-foreground">{description}</p>
-            </div>
-            {children}
-          </div>
+
+        <div className="border-2 md:col-span-6 flex flex-col items-center justify-center">
+          <p className="text-2xl text-black font-bold pt-2 md:pt-0 hidden md:block">
+            {title}
+          </p>
+          <p className="text-sm text-gray-400 font-bold py-2 hidden md:block">
+            {description}
+          </p>
+          <div className="md:w-80 hidden md:block">{children}</div>
         </div>
       </div>
     </>
   );
 };
-
 export default AuthForm;

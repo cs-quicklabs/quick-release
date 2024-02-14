@@ -1,27 +1,15 @@
 "use client";
-import { cn } from "@/lib/utils";
-import { Loader } from "lucide-react";
-import React, { useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Link from "next/link";
-import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  Form,
-} from "./ui/form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Oval } from "react-loader-spinner";
+import { z } from "zod";
 
-const LoginForm = () => {
-  const [isLoading, setIsLoading] = React.useState(false);
+export default function LoginForm() {
   const router = useRouter();
 
   const [loader, setLoader] = useState(false);
@@ -37,7 +25,11 @@ const LoginForm = () => {
       .min(6, { message: "Password should be minimum 6 characters" }),
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
@@ -66,87 +58,129 @@ const LoginForm = () => {
           title: error ? "Invalid Credentials" : "",
         });
       }
-    } finally {
-      setLoader(false);
     }
+    setLoader(false);
   }
   return (
     <>
-      <div className={cn("grid gap-6")}>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(loginUser)}>
-            <div className="pb-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex justify-between items-center">
-                      <FormLabel>Email</FormLabel>
-                      <Link href="/forget-password">
-                        <span className="text-sm text-[#64748B]">
-                          Forgot Password ?
-                        </span>
-                      </Link>
-                    </div>
-                    <FormControl>
-                      <Input
-                        placeholder="abc@gmail.com"
-                        {...field}
-                        type="email"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-600" />
-                  </FormItem>
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+        <Link
+          href="/"
+          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        >
+          <img
+            className="w-8 h-8 mr-2"
+            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            alt="logo"
+          />
+          Quick Release
+        </Link>
+        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              Sign in to your account
+            </h1>{" "}
+            <form
+              className="space-y-4 md:space-y-6"
+              onSubmit={handleSubmit(loginUser)}
+            >
+              <div>
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your email
+                </label>{" "}
+                <input
+                  type="email"
+                  id="email"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="name@company.com"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <span className="text-red-600 text-[12px]">
+                    {errors.email.message}
+                  </span>
                 )}
-              />
-            </div>
-            <div className="pb-4">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Password"
-                        {...field}
-                        type="password"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-red-600" />
-                  </FormItem>
+              </div>{" "}
+              <div>
+                <label
+                  htmlFor="password"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Password
+                </label>{" "}
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="••••••••"
+                  {...register("password")}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+                {errors.password && (
+                  <span className="text-red-600 text-[12px]">
+                    {errors.password.message}
+                  </span>
                 )}
-              />
-            </div>
-            <Button type="submit" className="px-6">
-              {loader ? (
-                <>
-                  <span className="px-2">Log In </span>
-                  <Loader />
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </Button>
-          </form>
-        </Form>
-        <div className="relative">
-          <div className="relative flex justify-center text-md">
-            <Link href="register">
-              <span className="bg-background px-2 text-muted-foreground">
-                Don&apos;t have an account?
-                <span className="font-bold text-black underline px-2">
+              </div>{" "}
+              <div className="flex items-center justify-between">
+                <div className="flex items-start">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="remember"
+                      aria-describedby="remember"
+                      type="checkbox"
+                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                    />
+                  </div>{" "}
+                  <div className="ml-3 text-sm">
+                    <label
+                      htmlFor="remember"
+                      className="text-gray-500 dark:text-gray-300"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                </div>{" "}
+                <Link
+                  href="/forget-password"
+                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >
+                  Forgot password?
+                </Link>
+              </div>{" "}
+              <button
+                type="submit"
+                className="w-full mt-4 text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+              >
+                {loader ? (
+                  <div className="flex items-center justify-center gap-4">
+                    <Oval
+                      height={25}
+                      width={25}
+                      color="black"
+                      secondaryColor="white"
+                    />
+                  </div>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+              <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                Don’t have an account yet?{" "}
+                <Link
+                  href="/register"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                >
                   Sign up
-                </span>
-              </span>
-            </Link>
+                </Link>
+              </p>
+            </form>
           </div>
         </div>
       </div>
+      ;
     </>
   );
-};
-
-export default LoginForm;
+}

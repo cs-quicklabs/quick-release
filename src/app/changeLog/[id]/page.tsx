@@ -14,16 +14,16 @@ interface BlogDetailProp {
 }
 
 const getPost = async (id: string) => {
-  const response = await db.logs.findFirst({
+  const response = await db.log.findFirst({
     where: {
-      log_id: id,
+      id,
     },
     select: {
-      log_id: true,
+      id: true,
       title: true,
       description: true,
       releaseVersion: true,
-      releaseCategory: true,
+      releaseTags: true,
       createdAt: true,
     },
   });
@@ -32,20 +32,22 @@ const getPost = async (id: string) => {
 
 const BlogDetail: FC<BlogDetailProp> = async ({ params }) => {
   const changelog = await getPost(params.id);
-  console.log("Change Log", changelog?.title);
 
   return (
     <div>
-      <Navbar />
       <MaxWidthWrapper>
-        <TypographyH1 children={`${changelog?.title}`} />
-        <TypographyP
-          children={`Published on ${dayjs(changelog?.createdAt).format(
-            DateFormat.LONG
-          )} as Version ${changelog?.releaseVersion}`}
-        />
-        <div className="py-12">{parse(changelog?.description as any)}</div>
-        <h1>{changelog?.releaseCategory}</h1>
+        <div className="flex flex-col items-center justify-center py-4">
+          <TypographyH1
+            children={`${changelog?.title}`}
+            className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight"
+          />
+          <TypographyP
+            children={`Published on ${dayjs(changelog?.createdAt).format(
+              DateFormat.LONG
+            )} as Version ${changelog?.releaseVersion}`}
+          />
+          <p className="py-12">{parse(changelog?.description as any)}</p>
+        </div>
       </MaxWidthWrapper>
     </div>
   );

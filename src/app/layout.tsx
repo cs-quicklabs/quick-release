@@ -4,8 +4,9 @@ import "./globals.css";
 import Provider from "@/components/Provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/Navbar";
-import { getServerSession } from "next-auth";
 import { Toaster } from "@/components/ui/toaster";
+import { getServerSession } from "next-auth";
+import AuthProvider from "./context/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,21 +22,23 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession();
 
-  console.log(session);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Provider>
-            <div className="h-full pt-1">{children}</div>
-            <Toaster />
-          </Provider>
-        </ThemeProvider>
+        <AuthProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Provider>
+              <Navbar />
+              <div className="bg-gray-50 dark:bg-gray-900">{children}</div>
+              <Toaster />
+            </Provider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );
