@@ -36,7 +36,7 @@ export async function POST(request: Request, res: NextApiResponse) {
     });
     return NextResponse.json({
       status: 200,
-      message: "Registered` Successfully",
+      message: "Registered Successfully",
       register,
     });
   } catch (e: any) {

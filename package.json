@@ -46,8 +46,10 @@
     "react-loader-spinner": "^6.1.6",
     "react-query": "^3.39.3",
     "react-select": "^5.8.0",
+    "react-toastify": "^10.0.4",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
+    "ui": "github:shadcn/ui",
     "zod": "^3.22.4"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
@@ -7,7 +7,6 @@ export async function POST(
 ) {
   try {
     const body = await request.json();
-    console.log(body, "body");
     const existingProject = await db.project.findFirst({
       where: { name: body.projects, adminId: params.id },
     });
