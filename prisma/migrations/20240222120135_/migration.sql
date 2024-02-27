@@ -9,6 +9,8 @@ CREATE TABLE "User" (
     "password" TEXT NOT NULL,
     "resetToken" TEXT,
     "resetTokenExpiry" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "role" TEXT NOT NULL DEFAULT 'ADMIN',
     "organisationId" TEXT NOT NULL,
 
@@ -32,6 +34,7 @@ CREATE TABLE "Project" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "adminId" TEXT,
+    "isActive" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
@@ -44,7 +47,7 @@ CREATE TABLE "Log" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "releaseVersion" TEXT NOT NULL,
-    "releaseTags" TEXT[],
+    "releaseTags" JSONB[],
     "projectId" TEXT,
 
     CONSTRAINT "Log_pkey" PRIMARY KEY ("id")
@@ -58,6 +61,9 @@ CREATE UNIQUE INDEX "User_resetToken_key" ON "User"("resetToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_organisationId_key" ON "User"("organisationId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Organisation_name_key" ON "Organisation"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Project_name_key" ON "Project"("name");

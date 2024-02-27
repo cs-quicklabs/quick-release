@@ -16,6 +16,17 @@ export const POST = async (request: any) => {
     },
   });
 
+  if (user) {
+    db.user.update({
+      where: {
+        resetToken: hashedToken,
+      },
+      data: {
+        isVerified: true,
+      },
+    });
+  }
+
   if (!user) {
     return new NextResponse("Invalid Token", { status: 400 });
   }

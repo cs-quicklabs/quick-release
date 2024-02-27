@@ -53,6 +53,9 @@ export const authOptions: NextAuthOptions = {
         if (uniqueUser && uniqueUser.isActive === false) {
           throw new Error("Your Access has been Restricted, Contact Admin");
         }
+        if (uniqueUser && uniqueUser.isVerified === false) {
+          throw new Error("Your Account is not Verified Yet, Check Email");
+        }
 
         const passwordCorrect = await compare(
           credentials?.password || "",

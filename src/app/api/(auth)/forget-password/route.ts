@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
-import { NextResponse } from "next/server";
-import crypto from "crypto";
 import sgMail from "@sendgrid/mail";
+import crypto from "crypto";
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   const body = await request.json();
@@ -40,7 +40,6 @@ export async function POST(request: Request) {
 
   try {
     const sent = await sgMail.send(msg);
-    console.log(sent, "sent");
 
     await db.user.update({
       where: {

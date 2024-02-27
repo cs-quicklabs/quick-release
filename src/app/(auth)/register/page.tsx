@@ -2,13 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Oval } from "react-loader-spinner";
-import Link from "next/link";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 const Register = () => {
   const [loader, setLoader] = useState(false);
@@ -61,7 +61,7 @@ const Register = () => {
 
       const response = await axios.post("/api/register", values);
       setLoader(false);
-      toast.success(response.data.message);
+      toast.success("Registered Successfully");
       router.push("/");
     } catch (e: any) {
       console.log(e);
