@@ -1,12 +1,14 @@
 "use client";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { BaseSyntheticEvent, FormEvent, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { z } from "zod";
 import { toast } from "react-toastify";
+import { z } from "zod";
+
 const ForgotPassword = () => {
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
@@ -34,9 +36,8 @@ const ForgotPassword = () => {
       const res = await axios.post("/api/forget-password", values);
       toast.success("Reset Link Sent Successfully");
       setLoader(false);
-    } catch (e: any) {
-      toast.error(e.response.data);
-
+    } catch (error: any) {
+      toast.error(error.response.data);
       setLoader(false);
     }
   };

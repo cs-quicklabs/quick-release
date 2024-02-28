@@ -16,6 +16,7 @@ export default function LoginForm() {
   const router = useRouter();
   const params = useParams();
   const [loader, setLoader] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const [verifiedUser, setVerifiedUser] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,7 +30,7 @@ export default function LoginForm() {
     password: z
       .string()
       .min(1, { message: "Required" })
-      .min(6, { message: "Password should be minimum 6 characters" }),
+      .min(8, { message: "Password should be minimum 8 characters" }),
   });
 
   const {
@@ -114,11 +115,14 @@ export default function LoginForm() {
 
   const resendEmail = async () => {
     try {
+      setResendLoading(true);
       await axios.post(`/api/resend-verification-link/${userEmail}`);
       toast.success("Verification link sent to email");
+      setResendLoading(false);
     } catch (e: any) {
       console.log(e, "er");
       toast.error("Email not registered");
+      setResendLoading(false);
     }
   };
   return (
@@ -170,6 +174,7 @@ export default function LoginForm() {
                     buttonText="Resend Verification Link"
                     title="Account Not Confirmed"
                     onClick={resendEmail}
+                    loading={resendLoading}
                   >
                     <div>Check your email if already registered</div>
                   </Modal>

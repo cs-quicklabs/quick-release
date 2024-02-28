@@ -1,8 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import React, { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner";
 
 const Projects = () => {
@@ -21,7 +22,7 @@ const Projects = () => {
     }
     setLoading(false);
   };
-  console.log(projects);
+
   useEffect(() => {
     const fetchData = async () => {
       if (userId) {

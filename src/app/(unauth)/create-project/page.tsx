@@ -53,7 +53,7 @@ const Project = () => {
     fetchData();
   }, [userId]);
 
-  async function createProject(values: any, e: any) {
+  async function createProject(values: z.infer<typeof formSchema>, e: any) {
     e.preventDefault();
     try {
       setLoader(true);

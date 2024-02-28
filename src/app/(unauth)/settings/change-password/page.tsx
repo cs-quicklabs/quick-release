@@ -2,6 +2,7 @@
 
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
+import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const page = () => {
-  const [activeUser, setActiveUser] = useState<any>([]);
+  const [activeUser, setActiveUser] = useState<User>();
   const [loader, setLoader] = useState(false);
   const formSchema = z
     .object({
@@ -60,7 +61,7 @@ const page = () => {
     try {
       setLoader(true);
       const res = await axios.post(
-        `/api/change-password/${activeUser.id}`,
+        `/api/change-password/${activeUser?.id}`,
         values
       );
       toast.success(res.data.message);

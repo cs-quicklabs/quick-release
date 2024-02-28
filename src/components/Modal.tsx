@@ -3,6 +3,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { Oval } from "react-loader-spinner";
 
 interface ModalProps {
   open: boolean;
@@ -11,6 +12,7 @@ interface ModalProps {
   buttonText: string;
   title: string;
   onClick: any;
+  loading: boolean;
 }
 
 export default function Modal({
@@ -20,6 +22,7 @@ export default function Modal({
   buttonText,
   title,
   onClick,
+  loading,
 }: ModalProps) {
   function closeModal() {
     setIsOpen(!open);
@@ -81,7 +84,18 @@ export default function Modal({
                       className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-2 py-1 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={onClick}
                     >
-                      {buttonText}{" "}
+                      {loading ? (
+                        <div className="flex items-center justify-center gap-4">
+                          <Oval
+                            height={25}
+                            width={25}
+                            color="black"
+                            secondaryColor="white"
+                          />
+                        </div>
+                      ) : (
+                        buttonText
+                      )}
                     </button>
                   </div>
                 </Dialog.Panel>

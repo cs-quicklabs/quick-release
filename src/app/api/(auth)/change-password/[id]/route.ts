@@ -3,7 +3,10 @@ import { compare, hash } from "bcrypt";
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request, { params }: any) {
+export async function POST(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const body = await request.json();
     const existingUser = await db.user.findUnique({

@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { FormChangeLogPost, ReleaseTagsOption } from "@/types";
+import { FormChangeLogPost, ReleaseTagsOption, User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -34,7 +34,7 @@ import * as z from "zod";
 
 const AddChangeLog = () => {
   const router = useRouter();
-  const [activeUser, setActiveUser] = useState<any>([]);
+  const [activeUser, setActiveUser] = useState<User>();
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }).max(50, {
@@ -44,9 +44,6 @@ const AddChangeLog = () => {
     releaseVersion: z.string().min(1, { message: "Required" }).max(50, {
       message: "Last Name can be maximum 50 characters",
     }),
-    // releaseTags: z.string().min(1, { message: "Required" }).max(50, {
-    //   message: "Last Name can be maximum 50 characters",
-    // }),
     releaseTags: z
       .array(
         z.object({

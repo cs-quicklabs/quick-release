@@ -31,7 +31,7 @@ const Register = () => {
       password: z
         .string()
         .min(1, { message: "Required" })
-        .min(6, { message: "Password should be minimum 6 characters" }),
+        .min(8, { message: "Password should be minimum 8 characters" }),
       confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
@@ -308,7 +308,7 @@ const Register = () => {
                   href="/"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
-                  Login here
+                  Sign In
                 </Link>
               </p>
             </form>

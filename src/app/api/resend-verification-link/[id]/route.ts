@@ -7,8 +7,6 @@ export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  console.log(params, "params");
-
   try {
     const user = await db.user.findUnique({
       where: {

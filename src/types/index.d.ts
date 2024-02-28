@@ -16,13 +16,42 @@ export type FormChangeLogPost = {
 };
 
 export interface User {
-  createdAt: String;
-  email: String;
-  firstName: String;
   id: String;
+  createdAt: DateTime;
+  updatedAt: DateTime;
+  firstName: String;
   lastName: String;
-  orgName: String;
+  profilePicture?: String;
+  email: String;
   password: String;
-  resetToken: String;
-  resetTokenExpiry: String;
+  resetToken?: String;
+  resetTokenExpiry?: String;
+  isActive: Boolean;
+  isVerified: Boolean;
+  role: String;
+  organisationId: String;
+  organisation?: Organisation;
+  projects: Project[];
+  verificationToken?: String;
+  verificationTokenExpiry?: String;
+}
+
+export interface IFile {
+  encoding: string;
+  buffer: Buffer;
+  fieldname: string;
+  mimetype: string;
+  originalname: string;
+  size: number;
+}
+
+export interface Project {
+  id: String;
+  createdAt: DateTime;
+  updatedAt: DateTime;
+  name: String;
+  logs: Log[];
+  User?: User;
+  adminId?: String;
+  isActive: Boolean;
 }

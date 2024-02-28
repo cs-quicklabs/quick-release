@@ -1,13 +1,15 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request,{ params }: { params: { id: string }} ) {
-  console.log(params.id,"params")
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const activeProject = await db.project.findFirst({
       where: {
         isActive: true,
-        adminId: params.id
+        adminId: params.id,
       },
     });
     return NextResponse.json(activeProject);

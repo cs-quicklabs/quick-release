@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
-export const POST = async (request: any) => {
+export const POST = async (request: Request) => {
   const body = await request.json();
 
   const hashedToken = crypto
