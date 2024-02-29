@@ -48,7 +48,7 @@ export default function LoginForm() {
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
     e.preventDefault();
     try {
-      if (verifiedUser) {
+      if (verifiedUser && params.id) {
         setLoader(true);
         const res = await signIn("credentials", {
           email: values.email,
@@ -193,13 +193,9 @@ export default function LoginForm() {
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className="  text-gray-900 sm:text-sm focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="  bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600bg-gray-50 focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
-                  {errors.password && (
-                    <span className="text-red-600 text-[12px]">
-                      {errors.password.message}
-                    </span>
-                  )}
+
                   <div
                     className="px-4 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
@@ -242,6 +238,11 @@ export default function LoginForm() {
                     )}
                   </div>
                 </div>
+                {errors.password && (
+                  <span className="text-red-600 text-[12px]">
+                    {errors.password.message}
+                  </span>
+                )}
               </div>{" "}
               <div className="flex items-center justify-between">
                 <div className="flex items-start"></div>{" "}
