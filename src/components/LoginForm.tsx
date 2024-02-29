@@ -1,18 +1,27 @@
 "use client";
+
+import Modal from "./Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { z } from "zod";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 export default function LoginForm() {
   const router = useRouter();
+  const params = useParams();
   const [loader, setLoader] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [verifiedUser, setVerifiedUser] = useState<boolean>(false);
+  const [userEmail, setUserEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+
   const formSchema = z.object({
     email: z
       .string()
@@ -21,7 +30,7 @@ export default function LoginForm() {
     password: z
       .string()
       .min(1, { message: "Required" })
-      .min(6, { message: "Password should be minimum 6 characters" }),
+      .min(8, { message: "Password should be minimum 8 characters" }),
   });
 
   const {
@@ -39,15 +48,35 @@ export default function LoginForm() {
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
     e.preventDefault();
     try {
-      setLoader(true);
-      const res = await signIn("credentials", {
-        email: values.email,
-        password: values.password,
-        redirect: false,
-      });
-      if (!res?.error) router.push("/allLogs");
-      if (res?.error) {
-        toast.error(res?.error as string);
+      if (verifiedUser) {
+        setLoader(true);
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
+        if (!res?.error) {
+          router.push("/allLogs");
+        } else {
+          toast.error(res?.error as string);
+          setUserEmail(values.email);
+          setIsOpen(true);
+        }
+      }
+      if (!params.id) {
+        setLoader(true);
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
+        if (!res?.error) {
+          router.push("/allLogs");
+        } else {
+          toast.error(res?.error as string);
+          setUserEmail(values.email);
+          setIsOpen(true);
+        }
       }
     } catch (error) {
       if (error) {
@@ -56,6 +85,46 @@ export default function LoginForm() {
     }
     setLoader(false);
   }
+  useEffect(() => {
+    if (params.id) {
+      const verifyToken = async () => {
+        try {
+          const token = params?.id[0];
+          const res = await axios.post("/api/verify-register-token", {
+            id: token,
+          });
+          if (res.data.isVerified === true) {
+            setVerifiedUser(true);
+          } else {
+            setVerifiedUser(false);
+          }
+        } catch (error) {
+          console.log(error);
+          setVerifiedUser(false);
+        }
+      };
+      verifyToken();
+    }
+  }, [params.id]);
+
+  useEffect(() => {
+    if (verifiedUser === true) {
+      toast.success("Your account has been verified");
+    }
+  }, [verifiedUser]);
+
+  const resendEmail = async () => {
+    try {
+      setResendLoading(true);
+      await axios.post(`/api/resend-verification-link/${userEmail}`);
+      toast.success("Verification link sent to email");
+      setResendLoading(false);
+    } catch (e: any) {
+      console.log(e, "er");
+      toast.error("Email not registered");
+      setResendLoading(false);
+    }
+  };
   return (
     <>
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -97,6 +166,18 @@ export default function LoginForm() {
                   <span className="text-red-600 text-[12px]">
                     {errors.email.message}
                   </span>
+                )}
+                {isOpen && (
+                  <Modal
+                    open={isOpen}
+                    setIsOpen={setIsOpen}
+                    buttonText="Resend Verification Link"
+                    title="Account Not Confirmed"
+                    onClick={resendEmail}
+                    loading={resendLoading}
+                  >
+                    <div>Check your email if already registered</div>
+                  </Modal>
                 )}
               </div>{" "}
               <div>
@@ -163,24 +244,7 @@ export default function LoginForm() {
                 </div>
               </div>{" "}
               <div className="flex items-center justify-between">
-                <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input
-                      id="remember"
-                      aria-describedby="remember"
-                      type="checkbox"
-                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                    />
-                  </div>{" "}
-                  <div className="ml-3 text-sm">
-                    <label
-                      htmlFor="remember"
-                      className="text-gray-500 dark:text-gray-300"
-                    >
-                      Remember me
-                    </label>
-                  </div>
-                </div>{" "}
+                <div className="flex items-start"></div>{" "}
                 <Link
                   href="/forget-password"
                   className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"

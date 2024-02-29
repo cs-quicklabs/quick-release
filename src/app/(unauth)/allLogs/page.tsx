@@ -4,6 +4,7 @@ import ChangeLogCard from "@/components/ChangeLogCard";
 import ChangeLogDetail from "@/components/ChangeLogDetail";
 import { TypographyH3, TypographyP } from "@/components/Typography";
 import BaseTemplate from "@/templates/BaseTemplate";
+import { Project } from "@/types";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -13,9 +14,7 @@ import { Oval } from "react-loader-spinner";
 
 export default function AllLogs() {
   const [changeLogs, setChangeLogs] = useState([]);
-  const [activeProjectData, setActiveProjectData] = React.useState<
-    Record<string, any>
-  >({});
+  const [activeProjectData, setActiveProjectData] = React.useState<Project>();
   const { data } = useSession();
 
   const router = useRouter();
@@ -35,7 +34,9 @@ export default function AllLogs() {
   const getChangeLogs = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`api/get-changelogs/${activeProjectData.id}`);
+      const res = await axios.get(
+        `api/get-changelogs/${activeProjectData?.id}`
+      );
       setChangeLogs(res.data);
     } catch (err) {
       console.log(err, "err");

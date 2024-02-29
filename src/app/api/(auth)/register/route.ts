@@ -1,0 +1,102 @@
+import { db } from "@/lib/db";
+import sgMail from "@sendgrid/mail";
+import { hash } from "bcrypt";
+import crypto from "crypto";
+import { NextApiResponse } from "next";
+import { NextResponse } from "next/server";
+
+export async function POST(request: Request, res: NextApiResponse) {
+  try {
+    const body = await request.json();
+    const hashedPassword = await hash(body.password, 10);
+
+    const existingEmail = await db.user.findUnique({
+      where: { email: body.email },
+    });
+    const existingOrgName = await db.organisation.findUnique({
+      where: { name: body.orgName },
+    });
+    if (existingEmail) {
+      throw new Error("Email already exists");
+    }
+    if (existingOrgName) {
+      throw new Error("Organisation already exists");
+    }
+    const organisation = await db.organisation.create({
+      data: {
+        name: body.orgName,
+      },
+    });
+    const register = await db.user.create({
+      data: {
+        email: body.email,
+        password: hashedPassword,
+        firstName: body.firstName,
+        lastName: body.lastName,
+        organisationId: organisation.id,
+      },
+    });
+
+    const verificationToken = crypto.randomBytes(20).toString("hex");
+    const registerVerificationToken = crypto
+      .createHash("sha256")
+      .update(verificationToken)
+      .digest("hex");
+
+    const verificationTokenExpires = (Date.now() + 3600000).toString();
+    register.verificationToken = registerVerificationToken;
+    register.verificationTokenExpiry = verificationTokenExpires;
+    const verificationUrl = `${process.env.BASEURL}/${verificationToken}`;
+    const msg = {
+      to: body.email,
+      from: "akash@crownstack.com",
+      subject: "Welcome to Quick Release",
+      text: `Hi ${body.firstName}
+      Welcome to Quicklabs! We're thrilled to have you on board
+      Our mission is simple: to streamline change log management for all your software releases. With Quicklabs, you'll experience efficiency and clarity like never before.
+      Best regards,
+      Quick Release Team
+      
+      Click to verify email ${verificationUrl}
+      `,
+    };
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
+
+    try {
+      if (register.id) {
+        sgMail.send(msg);
+      }
+      await db.user.update({
+        where: {
+          email: body.email,
+        },
+        data: {
+          verificationToken: verificationToken,
+          verificationTokenExpiry: verificationTokenExpires,
+        },
+      });
+      return NextResponse.json("Verification Link Sent to email", {
+        status: 200,
+      });
+    } catch (err) {
+      console.log(err);
+      await db.user.update({
+        where: {
+          email: body.email,
+        },
+        data: {
+          verificationToken: null,
+          verificationTokenExpiry: null,
+        },
+      });
+      throw new Error("Unable to sent verification link");
+    }
+  } catch (e: any) {
+    return NextResponse.json(
+      {
+        message: e.message,
+      },
+      { status: 400 }
+    );
+  }
+}

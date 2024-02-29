@@ -3,13 +3,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
-import React, { BaseSyntheticEvent, FormEvent, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const ForgotPassword = () => {
+const ResendRegisterLink = () => {
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
     email: z
@@ -29,15 +29,17 @@ const ForgotPassword = () => {
     },
   });
 
-  const forgetPassword = async (values: z.infer<typeof formSchema>, e: any) => {
+  const resendEmail = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
     setLoader(true);
     try {
-      const res = await axios.post("/api/forget-password", values);
+      await axios.post("/api/resend-verification-link", values);
       toast.success("Reset Link Sent Successfully");
       setLoader(false);
-    } catch (error: any) {
-      toast.error(error.response.data);
+    } catch (e: any) {
+      console.log(e, "er");
+      toast.error("Email not registered");
+
       setLoader(false);
     }
   };
@@ -57,11 +59,11 @@ const ForgotPassword = () => {
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-            Forgot your password?
+            Resend Verification Email
           </h1>{" "}
           <form
             className="space-y-4 md:space-y-6"
-            onSubmit={handleSubmit(forgetPassword)}
+            onSubmit={handleSubmit(resendEmail)}
           >
             <div>
               <label
@@ -106,7 +108,7 @@ const ForgotPassword = () => {
                 href="/"
                 className="font-medium text-primary-600 hover:underline dark:text-primary-500"
               >
-                Sign in
+                Sign In
               </Link>
             </p>
           </form>
@@ -116,4 +118,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResendRegisterLink;

@@ -8,10 +8,10 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { z } from "zod";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
-const ResetPassword = ({ params }: any) => {
+const ResetPassword = ({ params }: { params: { token: string } }) => {
   const [verified, setVerified] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);

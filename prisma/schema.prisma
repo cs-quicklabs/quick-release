@@ -12,20 +12,24 @@ datasource db {
 }
 
 model User {
-  id               String        @id @default(cuid())
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  firstName        String
-  lastName         String
-  email            String        @unique
-  password         String
-  resetToken       String?       @unique
-  resetTokenExpiry String?
-  isActive         Boolean       @default(true)
-  role             String        @default("ADMIN")
-  organisationId   String        @unique
-  organisation     Organisation? @relation(fields: [organisationId], references: [id])
-  projects         Project[]
+  id                      String        @id @default(cuid())
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  firstName               String
+  lastName                String
+  profilePicture          String?
+  email                   String        @unique
+  password                String
+  resetToken              String?       @unique
+  resetTokenExpiry        String?
+  isActive                Boolean       @default(true)
+  isVerified              Boolean       @default(false)
+  role                    String        @default("ADMIN")
+  organisationId          String        @unique
+  organisation            Organisation? @relation(fields: [organisationId], references: [id])
+  projects                Project[]
+  verificationToken       String?       @unique
+  verificationTokenExpiry String?
 }
 
 model Organisation {
