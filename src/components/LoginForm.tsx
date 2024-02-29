@@ -46,7 +46,6 @@ export default function LoginForm() {
   });
 
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
-    console.log("function called");
     try {
       if (verifiedUser && params.id) {
         setLoader(true);
@@ -64,8 +63,6 @@ export default function LoginForm() {
         }
       }
       if (!params.id) {
-        console.log("function called wihtout params");
-
         setLoader(true);
         const res = await signIn("credentials", {
           email: values.email,

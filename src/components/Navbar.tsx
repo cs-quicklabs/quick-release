@@ -109,15 +109,11 @@ export function Navbar() {
       logout: true,
     }));
     try {
-      const data = await signOut({
-        redirect: false,
-      });
+      await signOut();
       setLoading((prevLoading) => ({
         ...prevLoading,
         logout: false,
       }));
-      router.push("/");
-      router.refresh();
     } catch (e) {
       console.log(e);
       setLoading((prevLoading) => ({
