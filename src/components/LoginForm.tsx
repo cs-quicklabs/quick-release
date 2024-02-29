@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -15,6 +15,9 @@ import { z } from "zod";
 export default function LoginForm() {
   const router = useRouter();
   const params = useParams();
+  const search = useSearchParams();
+  const token = search.get("token");
+
   const [loader, setLoader] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [verifiedUser, setVerifiedUser] = useState<boolean>(false);
@@ -47,22 +50,21 @@ export default function LoginForm() {
 
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
     try {
-      if (verifiedUser && params.id) {
-        setLoader(true);
-        const res = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
-        if (!res?.error) {
-          router.push("/allLogs");
-        } else {
-          toast.error(res?.error as string);
-          setUserEmail(values.email);
-          setIsOpen(true);
-        }
+      setLoader(true);
+      const res = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+      if (!res?.error) {
+        router.push("/allLogs");
+      } else {
+        toast.error(res?.error as string);
+        setUserEmail(values.email);
+        setIsOpen(true);
       }
-      if (!params.id) {
+
+      if (!token) {
         setLoader(true);
         const res = await signIn("credentials", {
           email: values.email,
@@ -85,10 +87,9 @@ export default function LoginForm() {
     setLoader(false);
   }
   useEffect(() => {
-    if (params.id) {
+    if (token) {
       const verifyToken = async () => {
         try {
-          const token = params?.id[0];
           const res = await axios.post("/api/verify-register-token", {
             id: token,
           });
@@ -104,7 +105,7 @@ export default function LoginForm() {
       };
       verifyToken();
     }
-  }, [params.id]);
+  }, [token]);
 
   useEffect(() => {
     if (verifiedUser === true) {

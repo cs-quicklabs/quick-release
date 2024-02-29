@@ -46,7 +46,7 @@ export async function POST(request: Request, res: NextApiResponse) {
     const verificationTokenExpires = (Date.now() + 3600000).toString();
     register.verificationToken = registerVerificationToken;
     register.verificationTokenExpiry = verificationTokenExpires;
-    const verificationUrl = `${process.env.BASEURL}/${verificationToken}`;
+    const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
     const msg = {
       to: body.email,
       from: "akash@crownstack.com",
