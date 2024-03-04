@@ -4,12 +4,10 @@ import Loader from "./Loader";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { ReadonlyURLSearchParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useParams } from "next/navigation";
-import { useSearchParams } from "next/navigation";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
@@ -18,16 +16,9 @@ function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
-interface ActiveProjectLoadingState {
-  [projectId: string]: boolean;
-}
-
 export function Navbar() {
   const router = useRouter();
-  const { data } = useSession();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const params = useParams();
   const [projects, setProjects] = React.useState([]);
   const [activeUser, setActiveUser] = React.useState<any>([]);
   const [activeProjectData, setActiveProjectData] = React.useState<
@@ -215,7 +206,7 @@ export function Navbar() {
                         src={
                           activeUser.profilePicture
                             ? activeUser.profilePicture
-                            : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                            : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
                         }
                         alt=""
                       />

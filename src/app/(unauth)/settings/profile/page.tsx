@@ -207,7 +207,11 @@ const Profile = () => {
                         <img
                           alt="No Image"
                           className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
-                          src={fileName}
+                          src={
+                            fileName
+                              ? fileName
+                              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                          }
                           height={20}
                           width={20}
                         />

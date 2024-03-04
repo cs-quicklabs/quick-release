@@ -55,7 +55,7 @@ export const authOptions: NextAuthOptions = {
           credentials?.password || "",
           uniqueUser?.password
         );
-        console.log(uniqueUser, checkPassword, "checkkkkkkkkkkkk");
+
         if (!checkPassword) {
           throw new Error("Incorrect Credentials!");
         }
