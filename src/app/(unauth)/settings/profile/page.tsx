@@ -217,7 +217,7 @@ const Profile = () => {
                         />
                         <input
                           type="file"
-                          accept="image/jpg*"
+                          accept="image/*"
                           onChange={handleFileChange}
                         />
                       </>
