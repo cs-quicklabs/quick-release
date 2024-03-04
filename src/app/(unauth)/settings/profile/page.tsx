@@ -210,36 +210,52 @@ const Profile = () => {
                     ) : (
                       <>
                         {fileName ? (
-                          <img
-                            alt="No Image"
-                            className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
-                            src={
-                              fileName
-                                ? fileName
-                                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
-                            }
-                            height={20}
-                            width={20}
-                          />
+                          <>
+                            <label htmlFor="fileInput">
+                              <img
+                                alt="No Image"
+                                className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                                src={
+                                  fileName
+                                    ? fileName
+                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                                }
+                                height={20}
+                                width={20}
+                              />
+                            </label>
+                            <input
+                              id="fileInput"
+                              hidden
+                              type="file"
+                              accept="image/*"
+                              onChange={handleFileChange}
+                            />
+                          </>
                         ) : (
-                          <img
-                            alt="No Image"
-                            className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
-                            src={
-                              (activeUser?.profilePicture as string)
-                                ? (activeUser?.profilePicture as string)
-                                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
-                            }
-                            height={20}
-                            width={20}
-                          />
+                          <>
+                            <label htmlFor="profilePic">
+                              <img
+                                alt="No Image"
+                                className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                                src={
+                                  (activeUser?.profilePicture as string)
+                                    ? (activeUser?.profilePicture as string)
+                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                                }
+                                height={20}
+                                width={20}
+                              />
+                            </label>
+                            <input
+                              id="profilePic"
+                              hidden
+                              type="file"
+                              accept="image/*"
+                              onChange={handleFileChange}
+                            />
+                          </>
                         )}
-
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                        />
                       </>
                     )}
                   </div>

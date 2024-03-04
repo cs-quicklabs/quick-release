@@ -20,7 +20,13 @@ const Project = () => {
 
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
-    projects: z.string().min(3, { message: "Required" }),
+    projects: z
+      .string()
+      .min(3, { message: "Required" })
+      .refine((value) => /^[a-zA-Z0-9\-]*$/.test(value), {
+        message: "Only alphanumeric characters and - are allowed",
+        path: ["projects"],
+      }),
   });
   const {
     register,
