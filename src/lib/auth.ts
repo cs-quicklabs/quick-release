@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { compare } from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { NextResponse } from "next/server";
 
 export const authOptions: NextAuthOptions = {
   pages: {
@@ -48,28 +49,29 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (!uniqueUser) {
-          throw new Error("InCorrect Credentials!");
+          throw new Error("Incorrect Credentials!");
         }
-        if (uniqueUser && uniqueUser.isActive === false) {
+        const checkPassword = await compare(
+          credentials?.password || "",
+          uniqueUser?.password
+        );
+        console.log(uniqueUser, checkPassword, "checkkkkkkkkkkkk");
+        if (!checkPassword) {
+          throw new Error("Incorrect Credentials!");
+        }
+        if (checkPassword && uniqueUser && uniqueUser.isActive === false) {
           throw new Error("Your Access has been Restricted, Contact Admin");
         }
-        if (uniqueUser && uniqueUser.isVerified === false) {
+
+        if (checkPassword && uniqueUser && uniqueUser.isVerified === false) {
           throw new Error("Your Account is not Verified Yet, Check Email");
         }
-
-        const passwordCorrect = await compare(
-          credentials?.password || "",
-          uniqueUser.password
-        );
-        if (passwordCorrect) {
+        if (checkPassword) {
           return {
             user: uniqueUser,
             id: uniqueUser.id,
             email: uniqueUser.email,
           };
-        }
-        if (!passwordCorrect) {
-          throw new Error("Incorrect Credentials!");
         }
 
         return uniqueUser;

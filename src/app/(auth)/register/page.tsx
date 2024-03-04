@@ -28,6 +28,7 @@ const Register = () => {
         .min(1, { message: "Required" })
         .email({ message: "Invalid email address" }),
       orgName: z.string().min(1, { message: "Required" }),
+      terms: z.boolean(),
       password: z
         .string()
         .min(1, { message: "Required" })
@@ -37,6 +38,15 @@ const Register = () => {
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
       path: ["confirmPassword"],
+    })
+    .superRefine(({ terms }, ctx) => {
+      if (terms !== true) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["terms"],
+          message: "You have to accept terms and condtions",
+        });
+      }
     });
 
   const {
@@ -52,6 +62,7 @@ const Register = () => {
       password: "",
       orgName: "",
       confirmPassword: "",
+      terms: false,
     },
   });
 
@@ -265,6 +276,7 @@ const Register = () => {
                     id="terms"
                     aria-describedby="terms"
                     type="checkbox"
+                    {...register("terms")}
                     className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
                   />
                 </div>{" "}
@@ -283,6 +295,11 @@ const Register = () => {
                   </label>
                 </div>
               </div>{" "}
+              {errors.terms && (
+                <span className="text-red-600 text-[12px]">
+                  {errors.terms.message}
+                </span>
+              )}
               <a href="/quick-release/signup/team" className="mt-4">
                 <button
                   type="submit"

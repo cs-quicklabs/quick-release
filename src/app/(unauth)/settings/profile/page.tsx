@@ -1,11 +1,13 @@
 "use client";
 
+import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -13,13 +15,16 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const Profile = () => {
+  const router = useRouter();
   const [activeUser, setActiveUser] = useState<User>();
   const [selectedFile, setSelectedFile] = useState();
   const [fileName, setFileName] = useState();
+  const [previousValue, setPreviousValue] = useState("");
   const [loading, setLoading] = useState({
     profileLoading: false,
     imageUploadLoading: false,
   });
+  const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
     firstName: z.string().min(1, { message: "Required" }).max(50, {
       message: "Fisrt Name can be maximum 50 characters",
@@ -76,7 +81,7 @@ const Profile = () => {
     setDefaultValues();
   }, [activeUser]);
 
-  const defaultValues = getValues();
+  const formValues = getValues();
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
@@ -121,7 +126,10 @@ const Profile = () => {
     }
   };
 
-  const updateProfile = async (values: z.infer<typeof formSchema>, e: any) => {
+  const updateProfile = async (
+    values: z.infer<typeof formSchema>,
+    isEmailUpdate = false
+  ) => {
     try {
       setLoading((prevLoading) => ({
         ...prevLoading,
@@ -131,20 +139,37 @@ const Profile = () => {
         ...values,
         profilePicture: fileName,
       });
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: false,
-      }));
+
       toast.success("Profile Updated Successfully");
+
+      if (isEmailUpdate) {
+        await signOut({ redirect: false });
+        router.push("/");
+        router.refresh();
+      }
     } catch (err: any) {
       console.log("error", err);
+
+      toast.error(err.response.data.message);
+    } finally {
       setLoading((prevLoading) => ({
         ...prevLoading,
         profileLoading: false,
       }));
-      toast.error(err.response.data.message);
     }
   };
+
+  const updateProfileDetails = async (
+    values: z.infer<typeof formSchema>,
+    e: any
+  ) => {
+    if (activeUser?.email === values.email) {
+      updateProfile(values);
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   return (
     <BaseTemplate>
       <main className="max-w-7xl mx-auto pb-10 lg:py-12 lg:px-8">
@@ -160,7 +185,7 @@ const Profile = () => {
               </p>{" "}
               <form
                 className="w-full mt-6"
-                onSubmit={handleSubmit(updateProfile)}
+                onSubmit={handleSubmit(updateProfileDetails)}
               >
                 <div className="sm:col-span-2">
                   <label
@@ -270,6 +295,21 @@ const Profile = () => {
                   )}
                 </button>
               </form>
+              {isOpen ? (
+                <Modal
+                  open={isOpen}
+                  setIsOpen={setIsOpen}
+                  buttonText="Ok"
+                  title="Re-verification Email"
+                  onClick={() => {
+                    setIsOpen(false);
+                    updateProfile(formValues, true);
+                  }}
+                  loading={loading.profileLoading}
+                >
+                  <div>Are you sure you want to change your email address?</div>
+                </Modal>
+              ) : null}
             </div>
           </main>
         </div>
