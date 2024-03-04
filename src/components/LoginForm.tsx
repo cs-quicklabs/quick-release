@@ -30,10 +30,7 @@ export default function LoginForm() {
       .string()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
-    password: z
-      .string()
-      .min(1, { message: "Required" })
-      .min(8, { message: "Password should be minimum 8 characters" }),
+    password: z.string().min(1, { message: "Required" }),
   });
 
   const {
@@ -58,26 +55,13 @@ export default function LoginForm() {
       });
       if (!res?.error) {
         router.push("/allLogs");
-      } else {
+      }
+      if (res?.error === "Incorrect Credentials!") {
         toast.error(res?.error as string);
+      }
+      if (res?.error === "Your Account is not Verified Yet, Check Email") {
         setUserEmail(values.email);
         setIsOpen(true);
-      }
-
-      if (!token) {
-        setLoader(true);
-        const res = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
-        if (!res?.error) {
-          router.push("/allLogs");
-        } else {
-          toast.error(res?.error as string);
-          setUserEmail(values.email);
-          setIsOpen(true);
-        }
       }
     } catch (error) {
       if (error) {

@@ -1,11 +1,13 @@
 "use client";
 
+import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import Image from "next/image";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -13,13 +15,17 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const Profile = () => {
+  const router = useRouter();
   const [activeUser, setActiveUser] = useState<User>();
   const [selectedFile, setSelectedFile] = useState();
   const [fileName, setFileName] = useState();
+  const [previousValue, setPreviousValue] = useState("");
+
   const [loading, setLoading] = useState({
     profileLoading: false,
     imageUploadLoading: false,
   });
+  const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
     firstName: z.string().min(1, { message: "Required" }).max(50, {
       message: "Fisrt Name can be maximum 50 characters",
@@ -33,18 +39,6 @@ const Profile = () => {
       .email({ message: "Invalid email address" }),
     profilePicture: z.unknown(),
   });
-
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    getActiveUser();
-  }, []);
 
   const {
     register,
@@ -62,6 +56,23 @@ const Profile = () => {
     },
   });
 
+  const getActiveUser = async () => {
+    try {
+      const res = await axios.get("/api/get-active-user");
+      setActiveUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading((prevLoading) => ({
+      ...prevLoading,
+      activeUserLoading: false,
+    }));
+  };
+
+  useEffect(() => {
+    getActiveUser();
+  }, []);
+
   useEffect(() => {
     const setDefaultValues = () => {
       if (activeUser) {
@@ -76,7 +87,7 @@ const Profile = () => {
     setDefaultValues();
   }, [activeUser]);
 
-  const defaultValues = getValues();
+  const formValues = getValues();
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
@@ -110,7 +121,6 @@ const Profile = () => {
         ...prevLoading,
         imageUploadLoading: false,
       }));
-      console.log("Image uploaded successfully:", response);
     } catch (error) {
       console.error("Error uploading image:", error);
 
@@ -121,7 +131,10 @@ const Profile = () => {
     }
   };
 
-  const updateProfile = async (values: z.infer<typeof formSchema>, e: any) => {
+  const updateProfile = async (
+    values: z.infer<typeof formSchema>,
+    isEmailUpdate = false
+  ) => {
     try {
       setLoading((prevLoading) => ({
         ...prevLoading,
@@ -131,20 +144,37 @@ const Profile = () => {
         ...values,
         profilePicture: fileName,
       });
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: false,
-      }));
+
       toast.success("Profile Updated Successfully");
+
+      if (isEmailUpdate) {
+        await signOut({ redirect: false });
+        router.push("/");
+        router.refresh();
+      }
     } catch (err: any) {
       console.log("error", err);
+
+      toast.error(err.response.data.message);
+    } finally {
       setLoading((prevLoading) => ({
         ...prevLoading,
         profileLoading: false,
       }));
-      toast.error(err.response.data.message);
     }
   };
+
+  const updateProfileDetails = async (
+    values: z.infer<typeof formSchema>,
+    e: any
+  ) => {
+    if (activeUser?.email === values.email) {
+      updateProfile(values);
+    } else {
+      setIsOpen(true);
+    }
+  };
+
   return (
     <BaseTemplate>
       <main className="max-w-7xl mx-auto pb-10 lg:py-12 lg:px-8">
@@ -160,7 +190,7 @@ const Profile = () => {
               </p>{" "}
               <form
                 className="w-full mt-6"
-                onSubmit={handleSubmit(updateProfile)}
+                onSubmit={handleSubmit(updateProfileDetails)}
               >
                 <div className="sm:col-span-2">
                   <label
@@ -179,18 +209,53 @@ const Profile = () => {
                       />
                     ) : (
                       <>
-                        <img
-                          alt="No Image"
-                          className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
-                          src={fileName}
-                          height={20}
-                          width={20}
-                        />
-                        <input
-                          type="file"
-                          accept="image/jpg*"
-                          onChange={handleFileChange}
-                        />
+                        {fileName ? (
+                          <>
+                            <label htmlFor="fileInput">
+                              <img
+                                alt="No Image"
+                                className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                                src={
+                                  fileName
+                                    ? fileName
+                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                                }
+                                height={20}
+                                width={20}
+                              />
+                            </label>
+                            <input
+                              id="fileInput"
+                              hidden
+                              type="file"
+                              accept="image/*"
+                              onChange={handleFileChange}
+                            />
+                          </>
+                        ) : (
+                          <>
+                            <label htmlFor="profilePic">
+                              <img
+                                alt="No Image"
+                                className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                                src={
+                                  (activeUser?.profilePicture as string)
+                                    ? (activeUser?.profilePicture as string)
+                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                                }
+                                height={20}
+                                width={20}
+                              />
+                            </label>
+                            <input
+                              id="profilePic"
+                              hidden
+                              type="file"
+                              accept="image/*"
+                              onChange={handleFileChange}
+                            />
+                          </>
+                        )}
                       </>
                     )}
                   </div>
@@ -270,6 +335,21 @@ const Profile = () => {
                   )}
                 </button>
               </form>
+              {isOpen ? (
+                <Modal
+                  open={isOpen}
+                  setIsOpen={setIsOpen}
+                  buttonText="Ok"
+                  title="Re-verification Email"
+                  onClick={() => {
+                    setIsOpen(false);
+                    updateProfile(formValues, true);
+                  }}
+                  loading={loading.profileLoading}
+                >
+                  <div>Are you sure you want to change your email address?</div>
+                </Modal>
+              ) : null}
             </div>
           </main>
         </div>

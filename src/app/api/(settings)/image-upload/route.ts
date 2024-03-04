@@ -1,5 +1,6 @@
 import { IFile } from "@/types";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import imageType from "image-type";
 import { NextRequest, NextResponse } from "next/server";
 
 const s3Client = new S3Client({
@@ -10,21 +11,24 @@ const s3Client = new S3Client({
   },
 });
 
-async function uploadFileToS3(
-  file: IFile,
-  fileName: string,
-  folderName: string
-) {
+async function uploadFileToS3(file: any, fileName: string, folderName: string) {
   const fileBuffer = file;
+
   if (!folderName) {
     folderName = "files";
   }
 
+  const imageMimeType = await imageType(fileBuffer);
+  const contentType = imageMimeType
+    ? imageMimeType.mime
+    : "application/octet-stream";
   const params = {
     Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
-    Key: `${folderName}/${Date.now()}-profile-picture.jpg`,
+    Key: `${folderName}/${Date.now()}-profile-picture.${
+      imageMimeType ? imageMimeType.ext : "jpg"
+    }`,
     Body: fileBuffer.buffer,
-    ContentType: "image/jpeg",
+    ContentType: contentType,
   };
 
   const command = new PutObjectCommand(params);

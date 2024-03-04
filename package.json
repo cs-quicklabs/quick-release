@@ -37,6 +37,7 @@
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
     "html-react-parser": "^5.0.11",
+    "image-type": "^5.2.0",
     "lucide-react": "^0.297.0",
     "next": "14.0.4",
     "next-auth": "^4.24.5",

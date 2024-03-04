@@ -24,7 +24,7 @@ export async function POST(
     if (user) {
       user.verificationToken = registerVerificationToken;
       user.verificationTokenExpiry = verificationTokenExpires;
-      const verificationUrl = `${process.env.BASEURL}/${verificationToken}`;
+      const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
       const msg = {
         to: params.id,
         from: "akash@crownstack.com",
