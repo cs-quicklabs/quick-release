@@ -20,6 +20,7 @@ const Profile = () => {
   const [selectedFile, setSelectedFile] = useState();
   const [fileName, setFileName] = useState();
   const [previousValue, setPreviousValue] = useState("");
+
   const [loading, setLoading] = useState({
     profileLoading: false,
     imageUploadLoading: false,
@@ -39,18 +40,6 @@ const Profile = () => {
     profilePicture: z.unknown(),
   });
 
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  useEffect(() => {
-    getActiveUser();
-  }, []);
-
   const {
     register,
     handleSubmit,
@@ -66,6 +55,23 @@ const Profile = () => {
       profilePicture: fileName,
     },
   });
+
+  const getActiveUser = async () => {
+    try {
+      const res = await axios.get("/api/get-active-user");
+      setActiveUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+    setLoading((prevLoading) => ({
+      ...prevLoading,
+      activeUserLoading: false,
+    }));
+  };
+
+  useEffect(() => {
+    getActiveUser();
+  }, []);
 
   useEffect(() => {
     const setDefaultValues = () => {
@@ -115,7 +121,6 @@ const Profile = () => {
         ...prevLoading,
         imageUploadLoading: false,
       }));
-      console.log("Image uploaded successfully:", response);
     } catch (error) {
       console.error("Error uploading image:", error);
 
@@ -204,17 +209,32 @@ const Profile = () => {
                       />
                     ) : (
                       <>
-                        <img
-                          alt="No Image"
-                          className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
-                          src={
-                            fileName
-                              ? fileName
-                              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
-                          }
-                          height={20}
-                          width={20}
-                        />
+                        {fileName ? (
+                          <img
+                            alt="No Image"
+                            className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
+                            src={
+                              fileName
+                                ? fileName
+                                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                            }
+                            height={20}
+                            width={20}
+                          />
+                        ) : (
+                          <img
+                            alt="No Image"
+                            className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0"
+                            src={
+                              (activeUser?.profilePicture as string)
+                                ? (activeUser?.profilePicture as string)
+                                : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                            }
+                            height={20}
+                            width={20}
+                          />
+                        )}
+
                         <input
                           type="file"
                           accept="image/*"
