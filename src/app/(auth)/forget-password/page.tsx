@@ -104,7 +104,7 @@ const ForgotPassword = () => {
               Login to your account{" "}
               <Link
                 href="/"
-                className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
               >
                 Sign in
               </Link>
