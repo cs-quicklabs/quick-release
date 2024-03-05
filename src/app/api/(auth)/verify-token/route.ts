@@ -17,7 +17,7 @@ export const POST = async (request: Request) => {
       }
       if (user.verificationTokenExpiry) {
         let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
-        if (tokenExpiryTimestamp < Date.now())
+        if (tokenExpiryTimestamp > Date.now())
           return new NextResponse("Reset Link has expired", { status: 400 });
       }
       return new NextResponse("Token Verified", { status: 200 });
