@@ -4,7 +4,7 @@ import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -12,9 +12,10 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const ResetPassword = ({ params }: { params: { token: string } }) => {
-  const [verified, setVerified] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const search = useSearchParams();
+  const token = search.get("token");
   const [loader, setLoader] = useState(false);
   const router = useRouter();
   const formSchema = z
@@ -64,19 +65,20 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      try {
-        const res = await axios.post("/api/verify-token", {
-          token: params.token,
-        });
-        setVerified(true);
-        const userData = await res.data;
-        setUser(userData);
-      } catch (error) {
-        setVerified(true);
+      if (token) {
+        try {
+          const res = await axios.post("/api/verify-token", {
+            id: token,
+          });
+          const userData = await res.data;
+          setUser(userData);
+        } catch (error: any) {
+          toast.error(error.response.data);
+        }
       }
     };
     verifyToken();
-  }, [params.token]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">

@@ -21,13 +21,17 @@ export async function POST(request: Request) {
     .update(resetToken)
     .digest("hex");
 
-  const passwordResetExpires = (Date.now() + 3600000).toString();
+  const oneDayInMilliseconds = 24 * 60 * 60 * 1000; //24hours
+  const passwordResetExpires = (Date.now() + oneDayInMilliseconds).toString();
 
   existingUser.resetToken = passwordResetToken;
   existingUser.resetTokenExpiry = passwordResetExpires;
-  const resetUrl = `${process.env.BASEURL}/reset-password/${resetToken}`;
+  const resetUrl = `${process.env.BASEURL}/reset-password/?token=${resetToken}`;
 
-  const emailBody = "Reset Password by clicking on following url:" + resetUrl;
+  const emailBody =
+    "Reset Password by clicking on following url:" +
+    resetUrl +
+    "     This link is valid for 24hours    ";
 
   const msg = {
     to: body.email,
@@ -46,7 +50,7 @@ export async function POST(request: Request) {
         email: body.email,
       },
       data: {
-        resetToken: passwordResetToken,
+        resetToken: resetToken,
         resetTokenExpiry: passwordResetExpires,
       },
     });
