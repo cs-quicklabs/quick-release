@@ -28,16 +28,17 @@ export async function POST(request: Request) {
   existingUser.resetTokenExpiry = passwordResetExpires;
   const resetUrl = `${process.env.BASEURL}/reset-password/?token=${resetToken}`;
 
-  const emailBody =
-    "Reset Password by clicking on following url:" +
-    resetUrl +
-    "     This link is valid for 24hours    ";
+  const emailBody = `Hello ${existingUser.firstName},
+Someone has requested a link to change your password. You can do this through the link below.
+<a href="${resetUrl}">Change my password</a>,
+If you didn't request this, please ignore this email.
+Your password won't change until you access the link above and create a new one.`;
 
   const msg = {
     to: body.email,
     from: "akash@crownstack.com",
     subject: "Reset Password",
-    text: emailBody,
+    html: emailBody,
   };
 
   sgMail.setApiKey(process.env.SENDGRID_API_KEY!);

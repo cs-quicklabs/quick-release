@@ -28,9 +28,10 @@ export default function LoginForm() {
   const formSchema = z.object({
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
-    password: z.string().min(1, { message: "Required" }),
+    password: z.string().trim().min(1, { message: "Required" }),
   });
 
   const {
@@ -55,13 +56,26 @@ export default function LoginForm() {
       });
       if (!res?.error) {
         router.push("/allLogs");
-      }
-      if (res?.error === "Incorrect Credentials!") {
+      } else {
         toast.error(res?.error as string);
-      }
-      if (res?.error === "Your Account is not Verified Yet, Check Email") {
         setUserEmail(values.email);
         setIsOpen(true);
+      }
+
+      if (!token) {
+        setLoader(true);
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
+        if (!res?.error) {
+          router.push("/allLogs");
+        } else {
+          toast.error(res?.error as string);
+          setUserEmail(values.email);
+          setIsOpen(true);
+        }
       }
     } catch (error) {
       if (error) {
@@ -223,16 +237,16 @@ export default function LoginForm() {
                   </div>
                 </div>
                 {errors.password && (
-                  <span className="text-red-600 text-[12px]">
+                  <p className="text-red-600  text-[11px] pt-1">
                     {errors.password.message}
-                  </span>
+                  </p>
                 )}
               </div>{" "}
               <div className="flex items-center justify-between">
                 <div className="flex items-start"></div>{" "}
                 <Link
                   href="/forget-password"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                  className=" mb-[-10px] text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
                   Forgot password?
                 </Link>

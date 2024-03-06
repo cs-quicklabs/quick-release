@@ -20,13 +20,7 @@ const Project = () => {
 
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
-    projects: z
-      .string()
-      .min(3, { message: "Required" })
-      .refine((value) => /^[a-zA-Z0-9\-]*$/.test(value), {
-        message: "Only alphanumeric characters and - are allowed",
-        path: ["projects"],
-      }),
+    projects: z.string().trim().min(3, { message: "Required" }),
   });
   const {
     register,
@@ -79,8 +73,8 @@ const Project = () => {
 
   return (
     <BaseTemplate>
-      <main className="mx-auto max-w-4xl pb-10 lg:py-12 lg:px-8 md:py-8 md:px-4 bg-gray-50">
-        <div className="bg-white shadow sm:rounded-lg">
+      <main className="mx-auto max-w-4xl pb-10 lg:py-12 lg:px-8 md:py-8 md:px-4">
+        <div className=" shadow sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-base font-semibold leading-6 text-gray-900">
               Create Your Project

@@ -22,9 +22,10 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
     .object({
       password: z
         .string()
+        .trim()
         .min(1, { message: "Required" })
-        .min(6, { message: "Password should be minimum 6 characters" }),
-      confirmPassword: z.string(),
+        .min(6, { message: "Password should be minimum 8 characters" }),
+      confirmPassword: z.string().trim(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -74,6 +75,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
           setUser(userData);
         } catch (error: any) {
           toast.error(error.response.data);
+          router.push("/");
         }
       }
     };
@@ -180,9 +182,9 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
               {errors.confirmPassword && (
-                <span className="text-red-600 text-[12px]">
+                <p className="text-red-600  text-[11px] pt-1">
                   {errors.confirmPassword.message}
-                </span>
+                </p>
               )}
             </div>
             <button
@@ -202,15 +204,6 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                 "Set Password"
               )}{" "}
             </button>
-            <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-              Login to your account{" "}
-              <Link
-                href="/"
-                className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600 text-opacity-[1]"
-              >
-                Sign in
-              </Link>
-            </p>
           </form>
         </div>
       </div>
