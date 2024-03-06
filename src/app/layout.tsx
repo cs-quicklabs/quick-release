@@ -23,10 +23,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-gray-50`}>
         <AuthProvider session={session}>
           <Provider>
-            <div className="bg-gray-50 dark:bg-gray-900">{children}</div>
+            <div className="bg-gray-50 dark:bg-gray-900 h-screen">
+              {children}
+            </div>
             <ToastContainer />
           </Provider>
         </AuthProvider>

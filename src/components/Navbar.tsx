@@ -143,7 +143,7 @@ export function Navbar() {
       {({ open }: any) => (
         <>
           <div className="px-2 sm:px-6 lg:px-8">
-            <div className="relative flex h-16 items-center justify-around">
+            <div className="relative flex h-12 items-center justify-around">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
                 <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -333,7 +333,7 @@ export function Navbar() {
                             )}
                           >
                             <div className="flex  items-center">
-                              <Link href="settings/profile" className="text-l">
+                              <Link href="/settings/profile" className="text-l">
                                 Profile Settings
                               </Link>
                             </div>

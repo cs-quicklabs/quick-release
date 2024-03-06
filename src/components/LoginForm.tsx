@@ -171,13 +171,13 @@ export default function LoginForm() {
                 >
                   Password
                 </label>{" "}
-                <div className="flex items-center focus-within:border-2 focus-within:border-black focus-within:rounded-lg bg-gray-50 border rounded-lg">
+                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className="  bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600bg-gray-50 focus:outline-none block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className=" p-[0.68rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
 
                   <div
@@ -232,7 +232,7 @@ export default function LoginForm() {
                 <div className="flex items-start"></div>{" "}
                 <Link
                   href="/forget-password"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
                   Forgot password?
                 </Link>
@@ -258,7 +258,7 @@ export default function LoginForm() {
                 Don’t have an account yet?{" "}
                 <Link
                   href="/register"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600 text-opacity-[1]"
                 >
                   Sign up
                 </Link>
@@ -267,7 +267,6 @@ export default function LoginForm() {
           </div>
         </div>
       </div>
-      ;
     </>
   );
 }
