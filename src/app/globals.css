@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 
 
 @layer base {
@@ -60,3 +60,22 @@
     @apply bg-background text-foreground;
   }
 } */
+
+.custom-input-editor .ql-editor {
+  height: 300px;
+  overflow-y: hidden;
+  resize: none;
+}
+
+.custom-input-editor .ql-container {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  background: white;
+}
+
+.custom-input-editor .ql-snow.ql-toolbar {
+  display: block;
+  background: #eaecec;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
