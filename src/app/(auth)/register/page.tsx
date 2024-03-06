@@ -17,9 +17,12 @@ const Register = () => {
 
   const formSchema = z
     .object({
-      firstName: z.string().min(1, { message: "Required" }).max(50, {
-        message: "Fisrt Name can be maximum 50 characters",
-      }),
+      firstName: z
+        .string()
+        .min(2, { message: "Name should be minimum 2 characters" })
+        .max(50, {
+          message: "Fisrt Name can be maximum 50 characters",
+        }),
       lastName: z.string().min(1, { message: "Required" }).max(50, {
         message: "Last Name can be maximum 50 characters",
       }),
@@ -28,6 +31,7 @@ const Register = () => {
         .min(1, { message: "Required" })
         .email({ message: "Invalid email address" }),
       orgName: z.string().min(1, { message: "Required" }),
+      terms: z.boolean(),
       password: z
         .string()
         .min(1, { message: "Required" })
@@ -37,6 +41,15 @@ const Register = () => {
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
       path: ["confirmPassword"],
+    })
+    .superRefine(({ terms }, ctx) => {
+      if (terms !== true) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["terms"],
+          message: "You have to accept terms and condtions",
+        });
+      }
     });
 
   const {
@@ -52,6 +65,7 @@ const Register = () => {
       password: "",
       orgName: "",
       confirmPassword: "",
+      terms: false,
     },
   });
 
@@ -72,7 +86,7 @@ const Register = () => {
   }
   return (
     <>
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0 ">
         <Link
           href="/"
           className="flex items-center mb-6  mt-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -183,19 +197,15 @@ const Register = () => {
                 >
                   Password
                 </label>{" "}
-                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border rounded-lg">
+                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className=" border-gray-300 text-gray-900 sm:text-sm focus:outline-none  block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
-                  {errors.password && (
-                    <span className="text-red-600 text-[12px]">
-                      {errors.password.message}
-                    </span>
-                  )}
+
                   <div
                     className="px-4 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
@@ -238,6 +248,11 @@ const Register = () => {
                     )}
                   </div>
                 </div>
+                {errors.password && (
+                  <span className="text-red-600 text-[12px]">
+                    {errors.password.message}
+                  </span>
+                )}
               </div>
               <div>
                 <label
@@ -265,6 +280,7 @@ const Register = () => {
                     id="terms"
                     aria-describedby="terms"
                     type="checkbox"
+                    {...register("terms")}
                     className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
                   />
                 </div>{" "}
@@ -275,7 +291,7 @@ const Register = () => {
                   >
                     I accept the{" "}
                     <a
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                      className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                       href="#"
                     >
                       Terms and Conditions
@@ -283,6 +299,11 @@ const Register = () => {
                   </label>
                 </div>
               </div>{" "}
+              {errors.terms && (
+                <span className="text-red-600 text-[12px]">
+                  {errors.terms.message}
+                </span>
+              )}
               <a href="/quick-release/signup/team" className="mt-4">
                 <button
                   type="submit"
@@ -306,7 +327,7 @@ const Register = () => {
                 Already have an account?{" "}
                 <Link
                   href="/"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
                   Sign In
                 </Link>
