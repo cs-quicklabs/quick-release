@@ -13,15 +13,11 @@ export async function POST(request: Request, res: NextApiResponse) {
     const existingEmail = await db.user.findUnique({
       where: { email: body.email },
     });
-    const existingOrgName = await db.organisation.findUnique({
-      where: { name: body.orgName },
-    });
+
     if (existingEmail) {
       throw new Error("Email already exists");
     }
-    if (existingOrgName) {
-      throw new Error("Organisation already exists");
-    }
+
     const organisation = await db.organisation.create({
       data: {
         name: body.orgName,
