@@ -20,7 +20,14 @@ const Project = () => {
 
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
-    projects: z.string().trim().min(3, { message: "Required" }),
+    projects: z
+      .string()
+      .trim()
+      .min(3, { message: "Required" })
+      .refine((value) => /^[a-zA-Z0-9\-.\s]+$/.test(value), {
+        message:
+          "Only letters, numbers, hyphens (-), periods (.), and spaces are allowed",
+      }),
   });
   const {
     register,
@@ -120,7 +127,7 @@ const Project = () => {
                     />
                   </div>
                 ) : (
-                  "Create Project"
+                  "Save"
                 )}{" "}
               </button>
             </form>{" "}
