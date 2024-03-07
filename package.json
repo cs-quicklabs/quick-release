@@ -36,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "dayjs": "^1.11.10",
+    "flowbite-react": "^0.7.2",
     "html-react-parser": "^5.0.11",
     "image-type": "^5.2.0",
     "lucide-react": "^0.297.0",
