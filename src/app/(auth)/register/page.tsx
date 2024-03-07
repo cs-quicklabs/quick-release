@@ -205,13 +205,13 @@ const Register = () => {
                 >
                   Password
                 </label>{" "}
-                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   />
 
                   <div
