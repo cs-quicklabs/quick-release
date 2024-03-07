@@ -56,26 +56,13 @@ export default function LoginForm() {
       });
       if (!res?.error) {
         router.push("/allLogs");
-      } else {
-        toast.error(res?.error as string);
+      }
+      if (res?.error === "Incorrect Credentials!") {
+        toast.error(res.error as string);
+      }
+      if (res?.error === "Your Account is not Verified Yet, Check Email") {
         setUserEmail(values.email);
         setIsOpen(true);
-      }
-
-      if (!token) {
-        setLoader(true);
-        const res = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
-        if (!res?.error) {
-          router.push("/allLogs");
-        } else {
-          toast.error(res?.error as string);
-          setUserEmail(values.email);
-          setIsOpen(true);
-        }
       }
     } catch (error) {
       if (error) {
