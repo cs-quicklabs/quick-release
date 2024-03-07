@@ -8,10 +8,10 @@ export async function POST(
   try {
     const body = await request.json();
     const existingProject = await db.project.findFirst({
-      where: { name: body.projects, adminId: params.id },
+      where: { name: body.projects },
     });
     if (existingProject) {
-      throw new Error("Project with this name already exists");
+      throw new Error("Project name is already taken");
     }
     const project = await db.project.create({
       data: {

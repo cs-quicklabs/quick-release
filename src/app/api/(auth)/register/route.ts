@@ -43,19 +43,22 @@ export async function POST(request: Request, res: NextApiResponse) {
     register.verificationToken = registerVerificationToken;
     register.verificationTokenExpiry = verificationTokenExpires;
     const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
-    const msg = {
-      to: body.email,
-      from: "akash@crownstack.com",
-      subject: "Welcome to Quick Release",
-      text: `Hi ${body.firstName}
+    const emailBody = `Hi ${body.firstName}
       Welcome to Quicklabs! We're thrilled to have you on board
       Our mission is simple: to streamline change log management for all your software releases. With Quicklabs, you'll experience efficiency and clarity like never before.
       Best regards,
       Quick Release Team
       
-      Click to verify email ${verificationUrl}
-      `,
+      <a href="${verificationUrl}">Click to verify Account</a>,
+      `;
+
+    const msg = {
+      to: body.email,
+      from: "akash@crownstack.com",
+      subject: "Welcome to Quick Release",
+      html: emailBody,
     };
+
     sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
     try {

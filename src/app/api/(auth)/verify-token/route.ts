@@ -3,32 +3,27 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
-  const body = await request.json();
+  try {
+    const body = await request.json();
+    if (body.id) {
+      const user = await db.user.findUnique({
+        where: {
+          resetToken: body.id,
+        },
+      });
 
-  const hashedToken = crypto
-    .createHash("sha256")
-    .update(body.token)
-    .digest("hex");
-
-  const user = await db.user.findUnique({
-    where: {
-      resetToken: hashedToken,
-    },
-  });
-
-  if (user) {
-    db.user.update({
-      where: {
-        resetToken: hashedToken,
-      },
-      data: {
-        isVerified: true,
-      },
-    });
-  }
-
-  if (!user) {
+      if (!user) {
+        return new NextResponse("Invalid Token", { status: 400 });
+      }
+      if (user.verificationTokenExpiry) {
+        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
+        if (tokenExpiryTimestamp > Date.now())
+          return new NextResponse("Reset Link has expired", { status: 400 });
+      }
+      return new NextResponse("Token Verified", { status: 200 });
+    }
+  } catch (err) {
+    console.log(err, "err");
     return new NextResponse("Invalid Token", { status: 400 });
   }
-  return new NextResponse(JSON.stringify(user), { status: 200 });
 };
