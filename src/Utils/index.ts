@@ -10,7 +10,7 @@ export const showNotification = (type: TypeOptions, message: string) => {
 
 export const requestHandler = async (
   api: () => Promise<AxiosResponse<any, any>>,
-  setLoading: (loading: boolean) => void | null,
+  setLoading: ((loading: boolean) => void) | null,
   onSuccess: (data: any) => void,
   onError: (errorMessage: string) => void
 ) => {

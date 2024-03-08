@@ -31,6 +31,14 @@ const deleteChangeLogRequest = (id: string) => {
   return apiClient.delete(`/changelog/${id}`);
 };
 
+const fileUploadRequest = (data: FormData) => {
+  return apiClient.post("/upload", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};
+
 // Export all the API functions
 export {
   getAllProjectsRequest,
@@ -38,4 +46,5 @@ export {
   createChangeLogRequest,
   getOneChangeLogRequest,
   deleteChangeLogRequest,
+  fileUploadRequest,
 };

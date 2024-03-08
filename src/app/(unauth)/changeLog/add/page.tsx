@@ -173,8 +173,8 @@ const AddChangeLog = () => {
 
   return (
     <BaseTemplate>
-      <MaxWidthWrapper className="mx-auto min-w-2xl max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
-        <div className="flex flex-col items-center justify-center">
+      <>
+        <div className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
           <Form {...form} >
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -223,6 +223,7 @@ const AddChangeLog = () => {
                             placeholder="Enter change log description"
                             value={value}
                             onChange={onChange}
+                            onModal="ChangeLogs"
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />
@@ -375,7 +376,7 @@ const AddChangeLog = () => {
             </form>
           </Form>
         </div>
-      </MaxWidthWrapper>
+      </>
     </BaseTemplate >
   );
 };
