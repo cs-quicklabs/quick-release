@@ -19,24 +19,30 @@ const Register = () => {
     .object({
       firstName: z
         .string()
-        .min(2, { message: "Name should be minimum 2 characters" })
-        .max(50, {
-          message: "Fisrt Name can be maximum 50 characters",
+        .trim()
+        .min(1, { message: "Required" })
+        .min(2, { message: "First name should be minimum 2 characters" })
+        .max(50, { message: "First Name can be maximum 50 characters" })
+        .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+          message: "First name can only contain letters",
         }),
-      lastName: z.string().min(1, { message: "Required" }).max(50, {
+
+      lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
         message: "Last Name can be maximum 50 characters",
       }),
       email: z
         .string()
+        .trim()
         .min(1, { message: "Required" })
         .email({ message: "Invalid email address" }),
-      orgName: z.string().min(1, { message: "Required" }),
+      orgName: z.string().trim().min(1, { message: "Required" }),
       terms: z.boolean(),
       password: z
         .string()
+        .trim()
         .min(1, { message: "Required" })
         .min(8, { message: "Password should be minimum 8 characters" }),
-      confirmPassword: z.string(),
+      confirmPassword: z.string().trim().min(1, { message: "Required" }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -69,6 +75,8 @@ const Register = () => {
     },
   });
 
+  console.log(errors, "errs");
+
   async function createUser(values: z.infer<typeof formSchema>) {
     try {
       setLoader(true);
@@ -86,10 +94,10 @@ const Register = () => {
   }
   return (
     <>
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0 ">
+      <div className="flex flex-col items-center justify-center px-6 py-12 mx-auto ">
         <Link
           href="/"
-          className="flex items-center mb-6  mt-6 text-2xl font-semibold text-gray-900 dark:text-white"
+          className="flex items-center mb-6  mt-8 text-2xl font-medium text-gray-900 dark:text-white"
         >
           <img
             className="w-8 h-8 mr-2"
@@ -98,7 +106,7 @@ const Register = () => {
           />
           Quick Release
         </Link>{" "}
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create your account
@@ -118,14 +126,14 @@ const Register = () => {
                   <input
                     type="text"
                     id="first-name"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg outline-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-600 dark:focus:border-blue-600"
                     placeholder="First name"
                     {...register("firstName")}
                   />
                   {errors.firstName && (
-                    <span className="text-red-600 text-[12px]">
+                    <p className="text-red-600 text-[11px] pt-1">
                       {errors.firstName.message}
-                    </span>
+                    </p>
                   )}
                 </div>
 
@@ -144,7 +152,7 @@ const Register = () => {
                     {...register("lastName")}
                   />
                   {errors.lastName && (
-                    <span className="text-red-600 text-[12px]">
+                    <span className="text-red-600 text-[11px] pt-1">
                       {errors.lastName.message}
                     </span>
                   )}
@@ -165,7 +173,7 @@ const Register = () => {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[11px] pt-1">
                     {errors.email.message}
                   </span>
                 )}
@@ -185,7 +193,7 @@ const Register = () => {
                   {...register("orgName")}
                 />
                 {errors.orgName && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[11px] pt-1">
                     {errors.orgName.message}
                   </span>
                 )}
@@ -197,13 +205,13 @@ const Register = () => {
                 >
                   Password
                 </label>{" "}
-                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   />
 
                   <div
@@ -249,7 +257,7 @@ const Register = () => {
                   </div>
                 </div>
                 {errors.password && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[11px] pt-1">
                     {errors.password.message}
                   </span>
                 )}
@@ -269,7 +277,7 @@ const Register = () => {
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
                 {errors.confirmPassword && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[11px] pt-1">
                     {errors.confirmPassword.message}
                   </span>
                 )}
@@ -281,7 +289,7 @@ const Register = () => {
                     aria-describedby="terms"
                     type="checkbox"
                     {...register("terms")}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
                   />
                 </div>{" "}
                 <div className="ml-3 text-sm">
@@ -300,7 +308,7 @@ const Register = () => {
                 </div>
               </div>{" "}
               {errors.terms && (
-                <span className="text-red-600 text-[12px]">
+                <span className="text-red-600 text-[11px] pt-1">
                   {errors.terms.message}
                 </span>
               )}

@@ -4,7 +4,7 @@ import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -12,18 +12,20 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const ResetPassword = ({ params }: { params: { token: string } }) => {
-  const [verified, setVerified] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const search = useSearchParams();
+  const token = search.get("token");
   const [loader, setLoader] = useState(false);
   const router = useRouter();
   const formSchema = z
     .object({
       password: z
         .string()
+        .trim()
         .min(1, { message: "Required" })
-        .min(6, { message: "Password should be minimum 6 characters" }),
-      confirmPassword: z.string(),
+        .min(6, { message: "Password should be minimum 8 characters" }),
+      confirmPassword: z.string().trim(),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -64,19 +66,21 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      try {
-        const res = await axios.post("/api/verify-token", {
-          token: params.token,
-        });
-        setVerified(true);
-        const userData = await res.data;
-        setUser(userData);
-      } catch (error) {
-        setVerified(true);
+      if (token) {
+        try {
+          const res = await axios.post("/api/verify-token", {
+            id: token,
+          });
+          const userData = await res.data;
+          setUser(userData);
+        } catch (error: any) {
+          toast.error(error.response.data);
+          router.push("/");
+        }
       }
     };
     verifyToken();
-  }, [params.token]);
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -107,13 +111,13 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
               >
                 New Password
               </label>{" "}
-              <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
+              <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                 <input
                   type={showPassword ? "text" : "password"}
                   id="password"
                   placeholder="••••••••"
                   {...register("password")}
-                  className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 />
                 {errors.password && (
                   <span className="text-red-600 text-[12px]">
@@ -178,9 +182,9 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               />
               {errors.confirmPassword && (
-                <span className="text-red-600 text-[12px]">
+                <p className="text-red-600  text-[11px] pt-1">
                   {errors.confirmPassword.message}
-                </span>
+                </p>
               )}
             </div>
             <button
@@ -200,15 +204,6 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                 "Set Password"
               )}{" "}
             </button>
-            <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-              Login to your account{" "}
-              <Link
-                href="/"
-                className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600 text-opacity-[1]"
-              >
-                Sign in
-              </Link>
-            </p>
           </form>
         </div>
       </div>

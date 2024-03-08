@@ -3,7 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Link from "next/link";
-import React, { BaseSyntheticEvent, FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -11,9 +12,11 @@ import { z } from "zod";
 
 const ForgotPassword = () => {
   const [loader, setLoader] = useState(false);
+  const router = useRouter();
   const formSchema = z.object({
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
   });
@@ -36,6 +39,7 @@ const ForgotPassword = () => {
       const res = await axios.post("/api/forget-password", values);
       toast.success("Reset Link Sent Successfully");
       setLoader(false);
+      router.push("/");
     } catch (error: any) {
       toast.error(error.response.data);
       setLoader(false);
@@ -78,9 +82,9 @@ const ForgotPassword = () => {
                 placeholder="name@company.com"
               />
               {errors.email && (
-                <span className="text-red-600 text-[12px]">
+                <p className="text-red-600  text-[11px] pt-1">
                   {errors.email.message}
-                </span>
+                </p>
               )}
             </div>{" "}
             <button
@@ -97,7 +101,7 @@ const ForgotPassword = () => {
                   />
                 </div>
               ) : (
-                "Request Password"
+                "Request Password Reset Instructions"
               )}{" "}
             </button>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">

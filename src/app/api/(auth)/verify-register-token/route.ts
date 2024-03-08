@@ -11,14 +11,7 @@ export const POST = async (request: Request) => {
           verificationToken: body.id,
         },
       });
-      let verificationTokenExpiry;
 
-      if (user) {
-        verificationTokenExpiry = parseInt(
-          user.verificationTokenExpiry as string,
-          10
-        );
-      }
       const updatedUser = await db.user.update({
         where: {
           id: user?.id,

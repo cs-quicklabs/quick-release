@@ -28,9 +28,10 @@ export default function LoginForm() {
   const formSchema = z.object({
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
-    password: z.string().min(1, { message: "Required" }),
+    password: z.string().trim().min(1, { message: "Required" }),
   });
 
   const {
@@ -55,13 +56,26 @@ export default function LoginForm() {
       });
       if (!res?.error) {
         router.push("/allLogs");
-      }
-      if (res?.error === "Incorrect Credentials!") {
+      } else {
         toast.error(res?.error as string);
-      }
-      if (res?.error === "Your Account is not Verified Yet, Check Email") {
         setUserEmail(values.email);
         setIsOpen(true);
+      }
+
+      if (!token) {
+        setLoader(true);
+        const res = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          redirect: false,
+        });
+        if (!res?.error) {
+          router.push("/allLogs");
+        } else {
+          toast.error(res?.error as string);
+          setUserEmail(values.email);
+          setIsOpen(true);
+        }
       }
     } catch (error) {
       if (error) {
@@ -171,13 +185,13 @@ export default function LoginForm() {
                 >
                   Password
                 </label>{" "}
-                <div className="flex items-center focus-within:border-2 focus-within:border-black bg-gray-50 border border-gray-300 rounded-lg">
+                <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
                     {...register("password")}
-                    className=" p-[0.68rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600  focus:outline-none block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                   />
 
                   <div
@@ -223,16 +237,16 @@ export default function LoginForm() {
                   </div>
                 </div>
                 {errors.password && (
-                  <span className="text-red-600 text-[12px]">
+                  <p className="text-red-600  text-[11px] pt-1">
                     {errors.password.message}
-                  </span>
+                  </p>
                 )}
               </div>{" "}
               <div className="flex items-center justify-between">
                 <div className="flex items-start"></div>{" "}
                 <Link
                   href="/forget-password"
-                  className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                  className=" mb-[-10px] text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
                   Forgot password?
                 </Link>
