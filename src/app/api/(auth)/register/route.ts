@@ -39,7 +39,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       .update(verificationToken)
       .digest("hex");
 
-    const verificationTokenExpires = (Date.now() + 3600000).toString();
+    const verificationTokenExpires = (Date.now() + 7200000).toString();
     register.verificationToken = registerVerificationToken;
     register.verificationTokenExpiry = verificationTokenExpires;
     const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;

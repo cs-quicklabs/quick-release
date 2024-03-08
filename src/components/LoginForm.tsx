@@ -83,14 +83,16 @@ export default function LoginForm() {
           } else {
             setVerifiedUser(false);
           }
-        } catch (error) {
+        } catch (error: any) {
           console.log(error);
+          toast.error(error.response.data);
+
           setVerifiedUser(false);
         }
       };
       verifyToken();
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (verifiedUser === true) {
