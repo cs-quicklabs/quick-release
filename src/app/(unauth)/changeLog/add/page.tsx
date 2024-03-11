@@ -82,7 +82,7 @@ const AddChangeLog = () => {
       .refine((arr) => arr.length >= 0, {
         message: "At least one category is required",
       }),
-    schemaTime: z.date().optional()
+    scheduledTime: z.date().optional()
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -93,7 +93,7 @@ const AddChangeLog = () => {
       releaseVersion: "",
       releaseCategories: [],
       releaseTags: [],
-      schemaTime: moment().toDate(),
+      scheduledTime: moment().toDate(),
     },
   });
 
@@ -134,7 +134,7 @@ const AddChangeLog = () => {
       releaseCategories: data.releaseCategories.map(category => category.value),
       releaseTags: data.releaseTags.map(category => category.value),
       projectId: activeProject?.id,
-      schemaTime: selectedAction.id === "published" ? moment().toDate() : data.schemaTime
+      scheduledTime: selectedAction.id === "published" ? moment().toDate() : data.scheduledTime
     };
 
     createChangeLog(changelogPost, setIsSaving);
@@ -323,7 +323,7 @@ const AddChangeLog = () => {
                   < div className="grid gap-2">
                     <FormField
                       control={form.control}
-                      name="schemaTime"
+                      name="scheduledTime"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Schedule Release On</FormLabel>
@@ -365,7 +365,7 @@ const AddChangeLog = () => {
                   selected={selectedAction}
                   options={actions}
                   onChange={(value) => {
-                    form.setValue("schemaTime", moment().toDate());
+                    form.setValue("scheduledTime", moment().toDate());
                     setSelectedAction(value);
                   }}
                   btnType="submit"

@@ -24,7 +24,7 @@ export async function POST(req: Response) {
         createdById: userId,
         updatedById: userId,
         status: body.status,
-        schemaTime: body.schemaTime ?? null,
+        scheduledTime: body.scheduledTime ?? null,
       },
       include: {
         project: { select: { id: true, name: true } },

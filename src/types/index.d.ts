@@ -19,7 +19,7 @@ export type FormChangeLogPost = {
   releaseVersion: string;
   releaseCategories: readonly IReleaseCategoriesOption[];
   releaseTags: readonly ReleaseTagsOption[];
-  schemaTime?: Date;
+  scheduledTime?: Date;
 };
 
 export interface IChangeLogPost extends FormChangeLogPost {
@@ -36,7 +36,7 @@ export type ChangeLogType = {
   releaseCategories: string[];
   releaseTags: string[];
   projectId: string;
-  schemaTime?: Date;
+  scheduledTime?: Date;
 
   status: string;
 

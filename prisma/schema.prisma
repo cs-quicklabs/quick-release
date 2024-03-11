@@ -64,7 +64,7 @@ model Log {
   releaseTags       String[]
   project           Project?  @relation(fields: [projectId], references: [id])
   projectId         String?
-  schemaTime        DateTime?
+  scheduledTime     DateTime?
   status            String
   createdBy         User      @relation("CreatedLogs", fields: [createdById], references: [id])
   createdById       String
