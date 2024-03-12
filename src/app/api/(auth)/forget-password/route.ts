@@ -1,5 +1,5 @@
+import { transport } from "@/Utils/EmailService";
 import { db } from "@/lib/db";
-import sgMail from "@sendgrid/mail";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
@@ -36,15 +36,13 @@ Your password won't change until you access the link above and create a new one.
 
   const msg = {
     to: body.email,
-    from: "akash@crownstack.com",
+    from: "admin@projects.quicklabs.in",
     subject: "Reset Password",
     html: emailBody,
   };
 
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-
   try {
-    const sent = await sgMail.send(msg);
+    const sent = await transport.sendMail(msg);
 
     await db.user.update({
       where: {

@@ -1,5 +1,5 @@
+import { transport } from "@/Utils/EmailService";
 import { db } from "@/lib/db";
-import sgMail from "@sendgrid/mail";
 import { hash } from "bcrypt";
 import crypto from "crypto";
 import { NextApiResponse } from "next";
@@ -54,16 +54,14 @@ export async function POST(request: Request, res: NextApiResponse) {
 
     const msg = {
       to: body.email,
-      from: "akash@crownstack.com",
+      from: "omprakash.pandey@crownstack.com",
       subject: "Welcome to Quick Release",
       html: emailBody,
     };
 
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
-
     try {
       if (register.id) {
-        sgMail.send(msg);
+        transport.sendMail(msg);
       }
       await db.user.update({
         where: {
@@ -77,8 +75,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       return NextResponse.json("Verification Link Sent to email", {
         status: 200,
       });
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
       await db.user.update({
         where: {
           email: body.email,
