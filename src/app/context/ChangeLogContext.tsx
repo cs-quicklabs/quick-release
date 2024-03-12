@@ -158,9 +158,6 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     }
   }, [activeProjectId]);
 
-  console.log("board", activeBoardKey, list, map, boards[defaultBoardKey]?.list?.length, boards);
-
-
   // Provide change logs-related data and functions through the context
   return (
     <ChangeLogContext.Provider value={{
