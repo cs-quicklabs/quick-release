@@ -354,7 +354,11 @@ const AddChangeLog = () => {
 
               </CardContent>
               <CardFooter className="justify-end px-0">
-                <Button className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded">
+                <Button
+                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
+                  type="button"
+                  onClick={router.back}
+                >
                   Cancel
                 </Button>
                 {/* <Button className="bg-blue-500 text-white" type="submit">
