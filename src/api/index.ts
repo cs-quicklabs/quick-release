@@ -1,4 +1,4 @@
-import { ChangeLogType } from "@/types";
+import { ApiFilterQueryType, ChangeLogType } from "@/types";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -9,13 +9,18 @@ const apiClient = axios.create({
 
 // API functions for different actions
 
-// project actions api's
-const getAllProjectsRequest = (userId: string) => {
-  return apiClient.get(`/get-projects/${userId}`);
+// user profile actions api's
+const getLoggedInUserDetailsRequest = () => {
+  return apiClient.get("/users/current-user");
 };
 
-const getOneActiveProjectRequest = (userId: string) => {
-  return apiClient.get(`/get-active-project/${userId}`);
+// project actions api's
+const getAllProjectsRequest = () => {
+  return apiClient.get(`/projects/cu`);
+};
+
+const getOneActiveProjectRequest = () => {
+  return apiClient.get("/projects/cu/active");
 };
 
 // changelog actions api's
@@ -23,8 +28,12 @@ const createChangeLogRequest = (data: ChangeLogType) => {
   return apiClient.post("/changelogs", data);
 };
 
+const getAllChangeLogsRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get("/changelogs", { params });
+};
+
 const getOneChangeLogRequest = (id: string) => {
-  return apiClient.get(`/changelog/${id}`);
+  return apiClient.get(`/changelogs/${id}`);
 };
 
 const deleteChangeLogRequest = (id: string) => {
@@ -41,9 +50,11 @@ const fileUploadRequest = (data: FormData) => {
 
 // Export all the API functions
 export {
+  getLoggedInUserDetailsRequest,
   getAllProjectsRequest,
   getOneActiveProjectRequest,
   createChangeLogRequest,
+  getAllChangeLogsRequest,
   getOneChangeLogRequest,
   deleteChangeLogRequest,
   fileUploadRequest,

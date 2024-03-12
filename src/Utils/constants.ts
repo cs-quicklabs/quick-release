@@ -1,3 +1,5 @@
+import { ChangeLogsStatusType } from "@/types";
+
 export const ChangeLogsReleaseCategories = Object.freeze({
   new: {
     value: "new",
@@ -68,30 +70,34 @@ export const ChangeLogsReleaseActions = Object.freeze({
   },
 });
 
-export const ChangeLogsStatus = Object.freeze({
+export const ChangeLogsStatus = Object.freeze<ChangeLogsStatusType>({
   published: {
     id: "published",
     title: "Published",
     textColor: "text-green-800",
     bgColor: "bg-green-100",
+    bulletColor: "bg-green-400",
   },
   draft: {
     id: "draft",
     title: "Draft",
     textColor: "text-yellow-800",
     bgColor: "bg-yellow-100",
+    bulletColor: "bg-yellow-400",
   },
   scheduled: {
     id: "scheduled",
     title: "Scheduled",
     textColor: "text-gray-800",
     bgColor: "bg-gray-100",
+    bulletColor: "bg-gray-400",
   },
   archived: {
     id: "archived",
     title: "Archived",
-    textColor: "text-gray-800",
-    bgColor: "bg-gray-100",
+    textColor: "text-red-800",
+    bgColor: "bg-red-100",
+    bulletColor: "bg-red-400",
   },
 });
 

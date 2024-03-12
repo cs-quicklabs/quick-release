@@ -7,7 +7,9 @@ import { getServerSession } from "next-auth";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
+import { UserProvider } from "./context/UserContext";
 import { ChangeLogProvider } from "./context/ChangeLogContext";
+import { ProjectProvider } from "./context/ProjectContext";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,10 +31,14 @@ export default async function RootLayout({
       <body className={`${inter.className} bg-gray-50`}>
         <AuthProvider session={session}>
           <Provider>
-            <ChangeLogProvider>
-              <div className="bg-gray-50 dark:bg-gray-900 h-screen">{children}</div>
-              <ToastContainer />
-            </ChangeLogProvider>
+            <UserProvider>
+              <ProjectProvider>
+                <ChangeLogProvider>
+                  <div className="bg-gray-50 dark:bg-gray-900 h-screen">{children}</div>
+                  <ToastContainer />
+                </ChangeLogProvider>
+              </ProjectProvider>
+            </UserProvider>
           </Provider>
         </AuthProvider>
       </body>
