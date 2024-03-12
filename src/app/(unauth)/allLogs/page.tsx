@@ -30,7 +30,7 @@ export default function AllLogs() {
   }, [activeProjectId]);
 
   // show loading if fetching current active project or change logs
-  if (loading || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs)) {
+  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs)) {
     return (
       <BaseTemplate>
         <div className="w-full h-full flex items-center justify-center">
