@@ -1,11 +1,12 @@
 "use client";
 
 import BaseTemplate from "@/templates/BaseTemplate";
+import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -15,15 +16,15 @@ const Project = () => {
   const { data } = useSession();
   const router = useRouter();
   const [projects, setProjects] = React.useState([]);
+  const [activeUser, setActiveUser] = useState<User>();
   const [loading, setLoading] = React.useState(false);
-  const userId = (data?.user as { id: string })?.id;
-
   const [loader, setLoader] = useState(false);
   const formSchema = z.object({
     projects: z
       .string()
       .trim()
-      .min(3, { message: "Required" })
+      .min(1, { message: "Required" })
+      .min(3, { message: "Minimun 3 characters required" })
       .refine((value) => /^[a-zA-Z0-9\-.\s]+$/.test(value), {
         message:
           "Only letters, numbers, hyphens (-), periods (.), and spaces are allowed",
@@ -40,10 +41,23 @@ const Project = () => {
     },
   });
 
+  const getActiveUser = async () => {
+    try {
+      const res = await axios.get("/api/get-active-user");
+      setActiveUser(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getActiveUser();
+  }, []);
+
   const getProjects = async () => {
     setLoading(true);
     try {
-      const projects = await axios.get(`/api/get-projects/${userId}`);
+      const projects = await axios.get(`/api/get-projects/${activeUser?.id}`);
       setProjects(projects.data);
     } catch (err) {
       console.log(err, "error");
@@ -52,19 +66,19 @@ const Project = () => {
   };
   React.useEffect(() => {
     const fetchData = async () => {
-      if (userId) {
+      if (activeUser?.id) {
         await getProjects();
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [activeUser?.id]);
 
   async function createProject(values: z.infer<typeof formSchema>, e: any) {
     e.preventDefault();
     try {
       setLoader(true);
-      const response = await axios.post(`api/add-project/${userId}`, {
+      const response = await axios.post(`api/add-project/${activeUser?.id}`, {
         projects: values.projects.trim(),
       });
       toast.success(response.data.message);
