@@ -103,7 +103,7 @@ export default function LoginForm() {
   const resendEmail = async () => {
     try {
       setResendLoading(true);
-      await axios.post(`/api/resend-verification-link/${userEmail}`);
+      await axios.post(`/api/resend-verification-link`, { email: userEmail });
       toast.success("Verification link sent to email");
       setResendLoading(false);
     } catch (e: any) {

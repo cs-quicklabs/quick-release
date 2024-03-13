@@ -3,16 +3,15 @@ import { db } from "@/lib/db";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request) {
   try {
+    const body = await request.json();
     const user = await db.user.findUnique({
       where: {
-        email: params.id,
+        email: body.email,
       },
     });
+    console.log(user, "userFound");
     const verificationToken = crypto.randomBytes(20).toString("hex");
     const registerVerificationToken = crypto
       .createHash("sha256")
@@ -25,7 +24,7 @@ export async function POST(
       user.verificationToken = registerVerificationToken;
       user.verificationTokenExpiry = verificationTokenExpires;
       const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
-      const emailBody = `Hi ${params.id}
+      const emailBody = `Hi ${user.firstName}
       Welcome to Quicklabs! We're thrilled to have you on board
       Our mission is simple: to streamline change log management for all your software releases. With Quicklabs, you'll experience efficiency and clarity like never before.
       Best regards,
@@ -34,12 +33,11 @@ export async function POST(
       <a href="${verificationUrl}">Click to verify Account</a>,
       `;
       const msg = {
-        to: params.id,
+        to: user.email,
         from: process.env.EMAIL_FROM,
         subject: "Welcome to Quick Release",
         html: emailBody,
       };
-
       transport.sendMail(msg);
     }
     if (!user) {
@@ -48,13 +46,11 @@ export async function POST(
     try {
       await db.user.update({
         where: {
-          email: params.id,
+          id: user.id,
         },
         data: {
           verificationToken: verificationToken,
           verificationTokenExpiry: verificationTokenExpires,
-          isActive: true,
-          isVerified: true,
         },
       });
 
@@ -65,7 +61,7 @@ export async function POST(
       console.log(err);
       await db.user.update({
         where: {
-          email: params.id,
+          id: user.id,
         },
         data: {
           verificationToken: null,
