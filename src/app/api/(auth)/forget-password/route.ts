@@ -36,7 +36,7 @@ Your password won't change until you access the link above and create a new one.
 
   const msg = {
     to: body.email,
-    from: "admin@projects.quicklabs.in",
+    from: process.env.EMAIL_FROM,
     subject: "Reset Password",
     html: emailBody,
   };

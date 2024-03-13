@@ -54,7 +54,7 @@ export async function POST(request: Request, res: NextApiResponse) {
 
     const msg = {
       to: body.email,
-      from: "omprakash.pandey@crownstack.com",
+      from: process.env.EMAIL_FROM,
       subject: "Welcome to Quick Release",
       html: emailBody,
     };
