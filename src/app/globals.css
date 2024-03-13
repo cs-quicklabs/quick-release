@@ -67,3 +67,8 @@
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
+
+body {
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+}

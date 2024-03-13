@@ -15,12 +15,12 @@ export const POST = async (request: Request) => {
       if (!user) {
         return new NextResponse("Invalid Token", { status: 400 });
       }
-      if (user.verificationTokenExpiry) {
-        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
-        if (tokenExpiryTimestamp > Date.now())
+      if (user.resetTokenExpiry) {
+        let tokenExpiryTimestamp = parseInt(user.resetTokenExpiry);
+        if (tokenExpiryTimestamp < Date.now())
           return new NextResponse("Reset Link has expired", { status: 400 });
       }
-      return new NextResponse("Token Verified", { status: 200 });
+      return NextResponse.json(user, { status: 200 });
     }
   } catch (err) {
     console.log(err, "err");

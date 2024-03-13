@@ -81,7 +81,7 @@ const Project = () => {
   return (
     <BaseTemplate>
       <main className="mx-auto max-w-4xl pb-10 lg:py-12 lg:px-8 md:py-8 md:px-4">
-        <div className=" shadow sm:rounded-lg">
+        <div className=" shadow sm:rounded-lg bg-white">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-base font-semibold leading-6 text-gray-900">
               Create Your Project

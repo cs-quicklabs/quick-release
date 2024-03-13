@@ -1,5 +1,5 @@
+import { transport } from "@/Utils/EmailService";
 import { db } from "@/lib/db";
-import sgMail from "@sendgrid/mail";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
 
@@ -35,13 +35,12 @@ export async function POST(
       `;
       const msg = {
         to: params.id,
-        from: "akash@crownstack.com",
+        from: process.env.EMAIL_FROM,
         subject: "Welcome to Quick Release",
         html: emailBody,
       };
-      sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-      sgMail.send(msg);
+      transport.sendMail(msg);
     }
     if (!user) {
       throw new Error("Email is not registred");

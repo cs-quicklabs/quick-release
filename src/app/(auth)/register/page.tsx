@@ -75,8 +75,6 @@ const Register = () => {
     },
   });
 
-  console.log(errors, "errs");
-
   async function createUser(values: z.infer<typeof formSchema>) {
     try {
       setLoader(true);
