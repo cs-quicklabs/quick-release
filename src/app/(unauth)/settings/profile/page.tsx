@@ -331,7 +331,7 @@ const Profile = () => {
                       />
                     </div>
                   ) : (
-                    "Update"
+                    "Save"
                   )}
                 </button>
               </form>
