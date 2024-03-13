@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("image");
 
-    if (!file || !(file instanceof File)) {
+    if (!file || !(file instanceof Blob)) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
     }
 
