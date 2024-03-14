@@ -17,6 +17,8 @@ export const POST = async (request: Request) => {
           id: user?.id,
         },
         data: {
+          verificationToken: null,
+          verificationTokenExpiry: null,
           isVerified: true,
         },
       });
