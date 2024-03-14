@@ -39,7 +39,7 @@ model Organisation {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   admin     User?
-  name      String   @unique
+  name      String
 }
 
 model Project {

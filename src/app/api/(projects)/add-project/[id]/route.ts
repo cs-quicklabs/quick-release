@@ -13,10 +13,16 @@ export async function POST(
     if (existingProject) {
       throw new Error("Project name is already taken");
     }
+    const checkProjects = await db.project.findMany({
+      where: {
+        adminId: params.id,
+      },
+    });
     const project = await db.project.create({
       data: {
         name: body.projects,
         adminId: params.id,
+        isActive: checkProjects.length === 0 ? true : false,
       },
     });
     return NextResponse.json({
