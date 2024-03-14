@@ -5,11 +5,12 @@ import { SelectUserDetailsFromDB } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: Response) {
+export async function POST(req: NextRequest) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
+    // @ts-ignore
     const userId = session?.user?.id!;
     const body = await req.json();
 
