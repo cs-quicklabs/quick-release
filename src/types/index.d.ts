@@ -44,6 +44,19 @@ export type ChangeLogType = {
   updatedAt?: Date;
 
   deletedAt?: Date;
+
+  createdBy?: User;
+  isArchived?: boolean;
+};
+
+export type ChangeLogsStatusType = {
+  [key: string]: {
+    id: string;
+    title: string;
+    textColor: string;
+    bgColor: string;
+    bulletColor: string;
+  };
 };
 
 export interface User {
@@ -86,3 +99,9 @@ export interface Project {
   adminId?: String;
   isActive: Boolean;
 }
+
+export type ApiFilterQueryType = {
+  page?: number;
+  limit?: number;
+  [key: string]: any;
+};

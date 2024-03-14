@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+import { useProjectContext } from "@/app/context/ProjectContext";
 import Loader from "./Loader";
 import { User } from "@/types";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
@@ -12,6 +14,7 @@ import { usePathname } from "next/navigation";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
+import { useUserContext } from "@/app/context/UserContext";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -20,11 +23,15 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [projects, setProjects] = React.useState([]);
+
+  const { loggedInUser, logout } = useUserContext();
+  const { activeProjectId, list: projectList, map: projectMap, setActiveProject  } = useProjectContext();
+
+  // const [projects, setProjects] = React.useState([]);
   const [activeUser, setActiveUser] = React.useState<User>();
-  const [activeProjectData, setActiveProjectData] = React.useState<
-    Record<string, any>
-  >({});
+  // const [activeProjectData, setActiveProjectData] = React.useState<
+  //   Record<string, any>
+  // >({});
   const [loading, setLoading] = React.useState({
     projectLoading: false,
     activeProjectLoading: false as any,
@@ -32,115 +39,151 @@ export function Navbar() {
     activeUserLoading: true,
   });
 
-  const getActiveUser = async () => {
+  const projects = projectList.map(projectId => projectMap[projectId]);
+
+  // const getActiveUser = async () => {
+  //   try {
+  //     const res = await axios.get("/api/get-active-user");
+  //     setActiveUser(res.data);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  //   setLoading((prevLoading) => ({
+  //     ...prevLoading,
+  //     activeUserLoading: false,
+  //   }));
+  // };
+
+  // const getActiveProject = async (userId: string) => {
+  //   try {
+  //     if (userId) {
+  //       const res = await axios.get(`/api/get-active-project/${userId}`);
+  //       setActiveProjectData(res.data);
+  //     }
+  //   } catch (err) {
+  //     console.log(err, "err");
+  //   }
+  //   setLoading((prevLoading) => ({
+  //     ...prevLoading,
+  //     activeProjectLoading: false,
+  //   }));
+  // };
+
+  // const getProjects = async (userId: string) => {
+  //   try {
+  //     if (userId) {
+  //       const projects = await axios.get(`/api/get-projects/${userId}`);
+  //       setProjects(projects.data);
+  //     }
+  //   } catch (err) {
+  //     console.log(err, "error");
+  //   }
+  //   setLoading((prevLoading) => ({
+  //     ...prevLoading,
+  //     projectLoading: false,
+  //   }));
+  // };
+
+  // React.useEffect(() => {
+  //   getActiveUser();
+  // }, []);
+
+  // React.useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (activeUser?.id) {
+  //       await getProjects(activeUser?.id as string);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, [pathname, activeUser?.id]);
+
+  // React.useEffect(() => {
+  //   if (activeUser?.id) {
+  //     getActiveProject(activeUser?.id as string);
+  //   }
+  // }, [activeUser?.id]);
+
+  // const handleLogout = async () => {
+  //   setLoading((prevLoading) => ({
+  //     ...prevLoading,
+  //     logout: true,
+  //   }));
+  //   try {
+  //     const data = await signOut({ redirect: false });
+
+  //     setLoading((prevLoading) => ({
+  //       ...prevLoading,
+  //       logout: false,
+  //     }));
+  //     router.push("/");
+  //     router.refresh();
+  //   } catch (e) {
+  //     console.log(e);
+  //     setLoading((prevLoading) => ({
+  //       ...prevLoading,
+  //       logout: false,
+  //     }));
+  //   }
+  // };
+
+  const activeProject = async (projectId: string) => {
     try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-    setLoading((prevLoading) => ({
-      ...prevLoading,
-      activeUserLoading: false,
-    }));
-  };
+      setActiveProject(projectId);
+      const userId = loggedInUser?.id;
+      router.replace("/allLogs");
 
-  const getActiveProject = async (userId: string) => {
-    try {
-      if (userId) {
-        const res = await axios.get(`/api/get-active-project/${userId}`);
-        setActiveProjectData(res.data);
-      }
-    } catch (err) {
-      console.log(err, "err");
-    }
-    setLoading((prevLoading) => ({
-      ...prevLoading,
-      activeProjectLoading: false,
-    }));
-  };
-
-  const getProjects = async (userId: string) => {
-    try {
-      if (userId) {
-        const projects = await axios.get(`/api/get-projects/${userId}`);
-        setProjects(projects.data);
-      }
-    } catch (err) {
-      console.log(err, "error");
-    }
-    setLoading((prevLoading) => ({
-      ...prevLoading,
-      projectLoading: false,
-    }));
-  };
-
-  React.useEffect(() => {
-    getActiveUser();
-  }, []);
-
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (activeUser?.id) {
-        await getProjects(activeUser?.id as string);
-      }
-    };
-
-    fetchData();
-  }, [pathname, activeUser?.id]);
-
-  React.useEffect(() => {
-    if (activeUser?.id) {
-      getActiveProject(activeUser?.id as string);
-    }
-  }, [activeUser?.id]);
-
-  const handleLogout = async () => {
-    setLoading((prevLoading) => ({
-      ...prevLoading,
-      logout: true,
-    }));
-    try {
-      const data = await signOut({ redirect: false });
-
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        logout: false,
-      }));
-      router.push("/");
-      router.refresh();
-    } catch (e) {
-      console.log(e);
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        logout: false,
-      }));
-    }
-  };
-
-  const activeProject = async (projectId: string, userId: string) => {
-    try {
       if (projectId && userId) {
         await axios.post(`/api/active-project/${projectId}/${userId}`);
-        router.push("/changeLog/add");
-        getActiveProject(userId);
+        // router.push("/changeLog/add");
+        // getActiveProject(userId);
       }
     } catch (err) {
       console.log("error", err);
     }
   };
 
-  const navigation = [
-    { name: "Quick Release", href: "/allLogs", current: true },
-    {
-      name: activeProjectData?.name ? activeProjectData?.name : null,
-      href: "/allLogs",
-      current: true,
-    },
-  ];
+  // const navigation = [
+  //   { name: "Quick Release", href: "/allLogs", current: true },
+  //   {
+  //     name: activeProjectData?.name ? activeProjectData?.name : null,
+  //     href: "/allLogs",
+  //     current: true,
+  //   },
+  // ];
 
-  const fullName = activeUser?.firstName + " " + activeUser?.lastName;
-  const email = activeUser?.email;
+  const navigation = useMemo(() => {
+    const nav = [
+      {
+        name: "Quick Release",
+        href: "/allLogs",
+        current: true
+      }
+    ];
+
+    if (activeProjectId) {
+      nav.push({
+        name: projectMap[activeProjectId]?.name as string,
+        href: "/allLogs",
+        current: true
+      });
+    }
+
+    return nav;
+  }, [activeProjectId]);
+
+  // const fullName = activeUser?.firstName + " " + activeUser?.lastName;
+  // const email = activeUser?.email;
+
+  const { fullName, email } = useMemo(() => {
+    const { firstName, lastName } = loggedInUser || {};
+    const fullName = `${firstName || ""} ${lastName || ""}`.trim();
+    let email = `${loggedInUser?.email || ""}`.trim();
+    email = email.length > 18 ? `${email.slice(0, 18)}...` : email;
+
+    return { fullName, email }
+  }, [loggedInUser])
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }: any) => (
@@ -179,19 +222,19 @@ export function Navbar() {
                     ) : (
                       navigation.map((item) =>
                         item.name ? (
-                          <a
+                          <Link
                             key={item.name}
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? "bg-gray-900 text-white"
-                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                                ? "text-white"
+                                : "text-gray-300 hover:text-white",
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
                             aria-current={item.current ? "page" : undefined}
                           >
                             {item.name}
-                          </a>
+                          </Link>
                         ) : null
                       )
                     )}
@@ -212,9 +255,9 @@ export function Navbar() {
                         aria-hidden="true"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         ></path>
                       </svg>
                     </div>{" "}
@@ -238,13 +281,13 @@ export function Navbar() {
                     className="h-6 w-6"
                     fill="none"
                     viewBox="0 0 24 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     aria-hidden="true"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
                       d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
                     ></path>
                   </svg>
@@ -257,11 +300,11 @@ export function Navbar() {
                       <img
                         className="h-8 w-8 rounded-full"
                         src={
-                          (activeUser?.profilePicture as string)
-                            ? (activeUser?.profilePicture as string)
+                          (loggedInUser?.profilePicture as string)
+                            ? (loggedInUser?.profilePicture as string)
                             : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
                         }
-                        alt=""
+                        alt={fullName}
                       />
                     </Menu.Button>
                   </div>
@@ -279,7 +322,7 @@ export function Navbar() {
                         {({ active }) => (
                           <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
                             <div className="truncate flex justify-center items-center">
-                              {loading.activeUserLoading ? (
+                              {/* {loading.activeUserLoading ? (
                                 <Oval
                                   height={20}
                                   width={20}
@@ -299,7 +342,12 @@ export function Navbar() {
                                   <p>{fullName}</p>
                                   <p className="font-medium ">{email}</p>
                                 </>
-                              )}
+                              )} */}
+
+                                <div className="flex flex-col">
+                                  <p>{fullName}</p>
+                                  <p className="font-medium ">{email}</p>
+                                </div>
                             </div>
                           </div>
                         )}
@@ -318,9 +366,9 @@ export function Navbar() {
                           >
                             <path
                               stroke="currentColor"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              stroke-width="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
                               d="M12 7.8v8.4M7.8 12h8.4m4.8 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
                             ></path>
                           </svg>
@@ -342,13 +390,9 @@ export function Navbar() {
                           {projects.map((item: any) => {
                             return (
                               <Menu.Item
+                                key={item.id}
                                 as="div"
-                                onClick={() => {
-                                  activeProject(
-                                    item.id,
-                                    activeUser?.id as string
-                                  );
-                                }}
+                                onClick={() => activeProject(item.id)}
                                 className="hover:bg-gray-100 hover:text-black cursor-pointer border bottom-1"
                               >
                                 <div className="flex items-center">
@@ -356,7 +400,7 @@ export function Navbar() {
                                     {item.name}
                                   </div>
 
-                                  {item.id === activeProjectData?.id ? (
+                                  {item.id === activeProjectId ? (
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       viewBox="0 0 20 20"
@@ -365,9 +409,9 @@ export function Navbar() {
                                       aria-hidden="true"
                                     >
                                       <path
-                                        fill-rule="evenodd"
+                                        fillRule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clip-rule="evenodd"
+                                        clipRule="evenodd"
                                       ></path>
                                     </svg>
                                   ) : null}
@@ -390,8 +434,8 @@ export function Navbar() {
 
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            onClick={handleLogout}
+                          <Link href="/settings/profile"
+                            // onClick={handleLogout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
@@ -402,13 +446,13 @@ export function Navbar() {
                                 Profile Settings
                               </Link>
                             </div>
-                          </a>
+                          </Link>
                         )}
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            onClick={handleLogout}
+                            onClick={logout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700 cursor-pointer"

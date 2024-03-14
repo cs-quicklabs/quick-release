@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextResponse) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
@@ -40,6 +40,66 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       new ApiResponse(200, newChangeLog, "Create changelog successfully")
+    );
+  });
+}
+
+export async function GET(req: NextRequest) {
+  return asyncHandler(async () => {
+    const { searchParams } = req.nextUrl;
+    const query: { [key: string]: any } = { deletedAt: null };
+
+    const page = Number(searchParams.get("page")) || 1;
+    const limit = Number(searchParams.get("limit")) || 10;
+    const start = (page - 1) * limit;
+
+    const projectId = searchParams.get("projectId");
+    if (projectId) {
+      query.projectId = projectId;
+    }
+
+    const status = searchParams.get("status");
+    if (status) {
+      query.status = status;
+      query.isArchived = false;
+    }
+
+    const isArchived = searchParams.get("isArchived");
+    if (isArchived) {
+      query.isArchived = Boolean(isArchived);
+    }
+
+    const changeLogs = await db.log.findMany({
+      where: query,
+      include: {
+        project: { select: { id: true, name: true } },
+        createdBy: { select: SelectUserDetailsFromDB },
+        updatedBy: { select: SelectUserDetailsFromDB },
+      },
+      skip: start,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    const totalChangeLogs = await db.log.count({ where: query });
+    const hasNextPage = totalChangeLogs > page * limit;
+    const nextPage = hasNextPage ? page + 1 : null;
+
+    return NextResponse.json(
+      new ApiResponse(
+        200,
+        {
+          changeLogs,
+          page,
+          limit,
+          total: totalChangeLogs,
+          hasNextPage,
+          nextPage,
+        },
+        "Change logs fetched successfully"
+      )
     );
   });
 }
