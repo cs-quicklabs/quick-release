@@ -1,5 +1,6 @@
 "use client";
 
+import { useProjectContext } from "@/app/context/ProjectContext";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,6 +42,8 @@ const Project = () => {
     },
   });
 
+  const { getAllProjects } = useProjectContext()
+
   const getActiveUser = async () => {
     try {
       const res = await axios.get("/api/get-active-user");
@@ -81,9 +84,10 @@ const Project = () => {
       const response = await axios.post(`api/add-project/${activeUser?.id}`, {
         projects: values.projects.trim(),
       });
+      getAllProjects();
       toast.success(response.data.message);
       router.push("/allLogs");
-      getProjects();
+      // getProjects();
     } catch (error: any) {
       if (error) {
         toast.error(error.response.data.message);

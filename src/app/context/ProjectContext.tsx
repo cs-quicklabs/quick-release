@@ -12,7 +12,7 @@ type ProjectMapType = {
 
 type ProjectContextType = {
   isLoading: boolean;
-  map: {};
+  map: ProjectMapType;
   list: string[];
   meta: { [key: string]: any; };
   activeProjectId: string | null;
@@ -69,6 +69,8 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
         setList(projectIds);
         setMeta(metaData);
         setActiveProjectId(prevProjectId => {
+          console.log("prevProjectId", prevProjectId);
+
           if (prevProjectId && projectIds.includes(prevProjectId)) {
             return prevProjectId;
           } else {
