@@ -4,6 +4,11 @@ export type FormInputPost = {
   tagId: string;
 };
 
+export interface IReleaseCategoriesOption {
+  value: string;
+  label: string;
+}
+
 export interface ReleaseTagsOption {
   readonly value: string;
   readonly label: string;
@@ -12,7 +17,33 @@ export type FormChangeLogPost = {
   title: string;
   description: string;
   releaseVersion: string;
+  releaseCategories: readonly IReleaseCategoriesOption[];
   releaseTags: readonly ReleaseTagsOption[];
+  scheduledTime?: Date;
+};
+
+export interface IChangeLogPost extends FormChangeLogPost {
+  id?: string;
+  status: string;
+  releaseCategories: string[];
+}
+
+export type ChangeLogType = {
+  id?: string;
+  title: string;
+  description: string;
+  releaseVersion: string;
+  releaseCategories: string[];
+  releaseTags: string[];
+  projectId: string;
+  scheduledTime?: Date;
+
+  status: string;
+
+  createdAt?: Date;
+  updatedAt?: Date;
+
+  deletedAt?: Date;
 };
 
 export interface User {
