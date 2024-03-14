@@ -34,12 +34,15 @@ import * as z from "zod";
 
 import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
 import DatePicker from "@/components/DatePicker";
-import RichTextEditor from "@/components/RichTextEditor";
+// import RichTextEditor from "@/components/RichTextEditor";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import TimePicker from "@/components/TimePicker";
 import moment from "moment";
 import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, ChangeLogsReleaseActions } from "@/Utils/constants";
 import { checkRichTextEditorIsEmpty } from "@/Utils";
+import dynamic from "next/dynamic";
+
+const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), { ssr: true });
 
 const AddChangeLog = () => {
   const prevProps = useRef({
