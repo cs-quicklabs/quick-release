@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextResponse) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
+    // @ts-ignore
     const userId = session?.user?.id!;
     const body = await req.json();
 

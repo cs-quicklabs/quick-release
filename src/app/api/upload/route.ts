@@ -11,6 +11,7 @@ const allowedModals = ["ChangeLogs", "ProfilePictures"];
 export async function POST(req: NextRequest) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
+    // @ts-ignore
     const userId = session?.user?.id;
 
     if (!userId) {
