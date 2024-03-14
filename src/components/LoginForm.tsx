@@ -56,26 +56,13 @@ export default function LoginForm() {
       });
       if (!res?.error) {
         router.push("/allLogs");
-      } else {
-        toast.error(res?.error as string);
+      }
+      if (res?.error === "Incorrect Credentials!") {
+        toast.error(res.error as string);
+      }
+      if (res?.error === "Your Account is not Verified Yet, Check Email") {
         setUserEmail(values.email);
         setIsOpen(true);
-      }
-
-      if (!token) {
-        setLoader(true);
-        const res = await signIn("credentials", {
-          email: values.email,
-          password: values.password,
-          redirect: false,
-        });
-        if (!res?.error) {
-          router.push("/allLogs");
-        } else {
-          toast.error(res?.error as string);
-          setUserEmail(values.email);
-          setIsOpen(true);
-        }
       }
     } catch (error) {
       if (error) {
@@ -96,14 +83,16 @@ export default function LoginForm() {
           } else {
             setVerifiedUser(false);
           }
-        } catch (error) {
+        } catch (error: any) {
           console.log(error);
+          toast.error(error.response.data);
+
           setVerifiedUser(false);
         }
       };
       verifyToken();
     }
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (verifiedUser === true) {
@@ -114,7 +103,7 @@ export default function LoginForm() {
   const resendEmail = async () => {
     try {
       setResendLoading(true);
-      await axios.post(`/api/resend-verification-link/${userEmail}`);
+      await axios.post(`/api/resend-verification-link`, { email: userEmail });
       toast.success("Verification link sent to email");
       setResendLoading(false);
     } catch (e: any) {
@@ -243,6 +232,24 @@ export default function LoginForm() {
                 )}
               </div>{" "}
               <div className="flex items-center justify-between">
+                <div className="flex items-start mb-[-2px]">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="remember"
+                      aria-describedby="remember"
+                      type="checkbox"
+                      className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                    />
+                  </div>{" "}
+                  <div className="ml-3 text-sm">
+                    <label
+                      htmlFor="remember"
+                      className="text-gray-500 dark:text-gray-300"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                </div>
                 <div className="flex items-start"></div>{" "}
                 <Link
                   href="/forget-password"

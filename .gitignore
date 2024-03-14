@@ -29,6 +29,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env*.txt
 
 # vercel
 .vercel
@@ -38,4 +39,5 @@ yarn-error.log*
 next-env.d.ts
 .env
 .env.vercel.txt
+.env.vercel
 # End of https://www.toptal.com/developers/gitignore/api/nextjs

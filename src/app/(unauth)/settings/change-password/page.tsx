@@ -18,15 +18,13 @@ const page = () => {
   const [loader, setLoader] = useState(false);
   const formSchema = z
     .object({
-      oldPassword: z
-        .string()
-        .min(1, { message: "Required" })
-        .min(6, { message: "Password should be minimum 6 characters" }),
+      oldPassword: z.string().trim().min(1, { message: "Required" }),
       password: z
         .string()
+        .trim()
         .min(1, { message: "Required" })
-        .min(6, { message: "Password should be minimum 6 characters" }),
-      confirmPassword: z.string(),
+        .min(8, { message: "Password should be minimum 8 characters" }),
+      confirmPassword: z.string().trim().min(1, { message: "Required" }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -49,7 +47,7 @@ const page = () => {
   const getActiveUser = async () => {
     try {
       const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data.user);
+      setActiveUser(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -79,6 +77,7 @@ const page = () => {
       <main className="max-w-7xl mx-auto pb-10 lg:py-12 lg:px-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
           <SettingsNav />
+
           <main className="max-w-xl pb-12 px-4 lg:col-span-6">
             <div>
               <h1 className="text-lg font-semibold dark:text-white">
@@ -102,7 +101,7 @@ const page = () => {
                     type="password"
                     {...register("oldPassword")}
                     id="email"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="••••••••"
                   />
                   {errors.oldPassword && (
@@ -118,12 +117,12 @@ const page = () => {
                   >
                     New Password
                   </label>{" "}
-                  <div className="flex items-center focus-within:border-2 focus-within:border-black focus-within:rounded-lg bg-gray-50 border rounded-lg">
+                  <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                     <input
                       type={showPassword ? "text" : "password"}
                       {...register("password")}
                       id=""
-                      className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                       placeholder="••••••••"
                     />
                     <div
@@ -208,7 +207,7 @@ const page = () => {
                       />
                     </div>
                   ) : (
-                    "Update Password"
+                    "Save"
                   )}{" "}
                 </button>
               </form>

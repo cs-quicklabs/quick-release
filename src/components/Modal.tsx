@@ -65,7 +65,7 @@ export default function Modal({
                     className="text-md font-medium leading-6 "
                   >
                     <div className="flex items-center justify-between">
-                      <p className="text-red-500"> {title}</p>{" "}
+                      <p className="text-black-500"> {title}</p>{" "}
                       <div>
                         <XMarkIcon
                           className="w-5 h-10 font-black cursor-pointer"
@@ -81,7 +81,7 @@ export default function Modal({
                   <div className="mt-4">
                     <button
                       type="button"
-                      className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-2 py-1 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="inline-flex  text-white justify-center rounded-md border border-transparent bg-blue-600 px-2 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={onClick}
                     >
                       {loading ? (
