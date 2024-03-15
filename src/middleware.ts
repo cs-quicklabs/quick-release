@@ -25,5 +25,12 @@ export function middleware(request: NextRequest) {
   }
 }
 export const config = {
-  matcher: ["/allLogs", "/", "/register", "/changeLog/add"],
+  matcher: [
+    "/allLogs",
+    "/",
+    "/register",
+    "/changeLog/add",
+    "/settings/:path*",
+    "/create-project",
+  ],
 };

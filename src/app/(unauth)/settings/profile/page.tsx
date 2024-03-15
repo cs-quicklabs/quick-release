@@ -4,6 +4,7 @@ import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/types";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { signOut } from "next-auth/react";
@@ -18,8 +19,8 @@ const Profile = () => {
   const router = useRouter();
   const [activeUser, setActiveUser] = useState<User>();
   const [selectedFile, setSelectedFile] = useState();
-  const [fileName, setFileName] = useState();
-  const [previousValue, setPreviousValue] = useState("");
+  const [fileName, setFileName] = useState<any>(activeUser?.profilePicture);
+  const [isOpenImageModal, setIsOpenImageModal] = useState(false);
 
   const [loading, setLoading] = useState({
     profileLoading: false,
@@ -60,9 +61,11 @@ const Profile = () => {
     try {
       const res = await axios.get("/api/get-active-user");
       setActiveUser(res.data);
+      setFileName(res.data.profilePicture);
     } catch (err) {
       console.log(err);
     }
+
     setLoading((prevLoading) => ({
       ...prevLoading,
       activeUserLoading: false,
@@ -211,44 +214,44 @@ const Profile = () => {
                       <>
                         {fileName ? (
                           <>
+                            <div className="flex ">
+                              <label htmlFor="fileInput">
+                                <img
+                                  alt="No Image"
+                                  className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                                  src={fileName}
+                                  height={20}
+                                  width={20}
+                                />
+                              </label>
+                              <input
+                                id="fileInput"
+                                hidden
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileChange}
+                              />
+                              <XMarkIcon
+                                className="ml-[-10px] cursor-pointer"
+                                onClick={() => setIsOpenImageModal(true)}
+                                height={"20px"}
+                                width={"20px"}
+                              />
+                            </div>
+                          </>
+                        ) : (
+                          <>
                             <label htmlFor="fileInput">
                               <img
                                 alt="No Image"
                                 className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                                src={
-                                  fileName
-                                    ? fileName
-                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
-                                }
+                                src="/images/userAvatar.png"
                                 height={20}
                                 width={20}
                               />
                             </label>
                             <input
                               id="fileInput"
-                              hidden
-                              type="file"
-                              accept="image/*"
-                              onChange={handleFileChange}
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <label htmlFor="profilePic">
-                              <img
-                                alt="No Image"
-                                className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                                src={
-                                  (activeUser?.profilePicture as string)
-                                    ? (activeUser?.profilePicture as string)
-                                    : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
-                                }
-                                height={20}
-                                width={20}
-                              />
-                            </label>
-                            <input
-                              id="profilePic"
                               hidden
                               type="file"
                               accept="image/*"
@@ -349,6 +352,19 @@ const Profile = () => {
                 >
                   <div>Are you sure you want to change your email address?</div>
                 </Modal>
+              ) : null}
+              {isOpenImageModal ? (
+                <Modal
+                  open={isOpenImageModal}
+                  setIsOpen={setIsOpenImageModal}
+                  buttonText="OK"
+                  title="Remove Profile Picture ?"
+                  onClick={() => {
+                    setIsOpenImageModal(false);
+                    setFileName(null);
+                  }}
+                  loading={loading.profileLoading}
+                ></Modal>
               ) : null}
             </div>
           </main>

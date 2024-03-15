@@ -4,7 +4,6 @@ import "react-quill/dist/quill.snow.css";
 import "./globals.css";
 import AuthProvider from "./context/AuthProvider";
 import Provider from "@/components/Provider";
-import { getServerSession } from "next-auth";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
@@ -25,12 +24,11 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession();
 
   return (
     <html lang="en">
       <body className="bg-gray-50">
-        <AuthProvider session={session}>
+        <AuthProvider>
           <Provider>
             <UserProvider>
               <ProjectProvider>

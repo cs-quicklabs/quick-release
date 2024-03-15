@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { useProjectContext } from "@/app/context/ProjectContext";
 import Loader from "./Loader";
+import { useProjectContext } from "@/app/context/ProjectContext";
+import { useUserContext } from "@/app/context/UserContext";
 import { User } from "@/types";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -11,10 +11,10 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
-import { useUserContext } from "@/app/context/UserContext";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -25,13 +25,13 @@ export function Navbar() {
   const pathname = usePathname();
 
   const { loggedInUser, logout } = useUserContext();
-  const { activeProjectId, list: projectList, map: projectMap, setActiveProject  } = useProjectContext();
+  const {
+    activeProjectId,
+    list: projectList,
+    map: projectMap,
+    setActiveProject,
+  } = useProjectContext();
 
-  // const [projects, setProjects] = React.useState([]);
-  const [activeUser, setActiveUser] = React.useState<User>();
-  // const [activeProjectData, setActiveProjectData] = React.useState<
-  //   Record<string, any>
-  // >({});
   const [loading, setLoading] = React.useState({
     projectLoading: false,
     activeProjectLoading: false as any,
@@ -39,93 +39,7 @@ export function Navbar() {
     activeUserLoading: true,
   });
 
-  const projects = projectList.map(projectId => projectMap[projectId]);
-
-  // const getActiveUser = async () => {
-  //   try {
-  //     const res = await axios.get("/api/get-active-user");
-  //     setActiveUser(res.data);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  //   setLoading((prevLoading) => ({
-  //     ...prevLoading,
-  //     activeUserLoading: false,
-  //   }));
-  // };
-
-  // const getActiveProject = async (userId: string) => {
-  //   try {
-  //     if (userId) {
-  //       const res = await axios.get(`/api/get-active-project/${userId}`);
-  //       setActiveProjectData(res.data);
-  //     }
-  //   } catch (err) {
-  //     console.log(err, "err");
-  //   }
-  //   setLoading((prevLoading) => ({
-  //     ...prevLoading,
-  //     activeProjectLoading: false,
-  //   }));
-  // };
-
-  // const getProjects = async (userId: string) => {
-  //   try {
-  //     if (userId) {
-  //       const projects = await axios.get(`/api/get-projects/${userId}`);
-  //       setProjects(projects.data);
-  //     }
-  //   } catch (err) {
-  //     console.log(err, "error");
-  //   }
-  //   setLoading((prevLoading) => ({
-  //     ...prevLoading,
-  //     projectLoading: false,
-  //   }));
-  // };
-
-  // React.useEffect(() => {
-  //   getActiveUser();
-  // }, []);
-
-  // React.useEffect(() => {
-  //   const fetchData = async () => {
-  //     if (activeUser?.id) {
-  //       await getProjects(activeUser?.id as string);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, [pathname, activeUser?.id]);
-
-  // React.useEffect(() => {
-  //   if (activeUser?.id) {
-  //     getActiveProject(activeUser?.id as string);
-  //   }
-  // }, [activeUser?.id]);
-
-  // const handleLogout = async () => {
-  //   setLoading((prevLoading) => ({
-  //     ...prevLoading,
-  //     logout: true,
-  //   }));
-  //   try {
-  //     const data = await signOut({ redirect: false });
-
-  //     setLoading((prevLoading) => ({
-  //       ...prevLoading,
-  //       logout: false,
-  //     }));
-  //     router.push("/");
-  //     router.refresh();
-  //   } catch (e) {
-  //     console.log(e);
-  //     setLoading((prevLoading) => ({
-  //       ...prevLoading,
-  //       logout: false,
-  //     }));
-  //   }
-  // };
+  const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
     try {
@@ -135,45 +49,31 @@ export function Navbar() {
 
       if (projectId && userId) {
         await axios.post(`/api/active-project/${projectId}/${userId}`);
-        // router.push("/changeLog/add");
-        // getActiveProject(userId);
       }
     } catch (err) {
       console.log("error", err);
     }
   };
 
-  // const navigation = [
-  //   { name: "Quick Release", href: "/allLogs", current: true },
-  //   {
-  //     name: activeProjectData?.name ? activeProjectData?.name : null,
-  //     href: "/allLogs",
-  //     current: true,
-  //   },
-  // ];
-
   const navigation = useMemo(() => {
     const nav = [
       {
         name: "Quick Release",
         href: "/allLogs",
-        current: true
-      }
+        current: true,
+      },
     ];
 
     if (activeProjectId) {
       nav.push({
         name: projectMap[activeProjectId]?.name as string,
         href: "/allLogs",
-        current: true
+        current: true,
       });
     }
 
     return nav;
   }, [activeProjectId]);
-
-  // const fullName = activeUser?.firstName + " " + activeUser?.lastName;
-  // const email = activeUser?.email;
 
   const { fullName, email } = useMemo(() => {
     const { firstName, lastName } = loggedInUser || {};
@@ -181,8 +81,8 @@ export function Navbar() {
     let email = `${loggedInUser?.email || ""}`.trim();
     email = email.length > 18 ? `${email.slice(0, 18)}...` : email;
 
-    return { fullName, email }
-  }, [loggedInUser])
+    return { fullName, email };
+  }, [loggedInUser]);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -320,34 +220,12 @@ export function Navbar() {
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                          <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white ml-[-10px]">
                             <div className="truncate flex justify-center items-center">
-                              {/* {loading.activeUserLoading ? (
-                                <Oval
-                                  height={20}
-                                  width={20}
-                                  color="black"
-                                  secondaryColor="white"
-                                />
-                              ) : activeUser?.email &&
-                                activeUser?.email?.length > 16 ? (
-                                <div className="flex flex-col">
-                                  <p>{fullName}</p>
-                                  <p className="font-medium ">
-                                    {email?.slice(0, 18) + "..."}
-                                  </p>
-                                </div>
-                              ) : (
-                                <>
-                                  <p>{fullName}</p>
-                                  <p className="font-medium ">{email}</p>
-                                </>
-                              )} */}
-
-                                <div className="flex flex-col">
-                                  <p>{fullName}</p>
-                                  <p className="font-medium ">{email}</p>
-                                </div>
+                              <div className="flex flex-col">
+                                <p>{fullName}</p>
+                                <p className="font-medium ">{email}</p>
+                              </div>
                             </div>
                           </div>
                         )}
@@ -355,7 +233,7 @@ export function Navbar() {
                       <Menu.Item>
                         <Link
                           href="/create-project"
-                          className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 border-t border-gray-200 bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
+                          className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                         >
                           <svg
                             className="w-4 h-4 me-1"
@@ -393,10 +271,16 @@ export function Navbar() {
                                 key={item.id}
                                 as="div"
                                 onClick={() => activeProject(item.id)}
-                                className="hover:bg-gray-100 hover:text-black cursor-pointer border bottom-1"
+                                className="hover:bg-gray-100  cursor-pointer"
                               >
-                                <div className="flex items-center">
-                                  <div className="flex  pl-4 py-2 ">
+                                <div
+                                  className={`${
+                                    item.id === activeProjectId
+                                      ? "font-bold flex items-center"
+                                      : "flex items-center"
+                                  }`}
+                                >
+                                  <div className="flex  pl-4 py-2">
                                     {item.name}
                                   </div>
 
@@ -434,15 +318,19 @@ export function Navbar() {
 
                       <Menu.Item>
                         {({ active }) => (
-                          <Link href="/settings/profile"
+                          <Link
+                            href="/settings/profile"
                             // onClick={handleLogout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                              "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
                             )}
                           >
                             <div className="flex  items-center">
-                              <Link href="/settings/profile" className="text-l">
+                              <Link
+                                href="/settings/profile"
+                                className="text-[15px] font-[490] text-black"
+                              >
                                 Profile Settings
                               </Link>
                             </div>
@@ -460,16 +348,14 @@ export function Navbar() {
                           >
                             {loading.logout ? (
                               <div className="flex  items-center gap-4">
-                                <span className="text-l font-bold">
+                                <span className="text-sm text-[15px] font-[490] text-black">
                                   Sign out
                                 </span>
                                 <Loader width="w-6" color="border-black" />
                               </div>
                             ) : (
-                              <div className="flex  items-center">
-                                <span className="text-l font-bold">
-                                  Sign out
-                                </span>
+                              <div className="flex  items-center text-[15px] font-[490] text-black">
+                                <span className="text-l">Sign out</span>
                               </div>
                             )}
                           </a>

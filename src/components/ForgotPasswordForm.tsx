@@ -1,4 +1,6 @@
 "use client";
+
+import { useToast } from "../components/ui/use-toast";
 import AuthForm from "@/components/AuthForm";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +12,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useToast } from "../components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader } from "lucide-react";
@@ -46,7 +47,7 @@ const ForgotPasswordForm = () => {
       setLoader(false);
     } catch (e: any) {
       toast({
-        title: e.response.data,
+        title: e.response.data ? e.response.data : "Something went wrong",
       });
 
       setLoader(false);

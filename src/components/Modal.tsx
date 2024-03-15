@@ -8,11 +8,11 @@ import { Oval } from "react-loader-spinner";
 interface ModalProps {
   open: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   buttonText: string;
-  title: string;
-  onClick: any;
-  loading: boolean;
+  title?: string;
+  onClick?: any;
+  loading?: boolean;
 }
 
 export default function Modal({
