@@ -87,7 +87,7 @@ const SideNav = () => {
       <div className="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
         <div className="flex-shrink-0">
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
-            <span className="w-full" data-svelte-h="svelte-19a70nh">
+            <span className="w-full py-1 text-sm font-medium" data-svelte-h="svelte-19a70nh">
               Change Logs
             </span>
 

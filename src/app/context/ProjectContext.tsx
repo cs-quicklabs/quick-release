@@ -69,8 +69,6 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
         setList(projectIds);
         setMeta(metaData);
         setActiveProjectId(prevProjectId => {
-          console.log("prevProjectId", prevProjectId);
-
           if (prevProjectId && projectIds.includes(prevProjectId)) {
             return prevProjectId;
           } else {

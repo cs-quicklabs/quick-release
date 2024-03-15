@@ -5,9 +5,9 @@ import moment from "moment";
 type TimePickerProps = {
   value?: moment.Moment;
   onChange?: (value: moment.Moment) => void;
-}
+};
 
-type SelectOptionType = SingleValue<{ value: number, label: string }>;
+type SelectOptionType = SingleValue<{ value: number, label: string; }>;
 
 const hours = Array.from({ length: 24 }, (_, i) => ({ value: i, label: moment().hour(i).format("HH") }));
 const minutes = Array.from({ length: 60 }, (_, i) => ({
@@ -20,13 +20,29 @@ const TimePicker: React.FC<TimePickerProps> = ({ onChange, value }) => {
   const [selectedMinute, setSelectedMinute] = useState<number | null>(value ? value.minute() : null);
 
   const handleChangeHour = (option: SelectOptionType) => {
-    setSelectedHour(option?.value ?? null);
-    onChange && onChange(moment(selectedHour || 0, "HH").minute(selectedMinute || 0));
+    const hours = option?.value ?? 0;
+    setSelectedHour(hours);
+
+    const newDateTime = moment(value);
+    newDateTime.set({
+      hours: hours || 0,
+      minutes: selectedMinute || 0,
+      seconds: 0
+    });
+    onChange && onChange(newDateTime);
   };
 
   const handleChangeMinute = (option: SelectOptionType) => {
-    setSelectedMinute(option?.value ?? null);
-    onChange && onChange(moment(selectedHour || 0, "HH").minute(selectedMinute || 0));
+    const minutes = option?.value ?? 0;
+    setSelectedMinute(minutes);
+
+    const newDateTime = moment(value);
+    newDateTime.set({
+      hours: selectedHour || 0,
+      minutes: minutes || 0,
+      seconds: 0
+    });
+    onChange && onChange(newDateTime);
   };
 
   return (
