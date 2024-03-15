@@ -26,9 +26,10 @@ const Project = () => {
       .trim()
       .min(1, { message: "Required" })
       .min(3, { message: "Minimun 3 characters required" })
-      .refine((value) => /^[a-zA-Z0-9\-.\s]+$/.test(value), {
+      .toLowerCase()
+      .refine((value) => /^[a-zA-Z0-9\-.]+$/.test(value), {
         message:
-          "Only letters, numbers, hyphens (-), periods (.), and spaces are allowed",
+          "Only letters, numbers, hyphens (-), and periods (.) are allowed",
       }),
   });
   const {
@@ -42,7 +43,7 @@ const Project = () => {
     },
   });
 
-  const { getAllProjects } = useProjectContext()
+  const { getAllProjects } = useProjectContext();
 
   const getActiveUser = async () => {
     try {
