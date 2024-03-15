@@ -71,5 +71,5 @@ model Log {
   updatedBy         User      @relation("UpdatedLogs", fields: [updatedById], references: [id])
   updatedById       String
   deletedAt         DateTime?
-  isArchived        Boolean   @default(false)
+  archivedAt        DateTime?
 }

@@ -61,12 +61,12 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status");
     if (status) {
       query.status = status;
-      query.isArchived = false;
+      query.archivedAt = null;
     }
 
     const isArchived = searchParams.get("isArchived");
     if (isArchived) {
-      query.isArchived = Boolean(isArchived);
+      query.archivedAt = { not: null };
     }
 
     const changeLogs = await db.log.findMany({

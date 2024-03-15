@@ -4,7 +4,6 @@ import { asyncHandler } from "@/Utils/asyncHandler";
 import { SelectUserDetailsFromDB } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import moment from "moment";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -12,33 +11,7 @@ type ParamsType = {
   id: string;
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
-  return asyncHandler(async () => {
-    const { id } = params;
-
-    const changeLog = await db.log.findFirst({
-      where: { id },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
-    });
-
-    if (!changeLog) {
-      throw new ApiError(404, "Change log not found");
-    }
-
-    return NextResponse.json(
-      new ApiResponse(200, changeLog, "Changelog fetched successfully")
-    );
-  });
-}
-
-export async function DELETE(
+export async function POST(
   req: NextRequest,
   { params }: { params: ParamsType }
 ) {
@@ -48,7 +21,6 @@ export async function DELETE(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -67,20 +39,29 @@ export async function DELETE(
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const deleteChangeLog = await db.log.update({
+    const updatedChangeLog = await db.log.update({
       where: { id },
       data: {
-        updatedById: userId,
-        deletedAt: new Date(),
+        status: "published",
+        scheduledTime: new Date(),
+      },
+      include: {
+        project: { select: { id: true, name: true } },
+        createdBy: { select: SelectUserDetailsFromDB },
+        updatedBy: { select: SelectUserDetailsFromDB },
       },
     });
 
-    if (!deleteChangeLog.deletedAt) {
-      throw new ApiError(500, "Something went wrong while delete change log");
+    if (!updatedChangeLog) {
+      throw new ApiError(500, "Something went wrong while updating change log");
     }
 
     return NextResponse.json(
-      new ApiResponse(200, null, "Change log deleted successfully")
+      new ApiResponse(
+        200,
+        updatedChangeLog,
+        "Published change log successfully"
+      )
     );
   });
 }

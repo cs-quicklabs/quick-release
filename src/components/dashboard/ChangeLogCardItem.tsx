@@ -11,9 +11,9 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
 
   if (!changeLog) return null;
 
-  const { createdBy, releaseVersion, isArchived, status, scheduledTime } = changeLog;
+  const { createdBy, releaseVersion, archivedAt, status, scheduledTime } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-  const changeLogStatus = isArchived ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
+  const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
 
   const description = changeLog.description.replace(/(<([^>]+)>)/gi, "");
 

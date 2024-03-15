@@ -36,8 +36,16 @@ const getOneChangeLogRequest = (id: string) => {
   return apiClient.get(`/changelogs/${id}`);
 };
 
-const deleteChangeLogRequest = (id: string) => {
-  return apiClient.delete(`/changelog/${id}`);
+const publishOneChangeLogRequest = (id: string) => {
+  return apiClient.post(`/changelogs/${id}/publish-now`);
+};
+
+const toggleArchiveOneChangeLogRequest = (id: string) => {
+  return apiClient.post(`/changelogs/${id}/toggle-archive`);
+};
+
+const deleteOneChangeLogRequest = (id: string) => {
+  return apiClient.delete(`/changelogs/${id}`);
 };
 
 const fileUploadRequest = (data: FormData) => {
@@ -56,6 +64,8 @@ export {
   createChangeLogRequest,
   getAllChangeLogsRequest,
   getOneChangeLogRequest,
-  deleteChangeLogRequest,
+  publishOneChangeLogRequest,
+  toggleArchiveOneChangeLogRequest,
+  deleteOneChangeLogRequest,
   fileUploadRequest,
 };
