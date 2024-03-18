@@ -91,7 +91,7 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     <aside
       className={classNames(
         "xl:order-first xl:block xl:flex-shrink-0",
-        "xl:relative xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
+        "xl:relative xl:h-full  xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
         "sm:fixed sm:top-0 sm:left-0 sm:z-40 sm:h-screen sm:overflow-y-auto sm:transition-transform sm:w-screen sm:bg-black sm:bg-opacity-35",
         !showSideNav && "sm:-translate-x-full"
       )}

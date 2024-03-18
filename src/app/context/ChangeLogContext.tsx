@@ -112,18 +112,20 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     const nextBoardKey = JSON.stringify(query);
     if (nextBoardKey === activeBoardKey && isLoading) return;
 
-    setBoards((prevBoards: BoardMapType) => {
-      const board = prevBoards[activeBoardKey] ?? {};
+    if (nextBoardKey !== activeBoardKey) {
+      setBoards((prevBoards: BoardMapType) => {
+        const board = activeBoardKey ? prevBoards[activeBoardKey] : JSON.stringify({});
 
-      return Object.assign({}, prevBoards, {
-        [activeBoardKey]: Object.assign({}, board, { list, metaData })
+        return Object.assign({}, prevBoards, {
+          [activeBoardKey]: Object.assign({}, board, { list, metaData })
+        });
       });
-    });
 
-    const nextBoard = boards[nextBoardKey] ?? {};
-    setList(nextBoard.list ?? []);
-    setMetaData(nextBoard.metaData ?? {});
-    setActiveBoardsKey(nextBoardKey);
+      const nextBoard = boards[nextBoardKey] ?? {};
+      setList(nextBoard.list ?? []);
+      setMetaData(nextBoard.metaData ?? {});
+      setActiveBoardsKey(nextBoardKey);
+    }
 
     await requestHandler(
       async () => await getAllChangeLogsRequest({ ...query, page, limit }),
