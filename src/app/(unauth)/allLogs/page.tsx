@@ -1,27 +1,23 @@
 "use client";
 
-import ChangeLogCard from "@/components/ChangeLogCard";
-import ChangeLogDetail from "@/components/ChangeLogDetail";
-import { TypographyH3, TypographyP } from "@/components/Typography";
+
 import BaseTemplate from "@/templates/BaseTemplate";
-import { Project } from "@/types";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import SideNav from "@/components/dashboard/SideNav";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import Loading from "@/components/Loading";
 import EmptyPage from "@/components/dashboard/EmptyPage";
 import ContentContainer from "@/components/dashboard/ContentContainer";
+import { Button } from "@/components/ui/button";
+import { Bars3Icon } from "@heroicons/react/20/solid";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
   const { activeProjectId, getActiveProject, list } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, list: changeLogList, metaData } = useChangeLogContext();
+  const [showSideNav, setShowSideNav] = useState(true);
 
   useEffect(() => {
     if (!loading && !activeProjectId) {
@@ -68,7 +64,23 @@ export default function AllLogs() {
       <div className="flex h-full flex-col">
         <div className="md:flex md:items-center md:justify-between py-4 px-6" data-svelte-h="svelte-1a2r45a">
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Change Logs</h2>
+            <div className="flex items-center">
+              <div className="xl:hidden mr-1">
+                <Button
+                  className="rounded-full text-gray-400 hover:text-gray-600"
+                  variant="default"
+                  size="icon"
+                  onClick={() => setShowSideNav(true)}
+                >
+                  <Bars3Icon
+                    name="Menu options"
+                    className="h-5 w-5"
+                  />
+                </Button>
+              </div>
+
+              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">Change Logs</h2>
+            </div>
           </div>
 
           <div className="mt-4 flex md:mt-0 md:ml-4">
@@ -84,7 +96,10 @@ export default function AllLogs() {
 
         <div className="h-full flex min-h-0 flex-1 overflow-hidden">
           <main className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
-            <SideNav />
+            <SideNav
+              showSideNav={showSideNav}
+              setShowSideNav={setShowSideNav}
+            />
 
             <ContentContainer />
           </main>

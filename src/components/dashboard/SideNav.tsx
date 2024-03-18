@@ -17,7 +17,12 @@ type FilterType = {
   [key: string]: any;
 };
 
-const SideNav = () => {
+type SideNavProps = {
+  showSideNav: boolean;
+  setShowSideNav: (show: boolean) => void;
+};
+
+const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }) => {
   const loadMoreRef = useRef(null);
   const isVisible = useOnScreen(loadMoreRef);
 
@@ -83,9 +88,17 @@ const SideNav = () => {
   }, [filter.status, filter.isArchived]);
 
   return (
-    <aside className="hidden xl:order-first xl:block xl:flex-shrink-0">
+    <aside
+      className={classNames(
+        "xl:order-first xl:block xl:flex-shrink-0",
+        "xl:relative xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
+        "sm:fixed sm:top-0 sm:left-0 sm:z-40 sm:h-screen sm:overflow-y-auto sm:transition-transform sm:w-screen sm:bg-black sm:bg-opacity-35",
+        !showSideNav && "sm:-translate-x-full"
+      )}
+      onClick={() => setShowSideNav(false)}
+    >
       <div className="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
             <span className="w-full py-1 text-sm font-medium" data-svelte-h="svelte-19a70nh">
               Change Logs
