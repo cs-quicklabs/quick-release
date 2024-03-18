@@ -114,7 +114,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
 
     if (nextBoardKey !== activeBoardKey) {
       setBoards((prevBoards: BoardMapType) => {
-        const board = activeBoardKey ? prevBoards[activeBoardKey] : JSON.stringify({});
+        const board = prevBoards[activeBoardKey] ?? {};
 
         return Object.assign({}, prevBoards, {
           [activeBoardKey]: Object.assign({}, board, { list, metaData })
