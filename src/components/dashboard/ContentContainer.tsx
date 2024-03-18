@@ -78,7 +78,7 @@ const ContentContainer = () => {
     const archivedAt = changelog.archivedAt ? moment(changelog.archivedAt).format("MMMM DD, YYYY") : "";
     const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
     const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
-    const logStatus = changeLogStatus.id;
+    const logStatus = changeLogStatus?.id;
 
     switch (logStatus) {
       case "published": {
@@ -213,10 +213,10 @@ const ContentContainer = () => {
               <span
                 className={classNames(
                   "inline-flex items-center rounded-full px-3 py-0.5 text-sm font-medium",
-                  `${changeLogStatus.bgColor} ${changeLogStatus.textColor}`
+                  `${changeLogStatus?.bgColor} ${changeLogStatus?.textColor}`
                 )}
               >
-                {changeLogStatus.title}
+                {changeLogStatus?.title}
               </span>
 
               <div className="relative ml-3 inline-block text-left">
@@ -311,7 +311,11 @@ const ContentContainer = () => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message="Are you sure you want to delete this change log?"
+        message={
+          changeLogStatus?.id === "published"
+            ? "This is change log is in Public view. Are you sure you want to delete it?"
+            : "Are you sure you want to delete this change log?"
+        }
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() => deleteOneChangeLog(activeChangeLogId!, setIsLoading)}
@@ -322,7 +326,11 @@ const ContentContainer = () => {
       <AlertModal
         show={showToggleArchivedModal}
         title={`${archivedAt ? "Unarchive" : "Archive"} change log`}
-        message={`Are you sure you want to ${archivedAt ? "unarchive" : "archive"} this change log?`}
+        message={
+          changeLogStatus?.id === "published" ?
+            "This is change log is in Public view. Are you sure you want to archive it?" :
+            `Are you sure you want to ${archivedAt ? "unarchive" : "archive"} this change log?`
+        }
         onClickCancel={() => setShowToggleArchivedModal(false)}
         onClickOk={() => toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)}
         loading={isLoading}
