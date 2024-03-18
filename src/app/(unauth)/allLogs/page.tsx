@@ -17,7 +17,7 @@ export default function AllLogs() {
   const [loading, setLoading] = useState(false);
   const { activeProjectId, getActiveProject, list } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, list: changeLogList, metaData } = useChangeLogContext();
-  const [showSideNav, setShowSideNav] = useState(true);
+  const [showSideNav, setShowSideNav] = useState(false);
 
   useEffect(() => {
     if (!loading && !activeProjectId) {
