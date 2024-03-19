@@ -79,7 +79,7 @@
 
 .custom-input-editor .ql-editor {
   height: 300px;
-  overflow-y: hidden;
+  /* overflow-y: hidden; */
   resize: none;
 }
 
@@ -99,4 +99,8 @@
 body {
   font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", Segoe UI Symbol, "Noto Color Emoji";
+}
+
+.select__input:focus {
+  --tw-ring-color: transparent;
 }

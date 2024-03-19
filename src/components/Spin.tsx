@@ -10,7 +10,7 @@ const Spin: React.FC<SpinPropsType> = ({ className = "" }) => {
     <svg
       aria-hidden="true"
       className={classNames(
-        "inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600",
+        "inline w-10 h-10 text-gray-200 animate-spin dark:text-gray-600 fill-indigo-600",
         className
       )}
       viewBox="0 0 100 101"

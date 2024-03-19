@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "react-quill/dist/quill.snow.css";
 import "./globals.css";
 import AuthProvider from "./context/AuthProvider";
 import Provider from "@/components/Provider";

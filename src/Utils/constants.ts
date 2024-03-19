@@ -1,6 +1,12 @@
-import { ChangeLogsStatusType } from "@/types";
+import {
+  ReleaseCategoryType,
+  ChangeLogsStatusType,
+  ReleaseTagType,
+} from "@/types";
 
-export const ChangeLogsReleaseCategories = Object.freeze({
+export const ChangeLogsReleaseCategories = Object.freeze<{
+  [key: string]: ReleaseCategoryType;
+}>({
   new: {
     value: "new",
     label: "New",
@@ -33,7 +39,9 @@ export const ChangeLogsReleaseCategories = Object.freeze({
   },
 });
 
-export const ChangeLogsReleaseTags = Object.freeze({
+export const ChangeLogsReleaseTags = Object.freeze<{
+  [key: string]: ReleaseTagType;
+}>({
   ios: {
     value: "ios",
     label: "iOS",

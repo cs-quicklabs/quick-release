@@ -35,7 +35,10 @@ export type ChangeLogType = {
   releaseVersion: string;
   releaseCategories: string[];
   releaseTags: string[];
+
+  project?: Project;
   projectId: string;
+
   scheduledTime?: Date;
 
   status: string;
@@ -46,7 +49,7 @@ export type ChangeLogType = {
   deletedAt?: Date;
 
   createdBy?: User;
-  isArchived?: boolean;
+  archivedAt?: Date;
 };
 
 export type ChangeLogsStatusType = {
@@ -57,6 +60,18 @@ export type ChangeLogsStatusType = {
     bgColor: string;
     bulletColor: string;
   };
+};
+
+export type ReleaseCategoryType = {
+  value: string;
+  label: string;
+  textColor: string;
+  bgColor: string;
+};
+
+export type ReleaseTagType = {
+  value: string;
+  label: string;
 };
 
 export interface User {
