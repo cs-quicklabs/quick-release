@@ -1,8 +1,5 @@
 "use client";
 
-import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-// import { Navbar } from "@/components/Navbar";
-// import Tiptap from "@/components/Tiptap";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,7 +31,6 @@ import * as z from "zod";
 
 import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
 import DatePicker from "@/components/DatePicker";
-// import RichTextEditor from "@/components/RichTextEditor";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import TimePicker from "@/components/TimePicker";
 import moment from "moment";
@@ -59,11 +55,9 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     getChangeLog,
     updateChangeLog,
     map: changeLogMap,
-    error: getChangeLogError
    } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [changeLogErr, setChangeLogErr] = useState<string>(getChangeLogError || "");
   const actions: ListboxOption[] = useMemo(() => Object.values(ChangeLogsReleaseActions), []);
   const [selectedAction, setSelectedAction] = useState<ListboxOption>(actions[0]);
 
@@ -86,13 +80,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   }, [params.id]);
 
   const formSchema = z.object({
-    title: z.string().min(1, { message: "Required" }),
-    description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-    releaseVersion: z.string().min(1, { message: "Required" }),
-    releaseCategories: z.array(z.object({
-      value: z.string(),
-      label: z.string(),
-    })
+      title: z.string().min(1, { message: "Required" }),
+      description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
+      releaseVersion: z.string().min(1, { message: "Required" }),
+      releaseCategories: z.array(z.object({
+        value: z.string(),
+        label: z.string(),
+      })
     ),
     // releaseTags: z.string().min(1, { message: "Required" }).max(50, {
     //   message: "Last Name can be maximum 50 characters",
@@ -158,6 +152,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   //     router.refresh();
   //   },
   // });
+  
   const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(() => Object.values(ChangeLogsReleaseCategories), []);
   const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(() => Object.values(ChangeLogsReleaseTags), []);
 
