@@ -137,7 +137,9 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     };
 
     if(params.id !== "add"){
-      updateChangeLog({ ...changelogPost, id: params.id, projectId: changelog?.projectId!}, setIsSaving);
+      changelogPost.id = params.id;
+      changelogPost.projectId = changelog?.projectId!;
+      updateChangeLog(changelogPost, setIsSaving);
       return
     }
 
@@ -214,11 +216,14 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
                 <CardTitle className="text-lg font-medium leading-6 text-gray-900">
-                  {params.id === "add" ? "Add New Change Log" : "Edit Changelog"}
+                  {params.id === "add" ? "Add New Change Log" : "Edit Change Log"}
                 </CardTitle>
                 <CardDescription className="mt-1 text-sm text-gray-500">
-                  Let’s get started by filling in the information below to
-                  create your new changelog.
+                  {
+                    params.id === "add" ? 
+                    "Let’s get started by filling in the information below to create your new changelog." : 
+                    "Let’s get started by filling in the information below to update your changelog."
+                  }
                 </CardDescription>
               </CardHeader>
 
