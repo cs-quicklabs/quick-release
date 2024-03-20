@@ -118,3 +118,5 @@ export const SelectUserDetailsFromDB = {
   profilePicture: true,
   role: true,
 };
+
+export const REVALIDATE_API = 60; // revalidate/cache api response for 60 seconds
