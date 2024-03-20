@@ -24,6 +24,7 @@ import {
 } from "@heroicons/react/20/solid";
 import moment from "moment";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -31,6 +32,7 @@ type PrevStateType = {
 };
 
 const ContentContainer = () => {
+  const router = useRouter();
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const prevStates = useRef<PrevStateType>({ isLoading: false, activeChangeLogId: null });
 
@@ -136,7 +138,7 @@ const ContentContainer = () => {
   const actionOptions = useMemo(() => [
     {
       name: "Edit",
-      onClick: () => { },
+      onClick: () => { router.push(`/changeLog/${activeChangeLogId}`) },
     },
     {
       name: changelog?.archivedAt ? "Unarchive" : "Archive",

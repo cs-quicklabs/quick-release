@@ -7,8 +7,10 @@ import {
   createChangeLogRequest,
   deleteOneChangeLogRequest,
   getAllChangeLogsRequest,
+  getOneChangeLogRequest,
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
+  updateOneChangeLogRequest,
 } from "@/api";
 import { useProjectContext } from "./ProjectContext";
 
@@ -27,6 +29,8 @@ type ChangeLogContextType = {
   };
   createChangeLog: (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => Promise<void>;
   getAllChangeLogs: (query: {} | undefined, page?: 1, limit?: number) => Promise<void>;
+  getChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
+  updateChangeLog: (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => Promise<void>;
   loadMoreChangeLogs: () => Promise<void>;
   toggleArchiveOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
   publishNowOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
@@ -44,6 +48,8 @@ const ChangeLogContext = createContext<ChangeLogContextType>({
   metaData: {} as { [key: string]: any; },
   createChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
   getAllChangeLogs: async (query = {}, page = 1, limit = 20) => { },
+  getChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
+  updateChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
   loadMoreChangeLogs: async () => { },
   publishNowOneChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
   toggleArchiveOneChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
@@ -97,6 +103,49 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         setMetaData(prevMetaData => ({
           ...prevMetaData,
           total: (prevMetaData?.total || 0) + 1
+        }));
+        showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+        setError(errMessage);
+      }
+    );
+  };
+
+  const getChangeLog = async (id: string, setIsLoading: (loading: boolean) => void) => {
+    setError("");
+    await requestHandler(
+      async () => await getOneChangeLogRequest(id),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        const changelogId = data.id!;
+
+        setMap(prevMap => ({
+          ...prevMap,
+          [changelogId]: data,
+        }));
+        // showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+        setError(errMessage);
+      }
+    );
+  };
+
+  const updateChangeLog = async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => {
+    await requestHandler(
+      async () => await updateOneChangeLogRequest(data),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        const changelogId = data.id!;
+
+        setMap(prevMap => ({
+          ...prevMap,
+          [changelogId]: data,
         }));
         showNotification("success", message);
       },
@@ -261,6 +310,8 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
       }),
       createChangeLog,
       getAllChangeLogs,
+      getChangeLog,
+      updateChangeLog,
       loadMoreChangeLogs,
       publishNowOneChangeLog,
       toggleArchiveOneChangeLog,

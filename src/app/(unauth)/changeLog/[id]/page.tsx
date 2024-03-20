@@ -26,7 +26,7 @@ import { ChangeLogType, FormChangeLogPost, IReleaseCategoriesOption, ReleaseTags
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { use, useEffect, useMemo, useRef, useState } from "react";
+import React, { use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 // import { useMutation } from "react-query";
 import Select from "react-select";
@@ -41,23 +41,49 @@ import moment from "moment";
 import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, ChangeLogsReleaseActions } from "@/Utils/constants";
 import { checkRichTextEditorIsEmpty } from "@/Utils";
 import dynamic from "next/dynamic";
+import Loading from "@/components/Loading";
+import { useProjectContext } from "@/app/context/ProjectContext";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), { ssr: true });
 
-const AddChangeLog = () => {
+const AddChangeLog = ({ params }: { params: { id: string } }) => {
   const prevProps = useRef({
     isSaving: false,
+    loading: false,
   });
 
   const router = useRouter();
-  const [activeUser, setActiveUser] = useState<any>({});
-  const [activeProject, setActiveProject] = useState<Record<string, any>>({});
-
-  const { error, createChangeLog } = useChangeLogContext();
+  const { 
+    error, 
+    createChangeLog, 
+    getChangeLog,
+    updateChangeLog,
+    map: changeLogMap,
+    error: getChangeLogError
+   } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [changeLogErr, setChangeLogErr] = useState<string>(getChangeLogError || "");
   const actions: ListboxOption[] = useMemo(() => Object.values(ChangeLogsReleaseActions), []);
   const [selectedAction, setSelectedAction] = useState<ListboxOption>(actions[0]);
+
+  const {
+    activeProjectId,
+  } = useProjectContext();
+
+  const fetchChangeLog = useCallback(async () => {
+    getChangeLog(params.id, setLoading);
+  }, [params.id]);
+
+  const changelog = useMemo(() => {
+    return changeLogMap[params.id] || null;
+  }, [changeLogMap[params.id]]);
+
+  useEffect(() => {
+    if(params.id !== "add") {
+      fetchChangeLog();
+    }
+  }, [params.id]);
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "Required" }),
@@ -100,45 +126,20 @@ const AddChangeLog = () => {
     },
   });
 
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getActiveProject = async (userId: string) => {
-    try {
-      if (userId) {
-        const res = await axios.get(`/api/get-active-project/${userId}`);
-        setActiveProject(res.data);
-      }
-    } catch (err) {
-      console.log(err, "err");
-    }
-  };
-
-  useEffect(() => {
-    getActiveUser();
-  }, []);
-
-  useEffect(() => {
-    if (activeUser?.id) {
-      getActiveProject(activeUser?.id);
-    }
-  }, [activeUser?.id]);
-
   const handleCreatePost: SubmitHandler<FormChangeLogPost> = (data) => {
     const changelogPost: ChangeLogType = {
       ...data,
       status: selectedAction.id,
       releaseCategories: data.releaseCategories.map(category => category.value),
       releaseTags: data.releaseTags.map(category => category.value),
-      projectId: activeProject?.id,
+      projectId: activeProjectId!,
       scheduledTime: selectedAction.id === "published" ? moment().toDate() : data.scheduledTime
     };
+
+    if(params.id !== "add"){
+      updateChangeLog({ ...changelogPost, id: params.id, projectId: changelog?.projectId!}, setIsSaving);
+      return
+    }
 
     createChangeLog(changelogPost, setIsSaving);
   };
@@ -155,9 +156,24 @@ const AddChangeLog = () => {
   //     router.refresh();
   //   },
   // });
-
   const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(() => Object.values(ChangeLogsReleaseCategories), []);
   const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(() => Object.values(ChangeLogsReleaseTags), []);
+
+  useEffect(() => {
+      const setDefaultValues = () => {
+      if (changelog) {
+        form.reset({
+          title: changelog.title,
+          description: changelog.description,
+          releaseVersion: changelog.releaseVersion,
+          releaseCategories: changelog.releaseCategories.map(category => ({ value: category, label: category })),
+          releaseTags: changelog.releaseTags.map(category => ({ value: category, label: category })),
+          scheduledTime: moment(changelog.scheduledTime).toDate()
+        });
+      }
+    };
+    setDefaultValues();
+  }, [changelog]);
 
   useEffect(() => {
     if (prevProps?.current?.isSaving && !isSaving) {
@@ -166,13 +182,29 @@ const AddChangeLog = () => {
       }
     }
 
+    if (prevProps?.current?.loading && !loading) {
+      if (error) {
+        router.replace("/allLogs");
+      }
+    }
+
     return () => {
       prevProps.current = {
-        isSaving
+        isSaving,
+        loading
       };
     };
-  }, [isSaving]);
+  }, [isSaving, loading]);
 
+  if(!changelog && loading && params.id !== "add"){
+    return (
+      <BaseTemplate>
+        <div className="w-full h-full flex items-center justify-center">
+          <Loading />
+        </div>
+      </BaseTemplate>
+    );
+  }
 
   return (
     <BaseTemplate>
@@ -182,7 +214,7 @@ const AddChangeLog = () => {
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
                 <CardTitle className="text-lg font-medium leading-6 text-gray-900">
-                  Add New Change Log
+                  {params.id === "add" ? "Add New Change Log" : "Edit Changelog"}
                 </CardTitle>
                 <CardDescription className="mt-1 text-sm text-gray-500">
                   Let’s get started by filling in the information below to
