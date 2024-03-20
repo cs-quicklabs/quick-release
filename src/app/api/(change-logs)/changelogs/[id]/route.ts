@@ -110,7 +110,6 @@ export async function PUT(
    if (changeLog.createdById !== userId) {
     throw new ApiError(401, "Unauthorized request");
    }
-   const archivedAt = body.archivedAt ? moment(body.archivedAt) : null;
    const updatedChangeLog = await db.log.update({
     where: { id },
     data: {
@@ -122,9 +121,7 @@ export async function PUT(
      updatedById: userId,
      status: body.status,
      scheduledTime: body.scheduledTime ?? null,
-     archivedAt: archivedAt?.isValid()
-      ? archivedAt.toDate()
-      : changeLog.archivedAt,
+     archivedAt: null,
     },
     include: {
      project: { select: { id: true, name: true } },

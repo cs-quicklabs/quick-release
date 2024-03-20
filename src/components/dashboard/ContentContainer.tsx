@@ -79,6 +79,7 @@ const ContentContainer = () => {
     const updatedAt = changelog.updatedAt ? moment(changelog.updatedAt).format("MMMM DD, YYYY") : "";
     const archivedAt = changelog.archivedAt ? moment(changelog.archivedAt).format("MMMM DD, YYYY") : "";
     const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
+    const editChangeLogLink = `/changeLog/${activeChangeLogId}`;
     const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
     const logStatus = changeLogStatus?.id;
 
@@ -99,6 +100,7 @@ const ContentContainer = () => {
         return {
           message: `${fullName} created this draft on ${updatedAt}`,
           actionText: "Continue Editing",
+          actionLink: editChangeLogLink,
           containerClassName: "bg-yellow-50 shadow-yellow",
           iconClassName: "text-yellow-400",
           messageClassName: "text-yellow-700",
