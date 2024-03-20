@@ -58,11 +58,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
    } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const actions: ListboxOption[] = useMemo(() => Object.values(ChangeLogsReleaseActions), []);
   const [selectedAction, setSelectedAction] = useState<ListboxOption>(actions[0]);
 
   const {
     activeProjectId,
+    getActiveProject,
   } = useProjectContext();
 
   const fetchChangeLog = useCallback(async () => {
@@ -77,6 +79,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     if(params.id !== "add") {
       fetchChangeLog();
     }
+    getActiveProject(setIsLoading);
   }, [params.id]);
 
   const formSchema = z.object({
