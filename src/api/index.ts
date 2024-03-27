@@ -9,6 +9,10 @@ const apiClient = axios.create({
 
 // API functions for different actions
 
+const forgetPasswordRequest = (data: { email: string }) => {
+  return apiClient.post("/forget-password", data);
+}
+
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
   return apiClient.get("/users/current-user");
@@ -57,6 +61,7 @@ const fileUploadRequest = (data: FormData) => {
 };
 
 // Export all the API functions
+// Export all the API functions
 export {
   getLoggedInUserDetailsRequest,
   getAllProjectsRequest,
@@ -67,5 +72,6 @@ export {
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
-  fileUploadRequest,
+  fileUploadRequest, 
+  forgetPasswordRequest,
 };
