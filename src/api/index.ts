@@ -8,6 +8,9 @@ const apiClient = axios.create({
 });
 
 // API functions for different actions
+const registerUserRequest = (data: any) => {
+  return apiClient.post("/register", data);
+};
 
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
@@ -68,4 +71,5 @@ export {
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
   fileUploadRequest,
+  registerUserRequest,
 };
