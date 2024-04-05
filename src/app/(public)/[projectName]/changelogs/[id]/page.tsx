@@ -100,7 +100,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         />
       </div>
 
-      <div className="text-sm text-gray-800">
+      <div className="text-sm text-gray-800 mt-6">
         {releaseTags.map(({ value, label }) => (
           <span
             key={value}
