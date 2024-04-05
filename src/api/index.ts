@@ -36,6 +36,10 @@ const getOneChangeLogRequest = (id: string) => {
   return apiClient.get(`/changelogs/${id}`);
 };
 
+const updateOneChangeLogRequest = (data: ChangeLogType) => {
+  return apiClient.put(`/changelogs/${data.id}`, data);
+}
+
 const publishOneChangeLogRequest = (id: string) => {
   return apiClient.post(`/changelogs/${id}/publish-now`);
 };
@@ -64,6 +68,7 @@ export {
   createChangeLogRequest,
   getAllChangeLogsRequest,
   getOneChangeLogRequest,
+  updateOneChangeLogRequest,
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
