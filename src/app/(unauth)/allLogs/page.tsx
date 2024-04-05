@@ -15,13 +15,20 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
-  const { activeProjectId, getActiveProject, list } = useProjectContext();
-  const { isLoading: isFetchingChangeLogs, list: changeLogList, metaData } = useChangeLogContext();
+  const { activeProjectId, getActiveProject } = useProjectContext();
+  const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
   useEffect(() => {
     if (!loading && !activeProjectId) {
       getActiveProject(setLoading);
+    }
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    if (activeProjectId) {
+      const query = { projectId: activeProjectId };
+      getAllChangeLogs(query);
     }
   }, [activeProjectId]);
 

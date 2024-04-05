@@ -38,7 +38,7 @@ const getOneChangeLogRequest = (id: string) => {
 
 const updateOneChangeLogRequest = (data: ChangeLogType) => {
   return apiClient.put(`/changelogs/${data.id}`, data);
-}
+};
 
 const publishOneChangeLogRequest = (id: string) => {
   return apiClient.post(`/changelogs/${id}/publish-now`);
@@ -60,12 +60,20 @@ const fileUploadRequest = (data: FormData) => {
   });
 };
 
+// public api's
+const getAllPublicChangeLogsRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get(`public/projects/${params.projectName}/changelogs`, {
+    params,
+  });
+};
+
 // Export all the API functions
 export {
   getLoggedInUserDetailsRequest,
   getAllProjectsRequest,
   getOneActiveProjectRequest,
   createChangeLogRequest,
+  getAllPublicChangeLogsRequest,
   getAllChangeLogsRequest,
   getOneChangeLogRequest,
   updateOneChangeLogRequest,
