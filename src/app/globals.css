@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 /* @layer base {
   :root {
     --background: 0 0% 100%;
@@ -27,13 +40,13 @@
   }
 } */
 
-[type="checkbox"],
+/* [type="checkbox"],
 [type="radio"] {
   --tw-shadow: 0 0 #0000;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  /* background-color: #fff; */
+  background-color: #fff;
   background-origin: border-box;
   border-color: #6b7280;
   border-width: 1px;
@@ -49,8 +62,8 @@
   user-select: none;
   vertical-align: middle;
   width: 1rem;
-}
-.dark [type="checkbox"]:checked,
+} */
+/* .dark [type="checkbox"]:checked,
 .dark [type="radio"]:checked,
 [type="checkbox"]:checked,
 [type="radio"]:checked {
@@ -59,14 +72,14 @@
   background-repeat: no-repeat;
   background-size: 0.55em 0.55em;
   border-color: transparent;
-}
-[type="checkbox"]:checked {
+} */
+/* [type="checkbox"]:checked {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 12'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M1 5.917 5.724 10.5 15 1.5'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: 0.55em 0.55em;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
-}
+} */
 
 /* @layer base {
   * {

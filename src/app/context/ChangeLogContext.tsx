@@ -11,6 +11,7 @@ import {
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   updateOneChangeLogRequest,
+  getAllPublicChangeLogsRequest,
 } from "@/api";
 import { useProjectContext } from "./ProjectContext";
 
@@ -36,6 +37,8 @@ type ChangeLogContextType = {
   publishNowOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
   deleteOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
   setActiveChangeLogId: (id: string) => void;
+  getAllPublicChangeLogs: (query: {}, page?: 1, limit?: number) => Promise<void>;
+  loadMorePublicChangeLogs: () => Promise<void>;
 };
 
 // Create a context to manage change logs-related data and functions
@@ -47,6 +50,8 @@ const ChangeLogContext = createContext<ChangeLogContextType>({
   list: [] as string[],
   metaData: {} as { [key: string]: any; },
   createChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
+  getAllPublicChangeLogs: async (query = {}, page = 1, limit = 10) => { },
+  loadMorePublicChangeLogs: async () => { },
   getAllChangeLogs: async (query = {}, page = 1, limit = 20) => { },
   getChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
   updateChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
@@ -156,11 +161,8 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  // Function to handle get all change log details
-  const getAllChangeLogs = async (query = {}, page = 1, limit = 10) => {
-    const nextBoardKey = JSON.stringify(query);
-    if (nextBoardKey === activeBoardKey && isLoading) return;
-
+  /// Function to change next board
+  const changeBoard = (nextBoardKey: string) => {
     if (nextBoardKey !== activeBoardKey) {
       setBoards((prevBoards: BoardMapType) => {
         const board = prevBoards[activeBoardKey] ?? {};
@@ -175,32 +177,42 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
       setMetaData(nextBoard.metaData ?? {});
       setActiveBoardsKey(nextBoardKey);
     }
+  };
 
+  // Function to handle get all change logs success response
+  const onSuccessGetAllChangeLogs = (res: any, query: {}, page: number) => {
+    const { data } = res;
+    const { changeLogs = [], ...metaDataDetails } = data as { changeLogs: ChangeLogType[], [key: string]: any; };
+    const changeLogMap = changeLogs.reduce((map: ChangeLogMapType, changelog: ChangeLogType) => {
+      map[changelog?.id!] = changelog;
+      return map;
+    }, {});
+    const changeLogIds = changeLogs.map((changeLog) => changeLog?.id).filter(id => id) as string[];
+
+    if (page <= 1) {
+      setMap(changeLogMap);
+      setList(changeLogIds);
+      setActiveChangeLogId(changeLogIds[0] ?? null);
+    } else {
+      setMap((prevMap) => Object.assign({}, prevMap, changeLogMap));
+      setList((prevList) => {
+        const newList = new Set<string>([...prevList, ...changeLogIds]);
+        return Array.from(newList);
+      });
+    }
+    setMetaData({ ...metaDataDetails, prevQuery: query });
+  };
+
+  // Function to handle get all change log details
+  const getAllChangeLogs = async (query = {}, page = 1, limit = 10) => {
+    const nextBoardKey = JSON.stringify(query);
+    if (nextBoardKey === activeBoardKey && isLoading) return;
+
+    changeBoard(nextBoardKey);
     await requestHandler(
       async () => await getAllChangeLogsRequest({ ...query, page, limit }),
       setIsLoading,
-      (res: { [key: string]: any; }) => {
-        const { data } = res;
-        const { changeLogs = [], ...metaDataDetails } = data as { changeLogs: ChangeLogType[], [key: string]: any; };
-        const changeLogMap = changeLogs.reduce((map: ChangeLogMapType, changelog: ChangeLogType) => {
-          map[changelog?.id!] = changelog;
-          return map;
-        }, {});
-        const changeLogIds = changeLogs.map((changeLog) => changeLog?.id).filter(id => id) as string[];
-
-        if (page <= 1) {
-          setMap(changeLogMap);
-          setList(changeLogIds);
-          setActiveChangeLogId(changeLogIds[0] ?? null);
-        } else {
-          setMap((prevMap) => Object.assign({}, prevMap, changeLogMap));
-          setList((prevList) => {
-            const newList = new Set<string>([...prevList, ...changeLogIds]);
-            return Array.from(newList);
-          });
-        }
-        setMetaData({ ...metaDataDetails, prevQuery: query });
-      },
+      (res: { [key: string]: any; }) => onSuccessGetAllChangeLogs(res, query, page),
       (errMessage) => {
         showNotification("error", errMessage);
       }
@@ -212,6 +224,30 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     const { nextPage, hasNextPage = false, prevQuery } = metaData;
     if (isLoading && !hasNextPage) return;
     await getAllChangeLogs(prevQuery, nextPage);
+  };
+
+  // Function to handle get all change log details
+  const getAllPublicChangeLogs = async (query = {}, page = 1, limit = 10) => {
+    const nextBoardKey = JSON.stringify(query);
+    if (nextBoardKey === activeBoardKey && isLoading) return;
+
+    changeBoard(nextBoardKey);
+    await requestHandler(
+      async () => await getAllPublicChangeLogsRequest({ ...query, page, limit }),
+      setIsLoading,
+      (res: { [key: string]: any; }) => onSuccessGetAllChangeLogs(res, query, page),
+      (errMessage) => {
+        // showNotification("error", errMessage);
+        console.log("error", errMessage);
+      }
+    );
+  };
+
+  // Function to handle load more change log details
+  const loadMorePublicChangeLogs = async () => {
+    const { nextPage, hasNextPage = false, prevQuery } = metaData;
+    if (isLoading && !hasNextPage) return;
+    await getAllPublicChangeLogs(prevQuery, nextPage);
   };
 
   // Function to handle publish now change log
@@ -284,12 +320,12 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  useEffect(() => {
-    if (activeProjectId) {
-      const query = { projectId: activeProjectId };
-      getAllChangeLogs(query);
-    }
-  }, [activeProjectId]);
+  // useEffect(() => {
+  //   if (activeProjectId) {
+  //     const query = { projectId: activeProjectId };
+  //     getAllChangeLogs(query);
+  //   }
+  // }, [activeProjectId]);
 
   useEffect(() => {
     if (!activeChangeLogId && list.length > 0) {
@@ -309,6 +345,8 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         hasProjectChangeLogs: defaultBoardKey === activeBoardKey ? list?.length : !!boards[defaultBoardKey]?.list?.length
       }),
       createChangeLog,
+      getAllPublicChangeLogs,
+      loadMorePublicChangeLogs,
       getAllChangeLogs,
       getChangeLog,
       updateChangeLog,
