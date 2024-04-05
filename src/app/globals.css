@@ -104,3 +104,7 @@ body {
 .select__input:focus {
   --tw-ring-color: transparent;
 }
+
+.content-container .ql-editor {
+  padding: 0;
+}
