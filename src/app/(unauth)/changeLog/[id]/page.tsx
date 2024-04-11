@@ -19,14 +19,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { ChangeLogType, FormChangeLogPost, IReleaseCategoriesOption, ReleaseTagsOption } from "@/types";
+import { ChangeLogType, FormChangeLogPost, IReleaseCategoriesOption, IReleaseTag, ReleaseTagsOption } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { Fragment, use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 // import { useMutation } from "react-query";
-import Select from "react-select";
+import Select, { GroupBase, MenuProps, components } from "react-select";
 import * as z from "zod";
 
 import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
@@ -39,23 +39,26 @@ import { checkRichTextEditorIsEmpty } from "@/Utils";
 import dynamic from "next/dynamic";
 import Loading from "@/components/Loading";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
+import ReleaseTagSelectMenu from "@/components/ReleaseTagSelectMenu";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), { ssr: true });
 
-const AddChangeLog = ({ params }: { params: { id: string } }) => {
+const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
   const prevProps = useRef({
     isSaving: false,
     loading: false,
   });
 
   const router = useRouter();
-  const { 
-    error, 
-    createChangeLog, 
+  const { map: releaseTagMap, list: releaseTagIds } = useReleaseTagContext();
+  const {
+    error,
+    createChangeLog,
     getChangeLog,
     updateChangeLog,
     map: changeLogMap,
-   } = useChangeLogContext();
+  } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,20 +79,20 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   }, [changeLogMap[params.id]]);
 
   useEffect(() => {
-    if(params.id !== "add") {
+    if (params.id !== "add") {
       fetchChangeLog();
     }
     getActiveProject(setIsLoading);
   }, [params.id]);
 
   const formSchema = z.object({
-      title: z.string().min(1, { message: "Required" }),
-      description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-      releaseVersion: z.string().min(1, { message: "Required" }),
-      releaseCategories: z.array(z.object({
-        value: z.string(),
-        label: z.string(),
-      })
+    title: z.string().min(1, { message: "Required" }),
+    description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
+    releaseVersion: z.string().min(1, { message: "Required" }),
+    releaseCategories: z.array(z.object({
+      value: z.string(),
+      label: z.string(),
+    })
     ),
     // releaseTags: z.string().min(1, { message: "Required" }).max(50, {
     //   message: "Last Name can be maximum 50 characters",
@@ -133,11 +136,11 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       scheduledTime: selectedAction.id === "published" ? moment().toDate() : data.scheduledTime
     };
 
-    if(params.id !== "add"){
+    if (params.id !== "add") {
       changelogPost.id = params.id;
       changelogPost.projectId = changelog?.projectId!;
       updateChangeLog(changelogPost, setIsSaving);
-      return
+      return;
     }
 
     createChangeLog(changelogPost, setIsSaving);
@@ -155,19 +158,28 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   //     router.refresh();
   //   },
   // });
-  
+
   const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(() => Object.values(ChangeLogsReleaseCategories), []);
-  const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(() => Object.values(ChangeLogsReleaseTags), []);
+  // const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(() => Object.values(ChangeLogsReleaseTags), []);
+  const releaseTagsOptions: readonly ReleaseTagsOption[] = releaseTagIds.map(id => ({
+    value: releaseTagMap[id]?.code!,
+    label: releaseTagMap[id]?.name!,
+  }));
 
   useEffect(() => {
-      const setDefaultValues = () => {
+    const setDefaultValues = () => {
       if (changelog) {
+        const selectedReleaseTags = changelog.releaseTags as IReleaseTag[];
+
         form.reset({
           title: changelog.title,
           description: changelog.description,
           releaseVersion: changelog.releaseVersion,
-          releaseCategories: changelog.releaseCategories.map(category => ({ value: category, label: category })),
-          releaseTags: changelog.releaseTags.map(category => ({ value: category, label: category })),
+          releaseCategories: changelog.releaseCategories.map(categoryId => ({
+            value: ChangeLogsReleaseCategories[categoryId]?.value,
+            label: ChangeLogsReleaseCategories[categoryId]?.label
+          })),
+          releaseTags: selectedReleaseTags.map(tag => ({ value: tag.code, label: tag.name })),
           scheduledTime: moment(changelog.scheduledTime).toDate()
         });
       }
@@ -196,7 +208,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     };
   }, [isSaving, loading]);
 
-  if(!changelog && loading && params.id !== "add"){
+  if (!changelog && loading && params.id !== "add") {
     return (
       <BaseTemplate>
         <div className="w-full h-full flex items-center justify-center">
@@ -205,6 +217,8 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       </BaseTemplate>
     );
   }
+
+
 
   return (
     <BaseTemplate>
@@ -218,9 +232,9 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                 </CardTitle>
                 <CardDescription className="mt-1 text-sm text-gray-500">
                   {
-                    params.id === "add" ? 
-                    "Let’s get started by filling in the information below to create your new changelog." : 
-                    "Let’s get started by filling in the information below to update your changelog."
+                    params.id === "add" ?
+                      "Let’s get started by filling in the information below to create your new changelog." :
+                      "Let’s get started by filling in the information below to update your changelog."
                   }
                 </CardDescription>
               </CardHeader>
@@ -252,11 +266,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          {/* <Tiptap
-                            description={field.value}
-                            onChange={field.onChange}
-                          /> */}
-
                           <RichTextEditor
                             placeholder="Enter change log description"
                             value={value}
@@ -335,17 +344,15 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                             render={({
                               field: { onChange, onBlur, value, name },
                             }) => (
-                              <Select
-                                isMulti
-                                name={name}
-                                options={releaseTagsOptions}
+                              <ReleaseTagSelectMenu
                                 className="basic-multi-select"
                                 classNamePrefix="select"
+                                isMulti
+                                name={name}
                                 onBlur={onBlur}
-                                onChange={(selectedOptions) => {
-                                  onChange(selectedOptions);
-                                }}
+                                onChange={onChange}
                                 value={value}
+                                menuPlacement="top"
                               />
                             )}
                           />

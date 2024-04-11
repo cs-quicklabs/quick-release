@@ -35,11 +35,12 @@ model User {
 }
 
 model Organisation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  admin     User?
-  name      String
+  id          String       @id @default(cuid())
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  admin       User?
+  name        String
+  releaseTags ReleaseTag[]
 }
 
 model Project {
@@ -54,22 +55,42 @@ model Project {
 }
 
 model Log {
-  id                String    @id @default(cuid())
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   title             String
   description       String
   releaseVersion    String
   releaseCategories String[]
-  releaseTags       String[]
-  project           Project?  @relation(fields: [projectId], references: [id])
+  releaseTags       ReleaseTagOnLogs[]
+  project           Project?           @relation(fields: [projectId], references: [id])
   projectId         String?
   scheduledTime     DateTime?
   status            String
-  createdBy         User      @relation("CreatedLogs", fields: [createdById], references: [id])
+  createdBy         User               @relation("CreatedLogs", fields: [createdById], references: [id])
   createdById       String
-  updatedBy         User      @relation("UpdatedLogs", fields: [updatedById], references: [id])
+  updatedBy         User               @relation("UpdatedLogs", fields: [updatedById], references: [id])
   updatedById       String
   deletedAt         DateTime?
   archivedAt        DateTime?
+}
+
+model ReleaseTag {
+  id             Int                @id @default(autoincrement())
+  name           String
+  code           String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  organisation   Organisation?      @relation(fields: [organisationId], references: [id])
+  organisationId String
+  logs           ReleaseTagOnLogs[]
+}
+
+model ReleaseTagOnLogs {
+  log          Log        @relation(fields: [logId], references: [id])
+  logId        String
+  releaseTag   ReleaseTag @relation(fields: [releaseTagId], references: [id])
+  releaseTagId Int
+
+  @@id([logId, releaseTagId])
 }

@@ -10,6 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { UserProvider } from "./context/UserContext";
 import { ChangeLogProvider } from "./context/ChangeLogContext";
 import { ProjectProvider } from "./context/ProjectContext";
+import { ReleaseTagProvider } from "./context/ReleaseTagContext";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -37,12 +38,16 @@ export default async function RootLayout({
         <AuthProvider>
           <Provider>
             <UserProvider>
-              <ProjectProvider>
-                <ChangeLogProvider>
-                  <div className="bg-gray-50 dark:bg-gray-900 h-screen">{children}</div>
-                  <ToastContainer />
-                </ChangeLogProvider>
-              </ProjectProvider>
+              <ReleaseTagProvider>
+                <ProjectProvider>
+                  <ChangeLogProvider>
+                    <div className="bg-gray-50 h-screen">
+                      {children}
+                    </div>
+                    <ToastContainer />
+                  </ChangeLogProvider>
+                </ProjectProvider>
+              </ReleaseTagProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>

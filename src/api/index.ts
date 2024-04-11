@@ -1,4 +1,4 @@
-import { ApiFilterQueryType, ChangeLogType } from "@/types";
+import { ApiFilterQueryType, ChangeLogType, IReleaseTag } from "@/types";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -60,6 +60,23 @@ const fileUploadRequest = (data: FormData) => {
   });
 };
 
+// release tags actions api's
+const createReleaseTagRequest = (data: IReleaseTag) => {
+  return apiClient.post("/release-tags", data);
+};
+
+const getAllReleaseTagsRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get("/release-tags", { params });
+};
+
+const updateReleaseTagRequest = (data: IReleaseTag) => {
+  return apiClient.put(`/release-tags/${data.id}`, data);
+};
+
+const deleteReleaseTagRequest = (id: number) => {
+  return apiClient.delete(`/release-tags/${id}`);
+};
+
 // public api's
 const getAllPublicChangeLogsRequest = (params: ApiFilterQueryType) => {
   return apiClient.get(`public/projects/${params.projectName}/changelogs`, {
@@ -81,4 +98,8 @@ export {
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
   fileUploadRequest,
+  createReleaseTagRequest,
+  getAllReleaseTagsRequest,
+  updateReleaseTagRequest,
+  deleteReleaseTagRequest,
 };

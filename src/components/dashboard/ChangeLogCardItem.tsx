@@ -3,6 +3,7 @@ import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { classNames } from "@/lib/utils";
 import { ChangeLogType } from "@/types";
 import moment from "moment";
+import Link from "next/link";
 import React, { useMemo } from "react";
 
 const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => {
@@ -26,7 +27,11 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
     >
       <div className="flex justify-between space-x-3">
         <div className="min-w-0 flex-1">
-          <a href="#" className="block focus:outline-none">
+          <Link
+            className="block focus:outline-none"
+            href="#"
+            onClick={(e) => e.preventDefault()}
+          >
             <span
               className="absolute inset-0"
               aria-hidden="true"
@@ -43,7 +48,7 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
                 {` on ${scheduledTime ? moment(scheduledTime).format("MMMM DD, yyyy") : ""}`}
               </span>
             </p>
-          </a>
+          </Link>
         </div>
         <p className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">
           {releaseVersion}

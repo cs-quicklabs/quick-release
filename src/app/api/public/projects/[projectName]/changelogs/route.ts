@@ -1,7 +1,8 @@
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,7 +19,10 @@ export async function GET(
     projectName = projectName.toLowerCase();
 
     const projectQuery = { name: projectName };
-    const project = await db.project.findFirst({ where: projectQuery });
+    const project = await db.project.findFirst({
+      where: projectQuery,
+      include: { User: true },
+    });
     if (!project) {
       throw new ApiError(404, "Project not found");
     }
@@ -44,18 +48,30 @@ export async function GET(
 
     const releaseTags = searchParams.get("releaseTags")?.split(",");
     if (releaseTags?.length) {
+      const selectedReleaseTags = await db.releaseTag.findMany({
+        where: {
+          code: {
+            in: releaseTags,
+          },
+          organisationId: project.User?.organisationId,
+        },
+      });
+
       getAllPublishedChangeLogsQuery.releaseTags = {
-        hasSome: releaseTags,
+        some: {
+          releaseTagId: {
+            in: selectedReleaseTags.map((tag) => tag.id),
+          },
+        },
       };
     }
 
+    const releaseTagIds = [1];
+
     const changeLogs = await db.log.findMany({
       where: getAllPublishedChangeLogsQuery,
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+
+      include: ChangeLogIncludeDBQuery,
       skip: start,
       take: limit,
       orderBy: {
@@ -73,7 +89,9 @@ export async function GET(
       new ApiResponse(
         200,
         {
-          changeLogs,
+          changeLogs: changeLogs.map((changeLog) =>
+            computeChangeLog(changeLog)
+          ),
           page,
           limit,
           total: totalChangeLogs,

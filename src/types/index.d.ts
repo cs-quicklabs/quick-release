@@ -34,7 +34,7 @@ export type ChangeLogType = {
   description: string;
   releaseVersion: string;
   releaseCategories: string[];
-  releaseTags: string[];
+  releaseTags: string[] | IReleaseTag[];
 
   project?: Project;
   projectId: string;
@@ -113,6 +113,13 @@ export interface Project {
   User?: User;
   adminId?: String;
   isActive: Boolean;
+}
+
+export interface IReleaseTag {
+  id?: number;
+  name: string;
+  code?: string;
+  organisationId?: string;
 }
 
 export type ApiFilterQueryType = {

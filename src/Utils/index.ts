@@ -36,3 +36,7 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   const withoutTags = text.replace(/(<([^>]+)>)/gi, "");
   return withoutTags.trim().length > 0;
 };
+
+export const getReleaseTagCode = (tagName: string) => {
+  return tagName.toLowerCase().replaceAll(" ", "_");
+};

@@ -1,7 +1,11 @@
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import {
+  ChangeLogIncludeDBQuery,
+  SelectUserDetailsFromDB,
+} from "@/Utils/constants";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -31,18 +35,18 @@ export async function GET(
     };
     const changeLog = await db.log.findFirst({
       where: changeLogQuery,
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
     if (!changeLog) {
       throw new ApiError(404, "Changelog not found");
     }
 
     return NextResponse.json(
-      new ApiResponse(200, changeLog, "Changelog fetched successfully")
+      new ApiResponse(
+        200,
+        computeChangeLog(changeLog),
+        "Changelog fetched successfully"
+      )
     );
   });
 }

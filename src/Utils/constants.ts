@@ -119,4 +119,20 @@ export const SelectUserDetailsFromDB = {
   role: true,
 };
 
+export const ChangeLogIncludeDBQuery = {
+  project: { select: { id: true, name: true } },
+  createdBy: { select: SelectUserDetailsFromDB },
+  updatedBy: { select: SelectUserDetailsFromDB },
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+};
+
 export const REVALIDATE_API = 60; // revalidate/cache api response for 60 seconds
