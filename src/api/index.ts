@@ -8,6 +8,13 @@ const apiClient = axios.create({
 });
 
 // API functions for different actions
+const verifyRegisterTokenRequest = (data: any) => {
+  return apiClient.post("/verify-register-token", data);
+}
+
+const resendVerificationLinkRequest = (data: any) => {
+  return apiClient.post("/resend-verification-link", data);
+}
 
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
@@ -81,4 +88,6 @@ export {
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
   fileUploadRequest,
+  verifyRegisterTokenRequest,
+  resendVerificationLinkRequest
 };
