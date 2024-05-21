@@ -8,6 +8,10 @@ const apiClient = axios.create({
 });
 
 // API functions for different actions
+const registerUserRequest = (data: any) => {
+  return apiClient.post("/register", data);
+};
+
 const verifyRegisterTokenRequest = (data: any) => {
   return apiClient.post("/verify-register-token", data);
 }
@@ -88,6 +92,7 @@ export {
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
   fileUploadRequest,
+  registerUserRequest,
   verifyRegisterTokenRequest,
   resendVerificationLinkRequest
 };
