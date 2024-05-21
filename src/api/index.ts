@@ -20,6 +20,10 @@ const resendVerificationLinkRequest = (data: any) => {
   return apiClient.post("/resend-verification-link", data);
 }
 
+const forgetPasswordRequest = (data: { email: string }) => {
+  return apiClient.post("/forget-password", data);
+}
+
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
   return apiClient.get("/users/current-user");
@@ -79,6 +83,7 @@ const getAllPublicChangeLogsRequest = (params: ApiFilterQueryType) => {
 };
 
 // Export all the API functions
+// Export all the API functions
 export {
   getLoggedInUserDetailsRequest,
   getAllProjectsRequest,
@@ -91,7 +96,8 @@ export {
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
-  fileUploadRequest,
+  fileUploadRequest, 
+  forgetPasswordRequest,
   registerUserRequest,
   verifyRegisterTokenRequest,
   resendVerificationLinkRequest

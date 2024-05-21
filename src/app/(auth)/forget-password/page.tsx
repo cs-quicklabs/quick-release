@@ -1,13 +1,13 @@
 "use client";
 
+import { requestHandler, showNotification } from "@/Utils";
+import { forgetPasswordRequest } from "@/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 const ForgotPassword = () => {
@@ -35,15 +35,18 @@ const ForgotPassword = () => {
   const forgetPassword = async (values: z.infer<typeof formSchema>, e: any) => {
     e.preventDefault();
     setLoader(true);
-    try {
-      const res = await axios.post("/api/forget-password", values);
-      toast.success("Reset Link Sent Successfully");
-      setLoader(false);
-      router.push("/");
-    } catch (error: any) {
-      toast.error(error.response.data);
-      setLoader(false);
-    }
+    await requestHandler(
+      async () => await forgetPasswordRequest(values),
+      setLoader,
+      (res: any) => {
+        const { message } = res;
+        showNotification("success", message);
+        router.push("/");
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+      }
+    );
   };
   return (
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
