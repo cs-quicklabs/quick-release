@@ -1,6 +1,6 @@
 import { transport } from "@/Utils/EmailService";
 
-interface EmailParams {
+type EmailParams = {
   to: string;
   from: string;
   subject: string;
@@ -56,3 +56,4 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
 
   await sendEmail(emailParams);
 }
+

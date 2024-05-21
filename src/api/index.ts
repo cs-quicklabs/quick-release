@@ -8,6 +8,17 @@ const apiClient = axios.create({
 });
 
 // API functions for different actions
+const registerUserRequest = (data: any) => {
+  return apiClient.post("/register", data);
+};
+
+const verifyRegisterTokenRequest = (data: any) => {
+  return apiClient.post("/verify-register-token", data);
+}
+
+const resendVerificationLinkRequest = (data: any) => {
+  return apiClient.post("/resend-verification-link", data);
+}
 
 const forgetPasswordRequest = (data: { email: string }) => {
   return apiClient.post("/forget-password", data);
@@ -40,6 +51,10 @@ const getOneChangeLogRequest = (id: string) => {
   return apiClient.get(`/changelogs/${id}`);
 };
 
+const updateOneChangeLogRequest = (data: ChangeLogType) => {
+  return apiClient.put(`/changelogs/${data.id}`, data);
+};
+
 const publishOneChangeLogRequest = (id: string) => {
   return apiClient.post(`/changelogs/${id}/publish-now`);
 };
@@ -60,6 +75,13 @@ const fileUploadRequest = (data: FormData) => {
   });
 };
 
+// public api's
+const getAllPublicChangeLogsRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get(`public/projects/${params.projectName}/changelogs`, {
+    params,
+  });
+};
+
 // Export all the API functions
 // Export all the API functions
 export {
@@ -67,11 +89,16 @@ export {
   getAllProjectsRequest,
   getOneActiveProjectRequest,
   createChangeLogRequest,
+  getAllPublicChangeLogsRequest,
   getAllChangeLogsRequest,
   getOneChangeLogRequest,
+  updateOneChangeLogRequest,
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
   fileUploadRequest, 
   forgetPasswordRequest,
+  registerUserRequest,
+  verifyRegisterTokenRequest,
+  resendVerificationLinkRequest
 };

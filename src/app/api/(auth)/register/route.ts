@@ -1,4 +1,8 @@
+import { ApiError } from "@/Utils/ApiError";
+import { ApiResponse } from "@/Utils/ApiResponse";
 import { transport } from "@/Utils/EmailService";
+import { asyncHandler } from "@/Utils/asyncHandler";
+import { sendVerificationEmail } from "@/Utils/emailHandler";
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
 import crypto from "crypto";
@@ -6,93 +10,68 @@ import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request, res: NextApiResponse) {
-  try {
+  return asyncHandler(async () => {
     const body = await request.json();
-    const hashedPassword = await hash(body.password, 10);
+    if(body.firstName && body.lastName && body.orgName && body.email && body.password){
+        const hashedPassword = await hash(body.password, 10);
 
-    const existingEmail = await db.user.findUnique({
-      where: { email: body.email },
-    });
+        const existingEmail = await db.user.findUnique({
+          where: { email: body.email },
+        });
 
-    if (existingEmail) {
-      throw new Error("Email already exists");
-    }
+        if (existingEmail) {
+          throw new ApiError(400, "Email already exists");
+        }
 
-    const organisation = await db.organisation.create({
-      data: {
-        name: body.orgName,
-      },
-    });
-    const register = await db.user.create({
-      data: {
-        email: body.email,
-        password: hashedPassword,
-        firstName: body.firstName,
-        lastName: body.lastName,
-        organisationId: organisation.id,
-      },
-    });
+        const organisation = await db.organisation.create({
+          data: {
+            name: body.orgName,
+          },
+        });
+        const register = await db.user.create({
+          data: {
+            email: body.email,
+            password: hashedPassword,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            organisationId: organisation.id,
+          },
+        });
 
-    const verificationToken = crypto.randomBytes(20).toString("hex");
-    const registerVerificationToken = crypto
-      .createHash("sha256")
-      .update(verificationToken)
-      .digest("hex");
+        if(!register.id) {
+          throw new ApiError(400, "Unable to create user");
+        }
 
-    const verificationTokenExpires = (Date.now() + 7200000).toString();
-    register.verificationToken = registerVerificationToken;
-    register.verificationTokenExpiry = verificationTokenExpires;
-    const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
-    const emailBody = `Hi ${body.firstName}
-      Welcome to Quicklabs! We're thrilled to have you on board
-      Our mission is simple: to streamline change log management for all your software releases. With Quicklabs, you'll experience efficiency and clarity like never before.
-      Best regards,
-      Quick Release Team
-      
-      <a href="${verificationUrl}">Click to verify Account</a>,
-      `;
+        const verificationToken = crypto.randomBytes(20).toString("hex");
+        const registerVerificationToken = crypto
+          .createHash("sha256")
+          .update(verificationToken)
+          .digest("hex");
 
-    const msg = {
-      to: body.email,
-      from: process.env.EMAIL_FROM,
-      subject: "Welcome to Quick Release",
-      html: emailBody,
-    };
+        const verificationTokenExpires = (Date.now() + 7200000).toString();
+        register.verificationToken = registerVerificationToken;
+        register.verificationTokenExpiry = verificationTokenExpires;
 
-    try {
-      if (register.id) {
-        transport.sendMail(msg);
+        await db.user.update({
+          where: {
+            email: body.email,
+          },
+          data: {
+            verificationToken: verificationToken,
+            verificationTokenExpiry: verificationTokenExpires,
+          },
+        });
+
+        if (!register.id) {
+          throw new ApiError(400, "Unable to create user");
+        }
+        await sendVerificationEmail(body.email, verificationToken, body.firstName);
+        return NextResponse.json(
+          new ApiResponse(200, null, "User registered successfully"),
+        );
       }
-      await db.user.update({
-        where: {
-          email: body.email,
-        },
-        data: {
-          verificationToken: verificationToken,
-          verificationTokenExpiry: verificationTokenExpires,
-        },
-      });
-      return NextResponse.json("Verification Link Sent to email", {
-        status: 200,
-      });
-    } catch (err: any) {
-      await db.user.update({
-        where: {
-          email: body.email,
-        },
-        data: {
-          verificationToken: null,
-          verificationTokenExpiry: null,
-        },
-      });
-      throw new Error("Unable to sent verification link");
-    }
-  } catch (e: any) {
-    return NextResponse.json(
-      {
-        message: e.message,
-      },
-      { status: 400 }
-    );
-  }
+      else{
+        throw new ApiError(400, "Missing required fields");
+      }
+  })
 }
