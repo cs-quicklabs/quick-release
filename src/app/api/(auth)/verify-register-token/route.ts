@@ -1,39 +1,46 @@
+import { ApiError } from "@/Utils/ApiError";
+import { ApiResponse } from "@/Utils/ApiResponse";
+import { asyncHandler } from "@/Utils/asyncHandler";
 import { db } from "@/lib/db";
-import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
-  try {
+  return asyncHandler(async () => {
     const body = await request.json();
-    if (body.id) {
+    if (body.token) {
       const user = await db.user.findUnique({
         where: {
-          verificationToken: body.id,
+          verificationToken: body.token,
         },
       });
 
-      const updatedUser = await db.user.update({
+      if (!user) {
+        throw new ApiError(400, "Invalid Token");
+      }
+
+      if(user.isVerified){
+        throw new ApiError(400, "Account already verified");
+      }
+
+      await db.user.update({
         where: {
           id: user?.id,
         },
         data: {
-          verificationToken: null,
-          verificationTokenExpiry: null,
           isVerified: true,
         },
       });
-      if (!user) {
-        return new NextResponse("Invalid Token", { status: 400 });
-      }
       if (user.verificationTokenExpiry) {
         let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
         if (tokenExpiryTimestamp < Date.now())
-          return new NextResponse("Reset link has expired", { status: 400 });
+          throw new ApiError(400, "Verification link has expired");
       }
-      return new NextResponse(JSON.stringify(updatedUser), { status: 200 });
+      return NextResponse.json(
+        new ApiResponse(200, null, "Your account has been verified"),
+      )
     }
-  } catch (err) {
-    console.log(err, "err");
-    return new NextResponse("Invalid Token", { status: 400 });
-  }
+    else{
+      throw new ApiError(400, "Token not found");
+    }
+  })
 };

@@ -24,6 +24,7 @@ import {
 } from "@heroicons/react/20/solid";
 import moment from "moment";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -31,6 +32,7 @@ type PrevStateType = {
 };
 
 const ContentContainer = () => {
+  const router = useRouter();
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const prevStates = useRef<PrevStateType>({ isLoading: false, activeChangeLogId: null });
 
@@ -77,6 +79,7 @@ const ContentContainer = () => {
     const updatedAt = changelog.updatedAt ? moment(changelog.updatedAt).format("MMMM DD, YYYY") : "";
     const archivedAt = changelog.archivedAt ? moment(changelog.archivedAt).format("MMMM DD, YYYY") : "";
     const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
+    const editChangeLogLink = `/changeLog/${activeChangeLogId}`;
     const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
     const logStatus = changeLogStatus?.id;
 
@@ -97,6 +100,7 @@ const ContentContainer = () => {
         return {
           message: `${fullName} created this draft on ${updatedAt}`,
           actionText: "Continue Editing",
+          actionLink: editChangeLogLink,
           containerClassName: "bg-yellow-50 shadow-yellow",
           iconClassName: "text-yellow-400",
           messageClassName: "text-yellow-700",
@@ -136,7 +140,7 @@ const ContentContainer = () => {
   const actionOptions = useMemo(() => [
     {
       name: "Edit",
-      onClick: () => { },
+      onClick: () => { router.push(`/changeLog/${activeChangeLogId}`) },
     },
     {
       name: changelog?.archivedAt ? "Unarchive" : "Archive",
