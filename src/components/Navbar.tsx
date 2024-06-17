@@ -1,12 +1,14 @@
 "use client";
 
 import Loader from "./Loader";
+import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
 import { User } from "@/types";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { Tooltip } from "flowbite-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -68,7 +70,7 @@ export function Navbar() {
       nav.push({
         name: projectMap[activeProjectId]?.name as string,
         href: "/allLogs",
-        current: true,
+        current: false
       });
     }
 
@@ -79,8 +81,6 @@ export function Navbar() {
     const { firstName, lastName } = loggedInUser || {};
     const fullName = `${firstName || ""} ${lastName || ""}`.trim();
     let email = `${loggedInUser?.email || ""}`.trim();
-    email = email.length > 18 ? `${email.slice(0, 18)}...` : email;
-
     return { fullName, email };
   }, [loggedInUser]);
 
@@ -89,8 +89,8 @@ export function Navbar() {
       {({ open }: any) => (
         <>
           <div className="px-2 sm:px-6 lg:px-8">
-            <div className="relative flex h-12 items-center justify-around">
-              <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <div className="relative flex items-center justify-around">
+              <div className="flex items-center lg:hidden py-1">
                 {/* Mobile menu button*/}
                 <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="absolute -inset-0.5" />
@@ -102,7 +102,7 @@ export function Navbar() {
                   )}
                 </Disclosure.Button>
               </div>
-              <div className="hidden sm:flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+              <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
                 <div className="flex flex-shrink-0 items-center">
                   <img
                     className="h-8 w-auto"
@@ -110,8 +110,8 @@ export function Navbar() {
                     alt="Your Company"
                   />
                 </div>
-                <div className="hidden sm:ml-6 sm:block">
-                  <div className="flex space-x-4">
+                <div className="hidden lg:ml-6 lg:block">
+                  <div className="flex items-center space-x-4">
                     {loading.activeProjectLoading ? (
                       <Oval
                         height={20}
@@ -127,7 +127,7 @@ export function Navbar() {
                             href={item.href}
                             className={classNames(
                               item.current
-                                ? "text-white"
+                                ? "text-white text-base"
                                 : "text-gray-300 hover:text-white",
                               "rounded-md px-3 py-2 text-sm font-medium"
                             )}
@@ -147,7 +147,7 @@ export function Navbar() {
                     Search
                   </label>{" "}
                   <div className="relative">
-                    <div className="hidden  pointer-events-none absolute inset-y-0 left-0 sm:flex items-center pl-3">
+                    <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
                       <svg
                         className="h-5 w-5 text-gray-400"
                         viewBox="0 0 20 20"
@@ -164,17 +164,17 @@ export function Navbar() {
                     <input
                       id="search"
                       name="search"
-                      className=" hidden sm:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
+                      className=" hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
                       placeholder="Search"
                       type="search"
                     />
                   </div>
                 </div>
               </div>
-              <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+              <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
                 <button
                   type="button"
-                  className="hidden sm:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="sr-only">View notifications</span>{" "}
                   <svg
@@ -220,11 +220,27 @@ export function Navbar() {
                     <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                       <Menu.Item>
                         {({ active }) => (
-                          <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white ml-[-10px]">
-                            <div className="truncate flex justify-center items-center">
+                          <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white">
+                            <div className="flex justify-center items-center">
                               <div className="flex flex-col">
-                                <p>{fullName}</p>
-                                <p className="font-medium ">{email}</p>
+                                {fullName.length > 18 ? (
+                                  <Tooltip placement="left" content={fullName}>
+                                    <p>
+                                      {handleTrancate(fullName, 18)}
+                                    </p>
+                                  </Tooltip>
+                                ) : (
+                                  <p>{fullName}</p>
+                                )}
+                                {email.length > 18 ? (
+                                  <Tooltip placement="left" content={email}>
+                                    <p className="font-medium">
+                                      {handleTrancate(email, 18)}
+                                    </p>
+                                  </Tooltip>
+                                ) : (
+                                  <p className="font-medium">{fullName}</p>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -271,33 +287,35 @@ export function Navbar() {
                                 key={item.id}
                                 as="div"
                                 onClick={() => activeProject(item.id)}
-                                className="hover:bg-gray-100  cursor-pointer"
+                                className="hover:bg-gray-100  cursor-pointer px-4"
                               >
                                 <div
-                                  className={`${
+                                  className={`text-sm ${
                                     item.id === activeProjectId
-                                      ? "font-bold flex items-center"
+                                      ? "flex items-center"
                                       : "flex items-center"
                                   }`}
                                 >
-                                  <div className="flex  pl-4 py-2">
+                                  <div className="flex py-2 w-fit">
                                     {item.name}
                                   </div>
 
                                   {item.id === activeProjectId ? (
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="green"
-                                      className="w-5 h-5 ml-1 text-center"
-                                      aria-hidden="true"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                        clipRule="evenodd"
-                                      ></path>
-                                    </svg>
+                                    <div>
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="green"
+                                        className="w-5 h-5 ml-1 text-center"
+                                        aria-hidden="true"
+                                      >
+                                        <path
+                                          fillRule="evenodd"
+                                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+                                          clipRule="evenodd"
+                                        ></path>
+                                      </svg>
+                                    </div>
                                   ) : null}
                                   {loading.activeProjectLoading[item.id] && (
                                     <div className="flex items-center justify-center py-2">
@@ -329,7 +347,7 @@ export function Navbar() {
                             <div className="flex  items-center">
                               <Link
                                 href="/settings/profile"
-                                className="text-[15px] font-[490] text-black"
+                                className="text-[15px] font-[490] text-black text-sm"
                               >
                                 Profile Settings
                               </Link>
@@ -348,14 +366,14 @@ export function Navbar() {
                           >
                             {loading.logout ? (
                               <div className="flex  items-center gap-4">
-                                <span className="text-sm text-[15px] font-[490] text-black">
+                                <span className="text-sm font-[490] text-black">
                                   Sign out
                                 </span>
                                 <Loader width="w-6" color="border-black" />
                               </div>
                             ) : (
-                              <div className="flex  items-center text-[15px] font-[490] text-black">
-                                <span className="text-l">Sign out</span>
+                              <div className="flex  items-center font-[490] text-black text-sm">
+                                <span>Sign out</span>
                               </div>
                             )}
                           </a>
@@ -368,8 +386,8 @@ export function Navbar() {
             </div>
           </div>
 
-          <Disclosure.Panel className="sm:hidden">
-            <div className="space-y-1 px-2 pb-3 pt-2">
+          <Disclosure.Panel className="lg:hidden mt-5">
+            <div className="space-y-2 px-2 py-3">
               {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
