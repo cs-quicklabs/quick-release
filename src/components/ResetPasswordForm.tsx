@@ -29,6 +29,7 @@ const ResetPasswordForm = ({ user }: ResetPasswordProps) => {
   const formSchema = z.object({
     password: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .min(6, { message: "Password should be minimum 6 characters" }),
   });

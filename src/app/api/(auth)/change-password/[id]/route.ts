@@ -1,3 +1,4 @@
+import { sendPasswordUpatedEmail } from "@/Utils/emailHandler";
 import { db } from "@/lib/db";
 import { compare, hash } from "bcrypt";
 import { NextApiResponse } from "next";
@@ -40,9 +41,12 @@ export async function POST(
         id: existingUser.id,
       },
     });
+
+    await sendPasswordUpatedEmail(existingUser.email, existingUser.firstName);
+    
     return NextResponse.json({
       status: 200,
-      message: "Updated Successfully",
+      message: "Password has been updated successfully",
       update,
     });
   } catch (e: any) {
