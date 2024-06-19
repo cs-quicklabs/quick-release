@@ -36,3 +36,15 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   const withoutTags = text.replace(/(<([^>]+)>)/gi, "");
   return withoutTags.trim().length > 0;
 };
+
+export const selectedData = (userData: any) => {
+  return {
+    id: userData?.id,
+    name: userData?.firstName + " " + userData?.lastName,
+    profilePicture: userData?.profilePicture,
+    email: userData?.email,
+    role: userData?.role,
+    isActive: userData?.isActive,
+    isVerified: userData?.isVerified,
+  };
+};

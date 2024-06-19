@@ -1,14 +1,21 @@
+import { ApiError } from "@/Utils/ApiError";
+import { ApiResponse } from "@/Utils/ApiResponse";
+import { asyncHandler } from "@/Utils/asyncHandler";
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
 import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
-  const { password, email } = await request.json();
+  return asyncHandler(async () => {
+    const { password, email, confirmPassword } = await request.json();
+    if (!password || !email || !confirmPassword)
+      throw new ApiError(400, "Missing email or password");
 
-  const hashedPassword = await hash(password, 10);
+    if (password !== confirmPassword)
+      throw new ApiError(400, "Passwords do not match");
 
-  try {
-    await db.user.update({
+    const hashedPassword = await hash(password, 10);
+    const update = await db.user.update({
       where: {
         email: email,
       },
@@ -18,8 +25,13 @@ export const POST = async (request: Request) => {
         resetTokenExpiry: null,
       },
     });
-    return new NextResponse("User's password is updated", { status: 200 });
-  } catch (err: any) {
-    return new NextResponse(err, { status: 500 });
-  }
+
+    if (!update) {
+      throw new ApiError(400, "Unable to reset password, Try again later");
+    }
+
+    return NextResponse.json(
+      new ApiResponse(200, null, "Password reset successfully")
+    );
+  });
 };
