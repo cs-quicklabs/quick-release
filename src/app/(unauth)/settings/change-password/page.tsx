@@ -1,5 +1,8 @@
 "use client";
 
+import { requestHandler, showNotification } from "@/Utils";
+import { changePasswordRequest } from "@/api";
+import { useUserContext } from "@/app/context/UserContext";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/types";
@@ -13,8 +16,8 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 
 const page = () => {
-  const [activeUser, setActiveUser] = useState<User>();
   const [showPassword, setShowPassword] = useState(false);
+  const {loggedInUser} = useUserContext();
 
   const [loader, setLoader] = useState(false);
   const formSchema = z
@@ -45,32 +48,18 @@ const page = () => {
     },
   });
 
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getActiveUser();
-  }, []);
-
   const updatePassword = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setLoader(true);
-      const res = await axios.post(
-        `/api/change-password/${activeUser?.id}`,
-        values
-      );
-      toast.success(res.data.message);
-    } catch (err: any) {
-      console.log(err);
-      toast.error(err.response.data.message);
-    }
-    setLoader(false);
+    await requestHandler(
+      async () => await changePasswordRequest(values, loggedInUser?.id as string),
+      setLoader,
+      (res: any) => {
+        const { message } = res;
+        showNotification("success", message);
+      },
+      (err: any) => {
+        showNotification("error", err);
+      }
+    )
   };
 
   return (

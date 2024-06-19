@@ -57,7 +57,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
   await sendEmail(emailParams);
 }
 
-export async function sendPasswordUpatedEmail(email: string, firstName: string) {
+export async function sendPasswordUpdatedEmail(email: string, firstName: string) {
   const emailBody = `Hi ${firstName},<br/>
     Your password has been updated successfully.<br/>,
     <br/>
