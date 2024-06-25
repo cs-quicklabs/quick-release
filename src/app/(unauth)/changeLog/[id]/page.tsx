@@ -84,7 +84,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   }, [params.id]);
 
   useEffect(() => {
-    if(params.id !== "add" && changeLogsList?.length > 0) {
+    if(params.id !== "add" && changeLogsList && changeLogsList.length > 0) {
       const changeLogId = changeLogsList.find((changeLog) => changeLog === params.id);
       if(!changeLogId) {
         router.push("/error");
