@@ -1,14 +1,17 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
+import { usePathname } from "next/navigation";
 
 const NotFound = () => {
+  const pathName = usePathname().split("/")[2];
   return (
     <div className="h-1/2 flex items-end justify-center">
       <div className="text-center">
 
         <h1 className="text-4xl font-bold text-gray-900">404</h1>
         <h3 className="text-2xl font-semibold text-gray-900">Not Found</h3>
-        <p className="mt-1 text-sm text-gray-500">This page could not be found.</p>
+        <p className="mt-1 text-sm text-gray-500">{pathName === "changelogs" ? "Changelog has either been deleted or is not yet published." : "This page could not be found."}</p>
 
         <a href="/">
           <Button
