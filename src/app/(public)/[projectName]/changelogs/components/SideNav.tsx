@@ -79,7 +79,7 @@ const SideNav = () => {
   }, [projectName]);
 
   return (
-    <aside className="hidden lg:block h-full py-6 px-2 sm:px-6 lg:col-span-3 lg:py-0 lg:px-0">
+    <aside className="flex justify-between lg:h-full items-start lg:flex-col lg:justify-start py-6 px-2 sm:px-6 lg:col-span-3 lg:py-0 lg:px-0">
       <div className="p-4">
         <label className="text-base font-semibold text-gray-900">Select Categories</label>
         <p className="text-sm text-gray-500">Chose Release Categories</p>
