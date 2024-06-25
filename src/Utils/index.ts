@@ -48,3 +48,10 @@ export const selectedData = (userData: any) => {
     isVerified: userData?.isVerified,
   };
 };
+
+export const handleTrancate = (text: string, trucateNum: number) => {
+  if (text.length > trucateNum) {
+    return `${text.slice(0, trucateNum)}...`;
+  }
+  return text;
+}

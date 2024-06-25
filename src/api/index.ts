@@ -32,6 +32,10 @@ const verifyResetTokenRequest = (data: any) => {
   return apiClient.post("/verify-token", data);
 };
 
+const changePasswordRequest = (data: any, userId: string) => {
+  return apiClient.post(`/change-password/${userId}`, data);
+}
+
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
   return apiClient.get("/users/current-user");
@@ -111,4 +115,5 @@ export {
   resendVerificationLinkRequest,
   resetPasswordRequest,
   verifyResetTokenRequest,
+  changePasswordRequest
 };
