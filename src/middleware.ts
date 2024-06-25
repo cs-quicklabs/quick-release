@@ -32,5 +32,6 @@ export const config = {
     "/changeLog/add",
     "/settings/:path*",
     "/create-project",
+    "/changeLog/:path*",
   ],
 };
