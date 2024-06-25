@@ -51,9 +51,10 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { 
     error, 
-    createChangeLog, 
-    getChangeLog,
+    createChangeLog,
     updateChangeLog,
+    getAllChangeLogs,
+    list: changeLogsList,
     map: changeLogMap,
    } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
@@ -68,8 +69,8 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   } = useProjectContext();
 
   const fetchChangeLog = useCallback(async () => {
-    getChangeLog(params.id, setLoading);
-  }, [params.id]);
+    getAllChangeLogs({ projectId: activeProjectId! });
+  }, [activeProjectId]);
 
   const changelog = useMemo(() => {
     return changeLogMap[params.id] || null;
@@ -81,6 +82,17 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     }
     getActiveProject(setIsLoading);
   }, [params.id]);
+
+  useEffect(() => {
+    if(params.id !== "add" && changeLogsList?.length > 0) {
+      const changeLogId = changeLogsList.find((changeLog) => changeLog === params.id);
+      if(!changeLogId) {
+        router.push("/error");
+      }
+    }
+  }, [changeLogsList]);
+
+
 
   const formSchema = z.object({
       title: z.string().min(1, { message: "Required" }),
@@ -298,7 +310,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                         <FormControl>
                           <Controller
                             name="releaseCategories"
-                            control={form.control}
+                            control={form.control}                       
                             render={({
                               field: { onChange, onBlur, value, name },
                             }) => (
@@ -311,6 +323,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                                 onBlur={onBlur}
                                 onChange={onChange}
                                 value={value}
+                                isSearchable={false}
                               />
                             )}
                           />
@@ -346,6 +359,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                                   onChange(selectedOptions);
                                 }}
                                 value={value}
+                                isSearchable={false}
                               />
                             )}
                           />

@@ -44,6 +44,9 @@ const DatePicker: React.FC<DatePickerPropsType> = ({ className, placeholder = "S
           selected={value}
           onSelect={(selectedDate) => onChange?.(selectedDate)}
           initialFocus
+          disabled={{
+            before: new Date(),
+          }}
         />
       </PopoverContent>
     </Popover>
