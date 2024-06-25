@@ -37,6 +37,17 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   return withoutTags.trim().length > 0;
 };
 
+export const selectedData = (userData: any) => {
+  return {
+    id: userData?.id,
+    name: userData?.firstName + " " + userData?.lastName,
+    profilePicture: userData?.profilePicture,
+    email: userData?.email,
+    role: userData?.role,
+    isActive: userData?.isActive,
+    isVerified: userData?.isVerified,
+  };
+};
 
 export const handleTrancate = (text: string, trucateNum: number) => {
   if (text.length > trucateNum) {

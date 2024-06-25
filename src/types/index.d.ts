@@ -28,6 +28,12 @@ export interface IChangeLogPost extends FormChangeLogPost {
   releaseCategories: string[];
 }
 
+export type AuthType = {
+  email: string;
+  password: string;
+  confirmPassword?: string;
+}
+
 export type ChangeLogType = {
   id?: string;
   title: string;

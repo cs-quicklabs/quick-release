@@ -1,4 +1,4 @@
-import { ApiFilterQueryType, ChangeLogType } from "@/types";
+import { ApiFilterQueryType, AuthType, ChangeLogType } from "@/types";
 import axios from "axios";
 
 const apiClient = axios.create({
@@ -14,15 +14,23 @@ const registerUserRequest = (data: any) => {
 
 const verifyRegisterTokenRequest = (data: any) => {
   return apiClient.post("/verify-register-token", data);
-}
+};
 
 const resendVerificationLinkRequest = (data: any) => {
   return apiClient.post("/resend-verification-link", data);
-}
+};
 
 const forgetPasswordRequest = (data: { email: string }) => {
   return apiClient.post("/forget-password", data);
-}
+};
+
+const resetPasswordRequest = (data: AuthType) => {
+  return apiClient.post("/reset-password", data);
+};
+
+const verifyResetTokenRequest = (data: any) => {
+  return apiClient.post("/verify-token", data);
+};
 
 const changePasswordRequest = (data: any, userId: string) => {
   return apiClient.post(`/change-password/${userId}`, data);
@@ -100,10 +108,12 @@ export {
   publishOneChangeLogRequest,
   toggleArchiveOneChangeLogRequest,
   deleteOneChangeLogRequest,
-  fileUploadRequest, 
+  fileUploadRequest,
   forgetPasswordRequest,
   registerUserRequest,
   verifyRegisterTokenRequest,
   resendVerificationLinkRequest,
+  resetPasswordRequest,
+  verifyResetTokenRequest,
   changePasswordRequest
 };
