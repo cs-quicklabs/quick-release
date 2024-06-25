@@ -23,18 +23,20 @@ const RegisterForm = () => {
   const router = useRouter();
   const { toast } = useToast();
   const formSchema = z.object({
-    firstName: z.string().min(1, { message: "Required" }).max(50, {
+    firstName: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Fisrt Name can be maximum 50 characters",
     }),
-    lastName: z.string().min(1, { message: "Required" }).max(50, {
+    lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Last Name can be maximum 50 characters",
     }),
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
     password: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .min(6, { message: "Password should be minimum 6 characters" }),
     orgName: z.string().min(1, { message: "Required" }),

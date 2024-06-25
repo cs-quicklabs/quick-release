@@ -40,7 +40,7 @@ export default async function RootLayout({
               <ProjectProvider>
                 <ChangeLogProvider>
                   <div className="bg-gray-50 dark:bg-gray-900 h-screen">{children}</div>
-                  <ToastContainer />
+                  <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />
                 </ChangeLogProvider>
               </ProjectProvider>
             </UserProvider>

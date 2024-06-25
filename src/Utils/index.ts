@@ -40,3 +40,22 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
 export const isValidArray = (compareArray: string[], validArray: string[]) => {
   return compareArray.every(compareItem => validArray.includes(compareItem));
 }
+
+export const selectedData = (userData: any) => {
+  return {
+    id: userData?.id,
+    name: userData?.firstName + " " + userData?.lastName,
+    profilePicture: userData?.profilePicture,
+    email: userData?.email,
+    role: userData?.role,
+    isActive: userData?.isActive,
+    isVerified: userData?.isVerified,
+  };
+};
+
+export const handleTrancate = (text: string, trucateNum: number) => {
+  if (text.length > trucateNum) {
+    return `${text.slice(0, trucateNum)}...`;
+  }
+  return text;
+}

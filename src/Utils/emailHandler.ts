@@ -57,3 +57,22 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
   await sendEmail(emailParams);
 }
 
+export async function sendPasswordUpdatedEmail(email: string, firstName: string) {
+  const emailBody = `Hi ${firstName},<br/>
+    Your password has been updated successfully.<br/>,
+    <br/>
+    <br/>
+    Best regards,<br/>
+    Quick Release Team
+    `;
+
+  const emailParams: EmailParams = {
+    to: email,
+    from: process.env.EMAIL_FROM as string,
+    subject: "Password Updated",
+    html: emailBody,
+  };
+
+  await sendEmail(emailParams);
+}
+

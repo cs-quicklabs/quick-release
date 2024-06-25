@@ -83,9 +83,9 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   }, [params.id]);
 
   const formSchema = z.object({
-      title: z.string().min(1, { message: "Required" }),
-      description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-      releaseVersion: z.string().min(1, { message: "Required" }),
+      title: z.string().trim().min(1, { message: "Required" }),
+      description: z.string().trim().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
+      releaseVersion: z.string().trim().min(1, { message: "Required" }),
       releaseCategories: z.array(z.object({
         value: z.string(),
         label: z.string(),
