@@ -304,7 +304,7 @@ const Register = () => {
                   href="/"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
-                  Sign In
+                  Login here
                 </Link>
               </p>
             </form>
