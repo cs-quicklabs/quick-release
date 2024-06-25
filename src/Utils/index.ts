@@ -36,3 +36,11 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   const withoutTags = text.replace(/(<([^>]+)>)/gi, "");
   return withoutTags.trim().length > 0;
 };
+
+
+export const handleTrancate = (text: string, trucateNum: number) => {
+  if (text.length > trucateNum) {
+    return `${text.slice(0, trucateNum)}...`;
+  }
+  return text;
+}
