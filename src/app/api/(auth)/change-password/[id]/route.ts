@@ -1,35 +1,50 @@
+import { ApiResponse } from "@/Utils/ApiResponse";
+import { asyncHandler } from "@/Utils/asyncHandler";
+import { sendPasswordUpdatedEmail } from "@/Utils/emailHandler";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { compare, hash } from "bcrypt";
 import { NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
+import { ApiError } from "@/Utils/ApiError";
 import { NextResponse } from "next/server";
 
 export async function POST(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  try {
+  return asyncHandler(async () => {
+    const session = await getServerSession(authOptions);
+
+    // @ts-ignore
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const body = await request.json();
+    if(!body?.password || !body?.oldPassword){
+      throw new ApiError(400, "All fields are required");
+    }
+
     const existingUser = await db.user.findUnique({
       where: { id: params.id },
     });
     if (!existingUser) {
-      throw new Error("User Not Found!");
+      throw new ApiError(404, "User not found");
     }
     const newHashedPassword = await hash(body.password, 10);
-    if (existingUser) {
-      const passwordCorrect = await compare(
-        body?.oldPassword,
-        existingUser?.password
-      );
+    const passwordCorrect = await compare(
+      body?.oldPassword,
+      existingUser?.password
+    );
 
-      if (!passwordCorrect) {
-        throw new Error("Incorrect Password!");
-      }
+    if (!passwordCorrect) {
+      throw new ApiError(400, "Old Password is incorrect");
     }
     const passwordSame = await compare(body?.password, existingUser?.password);
 
     if (passwordSame) {
-      throw new Error("New Password cannot be same as Old Password");
+      throw new ApiError(400, "New Password cannot be same as old password");
     }
 
     const update = await db.user.update({
@@ -40,17 +55,15 @@ export async function POST(
         id: existingUser.id,
       },
     });
-    return NextResponse.json({
-      status: 200,
-      message: "Updated Successfully",
-      update,
-    });
-  } catch (e: any) {
+
+    if(!update) {
+      throw new ApiError(500, "Unable to update password");
+    }
+
+    await sendPasswordUpdatedEmail(existingUser.email, existingUser.firstName);
+    
     return NextResponse.json(
-      {
-        message: e.message,
-      },
-      { status: 400 }
+      new ApiResponse(200, update, "Password has been updated successfully")
     );
-  }
+  })
 }

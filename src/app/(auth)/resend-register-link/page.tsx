@@ -15,7 +15,8 @@ const ResendRegisterLink = () => {
     email: z
       .string()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .trim()
   });
 
   const {

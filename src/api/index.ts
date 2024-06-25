@@ -24,6 +24,10 @@ const forgetPasswordRequest = (data: { email: string }) => {
   return apiClient.post("/forget-password", data);
 }
 
+const changePasswordRequest = (data: any, userId: string) => {
+  return apiClient.post(`/change-password/${userId}`, data);
+}
+
 // user profile actions api's
 const getLoggedInUserDetailsRequest = () => {
   return apiClient.get("/users/current-user");
@@ -100,5 +104,6 @@ export {
   forgetPasswordRequest,
   registerUserRequest,
   verifyRegisterTokenRequest,
-  resendVerificationLinkRequest
+  resendVerificationLinkRequest,
+  changePasswordRequest
 };
