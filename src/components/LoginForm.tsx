@@ -47,7 +47,7 @@ export default function LoginForm() {
   });
 
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
-    
+    toast.dismiss();
     try {
       setLoader(true);
       const res = await signIn("credentials", {
@@ -234,7 +234,7 @@ export default function LoginForm() {
                     />
                   </div>
                 ) : (
-                  "Sign In"
+                  "Log in"
                 )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">

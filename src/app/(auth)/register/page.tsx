@@ -14,6 +14,7 @@ import { z } from "zod";
 const Register = () => {
   const [loader, setLoader] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const formSchema = z
@@ -236,13 +237,26 @@ const Register = () => {
                 >
                   Confirm Password
                 </label>{" "}
-                <input
-                  type="text"
-                  id="confirm-password"
-                  placeholder="password"
-                  {...register("confirmPassword")}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                />
+                <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    id="password"
+                    placeholder="••••••••"
+                    {...register("confirmPassword")}
+                    className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                  />
+
+                  <div
+                    className="px-4 cursor-pointer"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? (
+                      <EyeIcon className="w-6 h-6" />
+                    ) : (
+                      <EyeSlashIcon className="w-6 h-6" />
+                    )}
+                  </div>
+                </div>
                 {errors.confirmPassword && (
                   <span className="text-red-600 text-[11px] pt-1">
                     {errors.confirmPassword.message}

@@ -145,7 +145,7 @@ export function Navbar() {
                               )}
                               aria-current={item.current ? "page" : undefined}
                             >
-                              {item.name}
+                              {handleTrancate(item.name, 100)}
                             </Link>
                           ) : null
                         )
@@ -300,7 +300,7 @@ export function Navbar() {
                                   key={item.id}
                                   as="div"
                                   onClick={() => activeProject(item.id)}
-                                  className="hover:bg-gray-100  cursor-pointer px-4"
+                                  className="hover:bg-gray-100  cursor-pointer pl-4"
                                 >
                                   <div
                                     className={`text-sm ${
@@ -310,7 +310,16 @@ export function Navbar() {
                                     }`}
                                   >
                                     <div className="flex py-2 w-fit">
-                                      {item.name}
+                                      {item.name.length > 20 ? (
+                                        <Tooltip
+                                          placement="left"
+                                          content={item.name}
+                                        >
+                                          {handleTrancate(item.name, 20)}
+                                        </Tooltip>
+                                      ) : (
+                                        <p>{item.name}</p>
+                                      )}
                                     </div>
 
                                     {item.id === activeProjectId ? (
@@ -414,7 +423,7 @@ export function Navbar() {
                     )}
                     aria-current={item.current ? "page" : undefined}
                   >
-                    {item.name}
+                    {handleTrancate(item.name, 100)}
                   </Disclosure.Button>
                 ))}
               </div>

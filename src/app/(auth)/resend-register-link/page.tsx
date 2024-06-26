@@ -31,6 +31,7 @@ const ResendRegisterLink = () => {
   });
 
   const resendEmail = async (values: z.infer<typeof formSchema>, e: any) => {
+    toast.dismiss();
     e.preventDefault();
     setLoader(true);
     try {

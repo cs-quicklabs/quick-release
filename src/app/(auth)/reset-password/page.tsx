@@ -73,6 +73,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
+      toast.dismiss();
       if (token) {
         await requestHandler(
           async () => await verifyResetTokenRequest({ token }),

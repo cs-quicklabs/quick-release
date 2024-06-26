@@ -17,7 +17,9 @@ import { z } from "zod";
 
 const page = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const {loggedInUser} = useUserContext();
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const { loggedInUser } = useUserContext();
 
   const [loader, setLoader] = useState(false);
   const formSchema = z
@@ -50,7 +52,8 @@ const page = () => {
 
   const updatePassword = async (values: z.infer<typeof formSchema>) => {
     await requestHandler(
-      async () => await changePasswordRequest(values, loggedInUser?.id as string),
+      async () =>
+        await changePasswordRequest(values, loggedInUser?.id as string),
       setLoader,
       (res: any) => {
         const { message } = res;
@@ -59,7 +62,7 @@ const page = () => {
       (err: any) => {
         showNotification("error", err);
       }
-    )
+    );
   };
 
   return (
@@ -87,13 +90,27 @@ const page = () => {
                   >
                     Old Password
                   </label>{" "}
-                  <input
-                    type="password"
-                    {...register("oldPassword")}
-                    id="email"
-                    className="bg-gray-50 border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="••••••••"
-                  />
+                  <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
+                    <input
+                      type={showOldPassword ? "text" : "password"}
+                      {...register("oldPassword")}
+                      id=""
+                      className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="••••••••"
+                    />
+                    <div
+                      className="px-4 cursor-pointer"
+                      onClick={() =>
+                        setShowOldPassword(!showOldPassword)
+                      }
+                    >
+                      {showOldPassword ? (
+                        <EyeIcon className="w-6 h-6" />
+                      ) : (
+                        <EyeSlashIcon className="w-6 h-6" />
+                      )}
+                    </div>
+                  </div>
                   {errors.oldPassword && (
                     <span className="text-red-600 text-[12px]">
                       {errors.oldPassword.message}
@@ -134,18 +151,32 @@ const page = () => {
                 </div>{" "}
                 <div className="mb-5">
                   <label
-                    htmlFor="password"
+                    htmlFor="••••••••"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
                     Confirm password
                   </label>{" "}
-                  <input
-                    type="text"
-                    {...register("confirmPassword")}
-                    id="password"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    placeholder="password"
-                  />
+                  <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      {...register("confirmPassword")}
+                      id=""
+                      className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                      placeholder="••••••••"
+                    />
+                    <div
+                      className="px-4 cursor-pointer"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <EyeIcon className="w-6 h-6" />
+                      ) : (
+                        <EyeSlashIcon className="w-6 h-6" />
+                      )}
+                    </div>
+                  </div>
                   {errors.confirmPassword && (
                     <span className="text-red-600 text-[12px]">
                       {errors.confirmPassword.message}

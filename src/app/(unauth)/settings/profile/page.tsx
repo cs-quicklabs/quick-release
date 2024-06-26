@@ -119,6 +119,7 @@ const Profile = () => {
     values: z.infer<typeof formSchema>,
     isEmailUpdate = false
   ) => {
+    toast.dismiss();
     try {
       setLoading((prevLoading) => ({
         ...prevLoading,
