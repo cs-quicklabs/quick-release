@@ -102,17 +102,17 @@ export function Navbar() {
           <>
             <div className="px-2 sm:px-6 lg:px-8">
               <div className="relative flex items-center justify-around">
-                <div className="flex items-center lg:hidden py-1">
+                <div className="flex items-center lg:hidden py-4">
                   {/* Mobile menu button*/}
-                  <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                    <span className="absolute -inset-0.5" />
-                    <span className="sr-only">Open main menu</span>
-                    {open ? (
-                      <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                    )}
-                  </Disclosure.Button>
+
+                  <div className="flex flex-shrink-0 items-center gap-2">
+                    <img
+                      className="h-8 w-auto"
+                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      alt="Your Company"
+                    />
+                    <span className="text-gray-300 hover:text-white hover:bg-gray-700">Quick Release</span>
+                  </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
                   <div className="flex flex-shrink-0 items-center">
@@ -145,7 +145,7 @@ export function Navbar() {
                               )}
                               aria-current={item.current ? "page" : undefined}
                             >
-                              {handleTrancate(item.name, 100)}
+                              {handleTrancate(item.name, 50)}
                             </Link>
                           ) : null
                         )
@@ -206,7 +206,22 @@ export function Navbar() {
                   </button>
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <span className="absolute -inset-0.5" />
+                        <span className="sr-only">Open main menu</span>
+                        {open ? (
+                          <XMarkIcon
+                            className="block h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        ) : (
+                          <Bars3Icon
+                            className="block h-6 w-6"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </Disclosure.Button>
+                      <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
@@ -410,22 +425,78 @@ export function Navbar() {
 
             <Disclosure.Panel className="lg:hidden mt-5">
               <div className="space-y-2 px-2 py-3">
-                {navigation.map((item) => (
+                {projects.map((item: any) => (
                   <Disclosure.Button
                     key={item.name}
                     as="a"
                     href={item.href}
                     className={classNames(
-                      item.current
+                      item.id === activeProjectId
                         ? "bg-gray-900 text-white"
                         : "text-gray-300 hover:bg-gray-700 hover:text-white",
                       "block rounded-md px-3 py-2 text-base font-medium"
                     )}
-                    aria-current={item.current ? "page" : undefined}
+                    aria-current={
+                      item.id === activeProjectId ? "page" : undefined
+                    }
                   >
-                    {handleTrancate(item.name, 100)}
+                    {handleTrancate(item.name, 50)}
                   </Disclosure.Button>
                 ))}
+              </div>
+              <div className="flex items-center px-4 py-3 gap-4">
+                <div>
+                  <img
+                    className="h-8 w-8 rounded-full"
+                    src={
+                      (loggedInUser?.profilePicture as string)
+                        ? (loggedInUser?.profilePicture as string)
+                        : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                    }
+                    alt={fullName}
+                  />
+                </div>
+                <div className="flex flex-col text-white">
+                  {fullName.length > 18 ? (
+                    <Tooltip placement="left" content={fullName}>
+                      <p className="text-base font-medium text-white">
+                        {handleTrancate(fullName, 100)}
+                      </p>
+                    </Tooltip>
+                  ) : (
+                    <p className="text-base font-medium text-white">
+                      {fullName}
+                    </p>
+                  )}
+                  {email.length > 18 ? (
+                    <Tooltip placement="left" content={email}>
+                      <p className="text-sm font-medium text-gray-400">
+                        {handleTrancate(email, 100)}
+                      </p>
+                    </Tooltip>
+                  ) : (
+                    <p className="text-sm font-medium text-gray-400">
+                      {fullName}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="px-2 py-3">
+                <Link
+                  href="/settings/profile"
+                  // onClick={handleLogout}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <div className="flex items-center">
+                    <Link href="/settings/profile">Profile Settings</Link>
+                  </div>
+                </Link>
+                <a
+                  onClick={() => setOpen(true)}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <span>Sign out</span>
+                </a>
               </div>
             </Disclosure.Panel>
           </>
