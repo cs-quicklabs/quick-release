@@ -79,6 +79,7 @@ const Project = () => {
   }, [activeUser?.id]);
 
   async function createProject(values: z.infer<typeof formSchema>, e: any) {
+    toast.dismiss();
     e.preventDefault();
     try {
       setLoader(true);

@@ -323,7 +323,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                                 onBlur={onBlur}
                                 onChange={onChange}
                                 value={value}
-                                isSearchable={false}
                               />
                             )}
                           />
@@ -359,7 +358,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                                   onChange(selectedOptions);
                                 }}
                                 value={value}
-                                isSearchable={false}
                               />
                             )}
                           />
