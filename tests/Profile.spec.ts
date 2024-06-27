@@ -41,3 +41,14 @@ test('verify Update profile',async({page})=>{
     await page.locator('input[name="lastName"]').fill('Gupta')
     await page.getByText('Save').click()
 })
+test('verify admin able Upload profile picture',async({page})=>{
+    await page.getByText('Open user menu').click()
+    await page.getByText('Profile Settings').click()
+    const filechooserPromose=page.waitForEvent('filechooser')
+    await page.locator("//img[@alt='No Image']").click()
+    const filechooser=await filechooserPromose
+    await filechooser.setFiles('C:/Users/Admin/OneDrive/Pictures/Screenshots/Test.png')
+
+    await page.waitForTimeout(10000)
+   
+})
