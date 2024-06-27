@@ -110,7 +110,7 @@ export function Navbar() {
                       src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                       alt="Your Company"
                     />
-                    <span className="text-gray-300 hover:text-white hover:bg-gray-700">Quick Release</span>
+                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">Quick Release</span>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
