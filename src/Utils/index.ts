@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
 export const showNotification = (type: TypeOptions, message: string) => {
@@ -59,3 +59,9 @@ export const handleTrancate = (text: string, trucateNum: number) => {
   }
   return text;
 }
+
+export const apiClient = axios.create({
+  baseURL: "/api",
+  withCredentials: true,
+  timeout: 120000,
+});

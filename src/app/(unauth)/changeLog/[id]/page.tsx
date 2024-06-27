@@ -19,7 +19,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { ChangeLogType, FormChangeLogPost, IReleaseCategoriesOption, ReleaseTagsOption } from "@/types";
+import {
+  ChangeLogType,
+  FormChangeLogPost
+} from "@/types";
+import {
+  IReleaseCategoriesOption,
+  ReleaseTagsOption,
+} from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";

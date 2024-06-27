@@ -12,7 +12,7 @@ import {
   toggleArchiveOneChangeLogRequest,
   updateOneChangeLogRequest,
   getAllPublicChangeLogsRequest,
-} from "@/api";
+} from "@/api/changelog";
 import { useProjectContext } from "./ProjectContext";
 
 type ChangeLogMapType = {

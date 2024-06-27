@@ -1,9 +1,9 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getLoggedInUserDetailsRequest } from "@/api";
+import { getLoggedInUserDetailsRequest } from "@/api/authentication";
 import { requestHandler, showNotification } from "@/Utils";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/Loading";

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getAllProjectsRequest, getOneActiveProjectRequest } from "@/api";
+import { getAllProjectsRequest, getOneActiveProjectRequest } from "@/api/project";
 import { requestHandler, showNotification } from "@/Utils";
-import { Project } from "@/types";
+import { Project } from "@/interfaces";
 import { useUserContext } from "./UserContext";
 
 type ProjectMapType = {

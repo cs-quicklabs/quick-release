@@ -1,12 +1,12 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { fileUploadRequest } from "@/api";
+import { fileUploadRequest } from "@/api/fileUpload";
 import { useUserContext } from "@/app/context/UserContext";
 import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";

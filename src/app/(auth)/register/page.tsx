@@ -1,7 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { registerUserRequest } from "@/api";
+import { registerUserRequest } from "@/api/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
