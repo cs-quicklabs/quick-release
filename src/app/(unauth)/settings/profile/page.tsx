@@ -1,7 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { fileUploadRequest } from "@/api/fileUpload";
+import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
 import { useUserContext } from "@/app/context/UserContext";
 import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";

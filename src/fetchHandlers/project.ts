@@ -1,4 +1,4 @@
-import { apiClient } from "./../Utils";
+import { apiClient } from ".";
 
 const getAllProjectsRequest = () => {
     return apiClient.get(`/projects/cu`);

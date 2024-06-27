@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getLoggedInUserDetailsRequest } from "@/api/authentication";
+import { getLoggedInUserDetailsRequest } from "@/fetchHandlers/authentication";
 import { requestHandler, showNotification } from "@/Utils";
 import { User } from "@/interfaces";
 import { signOut, useSession } from "next-auth/react";

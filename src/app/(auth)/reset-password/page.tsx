@@ -1,7 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { resetPasswordRequest, verifyResetTokenRequest } from "@/api/authentication";
+import { resetPasswordRequest, verifyResetTokenRequest } from "@/fetchHandlers/authentication";
 import Loader from "@/components/Loader";
 import Loading from "@/components/Loading";
 import { AuthType } from "@/types";

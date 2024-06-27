@@ -1,5 +1,5 @@
 import { AuthType } from "@/types";
-import { apiClient } from "./../Utils";
+import { apiClient } from ".";
 
 
 const registerUserRequest = (data: any) => {

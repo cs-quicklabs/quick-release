@@ -11,7 +11,7 @@ import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { requestHandler, showNotification } from "@/Utils";
-import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/api/authentication";
+import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/fetchHandlers/authentication";
 import AlertModal from "./AlertModal";
 
 export default function LoginForm() {

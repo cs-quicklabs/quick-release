@@ -1,5 +1,5 @@
 import { ApiFilterQueryType, ChangeLogType } from "@/types";
-import { apiClient } from "./../Utils";
+import { apiClient } from ".";
 
 const createChangeLogRequest = (data: ChangeLogType) => {
     return apiClient.post("/changelogs", data);

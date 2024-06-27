@@ -1,7 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { changePasswordRequest } from "@/api/authentication";
+import { changePasswordRequest } from "@/fetchHandlers/authentication";
 import { useUserContext } from "@/app/context/UserContext";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";

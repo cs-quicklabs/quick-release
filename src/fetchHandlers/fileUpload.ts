@@ -1,4 +1,4 @@
-import { apiClient } from "./../Utils";
+import { apiClient } from ".";
 
 const fileUploadRequest = (data: FormData) => {
     return apiClient.post("/upload", data, {

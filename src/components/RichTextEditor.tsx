@@ -8,7 +8,7 @@ import "react-quill/dist/quill.snow.css";
 // @ts-ignore
 import ImageUploader from "quill-image-uploader";
 import { requestHandler, showNotification } from "@/Utils";
-import { fileUploadRequest } from "@/api/fileUpload";
+import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
 
 Quill.register("modules/imageUploader", ImageUploader);
 
