@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from "react";
-import { useOnScreen } from "@/Utils/customHooks";
+import { useOnScreen } from "@/hooks/useOnScreen";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { classNames } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

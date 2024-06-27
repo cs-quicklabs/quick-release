@@ -2,7 +2,7 @@
 
 import { useProjectContext } from "@/app/context/ProjectContext";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useSession } from "next-auth/react";

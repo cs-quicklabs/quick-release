@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 
 interface ResetPasswordProps {
   user: User | null;

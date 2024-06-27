@@ -33,10 +33,13 @@ import { Input } from "@/components/ui/input";
 import BaseTemplate from "@/templates/BaseTemplate";
 import {
   ChangeLogType,
-  FormChangeLogPost,
+  FormChangeLogPost
+} from "@/types";
+import {
   IReleaseCategoriesOption,
   ReleaseTagsOption,
-} from "@/types";
+} from "@/interfaces";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import moment from "moment";

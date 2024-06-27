@@ -1,10 +1,11 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { resetPasswordRequest, verifyResetTokenRequest } from "@/api";
+import { resetPasswordRequest, verifyResetTokenRequest } from "@/fetchHandlers/authentication";
 import Loader from "@/components/Loader";
 import Loading from "@/components/Loading";
-import { AuthType, User } from "@/types";
+import { AuthType } from "@/types";
+import { User } from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
