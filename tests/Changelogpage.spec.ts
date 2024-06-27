@@ -49,3 +49,59 @@ test.beforeEach(" Verify Admin able to click on newchange log ", async ({ page }
     await page.waitForTimeout(5000);
   });
 
+
+  test(" Verify user able to Edit changelog", async ({ page }) => {
+
+    const title="Test";
+    const description='Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry';
+    const version='2.0';
+    await page.locator('input[name="title"]').fill(title)
+    await page.locator("//div[@class='ql-editor ql-blank']").fill(description)
+    await page.getByPlaceholder("Enter release version").fill(version)
+    await page.locator('#react-select-3-input').click()
+    await page.getByText('New', { exact: true }).click();
+    await page.locator('#react-select-5-input').click()
+    await page.getByText('Web', { exact: true }).click();
+    await page.getByText("Change published status").click()
+    await page.getByText("Publish Changelog Now").click()
+
+
+      await expect(
+        page.locator("//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing a')]")
+      ).toHaveText(description);
+    await page.locator("(//*[name()='svg'][@name='Open options'])[1]").click()
+    await page.getByText("Edit").click()
+    await expect( page.getByText("Edit change log")).toBeVisible()
+    await page.locator('input[name="title"]').click()
+    await page.locator('input[name="title"]').press('Backspace')
+    await page.locator('input[name="title"]').fill('test12')
+    await page.getByText("Publish Changelog Now").click()
+
+   
+  });
+
+  test(" Verify user able to Delete changelog", async ({ page }) => {
+
+    const title="Test";
+    const description='Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry';
+    const version='2.0';
+    await page.locator('input[name="title"]').fill(title)
+    await page.locator("//div[@class='ql-editor ql-blank']").fill(description)
+    await page.getByPlaceholder("Enter release version").fill(version)
+    await page.locator('#react-select-3-input').click()
+    await page.getByText('New', { exact: true }).click();
+    await page.locator('#react-select-5-input').click()
+    await page.getByText('Web', { exact: true }).click();
+    await page.getByText("Change published status").click()
+    await page.getByText("Publish Changelog Now").click()
+
+
+      await expect(
+        page.locator("//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing a')]")
+      ).toHaveText(description);
+    await page.locator("(//*[name()='svg'][@name='Open options'])[1]").click()
+    await page.getByText("Delete").click()
+   
+
+   
+  });
