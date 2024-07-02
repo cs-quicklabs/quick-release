@@ -7,10 +7,16 @@ import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  Bars3Icon,
+  BellIcon,
+  MagnifyingGlassIcon,
+  PlusCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import axios from "axios";
 import { Tooltip } from "flowbite-react";
-import { signOut } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
@@ -18,6 +24,7 @@ import { useMemo } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
+import CheckCircleIcon from "@/svg-icons/CheckCircleIcon";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -61,7 +68,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [
       {
-        name: WEB_DETAILS.name,
+        name: "Quick Release",
         href: "/allLogs",
         current: true,
       },
@@ -106,20 +113,26 @@ export function Navbar() {
                   {/* Mobile menu button*/}
 
                   <div className="flex flex-shrink-0 items-center gap-2">
-                    <img
+                    <Image
                       className="h-8 w-auto"
                       src={WEB_DETAILS.logo}
-                      alt={WEB_DETAILS.name}
+                      alt="Your Company"
+                      width={40}
+                      height={40}
                     />
-                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">{WEB_DETAILS.name}</span>
+                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
+                      Quick Release
+                    </span>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
                   <div className="flex flex-shrink-0 items-center">
-                    <img
+                    <Image
                       className="h-8 w-auto"
                       src={WEB_DETAILS.logo}
-                      alt={WEB_DETAILS.name}
+                      alt="Your Company"
+                      width={40}
+                      height={40}
                     />
                   </div>
                   <div className="hidden lg:ml-6 lg:block">
@@ -160,18 +173,10 @@ export function Navbar() {
                     </label>{" "}
                     <div className="relative">
                       <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
-                        <svg
+                        <MagnifyingGlassIcon
                           className="h-5 w-5 text-gray-400"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
                           aria-hidden="true"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                            clipRule="evenodd"
-                          ></path>
-                        </svg>
+                        />
                       </div>{" "}
                       <input
                         id="search"
@@ -189,20 +194,7 @@ export function Navbar() {
                     className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                   >
                     <span className="sr-only">View notifications</span>{" "}
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                      ></path>
-                    </svg>
+                    <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                   <Menu as="div" className="relative ml-3">
                     <div>
@@ -224,14 +216,16 @@ export function Navbar() {
                       <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
-                        <img
+                        <Image
                           className="h-8 w-8 rounded-full"
                           src={
                             (loggedInUser?.profilePicture as string)
                               ? (loggedInUser?.profilePicture as string)
-                              : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                              : "/images/userAvatar.png"
                           }
                           alt={fullName}
+                          width={32}
+                          height={32}
                         />
                       </Menu.Button>
                     </div>
@@ -279,21 +273,7 @@ export function Navbar() {
                             href="/create-project"
                             className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                           >
-                            <svg
-                              className="w-4 h-4 me-1"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 7.8v8.4M7.8 12h8.4m4.8 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                              ></path>
-                            </svg>
+                            <PlusCircleIcon className="h-5 w-5 mr-2" />
                             Add new project
                           </Link>
                         </Menu.Item>
@@ -338,20 +318,8 @@ export function Navbar() {
                                     </div>
 
                                     {item.id === activeProjectId ? (
-                                      <div>
-                                        <svg
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          viewBox="0 0 20 20"
-                                          fill="green"
-                                          className="w-5 h-5 ml-1 text-center"
-                                          aria-hidden="true"
-                                        >
-                                          <path
-                                            fillRule="evenodd"
-                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                                            clipRule="evenodd"
-                                          ></path>
-                                        </svg>
+                                      <div className="ml-1">
+                                        <CheckCircleIcon className="w-5 h-5" />
                                       </div>
                                     ) : null}
                                     {loading.activeProjectLoading[item.id] && (
@@ -446,14 +414,16 @@ export function Navbar() {
               </div>
               <div className="flex items-center px-4 py-3 gap-4">
                 <div>
-                  <img
+                  <Image
                     className="h-8 w-8 rounded-full"
                     src={
                       (loggedInUser?.profilePicture as string)
                         ? (loggedInUser?.profilePicture as string)
-                        : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7QTsB1-eV2UCwBXvN3pxHXSd2JpPFAclggWqhjex2dQ&s"
+                        : "/images/userAvatar.png"
                     }
                     alt={fullName}
+                    width={40}
+                    height={40}
                   />
                 </div>
                 <div className="flex flex-col text-white">
