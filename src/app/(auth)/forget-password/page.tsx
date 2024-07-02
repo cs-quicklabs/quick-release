@@ -1,7 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { forgetPasswordRequest } from "@/api";
+import { forgetPasswordRequest } from "@/fetchHandlers/authentication";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -113,7 +113,7 @@ const ForgotPassword = () => {
                 href="/"
                 className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
               >
-                Sign in
+                Login here
               </Link>
             </p>
           </form>

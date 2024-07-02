@@ -9,7 +9,7 @@ import Link from "next/link";
 import { ChangeLogsStatus } from "@/Utils/constants";
 import Spin from "@/components/Spin";
 import { Button } from "../ui/button";
-import { useOnScreen } from "@/Utils/customHooks";
+import { useOnScreen } from "@/hooks/useOnScreen";
 import { classNames } from "@/lib/utils";
 
 type FilterType = {

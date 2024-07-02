@@ -1,11 +1,11 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { changePasswordRequest } from "@/api";
+import { changePasswordRequest } from "@/fetchHandlers/authentication";
 import { useUserContext } from "@/app/context/UserContext";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
