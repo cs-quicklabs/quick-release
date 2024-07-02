@@ -1,6 +1,7 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
+import { WEB_DETAILS } from "@/Utils/constants";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -103,7 +104,7 @@ const Register = () => {
             src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
             alt="logo"
           />
-          Quick Release
+          {WEB_DETAILS.name}
         </Link>{" "}
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
