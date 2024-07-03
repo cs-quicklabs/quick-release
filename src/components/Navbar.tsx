@@ -110,7 +110,9 @@ export function Navbar() {
                       src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
                       alt="Your Company"
                     />
-                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">Quick Release</span>
+                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
+                      Quick Release
+                    </span>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
@@ -373,7 +375,7 @@ export function Navbar() {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              href="/settings/profile"
+                              href="/settings/profile/general"
                               // onClick={handleLogout}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
@@ -381,12 +383,23 @@ export function Navbar() {
                               )}
                             >
                               <div className="flex  items-center">
-                                <Link
-                                  href="/settings/profile"
-                                  className="text-[15px] font-[490] text-black text-sm"
-                                >
-                                  Profile Settings
-                                </Link>
+                                Profile Settings
+                              </div>
+                            </Link>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              href="/settings/team/tags"
+                              // onClick={handleLogout}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                              )}
+                            >
+                              <div className="flex  items-center">
+                                Team Settings
                               </div>
                             </Link>
                           )}

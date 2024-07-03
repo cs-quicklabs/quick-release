@@ -25,14 +25,6 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Missing title, description or release version");
     }
 
-    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
-      throw new ApiError(400, "Release category is invalid");
-    }
-
-    if (!isValidArray(body.releaseTags, ["ios", "web", "android"])) {
-      throw new ApiError(400, "Release tag is invalid");
-    }
-
     const releaseTags = await db.releaseTag.findMany({
       where: {
         organisationId: user.organisationId,
@@ -41,6 +33,14 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+
+    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+      throw new ApiError(400, "Release category is invalid");
+    }
+
+    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+      throw new ApiError(400, "Release tag is invalid");
+    }
 
     const newChangeLog = await db.log.create({
       data: {

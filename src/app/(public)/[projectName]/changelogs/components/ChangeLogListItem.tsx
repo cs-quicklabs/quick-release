@@ -3,10 +3,11 @@
 import React, { useMemo, useRef } from "react";
 import { ChangeLogsReleaseCategories, } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
-import { ChangeLogType, IReleaseTag } from "@/types";
+import { ChangeLogType } from "@/types";
 import moment from "moment";
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
+import { IReleaseTag } from "@/interfaces";
 
 const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const contentContainerRef = useRef<HTMLDivElement | null>(null);

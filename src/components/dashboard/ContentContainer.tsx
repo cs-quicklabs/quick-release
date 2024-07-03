@@ -25,7 +25,7 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IReleaseTag } from "@/types";
+import { IReleaseTag } from "@/interfaces";
 
 
 type PrevStateType = {

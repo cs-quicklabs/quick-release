@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
-import { IReleaseTag } from "@/types";
+import { IReleaseTag } from "@/interfaces";
 
 type AddReleaseTagProps = {
   selectedReleaseTagId: number | null;

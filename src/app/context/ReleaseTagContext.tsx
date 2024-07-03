@@ -2,9 +2,9 @@
 
 import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { requestHandler, showNotification } from "@/Utils";
-import { createReleaseTagRequest, deleteReleaseTagRequest, getAllReleaseTagsRequest, updateReleaseTagRequest } from "@/api";
 import { useUserContext } from "./UserContext";
-import { IReleaseTag } from "@/types";
+import { IReleaseTag } from "@/interfaces";
+import { createReleaseTagRequest, deleteReleaseTagRequest, getAllReleaseTagsRequest, updateReleaseTagRequest } from "../../fetchHandlers/releaseTags";
 
 type ReleaseTagMapType = {
   [key: string]: IReleaseTag | null;

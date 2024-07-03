@@ -89,8 +89,12 @@ export async function DELETE(
       throw new ApiError(404, "Release tag not found");
     }
 
+    await db.releaseTagOnLogs.deleteMany({
+      where: { releaseTagId: id },
+    });
+
     const deletedReleaseTag = await db.releaseTag.delete({
-      where: { id, organisationId: user.organisationId },
+      where: { id },
     });
 
     return NextResponse.json(

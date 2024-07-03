@@ -5,7 +5,8 @@ import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, REVALIDATE_API } from "@/Utils/constants";
 import { classNames } from "@/lib/utils";
 import { notFound } from "next/navigation";
-import { ChangeLogType, IReleaseTag } from "@/types";
+import { ChangeLogType } from "@/types";
+import { IReleaseTag } from "@/interfaces";
 
 type PagePayloadType = {
   params: {

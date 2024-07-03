@@ -1,3 +1,4 @@
+import { isValidArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -108,6 +109,10 @@ export async function PUT(
     }
 
     const body = await req.json();
+    if (!body.title || !body.description || !body.releaseVersion) {
+      throw new ApiError(400, "Missing title, description or release version");
+    }
+
     const releaseTags = await db.releaseTag.findMany({
       where: {
         organisationId: user.organisationId,
@@ -116,6 +121,14 @@ export async function PUT(
         },
       },
     });
+
+    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+      throw new ApiError(400, "Release category is invalid");
+    }
+
+    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+      throw new ApiError(400, "Release tag is invalid");
+    }
 
     const changeLog = await db.log.findFirst({
       where: {

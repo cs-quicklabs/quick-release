@@ -2,7 +2,7 @@ import { Props, ActionMeta } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import React, { useState } from "react";
 import { classNames } from "@/lib/utils";
-import { IReleaseTag, ReleaseTagsOption } from "@/types";
+import { IReleaseTag, ReleaseTagsOption } from "@/interfaces";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import { getReleaseTagCode } from "@/Utils";
 

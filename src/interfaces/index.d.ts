@@ -54,3 +54,10 @@ export interface IReleaseCategoriesOption {
     adminId?: String;
     isActive: Boolean;
   }
+
+  export interface IReleaseTag {
+    id?: number;
+    name: string;
+    code?: string;
+    organisationId?: string;
+  }
