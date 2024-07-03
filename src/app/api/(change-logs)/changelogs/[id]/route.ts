@@ -18,6 +18,13 @@ export async function GET(
   { params }: { params: ParamsType }
 ) {
   return asyncHandler(async () => {
+    const session = await getServerSession(authOptions);
+    // @ts-ignore
+    const userId = session?.user?.id!;
+
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const { id } = params;
 
     const changeLog = await db.log.findFirst({

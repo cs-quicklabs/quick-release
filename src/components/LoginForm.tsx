@@ -1,26 +1,26 @@
 "use client";
 
-import Modal from "./Modal";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { requestHandler, showNotification } from "@/Utils";
+import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/fetchHandlers/authentication";
+import AlertModal from "./AlertModal";
 
 export default function LoginForm() {
   const router = useRouter();
-  const params = useParams();
   const search = useSearchParams();
-  const token = search.get("token");
+  const token = useMemo(() => search.get("token"), [search]);
 
   const [loader, setLoader] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
-  const [verifiedUser, setVerifiedUser] = useState<boolean>(false);
   const [userEmail, setUserEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +47,7 @@ export default function LoginForm() {
   });
 
   async function loginUser(values: z.infer<typeof formSchema>, e: any) {
+    toast.dismiss();
     try {
       setLoader(true);
       const res = await signIn("credentials", {
@@ -68,49 +69,42 @@ export default function LoginForm() {
       if (error) {
         toast.error(error ? "Invalid Credentials" : "");
       }
+    } finally {
+      setLoader(false);
     }
-    setLoader(false);
   }
   useEffect(() => {
-    if (token) {
-      const verifyToken = async () => {
-        try {
-          const res = await axios.post("/api/verify-register-token", {
-            id: token,
-          });
-          if (res.data.isVerified === true) {
-            setVerifiedUser(true);
-          } else {
-            setVerifiedUser(false);
-          }
-        } catch (error: any) {
-          console.log(error);
-          toast.error(error.response.data);
-
-          setVerifiedUser(false);
-        }
-      };
+      if (token) {
+        const verifyToken = async () => {
+          await requestHandler(
+            async () => await verifyRegisterTokenRequest({token}),
+            setLoader,
+            (res: any) => {
+              const { message } = res;
+              showNotification("success", message);
+            },
+            (errMessage) => {
+              showNotification("error", errMessage);
+            }
+          );
+      }
       verifyToken();
     }
   }, []);
 
-  useEffect(() => {
-    if (verifiedUser === true) {
-      toast.success("Your account has been verified");
-    }
-  }, [verifiedUser]);
-
   const resendEmail = async () => {
-    try {
-      setResendLoading(true);
-      await axios.post(`/api/resend-verification-link`, { email: userEmail });
-      toast.success("Verification link sent to email");
-      setResendLoading(false);
-    } catch (e: any) {
-      console.log(e, "er");
-      toast.error("Email not registered");
-      setResendLoading(false);
-    }
+    await requestHandler(
+      async () => await resendVerificationLinkRequest({ email: userEmail }),
+      setResendLoading,
+      (res: any) => {
+        const { message } = res;
+        showNotification("success", message);
+        router.push("/");
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+      }
+    );
   };
   return (
     <>
@@ -155,16 +149,19 @@ export default function LoginForm() {
                   </span>
                 )}
                 {isOpen && (
-                  <Modal
-                    open={isOpen}
-                    setIsOpen={setIsOpen}
-                    buttonText="Resend Verification Link"
+                  <AlertModal
+                    show={isOpen}
                     title="Account Not Confirmed"
-                    onClick={resendEmail}
+                    message="Check your email if already registered"
+                    okBtnText="Resend Verification Link"
+                    cancelBtnText="Cancel"
                     loading={resendLoading}
-                  >
-                    <div>Check your email if already registered</div>
-                  </Modal>
+                    onClickOk={ async () => {
+                      await resendEmail(),
+                      setIsOpen(false)
+                    }}
+                    onClickCancel={() => setIsOpen(false)}
+                  />
                 )}
               </div>{" "}
               <div>
@@ -187,42 +184,7 @@ export default function LoginForm() {
                     className="px-4 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-6 h-6"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-                        />
-                      </svg>
-                    )}
+                    {showPassword ? <EyeIcon className="w-6 h-6" /> : <EyeSlashIcon className="w-6 h-6" />}
                   </div>
                 </div>
                 {errors.password && (
@@ -272,7 +234,7 @@ export default function LoginForm() {
                     />
                   </div>
                 ) : (
-                  "Sign In"
+                  "Log in"
                 )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">

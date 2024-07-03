@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 
 interface ResetPasswordProps {
   user: User | null;
@@ -29,6 +29,7 @@ const ResetPasswordForm = ({ user }: ResetPasswordProps) => {
   const formSchema = z.object({
     password: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .min(6, { message: "Password should be minimum 6 characters" }),
   });

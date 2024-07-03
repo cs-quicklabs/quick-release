@@ -1,5 +1,17 @@
 "use client";
 
+import { checkRichTextEditorIsEmpty } from "@/Utils";
+import {
+  ChangeLogsReleaseCategories,
+  ChangeLogsReleaseTags,
+  ChangeLogsReleaseActions,
+} from "@/Utils/constants";
+import { useChangeLogContext } from "@/app/context/ChangeLogContext";
+import { useProjectContext } from "@/app/context/ProjectContext";
+import DatePicker from "@/components/DatePicker";
+import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
+import Loading from "@/components/Loading";
+import TimePicker from "@/components/TimePicker";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,11 +31,29 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { ChangeLogType, FormChangeLogPost, IReleaseCategoriesOption, IReleaseTag, ReleaseTagsOption } from "@/types";
+import {
+  ChangeLogType,
+  FormChangeLogPost
+} from "@/types";
+import {
+  IReleaseCategoriesOption,
+  ReleaseTagsOption,
+} from "@/interfaces";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import moment from "moment";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import React, { Fragment, use, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, {
+  use,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 // import { useMutation } from "react-query";
 import Select, { GroupBase, MenuProps, components } from "react-select";
@@ -57,22 +87,26 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
     createChangeLog,
     getChangeLog,
     updateChangeLog,
+    getAllChangeLogs,
+    list: changeLogsList,
     map: changeLogMap,
   } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const actions: ListboxOption[] = useMemo(() => Object.values(ChangeLogsReleaseActions), []);
-  const [selectedAction, setSelectedAction] = useState<ListboxOption>(actions[0]);
+  const actions: ListboxOption[] = useMemo(
+    () => Object.values(ChangeLogsReleaseActions),
+    []
+  );
+  const [selectedAction, setSelectedAction] = useState<ListboxOption>(
+    actions[0]
+  );
 
-  const {
-    activeProjectId,
-    getActiveProject,
-  } = useProjectContext();
+  const { activeProjectId, getActiveProject } = useProjectContext();
 
   const fetchChangeLog = useCallback(async () => {
-    getChangeLog(params.id, setLoading);
-  }, [params.id]);
+    getAllChangeLogs({ projectId: activeProjectId! });
+  }, [activeProjectId]);
 
   const changelog = useMemo(() => {
     return changeLogMap[params.id] || null;
@@ -85,14 +119,30 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
     getActiveProject(setIsLoading);
   }, [params.id]);
 
+  useEffect(() => {
+    if (params.id !== "add" && changeLogsList && changeLogsList.length > 0) {
+      const changeLogId = changeLogsList.find(
+        (changeLog) => changeLog === params.id
+      );
+      if (!changeLogId) {
+        router.push("/error");
+      }
+    }
+  }, [changeLogsList]);
+
   const formSchema = z.object({
-    title: z.string().min(1, { message: "Required" }),
-    description: z.string().min(1, { message: "Required" }).refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-    releaseVersion: z.string().min(1, { message: "Required" }),
-    releaseCategories: z.array(z.object({
-      value: z.string(),
-      label: z.string(),
-    })
+    title: z.string().trim().min(1, { message: "Required" }),
+    description: z
+      .string()
+      .trim()
+      .min(1, { message: "Required" })
+      .refine(checkRichTextEditorIsEmpty, { message: "Required" }),
+    releaseVersion: z.string().trim().min(1, { message: "Required" }),
+    releaseCategories: z.array(
+      z.object({
+        value: z.string(),
+        label: z.string(),
+      })
     ),
     // releaseTags: z.string().min(1, { message: "Required" }).max(50, {
     //   message: "Last Name can be maximum 50 characters",
@@ -105,13 +155,13 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
             .min(0, { message: "At least one category is required" }),
           label: z
             .string()
-            .min(0, { message: "At least one category is required" })
+            .min(0, { message: "At least one category is required" }),
         })
       )
       .refine((arr) => arr.length >= 0, {
         message: "At least one category is required",
       }),
-    scheduledTime: z.date().optional()
+    scheduledTime: z.date().optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -130,10 +180,15 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
     const changelogPost: ChangeLogType = {
       ...data,
       status: selectedAction.id,
-      releaseCategories: data.releaseCategories.map(category => category.value),
-      releaseTags: data.releaseTags.map(category => category.value),
+      releaseCategories: data.releaseCategories.map(
+        (category) => category.value
+      ),
+      releaseTags: data.releaseTags.map((category) => category.value),
       projectId: activeProjectId!,
-      scheduledTime: selectedAction.id === "published" ? moment().toDate() : data.scheduledTime
+      scheduledTime:
+        selectedAction.id === "published"
+          ? moment().toDate()
+          : data.scheduledTime,
     };
 
     if (params.id !== "add") {
@@ -203,7 +258,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
     return () => {
       prevProps.current = {
         isSaving,
-        loading
+        loading,
       };
     };
   }, [isSaving, loading]);
@@ -224,11 +279,13 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
     <BaseTemplate>
       <>
         <div className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
-          <Form {...form} >
+          <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
                 <CardTitle className="text-lg font-medium leading-6 text-gray-900">
-                  {params.id === "add" ? "Add New Change Log" : "Edit Change Log"}
+                  {params.id === "add"
+                    ? "Add New Change Log"
+                    : "Edit Change Log"}
                 </CardTitle>
                 <CardDescription className="mt-1 text-sm text-gray-500">
                   {
@@ -297,7 +354,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                   />
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2 max-w-2xl">
                   <FormField
                     control={form.control}
                     name="releaseCategories"
@@ -312,6 +369,9 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                               field: { onChange, onBlur, value, name },
                             }) => (
                               <Select
+                                classNames={{
+                                  control: () => "max-w-[640px]",
+                                }}
                                 isMulti
                                 name={name}
                                 options={releaseCategoriesOptions}
@@ -330,7 +390,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                   />
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2 max-w-2xl">
                   <FormField
                     control={form.control}
                     name="releaseTags"
@@ -363,9 +423,8 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                   />
                 </div>
 
-                {
-                  selectedAction.id === "scheduled" &&
-                  < div className="grid gap-2">
+                {selectedAction.id === "scheduled" && (
+                  <div className="grid gap-2">
                     <FormField
                       control={form.control}
                       name="scheduledTime"
@@ -378,14 +437,20 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                               <DatePicker
                                 className="justify-start bg-white"
                                 {...field}
-                                onChange={selectedDate => field.onChange(selectedDate ?? moment().toDate())}
+                                onChange={(selectedDate) =>
+                                  field.onChange(
+                                    selectedDate ?? moment().toDate()
+                                  )
+                                }
                               />
                             </FormControl>
 
                             <FormControl>
                               <TimePicker
                                 value={moment(field.value)}
-                                onChange={(value) => field.onChange(value.toDate())}
+                                onChange={(value) =>
+                                  field.onChange(value.toDate())
+                                }
                               />
                             </FormControl>
                           </div>
@@ -395,8 +460,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                       )}
                     />
                   </div>
-                }
-
+                )}
               </CardContent>
               <CardFooter className="justify-end px-0">
                 <Button
@@ -426,7 +490,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
           </Form>
         </div>
       </>
-    </BaseTemplate >
+    </BaseTemplate>
   );
 };
 

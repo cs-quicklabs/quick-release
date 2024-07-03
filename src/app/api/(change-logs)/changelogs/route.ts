@@ -1,3 +1,4 @@
+import { isValidArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -19,6 +20,18 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+
+    if (!body.title || !body.description || !body.releaseVersion) {
+      throw new ApiError(400, "Missing title, description or release version");
+    }
+
+    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+      throw new ApiError(400, "Release category is invalid");
+    }
+
+    if (!isValidArray(body.releaseTags, ["ios", "web", "android"])) {
+      throw new ApiError(400, "Release tag is invalid");
+    }
 
     const releaseTags = await db.releaseTag.findMany({
       where: {
@@ -64,6 +77,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   return asyncHandler(async () => {
+    const session = await getServerSession(authOptions);
+    // @ts-ignore
+    const userId = session?.user?.id!;
+
+    if(!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null };
 

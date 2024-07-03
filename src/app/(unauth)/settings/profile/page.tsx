@@ -1,15 +1,18 @@
 "use client";
 
+import { requestHandler, showNotification } from "@/Utils";
+import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
+import { useUserContext } from "@/app/context/UserContext";
 import Modal from "@/components/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { User } from "@/types";
+import { User } from "@/interfaces";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
@@ -17,25 +20,24 @@ import { z } from "zod";
 
 const Profile = () => {
   const router = useRouter();
-  const [activeUser, setActiveUser] = useState<User>();
-  const [selectedFile, setSelectedFile] = useState();
-  const [fileName, setFileName] = useState<any>(activeUser?.profilePicture);
+  const { loggedInUser } = useUserContext();
+  const [fileName, setFileName] = useState<any>(loggedInUser?.profilePicture);
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
-
+  const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const [loading, setLoading] = useState({
     profileLoading: false,
-    imageUploadLoading: false,
   });
   const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
-    firstName: z.string().min(1, { message: "Required" }).max(50, {
+    firstName: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Fisrt Name can be maximum 50 characters",
     }),
-    lastName: z.string().min(1, { message: "Required" }).max(50, {
+    lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Last Name can be maximum 50 characters",
     }),
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
     profilePicture: z.unknown(),
@@ -50,100 +52,80 @@ const Profile = () => {
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: activeUser?.firstName as string,
-      lastName: activeUser?.lastName as string,
-      email: activeUser?.email as string,
+      firstName: loggedInUser?.firstName as string,
+      lastName: loggedInUser?.lastName as string,
+      email: loggedInUser?.email as string,
       profilePicture: fileName,
     },
   });
 
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-      setFileName(res.data.profilePicture);
-    } catch (err) {
-      console.log(err);
-    }
-
-    setLoading((prevLoading) => ({
-      ...prevLoading,
-      activeUserLoading: false,
-    }));
-  };
-
-  useEffect(() => {
-    getActiveUser();
-  }, []);
-
   useEffect(() => {
     const setDefaultValues = () => {
-      if (activeUser) {
+      if (loggedInUser) {
         reset({
-          firstName: activeUser.firstName as string,
-          lastName: activeUser.lastName as string,
-          email: activeUser.email as string,
+          firstName: loggedInUser.firstName as string,
+          lastName: loggedInUser.lastName as string,
+          email: loggedInUser.email as string,
         });
       }
     };
 
     setDefaultValues();
-  }, [activeUser]);
+  }, [loggedInUser]);
 
   const formValues = getValues();
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
-
     if (file) {
-      setSelectedFile(file);
-      await uploadImage(file, event);
+      await uploadImage.upload(file);
     } else {
       console.error("No file selected.");
     }
   };
 
-  const uploadImage = async (file: any, event: any) => {
-    event.preventDefault();
+  const uploadImage = useMemo(() => ({
+    upload: (file: File) => {
+      return new Promise(async (resolve, reject) => {
+        // check if valid image exists
+        const extension = file.name.toLowerCase().split('.').pop();
+        if (!["png", "jpg", "jpeg"].includes(extension!)) {
+          const errMessage = "Invalid file type";
+          showNotification("error", errMessage);
+          return reject(errMessage);
+        }
 
-    try {
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        imageUploadLoading: true,
-      }));
-      const formData = new FormData();
-      formData.append("image", file);
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("onModal", "ProfilePictures");
 
-      const response = await axios.post("/api/image-upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+        await requestHandler(
+          async () => await fileUploadRequest(formData),
+          setImageUploadLoading,
+          (res: any) => {
+            setFileName(res.data.url);
+            showNotification("success", res?.message);
+          },
+          (errMessage) => {
+            showNotification("error", errMessage);
+            reject(errMessage);
+          }
+        );
       });
-      setFileName(response.data.fileName);
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        imageUploadLoading: false,
-      }));
-    } catch (error) {
-      console.error("Error uploading image:", error);
-
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        imageUploadLoading: false,
-      }));
     }
-  };
+  }), []);
 
   const updateProfile = async (
     values: z.infer<typeof formSchema>,
     isEmailUpdate = false
   ) => {
+    toast.dismiss();
     try {
       setLoading((prevLoading) => ({
         ...prevLoading,
         profileLoading: true,
       }));
-      await axios.post(`/api/update-profile/${activeUser?.id}`, {
+      await axios.post(`/api/update-profile/${loggedInUser?.id}`, {
         ...values,
         profilePicture: fileName,
       });
@@ -171,8 +153,9 @@ const Profile = () => {
     values: z.infer<typeof formSchema>,
     e: any
   ) => {
-    if (activeUser?.email === values.email) {
+    if (loggedInUser?.email === values.email) {
       updateProfile(values);
+      window.location.reload();
     } else {
       setIsOpen(true);
     }
@@ -203,7 +186,7 @@ const Profile = () => {
                     Upload avatar
                   </label>{" "}
                   <div className="items-center w-full sm:flex">
-                    {loading.imageUploadLoading ? (
+                    {imageUploadLoading ? (
                       <Oval
                         height={25}
                         width={25}
@@ -375,3 +358,4 @@ const Profile = () => {
 };
 
 export default Profile;
+

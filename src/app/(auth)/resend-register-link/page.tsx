@@ -15,7 +15,8 @@ const ResendRegisterLink = () => {
     email: z
       .string()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .trim()
   });
 
   const {
@@ -30,6 +31,7 @@ const ResendRegisterLink = () => {
   });
 
   const resendEmail = async (values: z.infer<typeof formSchema>, e: any) => {
+    toast.dismiss();
     e.preventDefault();
     setLoader(true);
     try {
@@ -108,7 +110,7 @@ const ResendRegisterLink = () => {
                 href="/"
                 className="font-medium text-primary-600 hover:underline dark:text-primary-500"
               >
-                Sign In
+                Log In
               </Link>
             </p>
           </form>

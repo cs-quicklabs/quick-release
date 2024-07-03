@@ -29,7 +29,7 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
 
   return (
     <div className="mx-auto max-w-7xl h-full overflow-hidden lg:py-4 lg:px-8">
-      <div className="h-full lg:grid lg:grid-cols-12 lg:gap-x-5">
+      <div className="h-full flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
         <SideNav releaseTags={releaseTags} />
 
         <ChangeLogsListContainer />

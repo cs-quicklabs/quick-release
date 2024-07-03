@@ -135,4 +135,4 @@ export const ChangeLogIncludeDBQuery = {
   },
 };
 
-export const REVALIDATE_API = 60; // revalidate/cache api response for 60 seconds
+export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

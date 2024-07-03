@@ -25,6 +25,7 @@ const ForgotPasswordForm = () => {
   const formSchema = z.object({
     email: z
       .string()
+      .trim()
       .min(1, { message: "Required" })
       .email({ message: "Invalid email address" }),
   });
