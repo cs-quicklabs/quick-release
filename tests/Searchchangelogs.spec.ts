@@ -1,6 +1,6 @@
-import { LoginPage } from "../Pages/Login";
-import { searchchangelog } from "../Pages/Searchchangelog";
-import { Changelog } from "../Pages/changelog";
+import { LoginPage } from "../e2e/Login";
+import { searchchangelog } from "../e2e/Searchchangelog";
+import { Changelog } from "../e2e/changelog";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(

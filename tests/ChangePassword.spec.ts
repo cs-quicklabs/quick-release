@@ -1,5 +1,5 @@
-import { LoginPage } from "../Pages/Login";
-import { Changepassword } from "../Pages/changepassword";
+import { LoginPage } from "../e2e/Login";
+import { Changepassword } from "../e2e/changepassword";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(" Verify Admin able login ", async ({ page }) => {

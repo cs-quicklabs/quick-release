@@ -1,5 +1,5 @@
-import { LoginPage } from "../Pages/Login";
-import { createproject } from "../Pages/Projectsdetails";
+import { LoginPage } from "../e2e/Login";
+import { createproject } from "../e2e/Projectsdetails";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(

@@ -1,4 +1,4 @@
-import { LoginPage } from "../Pages/Login";
+import { LoginPage } from "../e2e/Login";
 import { test, expect } from "@playwright/test";
 
 test("Verify user able to login with valid credential", async ({
