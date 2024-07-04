@@ -1,54 +1,32 @@
+import { LoginPage } from "../Pages/Login";
+import { Profiles } from "../Pages/Profiles";
 import { test, expect } from "@playwright/test";
-test.beforeEach(" Verify Admin able login ", async({ page }) => {
-    await page.goto("http://localhost:3000/allLogs");
-    await page
-      .getByPlaceholder("name@company.com")
-      .fill("divanshu@crownstack.com");
-    const passwordInput = page.locator('input[name="password"]');
-  
-    // Perform actions on the input field
-    await passwordInput.fill("pass1234");
-    // await passwordInput.fill('pass1234');
-    await page.getByRole("button", { name: "Log in" }).click();
-    await page.waitForURL("http://localhost:3000/allLogs")
-})
 
-test('verify user able to click on profile settings ',async({page})=>{
-    await page.getByText('Open user menu').click()
-    await page.getByText('Profile Settings').click()
-    await expect(page.getByText('Profile')).toBeVisible()
-})
+test.beforeEach(" Verify Admin able login ", async ({ page }) => {
+  const login = new LoginPage(page); // 30 seconds
+  await login.gotoLoginPage();
+  await login.login("divanshu@crownstack.com", "pass1234");
+});
 
-test('verify all elements on Profile setting Page',async({page})=>{
-    await page.getByText('Open user menu').click()
-    await page.getByText('Profile Settings').click()
-    await expect(page.getByText('Profile Settings')).toBeVisible()
-    await expect(page.getByText('Upload Avatar')).toBeVisible()
-    await expect(page.getByText('First Name')).toBeVisible()
-    await expect(page.getByText('Last Name')).toBeVisible()
-    await expect(page.getByText('Email', { exact: true })).toBeVisible()
-})
+test("verify user able to click on profile settings ", async ({ page }) => {
+  const Profile = new Profiles(page); // 30 seconds
+  await Profile.profileclick();
+});
 
+test("verify Profile page Elements ", async ({ page }, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 300000);
+  const Profile = new Profiles(page); // 30 seconds
+  await Profile.profilepage();
+});
 
-test('verify Update profile',async({page})=>{
-    await page.getByText('Open user menu').click()
-    await page.getByText('Profile Settings').click()
-    await page.locator('input[name="firstName"]').click()
-    await page.locator('input[name="firstName"]').press('Backspace')
-    await page.locator('input[name="firstName"]').fill('Kathleen1')
-    await page.locator('input[name="lastName"]').click()
-    await page.locator('input[name="lastName"]').press('Backspace')
-    await page.locator('input[name="lastName"]').fill('Gupta')
-    await page.getByText('Save').click()
-})
-test('verify admin able Upload profile picture',async({page})=>{
-    await page.getByText('Open user menu').click()
-    await page.getByText('Profile Settings').click()
-    const filechooserPromose=page.waitForEvent('filechooser')
-    await page.locator("//img[@alt='No Image']").click()
-    const filechooser=await filechooserPromose
-    await filechooser.setFiles('C:/Users/Admin/OneDrive/Pictures/Screenshots/Test.png')
+test("verify user able to update profile ", async ({ page }, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 300000);
+  const Profile = new Profiles(page); // 30 seconds
+  await Profile.profileupdate("Kathleen1", "Gupta");
+});
 
-    await page.waitForTimeout(10000)
-   
-})
+test("verify user able to uploadfile ", async ({ page }, testInfo) => {
+  testInfo.setTimeout(testInfo.timeout + 300000);
+  const Profile = new Profiles(page); // 30 seconds
+  await Profile.profileupload();
+});

@@ -1,17 +1,17 @@
 import { test, expect } from "@playwright/test";
-
-test(" Verify user able Sign up in with valid data", async ({ page }) => {
-  await page.goto("http://localhost:3000/allLogs");
-  await page.getByText('Sign up').click()
-  await page.getByPlaceholder('First name').fill("Divanshu")
-  await page.getByPlaceholder('Last name').fill("Gupta")
-  await page.getByPlaceholder('name@company.com').fill("divanshu@yopmail.com")
-  await page.getByPlaceholder('Company name').fill("crownstack")
-  await page.locator('input[id="password"]').first().fill('pass123')
-  await page.locator('input[name="confirmPassword"]').fill('pass123')
-  await page.getByRole('checkbox', { name: 'terms' }).check();
-  await page.getByText("Create an account").click()
+import { Signup } from "../Pages/signup";
+import { LoginPage } from "../Pages/Login";
 
 
+
+test('verify user able to  signout ',async({page},testInfo)=>{
+  testInfo.setTimeout(testInfo.timeout + 300000);
+  const login = new LoginPage(page); // 30 seconds
+  await login.gotoLoginPage();
+  const signup = new Signup(page); // 30 seconds
+  await signup.signup("Divanshu","Gupta","divanshu@yopmail.com","crownstack","pass123","pass123",)
  
-});
+
+
+
+})
