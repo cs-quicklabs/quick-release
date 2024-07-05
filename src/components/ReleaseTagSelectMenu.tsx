@@ -26,7 +26,7 @@ const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
 
     const newReleaseTagOption: ReleaseTagsOption = {
       value: newReleaseTag.code!,
-      label: newReleaseTag.name,
+      label: newReleaseTag.name!,
     };
 
     const actionMeta: ActionMeta<{ value: string, label: string; }> = {

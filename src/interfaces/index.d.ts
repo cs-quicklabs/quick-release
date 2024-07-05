@@ -33,6 +33,7 @@ export interface IReleaseCategoriesOption {
     projects: Project[];
     verificationToken?: String;
     verificationTokenExpiry?: String;
+    orgs: Organisation[];
   }
   
   export interface IFile {
@@ -57,7 +58,7 @@ export interface IReleaseCategoriesOption {
 
   export interface IReleaseTag {
     id?: number;
-    name: string;
+    name?: string;
     code?: string;
     organisationId?: string;
   }

@@ -69,4 +69,5 @@ export type ApiFilterQueryType = {
   page?: number;
   limit?: number;
   [key: string]: any;
+  organisationId?: string;
 };

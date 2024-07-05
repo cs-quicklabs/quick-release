@@ -2,9 +2,10 @@
 
 import AlertModal from "./AlertModal";
 import Loader from "./Loader";
-import { handleTrancate } from "@/Utils";
+import { handleTrancate, requestHandler, showNotification } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
+import { setActiveProjectRequest } from "@/fetchHandlers/project";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
@@ -44,17 +45,17 @@ export function Navbar() {
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
-    try {
-      setActiveProject(projectId);
-      const userId = loggedInUser?.id;
-      router.replace("/allLogs");
-
-      if (projectId && userId) {
-        await axios.post(`/api/active-project/${projectId}/${userId}`);
+    await requestHandler(
+      async () => await setActiveProjectRequest(projectId),
+      null,
+      (res: any) => {
+        router.refresh();
+        setActiveProject(projectId);
+      },
+      (errMessage: any) => {
+        showNotification("error", errMessage);
       }
-    } catch (err) {
-      console.log("error", err);
-    }
+    )
   };
 
   const navigation = useMemo(() => {

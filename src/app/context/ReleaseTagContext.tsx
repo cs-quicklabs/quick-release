@@ -42,7 +42,7 @@ const ReleaseTagProvider: React.FC<ProviderProps> = ({ children }) => {
   const createReleaseTag = async (data: IReleaseTag, setIsLoading: (loading: boolean) => void, isNotify = true) => {
     setError("");
     await requestHandler(
-      async () => await createReleaseTagRequest(data),
+      async () => await createReleaseTagRequest({ ...data, organisationId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -65,7 +65,7 @@ const ReleaseTagProvider: React.FC<ProviderProps> = ({ children }) => {
   // Function to handle get all release tags
   const getAllReleaseTags = async (setIsLoading: (loading: boolean) => void) => {
     await requestHandler(
-      async () => await getAllReleaseTagsRequest({}),
+      async () => await getAllReleaseTagsRequest({organisationId: loggedInUser?.orgs[0]?.id}),
       setIsLoading,
       (res: any) => {
         const { data } = res;
@@ -92,7 +92,7 @@ const ReleaseTagProvider: React.FC<ProviderProps> = ({ children }) => {
   const updateReleaseTag = async (data: IReleaseTag, setIsLoading: (loading: boolean) => void) => {
     setError("");
     await requestHandler(
-      async () => await updateReleaseTagRequest(data),
+      async () => await updateReleaseTagRequest({ ...data, organisationId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -115,7 +115,7 @@ const ReleaseTagProvider: React.FC<ProviderProps> = ({ children }) => {
   const deleteReleaseTag = async (id: number, setIsLoading: (loading: boolean) => void) => {
     setError("");
     await requestHandler(
-      async () => await deleteReleaseTagRequest(id),
+      async () => await deleteReleaseTagRequest({ id, organisationId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { message } = res;

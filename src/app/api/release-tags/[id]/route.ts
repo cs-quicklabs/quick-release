@@ -31,12 +31,16 @@ export async function PUT(
     if (!name) {
       throw new ApiError(400, "Tag name is required");
     }
+
+    if(!body.organisationId) {
+      throw new ApiError(400, "Organisation Id is required");
+    }
     const tagCode = getReleaseTagCode(name);
     const releaseTag = await db.releaseTag.findFirst({
       where: {
         NOT: { id },
         code: tagCode,
-        organisationId: user?.organisationId,
+        organisationId: body.organisationId,
       },
     });
     if (releaseTag) {
@@ -44,7 +48,7 @@ export async function PUT(
     }
 
     const updatedReleaseTag = await db.releaseTag.update({
-      where: { id, organisationId: user?.organisationId },
+      where: { id, organisationId: body.organisationId },
       data: {
         name: body.name,
         code: tagCode,
@@ -79,10 +83,16 @@ export async function DELETE(
       throw new ApiError(401, "Unauthorized request");
     }
 
+    const organisationId = req.nextUrl.searchParams.get("organisationId");
+
+    if (!organisationId) {
+      throw new ApiError(400, "Organisation id is required");
+    }
+
     const releaseTag = await db.releaseTag.findFirst({
       where: {
         id,
-        organisationId: user.organisationId,
+        organisationId: organisationId,
       },
     });
     if (!releaseTag) {

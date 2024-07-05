@@ -53,7 +53,7 @@ export async function GET(
           code: {
             in: releaseTags,
           },
-          organisationId: project.User?.organisationId,
+          organisationId: project?.organisationId,
         },
       });
 

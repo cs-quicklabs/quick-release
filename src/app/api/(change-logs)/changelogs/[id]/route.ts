@@ -113,9 +113,15 @@ export async function PUT(
       throw new ApiError(400, "Missing title, description or release version");
     }
 
+    const project = await db.project.findUnique({
+      where: {
+        id: body.projectId,
+      },
+    })
+
     const releaseTags = await db.releaseTag.findMany({
       where: {
-        organisationId: user.organisationId,
+        organisationId: project?.organisationId, // TODO: Check this.
         code: {
           in: body.releaseTags,
         },

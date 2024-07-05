@@ -7,15 +7,11 @@ export const getOneProject = async (
     const project = await db.project.findFirst({
       where: query,
       include: {
-        User: {
+        organisation: {
           select: {
-            organisation: {
-              select: {
-                releaseTags: true,
-              },
-            },
+            releaseTags: true,
           },
-        },
+        }
       },
     });
 

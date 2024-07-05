@@ -23,11 +23,15 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Tag name is required");
     }
 
+    if(!body.organisationId) {
+      throw new ApiError(400, "Organisation Id is required");
+    }
+
     const tagCode = getReleaseTagCode(name);
     const releaseTag = await db.releaseTag.findFirst({
       where: {
         code: tagCode,
-        organisationId: user.organisationId,
+        organisationId: body.organisationId,
       },
     });
     if (releaseTag) {
@@ -38,7 +42,7 @@ export async function POST(req: NextRequest) {
       data: {
         name: body.name,
         code: tagCode,
-        organisationId: user.organisationId,
+        organisationId: body.organisationId,
       },
     });
 
@@ -65,9 +69,14 @@ export async function GET(req: NextRequest) {
       throw new ApiError(401, "Unauthorized request");
     }
 
+    const organisationId = req.nextUrl.searchParams.get('organisationId');
+    if (!organisationId) {
+      throw new ApiError(400, "Organisation id is required");
+    }
+
     const releaseTags = await db.releaseTag.findMany({
       where: {
-        organisationId: user.organisationId,
+        organisationId: organisationId,
       },
       orderBy: {
         createdAt: "desc",
