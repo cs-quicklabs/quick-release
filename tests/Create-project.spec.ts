@@ -6,7 +6,7 @@ test.beforeEach(
   " Verify user able Log in with valid credential",
   async ({ page }) => {
     const login = new LoginPage(page); // 30 seconds
-    await login.gotoLoginPage();
+    await page.goto("/");
     await login.login("divanshu@crownstack.com", "pass1234");
   }
 );
