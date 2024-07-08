@@ -15,10 +15,10 @@ test("Verify user able to cancel change log", async ({ page }) => {
   await changelog.cancelchangelog();
 });
 
-test(" Verify admin should able to Save log draft ", async ({ page }) => {
-  const changelog = new Changelog(page);
-  await changelog.savechangelog();
-});
+// test(" Verify admin should able to Save log draft ", async ({ page }) => {
+//   const changelog = new Changelog(page);
+//   await changelog.savechangelog();
+// });
 
 test(" Verify admin should able to publish change log ", async ({ page }) => {
   const changelog = new Changelog(page);

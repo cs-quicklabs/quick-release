@@ -9,12 +9,8 @@ exports.Changelog = class changelog {
   }
 
   async cancelchangelog() {
-    await this.page.waitForSelector("#Add-New", {
-      state: "visible",
-      timeout: 60000,
-    });
-    if (await this.page.locator("#Add-New").isVisible()) {
-      await this.page.locator("#Add-New").click();
+    if (await this.page.locator("#add-new").isVisible()) {
+      await this.page.locator("#add-new").click();
       await this.page.locator("#title").fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
@@ -25,7 +21,6 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Cancel").click();
       await this.page.waitForTimeout(5000);
     } else {
@@ -42,18 +37,13 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Cancel").click();
     }
   }
 
   async publishchangelog() {
-    await this.page.waitForSelector("#Add-New", {
-      state: "visible",
-      timeout: 60000,
-    });
-    if (await this.page.locator("#Add-New").isVisible()) {
-      await this.page.locator("#Add-New").click();
+    if (await this.page.getByText("Add New").isVisible()) {
+      await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
@@ -64,7 +54,6 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Publish Changelog Now").click();
     } else {
       await this.page
@@ -80,18 +69,13 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Publish Changelog Now").click();
     }
   }
 
   async savechangelog() {
-    await this.page.waitForSelector("#Add-New", {
-      state: "visible",
-      timeout: 60000,
-    });
-    if (await this.page.locator("#Add-New").isVisible()) {
-      await this.page.locator("#Add-New").click();
+    if (await this.page.getByText("Add New").isVisible()) {
+      await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
@@ -102,7 +86,6 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page
         .getByRole("button", { name: "Change published status" })
         .click();
@@ -122,7 +105,6 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-3-input").click();
       await this.page.getByText("New", { exact: true }).click();
       await this.page.locator("#react-select-5-input").click();
-      await this.page.getByText("Web", { exact: true }).click();
       await this.page
         .getByRole("button", { name: "Change published status" })
         .click();
