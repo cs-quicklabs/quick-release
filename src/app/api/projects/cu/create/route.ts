@@ -3,10 +3,12 @@ import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { checkRole } from "@/middleware/checkRole";
+import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, response: Response) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
@@ -14,6 +16,11 @@ export async function POST(request: NextRequest) {
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
+
+    const roleMiddleware = checkRole([Role.SUPER_ADMIN], userId);
+    await roleMiddleware(request, response, () => {});
+
+
     const body = await request.json();
     if(!body.organisationId) {
       throw new ApiError(400, "Organisation Id is required");
@@ -51,6 +58,7 @@ export async function POST(request: NextRequest) {
       data: {
         userId: userId,
         projectId: project.id,
+        role: Role.SUPER_ADMIN,
       },
     });
     return NextResponse.json(

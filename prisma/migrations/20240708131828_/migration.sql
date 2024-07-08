@@ -3,10 +3,14 @@
 
   - You are about to drop the column `releaseTags` on the `Log` table. All the data in the column will be lost.
   - You are about to drop the column `organisationId` on the `User` table. All the data in the column will be lost.
+  - You are about to drop the column `role` on the `User` table. All the data in the column will be lost.
   - Added the required column `createdById` to the `Organisation` table without a default value. This is not possible if the table is not empty.
   - Added the required column `organisationId` to the `Project` table without a default value. This is not possible if the table is not empty.
 
 */
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'MEMBER');
+
 -- DropForeignKey
 ALTER TABLE "User" DROP CONSTRAINT "User_organisationId_fkey";
 
@@ -23,7 +27,8 @@ ALTER TABLE "Organisation" ADD COLUMN     "createdById" TEXT NOT NULL;
 ALTER TABLE "Project" ADD COLUMN     "organisationId" TEXT NOT NULL;
 
 -- AlterTable
-ALTER TABLE "User" DROP COLUMN "organisationId";
+ALTER TABLE "User" DROP COLUMN "organisationId",
+DROP COLUMN "role";
 
 -- CreateTable
 CREATE TABLE "OrganisationUsers" (
@@ -37,6 +42,7 @@ CREATE TABLE "OrganisationUsers" (
 CREATE TABLE "ProjectUsers" (
     "projectId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'MEMBER',
 
     CONSTRAINT "ProjectUsers_pkey" PRIMARY KEY ("userId","projectId")
 );

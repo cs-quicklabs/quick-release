@@ -11,14 +11,14 @@ import Loading from "@/components/Loading";
 type UserContextType = {
   isLoading: boolean;
   loggedInUser: User | null;
-  logout: () => Promise<void>;
+  logout: (setIsLoading: ((loading: boolean) => void) | null) => Promise<void>;
 };
 
 // Create a context to manage user related data and functions
 const UserContext = createContext<UserContextType>({
   isLoading: false,
   loggedInUser: null,
-  logout: async () => { }
+  logout: async (setIsLoading: ((loading: boolean) => void) | null) => { }
 });
 
 // Create a hook to access the UserContext
@@ -51,8 +51,10 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
   };
 
   // Function to handle user logout
-  const logout = async () => {
+  const logout = async (setIsLoading: ((loading: boolean) => void) | null) => {
+    setIsLoading?.(true);
     await signOut({ redirect: false });
+    setIsLoading?.(false);
     router.replace("/");
     router.refresh();
   };

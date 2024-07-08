@@ -116,7 +116,6 @@ export const SelectUserDetailsFromDB = {
   lastName: true,
   email: true,
   profilePicture: true,
-  role: true,
 };
 
 export const ChangeLogIncludeDBQuery = {
