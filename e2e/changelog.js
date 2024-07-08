@@ -66,7 +66,6 @@ exports.Changelog = class changelog {
       await this.page.locator("#react-select-5-input").click();
       await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Publish Changelog Now").click();
-      await this.page.waitForTimeout(5000);
     } else {
       await this.page
         .locator("//button[normalize-space()='New Changelog']")

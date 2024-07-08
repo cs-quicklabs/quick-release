@@ -9,10 +9,6 @@ exports.searchchangelog = class searchchangelog {
   }
 
   async searchchangelog() {
-    await this.page.waitForSelector("#Add-New", {
-      state: "visible",
-      timeout: 600,
-    });
     {
       await this.page.locator("#search").fill(this.title);
     }

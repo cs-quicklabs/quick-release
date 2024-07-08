@@ -140,6 +140,7 @@ const ContentContainer = () => {
   const actionOptions = useMemo(() => [
     {
       name: "Edit",
+      id:"edit-changelog",
       onClick: () => { router.push(`/changeLog/${activeChangeLogId}`) },
     },
     {
@@ -148,6 +149,7 @@ const ContentContainer = () => {
     },
     {
       name: "Delete",
+      id:"delete-changelog",
       onClick: () => setShowDeleteModal(true),
     },
   ], [changelog]);
@@ -243,6 +245,7 @@ const ContentContainer = () => {
                     {actionOptions.map((option) => (
                       <DropdownMenuItem
                         className="cursor-pointer bg-white hover:bg-gray-100"
+                        id={option?.id}
                         key={option.name}
                         onClick={option.onClick}
                       >
