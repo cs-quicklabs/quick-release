@@ -9,7 +9,7 @@ exports.Changelogdetail = class Changelogdetail {
   }
 
   async changelogelements() {
-    if (await this.page.locator("#Add-New").isVisible()) {
+    if (await this.page.locator("#add-new").isVisible()) {
       await expect(
         this.page.locator(
           "//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing a')]"
