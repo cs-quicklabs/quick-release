@@ -7,7 +7,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request,
-    { params }: { params: { id: string } }
+    { params: { projectId } }: { params: { projectId: string } }
 ) {
     return asyncHandler(async () => {
       const session = await getServerSession(authOptions);
@@ -18,13 +18,13 @@ export async function PATCH(req: Request,
         throw new ApiError(401, "Unauthorized request");
       }
   
-      if(!params.id) {
+      if(!projectId) {
         throw new ApiError(400, "Project Id is required");  
       }
 
       const project = await db.project.findFirst({
         where: {
-          id: params.id,
+          id: projectId,
         },
       });
   
@@ -37,7 +37,7 @@ export async function PATCH(req: Request,
           isActive: false,
         },
         where: {
-          adminId: userId,
+          createdById: userId,
         },
       });
       const activeProject = await db.project.update({
@@ -45,7 +45,7 @@ export async function PATCH(req: Request,
           isActive: true,
         },
         where: {
-          id: params.id,
+          id: projectId,
         },
       });
 

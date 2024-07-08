@@ -49,6 +49,7 @@ export async function POST(request: Request, res: NextApiResponse) {
         data: {
           name: body.orgName,
           createdById: register.id,
+          isActive: true,
         },
       });
 
