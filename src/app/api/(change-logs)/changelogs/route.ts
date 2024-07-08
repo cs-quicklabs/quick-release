@@ -2,8 +2,9 @@ import { isValidArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,21 +14,37 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
-    if(!userId) {
+    const user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const body = await req.json();
 
     if (!body.title || !body.description || !body.releaseVersion) {
       throw new ApiError(400, "Missing title, description or release version");
     }
 
+    const project = await db.project.findUnique({
+      where: {
+        id: body.projectId,
+      },
+    })
+
+    const releaseTags = await db.releaseTag.findMany({
+      where: {
+        organisationId: project?.organisationId, // TODO: Check this.
+        code: {
+          in: body.releaseTags,
+        },
+      },
+    });
+
     if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
       throw new ApiError(400, "Release category is invalid");
     }
 
-    if (!isValidArray(body.releaseTags, ["ios", "web", "android"])) {
+    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
       throw new ApiError(400, "Release tag is invalid");
     }
 
@@ -38,17 +55,16 @@ export async function POST(req: NextRequest) {
         releaseVersion: body.releaseVersion,
         releaseCategories: body.releaseCategories,
         projectId: body.projectId,
-        releaseTags: body.releaseTags,
+        // releaseTags: body.releaseTags,
+        releaseTags: {
+          create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
+        },
         createdById: userId,
         updatedById: userId,
         status: body.status,
         scheduledTime: body.scheduledTime ?? null,
       },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
 
     if (!newChangeLog) {
@@ -56,7 +72,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiResponse(200, newChangeLog, "Create changelog successfully")
+      new ApiResponse(
+        200,
+        computeChangeLog(newChangeLog),
+        "Create changelog successfully"
+      )
     );
   });
 }
@@ -95,11 +115,7 @@ export async function GET(req: NextRequest) {
 
     const changeLogs = await db.log.findMany({
       where: query,
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
       skip: start,
       take: limit,
       orderBy: {
@@ -115,7 +131,9 @@ export async function GET(req: NextRequest) {
       new ApiResponse(
         200,
         {
-          changeLogs,
+          changeLogs: changeLogs.map((changeLog) =>
+            computeChangeLog(changeLog)
+          ),
           page,
           limit,
           total: totalChangeLogs,

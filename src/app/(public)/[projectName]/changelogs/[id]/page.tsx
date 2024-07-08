@@ -6,6 +6,7 @@ import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, REVALIDATE_API } fr
 import { classNames } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ChangeLogType } from "@/types";
+import { IReleaseTag } from "@/interfaces";
 
 type PagePayloadType = {
   params: {
@@ -53,7 +54,8 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
 
   const { title, description, releaseVersion } = changelog;
   const releaseCategories = changelog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
-  const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  // const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  const releaseTags = (changelog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changelog.scheduledTime ? moment(changelog.scheduledTime).format("MMMM DD, YYYY") : "";
 
   return (
@@ -102,18 +104,21 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         />
       </div>
 
-      <div className="text-sm text-gray-800 mt-6">
-        {releaseTags.map(({ value, label }) => (
-          <span
-            key={value}
-            className={classNames(
-              "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
-            )}
-          >
-            {label}
-          </span>
-        ))}
-      </div>
+      {
+        !!releaseTags.length &&
+        <div className="text-sm text-gray-800 mt-6">
+          {releaseTags.map(({ value, label }) => (
+            <span
+              key={value}
+              className={classNames(
+                "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+              )}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      }
     </main>
   );
 };

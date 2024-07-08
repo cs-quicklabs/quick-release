@@ -32,8 +32,29 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    const orgs = await db.organisationUsers.findMany({
+      where: {
+        userId: userId,
+      },
+      select: {
+        organisation: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
     return NextResponse.json(
-      new ApiResponse(200, loggedInUser, "Current user fetched successfully")
+      new ApiResponse(
+        200,
+        {
+          ...loggedInUser,
+          orgs: orgs.map((org) => org.organisation),
+        },
+        "Current user fetched successfully"
+      )
     );
   });
 }

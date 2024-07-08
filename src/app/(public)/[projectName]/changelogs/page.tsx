@@ -25,10 +25,12 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
     return notFound();
   }
 
+  const releaseTags = project.organisation?.releaseTags.map(tag => ({ label: tag.name, value: tag.code }));
+
   return (
     <div className="mx-auto max-w-7xl h-full overflow-hidden lg:py-4 lg:px-8">
       <div className="h-full flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <SideNav />
+        <SideNav releaseTags={releaseTags} />
 
         <ChangeLogsListContainer />
       </div>

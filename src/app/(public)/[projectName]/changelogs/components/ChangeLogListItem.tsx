@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, ChangeLogsStatus } from "@/Utils/constants";
+import { ChangeLogsReleaseCategories, } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { ChangeLogType } from "@/types";
 import moment from "moment";
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
+import { IReleaseTag } from "@/interfaces";
 
 const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +27,8 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const { title, description, createdBy, releaseVersion, project } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
   const releaseCategories = changeLog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
-  const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changeLog.scheduledTime ? moment(changeLog.scheduledTime).format("MMMM DD, yyyy") : "-";
   const publicLink = `/${project?.name}/changelogs/${id}`;
 
@@ -77,18 +79,21 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
           </Link>
         }
 
-        <div className="text-sm text-gray-800">
-          {releaseTags.map(({ value, label }) => (
-            <span
-              key={value}
-              className={classNames(
-                "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
-              )}
-            >
-              {label}
-            </span>
-          ))}
-        </div>
+        {
+          !!releaseTags.length &&
+          <div className="text-sm text-gray-800">
+            {releaseTags.map(({ value, label }) => (
+              <span
+                key={value}
+                className={classNames(
+                  "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                )}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        }
       </div>
 
     </main>
