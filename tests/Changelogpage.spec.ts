@@ -11,20 +11,17 @@ test.beforeEach(
   }
 );
 
-test(" Verify change log Page data ", async ({ page }, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+test(" Verify change log Page data ", async ({ page }) => {
   const changelog = new Changelogdetail(page);
   await changelog.changelogelements();
 });
 
-test("Verify user able to Edit changelog ", async ({ page }, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+test("Verify user able to Edit changelog ", async ({ page }) => {
   const changelog = new Changelogdetail(page);
   await changelog.editchangelog();
 });
 
-test(" Verify user able to Delete changelog", async ({ page }, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+test(" Verify user able to Delete changelog", async ({ page }) => {
   const changelog = new Changelogdetail(page);
   await changelog.deletechangelog();
 });

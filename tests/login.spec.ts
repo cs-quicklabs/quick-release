@@ -28,10 +28,7 @@ test("Verify username field by invalid email", async ({ page }, testInfo) => {
   await login.loginwithInvalidmail();
 });
 
-test("Verify username field by invalid credential", async ({
-  page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+test("Verify username field by invalid credential", async ({ page }) => {
   const login = new LoginPage(page);
   await page.goto("/");
   await login.loginwithInvalidcredential("divanshu@crownstack.com", "pass123");

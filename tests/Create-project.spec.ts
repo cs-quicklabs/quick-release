@@ -10,23 +10,20 @@ test.beforeEach(
     await login.login("divanshu@crownstack.com", "pass1234");
   }
 );
-test(" Verify Admin able to create Projet", async ({ page }, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+test(" Verify Admin able to create Projet", async ({ page }) => {
   const projects = new createproject(page);
   await projects.createproject();
 });
 test(" Verify Admin should not able to create project with only spaces", async ({
   page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+}) => {
   const projects = new createproject(page);
   await projects.projectvalidations();
 });
 
 test(" Verify Admin should not able to create project with same project which are already exist", async ({
   page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+}) => {
   const projects = new createproject(page);
   await projects.existproject();
 });

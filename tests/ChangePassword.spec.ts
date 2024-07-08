@@ -11,9 +11,7 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
 
 test("verify user able to click on change password settings ", async ({
   page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
-
+}) => {
   const changepass = new Changepassword(page);
   await changepass.changepassword();
 });
