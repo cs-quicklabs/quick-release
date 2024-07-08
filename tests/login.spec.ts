@@ -8,7 +8,7 @@ test("Verify user able to login with valid credential", async ({
   const login = new LoginPage(page); // 30 seconds
   // await login.gotoLoginPage();
   await page.goto("/");
-  await login.login("divanshu@crownstack.com", "pass1234");
+  await login.login("divanshu@crownstack.com", "Divanshu@123");
 });
 
 test(" verify Username and Password field  with only spaces", async ({
@@ -17,7 +17,7 @@ test(" verify Username and Password field  with only spaces", async ({
   testInfo.setTimeout(testInfo.timeout + 300000);
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.loginwithwhitespaces();
+  await login.loginwithWhitespaces();
 });
 
 test("Verify username field by invalid email", async ({ page }, testInfo) => {
@@ -31,5 +31,5 @@ test("Verify username field by invalid email", async ({ page }, testInfo) => {
 test("Verify username field by invalid credential", async ({ page }) => {
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.loginwithInvalidcredential("divanshu@crownstack.com", "pass123");
+  await login.loginwithinvalidCredential("divanshu@crownstack.com", "pass123");
 });

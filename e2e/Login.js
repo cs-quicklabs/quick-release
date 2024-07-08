@@ -7,10 +7,6 @@ exports.LoginPage = class LoginPage {
     this.emailinput = "input[id=email]";
   }
 
-  async gotoLoginPage() {
-    await this.page.goto("http://localhost:3000/");
-  }
-
   async login(email, password) {
     const emailfield = this.page.locator(this.emailinput);
     await emailfield.fill(email);
@@ -22,7 +18,7 @@ exports.LoginPage = class LoginPage {
     await this.page.waitForURL("http://localhost:3000/allLogs");
   }
 
-  async loginwithwhitespaces() {
+  async loginwithWhitespaces() {
     const emailfield = this.page.locator(this.emailinput);
     await emailfield.fill("   ");
     const passwordfield = this.page.locator(this.passwordinput);
@@ -48,7 +44,7 @@ exports.LoginPage = class LoginPage {
     );
   }
 
-  async loginwithInvalidcredential(email, password) {
+  async loginwithinvalidCredential(email, password) {
     const emailfield = this.page.locator(this.emailinput);
     await emailfield.fill(email);
     const passwordfield = this.page.locator(this.passwordinput);

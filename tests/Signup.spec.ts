@@ -1,5 +1,5 @@
 import { LoginPage } from "../e2e/Login";
-import { Signup } from "../e2e/signup";
+import { Signup } from "../e2e/Signup";
 import { test, expect } from "@playwright/test";
 
 test("verify user able to  signout ", async ({ page }) => {

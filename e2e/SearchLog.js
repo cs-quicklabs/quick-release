@@ -8,7 +8,7 @@ exports.searchchangelog = class searchchangelog {
     this.title = "ABC";
   }
 
-  async searchchangelog() {
+  async searchlog() {
     {
       await this.page.locator("#search").fill(this.title);
     }

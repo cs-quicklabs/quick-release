@@ -1,6 +1,6 @@
+import { Changelogdetail } from "../e2e/ChangelogPage";
 import { LoginPage } from "../e2e/Login";
-import { Changelogdetail } from "../e2e/changelogpage";
-import { viewpublic } from "../e2e/viewpublic";
+import { viewpublic } from "../e2e/Viewpublic";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
@@ -9,7 +9,7 @@ test.beforeEach(
     const login = new LoginPage(page);
 
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "pass1234");
+    await login.login("divanshu@crownstack.com", "Divanshu@123");
   }
 );
 

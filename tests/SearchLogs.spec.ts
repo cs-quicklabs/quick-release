@@ -1,6 +1,6 @@
+import { Changelog } from "../e2e/Changelog";
 import { LoginPage } from "../e2e/Login";
-import { searchchangelog } from "../e2e/Searchchangelog";
-import { Changelog } from "../e2e/changelog";
+import { searchchangelog } from "../e2e/SearchLog";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
@@ -8,11 +8,11 @@ test.beforeEach(
   async ({ page }) => {
     const login = new LoginPage(page);
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "pass1234");
+    await login.login("divanshu@crownstack.com", "Divanshu@123");
   }
 );
 
 test(" Verify admin should able to search changelogs ", async ({ page }) => {
   const search = new searchchangelog(page);
-  await search.searchchangelog();
+  await search.searchlog();
 });
