@@ -144,7 +144,7 @@ export default function LoginForm() {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[12px]" id="login-error">
                     {errors.email.message}
                   </span>
                 )}

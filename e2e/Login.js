@@ -2,8 +2,9 @@ const { test, expect } = require("@playwright/test");
 exports.LoginPage = class LoginPage {
   constructor(page) {
     this.page = page;
-    this.input = 'input[name="password"]';
+    this.passwordinput = 'input[id="password"]';
     this.submit = '"button", { name: "Log in" }';
+    this.emailinput = "input[id=email]";
   }
 
   async gotoLoginPage() {
@@ -11,65 +12,51 @@ exports.LoginPage = class LoginPage {
   }
 
   async login(email, password) {
-    await this.page.getByPlaceholder("name@company.com").fill(email);
-    const passwordInput = this.page.locator(this.input);
+    const emailfield = this.page.locator(this.emailinput);
+    await emailfield.fill(email);
+    const passwordfield = this.page.locator(this.passwordinput);
 
-    await passwordInput.fill(password);
-    // await passwordInput.fill('pass1234');
+    await passwordfield.fill(password);
     await this.page.getByRole("button", { name: "Log in" }).click();
 
-    await this.page.waitForTimeout(5000);
     await this.page.waitForURL("http://localhost:3000/allLogs");
   }
 
-  async loginwithwhitespaces(email, password) {
-    await this.page.getByPlaceholder("name@company.com").fill(email);
-    const passwordInput = this.page.locator('input[name="password"]');
+  async loginwithwhitespaces() {
+    const emailfield = this.page.locator(this.emailinput);
+    await emailfield.fill("   ");
+    const passwordfield = this.page.locator(this.passwordinput);
 
-    await passwordInput.fill(password);
+    await passwordfield.fill("  ");
     await this.page.getByRole("button", { name: "Log in" }).click();
-    await expect(
-      this.page.locator(
-        "//div/div/form/div/ span[@class='text-red-600 text-[12px]']"
-      )
-    ).toHaveText("Required");
-
-    await this.page.waitForTimeout(5000);
+    await expect(this.page.locator("#login-error")).toHaveText("Required");
   }
 
   async loginwithInvalidmail() {
-    await this.page.getByPlaceholder("name@company.com").fill("      ");
-    const passwordInput = this.page.locator(this.input);
+    const emailfield = this.page.locator(this.emailinput);
+    await emailfield.fill("    ");
+    const passwordfield = this.page.locator(this.passwordinput);
 
-    await passwordInput.fill("         ");
+    await passwordfield.fill("pass1234");
     await this.page.getByRole("button", { name: "Log in" }).click();
-    await expect(
-      this.page.locator(
-        "//div/div/form/div/ span[@class='text-red-600 text-[12px]']"
-      )
-    ).toHaveText("Required");
-    await this.page.getByPlaceholder("name@company.com").press("Backspace");
-    await this.page.getByPlaceholder("name@company.com").fill("aa@@");
-    await expect(
-      this.page.locator(
-        "//div/div/form/div/ span[@class='text-red-600 text-[12px]']"
-      )
-    ).toHaveText("Invalid email address");
+    await expect(this.page.locator("#login-error")).toHaveText("Required");
 
-    await this.page.waitForTimeout(5000);
+    await this.page.locator(this.emailinput).press("Backspace");
+    await this.page.locator(this.emailinput).fill("aa@@");
+    await expect(this.page.locator("#login-error")).toHaveText(
+      "Invalid email address"
+    );
   }
 
   async loginwithInvalidcredential(email, password) {
-    await this.page.getByPlaceholder("name@company.com").fill(email);
-    const passwordInput = this.page.locator(this.input);
+    const emailfield = this.page.locator(this.emailinput);
+    await emailfield.fill(email);
+    const passwordfield = this.page.locator(this.passwordinput);
 
-    await passwordInput.fill(password);
+    await passwordfield.fill(password);
     await this.page.getByRole("button", { name: "Log in" }).click();
-    await this.page.waitForTimeout(5000);
-    await expect(this.page.locator("//div[@class='Toastify']")).toHaveText(
+    await expect(this.page.locator(".Toastify")).toHaveText(
       "Incorrect Credentials!"
     );
-
-    await this.page.waitForTimeout(5000);
   }
 };

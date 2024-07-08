@@ -9,11 +9,7 @@ exports.Changelogdetail = class Changelogdetail {
   }
 
   async changelogelements() {
-    if (
-      await this.page
-        .locator("//button[normalize-space()='Add New']")
-        .isVisible()
-    ) {
+    if (await this.page.locator("#Add-New").isVisible()) {
       await expect(
         this.page.locator(
           "//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing a')]"
@@ -50,9 +46,7 @@ exports.Changelogdetail = class Changelogdetail {
           "//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry')]"
         )
       ).toHaveText(this.description);
-      await this.page
-        .locator("(//*[name()='svg'][@name='Open options'])[1]")
-        .click();
+      await this.page.locator("#open-options").click();
       await this.page.getByText("Edit").click();
       await expect(this.page.getByText("Edit change log")).toBeVisible();
       await this.page.locator('input[name="title"]').click();
@@ -65,9 +59,7 @@ exports.Changelogdetail = class Changelogdetail {
           "//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry')]"
         )
       ).toHaveText(this.description);
-      await this.page
-        .locator("(//*[name()='svg'][@name='Open options'])[1]")
-        .click();
+      await this.page.locator("#open-options").click();
       await this.page.getByText("Edit").click();
       await expect(this.page.getByText("Edit change log")).toBeVisible();
       await this.page.locator('input[name="title"]').click();
@@ -78,14 +70,10 @@ exports.Changelogdetail = class Changelogdetail {
   }
 
   async deletechangelog() {
-    await expect(
-      this.page.locator(
-        "//div[@class='ql-editor']//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing a')]"
-      )
-    ).toHaveText(this.description);
-    await this.page
-      .locator("(//*[name()='svg'][@name='Open options'])[1]")
-      .click();
+    await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
+      this.description
+    );
+    await this.page.locator("#open-options").click();
     await this.page.getByText("Delete").click();
     //   }
   }

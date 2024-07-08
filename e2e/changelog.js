@@ -9,17 +9,13 @@ exports.Changelog = class changelog {
   }
 
   async cancelchangelog() {
-    await this.page.waitForSelector("//button[normalize-space()='Add New']", {
+    await this.page.waitForSelector("#Add-New", {
       state: "visible",
       timeout: 60000,
     });
-    if (
-      await this.page
-        .locator("//button[normalize-space()='Add New']")
-        .isVisible()
-    ) {
-      await this.page.locator("//button[normalize-space()='Add New']").click();
-      await this.page.locator('input[name="title"]').fill(this.title);
+    if (await this.page.locator("#Add-New").isVisible()) {
+      await this.page.locator("#Add-New").click();
+      await this.page.locator("#title").fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
         .fill(this.description);
@@ -49,20 +45,15 @@ exports.Changelog = class changelog {
       await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Cancel").click();
     }
-    await this.page.waitForTimeout(5000);
   }
 
   async publishchangelog() {
-    await this.page.waitForSelector("//button[normalize-space()='Add New']", {
+    await this.page.waitForSelector("#Add-New", {
       state: "visible",
       timeout: 60000,
     });
-    if (
-      await this.page
-        .locator("//button[normalize-space()='Add New']")
-        .isVisible()
-    ) {
-      await this.page.locator("//button[normalize-space()='Add New']").click();
+    if (await this.page.locator("#Add-New").isVisible()) {
+      await this.page.locator("#Add-New").click();
       await this.page.locator('input[name="title"]').fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
@@ -93,20 +84,15 @@ exports.Changelog = class changelog {
       await this.page.getByText("Web", { exact: true }).click();
       await this.page.getByText("Publish Changelog Now").click();
     }
-    await this.page.waitForTimeout(5000);
   }
 
   async savechangelog() {
-    await this.page.waitForSelector("//button[normalize-space()='Add New']", {
+    await this.page.waitForSelector("#Add-New", {
       state: "visible",
       timeout: 60000,
     });
-    if (
-      await this.page
-        .locator("//button[normalize-space()='Add New']")
-        .isVisible()
-    ) {
-      await this.page.locator("//button[normalize-space()='Add New']").click();
+    if (await this.page.locator("#Add-New").isVisible()) {
+      await this.page.locator("#Add-New").click();
       await this.page.locator('input[name="title"]').fill(this.title);
       await this.page
         .locator("//div[@class='ql-editor ql-blank']")
@@ -145,4 +131,5 @@ exports.Changelog = class changelog {
       await this.page.getByText("Save as Draft Changelog").click();
     }
   }
+  m;
 };

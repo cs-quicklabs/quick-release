@@ -145,7 +145,7 @@ const Register = () => {
                   </label>{" "}
                   <input
                     type="text"
-                    id="first-name"
+                    id="last-name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Last name"
                     {...register("lastName")}
@@ -186,7 +186,7 @@ const Register = () => {
                 </label>{" "}
                 <input
                   type="text"
-                  id="first-name"
+                  id="organisation-name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Company name"
                   {...register("orgName")}
@@ -240,7 +240,7 @@ const Register = () => {
                 <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
-                    id="password"
+                    id="confirm-password"
                     placeholder="••••••••"
                     {...register("confirmPassword")}
                     className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"

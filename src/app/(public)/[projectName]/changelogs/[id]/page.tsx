@@ -62,8 +62,10 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         <button
           className="mb-2 inline-flex items-center gap-x-1.5 shadow-sm px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           type="button"
+          id="see-all-changelogs"
+          
         >
-          <ArrowLeftIcon className="w-6 h-6" />
+          <ArrowLeftIcon className="w-6 h-6"/>
 
           See All Changelogs
         </button>

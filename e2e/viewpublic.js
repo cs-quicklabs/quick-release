@@ -10,15 +10,11 @@ exports.viewpublic = class viewpublic {
 
   async viewdetails() {
     await this.page.getByText("See Details").click();
-    await this.page.waitForTimeout(5000);
 
-    await expect(
-      this.page.locator(
-        "//p[contains(text(),'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry')]"
-      )
-    ).toHaveText(this.description);
-    await this.page.getByText("See All Changelogs").click();
-    await this.page.waitForTimeout(5000);
+    await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
+      this.description
+    );
+    await this.page.locator("#see-all-changelogs").click();
     await this.page.getByText("Select Categories").click();
   }
 };

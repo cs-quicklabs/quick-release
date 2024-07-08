@@ -234,6 +234,7 @@ const ContentContainer = () => {
                       <EllipsisVerticalIcon
                         name="Open options"
                         className="h-5 w-5"
+                        id="open-options"
                       />
                     </Button>
                   </DropdownMenuTrigger>

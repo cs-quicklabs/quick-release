@@ -6,7 +6,7 @@ exports.createproject = class Project {
   }
 
   async createproject() {
-    await this.page.getByText("Open user menu").click();
+    await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
     await projectInput.click();
@@ -14,14 +14,13 @@ exports.createproject = class Project {
 
     await expect(projectInput).toHaveValue(this.Project);
     await this.page.getByText("Save").click();
-    // await this.page.getByText("Created Successfully").isVisible();
     await expect(this.page.locator("//div[@class='Toastify']")).toHaveText(
       "Created Successfully"
     );
   }
 
   async existproject() {
-    await this.page.getByText("Open user menu").click();
+    await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
     await projectInput.click();
@@ -29,16 +28,13 @@ exports.createproject = class Project {
 
     await expect(projectInput).toHaveValue("testproject");
     await this.page.getByText("Save").click();
-    // await this.page.getByText("Created Successfully").isVisible();
     await expect(this.page.locator("//div[@class='Toastify']")).toHaveText(
       "Project name is already taken"
     );
-
-    await this.page.waitForTimeout(5000);
   }
 
   async projectvalidations() {
-    await this.page.getByText("Open user menu").click();
+    await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
 
@@ -47,7 +43,5 @@ exports.createproject = class Project {
 
     await this.page.getByText("Save").click();
     await expect(this.page.locator("#email-error")).toHaveText("Required");
-
-    await this.page.waitForTimeout(5000);
   }
 };

@@ -5,7 +5,7 @@ exports.Signout = class Signout {
   }
 
   async logout() {
-    await this.page.getByText("Open user menu").click();
+    await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Sign out").click();
     await this.page.getByRole("button", { name: "Yes, I'm sure" }).click();
   }
