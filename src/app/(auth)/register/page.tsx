@@ -5,6 +5,7 @@ import { WEB_DETAILS } from "@/Utils/constants";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -99,10 +100,12 @@ const Register = () => {
           href="/"
           className="flex items-center mb-6  mt-8 text-2xl font-medium text-gray-900 dark:text-white"
         >
-          <img
+          <Image
             className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            src={WEB_DETAILS.favicon}
             alt="logo"
+            width={32}
+            height={32}
           />
           {WEB_DETAILS.name}
         </Link>{" "}

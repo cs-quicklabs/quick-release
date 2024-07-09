@@ -4,6 +4,7 @@ import { requestHandler, showNotification } from "@/Utils";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { forgetPasswordRequest } from "@/fetchHandlers/authentication";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -55,10 +56,12 @@ const ForgotPassword = () => {
         href="/"
         className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
       >
-        <img
+        <Image
           className="w-8 h-8 mr-2"
-          src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+          src={WEB_DETAILS.favicon}
           alt="logo"
+          width={32}
+          height={32}
         />
         {WEB_DETAILS.name}
       </Link>{" "}

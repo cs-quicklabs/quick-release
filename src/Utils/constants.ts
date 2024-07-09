@@ -116,10 +116,7 @@ export const SelectUserDetailsFromDB = {
   lastName: true,
   email: true,
   profilePicture: true,
-  role: true,
 };
-
-export const REVALIDATE_API = 0; // revalidate/cache api response for 60 seconds
 
 export const WEB_DETAILS = {
   name: "Quick Release",
@@ -142,3 +139,5 @@ export const ChangeLogIncludeDBQuery = {
     },
   },
 };
+
+export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

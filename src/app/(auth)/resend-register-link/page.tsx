@@ -3,6 +3,7 @@
 import { WEB_DETAILS } from "@/Utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -52,10 +53,12 @@ const ResendRegisterLink = () => {
         href="/"
         className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
       >
-        <img
+        <Image
           className="w-8 h-8 mr-2"
           src={WEB_DETAILS.favicon}
           alt="logo"
+          width={32}
+          height={32}
         />
         {WEB_DETAILS.name}
       </Link>{" "}
