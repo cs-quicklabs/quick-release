@@ -10,14 +10,14 @@ type AddReleaseTagProps = {
 };
 
 const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = null, setSelectedReleaseTagId }) => {
-  const isEditingReleaseTag = selectedReleaseTagId !== null;
+  // const isEditingReleaseTag = selectedReleaseTagId !== null;
 
   const prevState = useRef({ isSaving: false });
 
   const [tagName, setTagName] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const { error, map: releaseTagMap, createReleaseTag, updateReleaseTag } = useReleaseTagContext();
+  const { error, map: releaseTagMap, createReleaseTag } = useReleaseTagContext();
 
 
   const onSaveReleaseTag = () => {
@@ -27,12 +27,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
       name: tagName,
     };
 
-    if (!isEditingReleaseTag) {
-      createReleaseTag(releaseTag, setIsSaving);
-    } else {
-      releaseTag.id = selectedReleaseTagId;
-      updateReleaseTag(releaseTag, setIsSaving);
-    }
+    createReleaseTag(releaseTag, setIsSaving);
   };
 
   const resetForm = () => {
@@ -67,7 +62,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
         <label
           className="block mb-2 text-sm font-medium text-gray-900"
         >
-          {isEditingReleaseTag ? "Update" : "Add new"} tag
+          Add new tag
         </label>
 
         <Input
@@ -86,7 +81,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
         {isSaving ? "Saving..." : "Save"}
       </Button>
 
-      {
+      {/* {
         isEditingReleaseTag &&
         <Button
           className="text-black bg-gray-200 hover:bg-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center ml-4"
@@ -95,7 +90,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
         >
           Cancel
         </Button>
-      }
+      } */}
     </div>
   );
 };
