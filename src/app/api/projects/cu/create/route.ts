@@ -3,7 +3,6 @@ import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { checkRole } from "@/middleware/checkRole";
 import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -17,13 +16,20 @@ export async function POST(request: NextRequest, response: Response) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const roleMiddleware = checkRole([Role.SUPER_ADMIN], userId);
-    await roleMiddleware(request, response, () => {});
-
-
     const body = await request.json();
     if(!body.organisationId) {
       throw new ApiError(400, "Organisation Id is required");
+    }
+
+    const organisation = await db.organisation.findFirst({
+      where: {
+        id: body.organisationId,
+        createdById: userId
+      },
+    })
+
+    if(!organisation) {
+      throw new ApiError(400, "Forbidden access");
     }
 
     if(!body.projects) {
