@@ -1,5 +1,6 @@
 "use client";
 
+import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
 import Loader from "./Loader";
 import { handleTrancate, requestHandler, showNotification } from "@/Utils";
@@ -61,7 +62,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [
       {
-        name: "Quick Release",
+        name: WEB_DETAILS.name,
         href: "/allLogs",
         current: true,
       },
@@ -108,20 +109,18 @@ export function Navbar() {
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                      alt="Your Company"
+                      src={WEB_DETAILS.logo}
+                      alt={WEB_DETAILS.name}
                     />
-                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
-                      Quick Release
-                    </span>
+                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">{WEB_DETAILS.name}</span>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
                   <div className="flex flex-shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-                      alt="Your Company"
+                      src={WEB_DETAILS.logo}
+                      alt={WEB_DETAILS.name}
                     />
                   </div>
                   <div className="hidden lg:ml-6 lg:block">

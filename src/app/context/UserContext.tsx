@@ -44,7 +44,6 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
         setLoggedInUser(data);
       },
       (errorMsg) => {
-        console.log("get logged in user details error: ", errorMsg);
         showNotification("error", errorMsg);
       }
     );

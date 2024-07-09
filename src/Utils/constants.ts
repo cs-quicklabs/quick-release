@@ -119,6 +119,14 @@ export const SelectUserDetailsFromDB = {
   role: true,
 };
 
+export const REVALIDATE_API = 0; // revalidate/cache api response for 60 seconds
+
+export const WEB_DETAILS = {
+  name: "Quick Release",
+  description: "Manage your release notes better",
+  logo: "/icons/qr-logo1.svg",
+  favicon: "/icons/favicon.svg",
+};
 export const ChangeLogIncludeDBQuery = {
   project: { select: { id: true, name: true } },
   createdBy: { select: SelectUserDetailsFromDB },
@@ -134,5 +142,3 @@ export const ChangeLogIncludeDBQuery = {
     },
   },
 };
-
-export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds
