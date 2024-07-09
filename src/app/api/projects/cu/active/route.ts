@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: Request, res: Response) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
 

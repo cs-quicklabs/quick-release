@@ -7,7 +7,7 @@ import { create } from "domain";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET(req: Request, res: Response) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
@@ -20,7 +20,6 @@ export async function GET(req: Request) {
 
     const projects = await db.project.findMany({ where: query });
     const totalProjects = await db.project.count({ where: query });
-
     return NextResponse.json(
       new ApiResponse(
         200,

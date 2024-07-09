@@ -35,6 +35,7 @@ export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const [open, setOpen] = React.useState(false);
+  const [isLogOut, setIsLogOut] = React.useState(false);
   const { loggedInUser, logout } = useUserContext();
   const {
     activeProjectId,
@@ -46,7 +47,6 @@ export function Navbar() {
   const [loading, setLoading] = React.useState({
     projectLoading: false,
     activeProjectLoading: false as any,
-    logout: false,
     activeUserLoading: true,
   });
 
@@ -101,9 +101,9 @@ export function Navbar() {
         message="Are you sure you want to sign out?"
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={logout}
+        onClickOk={() => logout(setIsLogOut)}
         onClickCancel={() => setOpen(false)}
-        loading={loading.logout}
+        loading={isLogOut}
       />
       <Disclosure as="nav" className="bg-gray-800">
         {({ open }: any) => (
@@ -381,7 +381,7 @@ export function Navbar() {
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
                               )}
                             >
-                              {loading.logout ? (
+                              {isLogOut ? (
                                 <div className="flex  items-center gap-4">
                                   <span className="text-sm font-[490] text-black">
                                     Sign out

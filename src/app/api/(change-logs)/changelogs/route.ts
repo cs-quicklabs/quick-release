@@ -93,6 +93,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null };
 
+
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
@@ -101,6 +102,8 @@ export async function GET(req: NextRequest) {
     if (projectId) {
       query.projectId = projectId;
     }
+
+
 
     const status = searchParams.get("status");
     if (status) {
@@ -113,6 +116,8 @@ export async function GET(req: NextRequest) {
       query.archivedAt = { not: null };
     }
 
+
+
     const changeLogs = await db.log.findMany({
       where: query,
       include: ChangeLogIncludeDBQuery,
@@ -122,6 +127,10 @@ export async function GET(req: NextRequest) {
         createdAt: "desc",
       },
     });
+
+    if (!changeLogs) {
+      throw new ApiError(404, "Change logs not found");
+    }
 
     const totalChangeLogs = await db.log.count({ where: query });
     const hasNextPage = totalChangeLogs > page * limit;
