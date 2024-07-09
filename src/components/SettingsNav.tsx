@@ -2,21 +2,24 @@
 
 import ChangePasswordSVG from "@/svg-icons/ChangePasswordSVG";
 import EmailPrefrencesSVG from "@/svg-icons/EmailPrefrencesSVG";
+import LockIcon from "@/svg-icons/LockIcon";
 import ProfileSVG from "@/svg-icons/ProfileSVG";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const SettingsNav = () => {
+const SettingsNav = (
+  {isProfileSettings = true}: {isProfileSettings?: boolean}
+) => {
   const pathname = usePathname();
-  const navLinks = [
+  const navLinks = isProfileSettings ? [
     {
-      href: "/settings/profile",
+      href: "/settings/profile/general",
       text: "Profile",
       icon: <ProfileSVG />,
     },
     {
-      href: "/settings/change-password",
+      href: "/settings/profile/password",
       text: "Change Password",
       icon: <ChangePasswordSVG />,
     },
@@ -24,6 +27,13 @@ const SettingsNav = () => {
       href: "/allLogs",
       text: "Email Prefrences",
       icon: <EmailPrefrencesSVG />,
+    },
+
+  ] : [
+    {
+      href: "/settings/team/tags",
+      text: "Tags",
+      icon: <LockIcon />,
     },
   ];
   return (

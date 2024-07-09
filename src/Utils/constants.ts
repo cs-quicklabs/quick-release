@@ -127,3 +127,18 @@ export const WEB_DETAILS = {
   logo: "/icons/qr-logo1.svg",
   favicon: "/icons/favicon.svg",
 };
+export const ChangeLogIncludeDBQuery = {
+  project: { select: { id: true, name: true } },
+  createdBy: { select: SelectUserDetailsFromDB },
+  updatedBy: { select: SelectUserDetailsFromDB },
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+};

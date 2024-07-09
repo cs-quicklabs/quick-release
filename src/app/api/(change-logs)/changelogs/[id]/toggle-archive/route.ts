@@ -1,8 +1,9 @@
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -44,11 +45,7 @@ export async function POST(
       data: {
         archivedAt: changeLog.archivedAt ? null : new Date(),
       },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
 
     if (
@@ -61,7 +58,7 @@ export async function POST(
     return NextResponse.json(
       new ApiResponse(
         200,
-        updatedChangeLog,
+        computeChangeLog(updatedChangeLog),
         `${
           updatedChangeLog.archivedAt ? "Archive" : "Unarchive"
         } change log successfully`

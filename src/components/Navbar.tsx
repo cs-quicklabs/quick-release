@@ -3,9 +3,10 @@
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
 import Loader from "./Loader";
-import { handleTrancate } from "@/Utils";
+import { handleTrancate, requestHandler, showNotification } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
+import { setActiveProjectRequest } from "@/fetchHandlers/project";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
@@ -45,17 +46,17 @@ export function Navbar() {
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
-    try {
-      setActiveProject(projectId);
-      const userId = loggedInUser?.id;
-      router.replace("/allLogs");
-
-      if (projectId && userId) {
-        await axios.post(`/api/active-project/${projectId}/${userId}`);
+    await requestHandler(
+      async () => await setActiveProjectRequest(projectId),
+      null,
+      (res: any) => {
+        router.refresh();
+        setActiveProject(projectId);
+      },
+      (errMessage: any) => {
+        showNotification("error", errMessage);
       }
-    } catch (err) {
-      console.log("error", err);
-    }
+    )
   };
 
   const navigation = useMemo(() => {
@@ -374,7 +375,7 @@ export function Navbar() {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              href="/settings/profile"
+                              href="/settings/profile/general"
                               // onClick={handleLogout}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
@@ -382,12 +383,23 @@ export function Navbar() {
                               )}
                             >
                               <div className="flex  items-center">
-                                <Link
-                                  href="/settings/profile"
-                                  className="text-[15px] font-[490] text-black text-sm"
-                                >
-                                  Profile Settings
-                                </Link>
+                                Profile Settings
+                              </div>
+                            </Link>
+                          )}
+                        </Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              href="/settings/team/tags"
+                              // onClick={handleLogout}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                              )}
+                            >
+                              <div className="flex  items-center">
+                                Team Settings
                               </div>
                             </Link>
                           )}

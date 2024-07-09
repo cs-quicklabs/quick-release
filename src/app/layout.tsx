@@ -11,6 +11,7 @@ import { UserProvider } from "./context/UserContext";
 import { ChangeLogProvider } from "./context/ChangeLogContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { WEB_DETAILS } from "@/Utils/constants";
+import { ReleaseTagProvider } from "./context/ReleaseTagContext";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -38,12 +39,16 @@ export default async function RootLayout({
         <AuthProvider>
           <Provider>
             <UserProvider>
-              <ProjectProvider>
-                <ChangeLogProvider>
-                  <div className="bg-gray-50 dark:bg-gray-900 h-screen">{children}</div>
-                  <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />
-                </ChangeLogProvider>
-              </ProjectProvider>
+              <ReleaseTagProvider>
+                <ProjectProvider>
+                  <ChangeLogProvider>
+                    <div className="bg-gray-50 h-screen">
+                      {children}
+                    </div>
+                    <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />
+                  </ChangeLogProvider>
+                </ProjectProvider>
+              </ReleaseTagProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>

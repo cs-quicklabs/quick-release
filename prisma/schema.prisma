@@ -12,64 +12,110 @@ datasource db {
 }
 
 model User {
-  id                      String        @id @default(cuid())
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
+  id                      String              @id @default(cuid())
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
   firstName               String
   lastName                String
   profilePicture          String?
-  email                   String        @unique
+  email                   String              @unique
   password                String
-  resetToken              String?       @unique
+  resetToken              String?             @unique
   resetTokenExpiry        String?
-  isActive                Boolean       @default(true)
-  isVerified              Boolean       @default(false)
-  role                    String        @default("ADMIN")
-  organisationId          String        @unique
-  organisation            Organisation? @relation(fields: [organisationId], references: [id])
-  projects                Project[]
-  verificationToken       String?       @unique
+  isActive                Boolean             @default(true)
+  isVerified              Boolean             @default(false)
+  role                    String              @default("ADMIN")
+  verificationToken       String?             @unique
   verificationTokenExpiry String?
-  createdLogs             Log[]         @relation("CreatedLogs")
-  updatedLogs             Log[]         @relation("UpdatedLogs")
+  projectUsers            ProjectUsers[]
+  organisations           Organisation[]
+  projects                Project[]
+  organisationUsers       OrganisationUsers[]
+  createdLogs             Log[]               @relation("CreatedLogs")
+  updatedLogs             Log[]               @relation("UpdatedLogs")
 }
 
 model Organisation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  admin     User?
-  name      String
+  id                  String                  @id @default(cuid())
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  user                User?                   @relation(fields: [createdById], references: [id])
+  createdById         String
+  name                String
+  organisationUsers   OrganisationUsers[]
+  releaseTags         ReleaseTag[]
+  projects            Project[]
+}
+
+model OrganisationUsers {
+  organisation    Organisation                @relation(fields: [organisationId], references: [id])
+  organisationId  String
+  user            User                        @relation(fields: [userId], references: [id])
+  userId          String
+
+  @@id([organisationId,userId])
 }
 
 model Project {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  logs      Log[]
-  User      User?    @relation(fields: [adminId], references: [id])
-  adminId   String?
-  isActive  Boolean  @default(false)
+  id              String            @id @default(cuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  name            String
+  logs            Log[]
+  User            User?             @relation(fields: [adminId], references: [id])
+  adminId         String?
+  isActive        Boolean           @default(false)
+  organisation    Organisation      @relation(fields: [organisationId], references: [id])
+  organisationId  String            
+  projectUsers    ProjectUsers[]
+}
+
+model ProjectUsers {
+  project     Project     @relation(fields: [projectId], references: [id])
+  projectId   String
+  user        User        @relation(fields: [userId], references: [id])
+  userId      String
+
+  @@id([userId,projectId])
 }
 
 model Log {
-  id                String    @id @default(cuid())
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                String             @id @default(cuid())
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
   title             String
   description       String
   releaseVersion    String
   releaseCategories String[]
-  releaseTags       String[]
-  project           Project?  @relation(fields: [projectId], references: [id])
+  releaseTags       ReleaseTagOnLogs[]
+  project           Project?           @relation(fields: [projectId], references: [id])
   projectId         String?
   scheduledTime     DateTime?
   status            String
-  createdBy         User      @relation("CreatedLogs", fields: [createdById], references: [id])
+  createdBy         User               @relation("CreatedLogs", fields: [createdById], references: [id])
   createdById       String
-  updatedBy         User      @relation("UpdatedLogs", fields: [updatedById], references: [id])
+  updatedBy         User               @relation("UpdatedLogs", fields: [updatedById], references: [id])
   updatedById       String
   deletedAt         DateTime?
   archivedAt        DateTime?
+}
+
+model ReleaseTag {
+  id             Int                @id @default(autoincrement())
+  name           String
+  code           String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  organisation   Organisation?      @relation(fields: [organisationId], references: [id])
+  organisationId String
+  logs           ReleaseTagOnLogs[]
+}
+
+model ReleaseTagOnLogs {
+  log          Log        @relation(fields: [logId], references: [id])
+  logId        String
+  releaseTag   ReleaseTag @relation(fields: [releaseTagId], references: [id])
+  releaseTagId Int
+
+  @@id([logId, releaseTagId])
 }

@@ -25,7 +25,7 @@ export type ChangeLogType = {
   description: string;
   releaseVersion: string;
   releaseCategories: string[];
-  releaseTags: string[];
+  releaseTags: string[] | IReleaseTag[];
 
   project?: Project;
   projectId: string;
@@ -69,4 +69,5 @@ export type ApiFilterQueryType = {
   page?: number;
   limit?: number;
   [key: string]: any;
+  organisationId?: string;
 };
