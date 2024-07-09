@@ -1,7 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
-import Link from "next/link";
 import AlertModal from "@/components/AlertModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { IReleaseTag } from "@/interfaces";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 
 type ReleaseTagsTableProps = {
   onEdit: (id: number) => void;
@@ -9,11 +12,20 @@ type ReleaseTagsTableProps = {
 
 const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
   const prevStates = useRef({ isLoading: false });
+  const [tagNames, setTagNames] = useState<{ [key: number]: string }>({});
+  const [isSaving, setIsSaving] = useState(false);
 
-  const { map: releaseTagMap, list, deleteReleaseTag } = useReleaseTagContext();
+  const {
+    map: releaseTagMap,
+    list,
+    deleteReleaseTag,
+    updateReleaseTag,
+  } = useReleaseTagContext();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedReleaseTagId, setSelectedReleaseTagId] = useState<number | null>(null);
+  const [selectedReleaseTagId, setSelectedReleaseTagId] = useState<
+    number | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
@@ -21,20 +33,42 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
     setShowDeleteModal(true);
   };
 
+  const handleEdit = (id: number) => {
+    setSelectedReleaseTagId(id);
+    setTagNames((prev) => ({
+      ...prev,
+      [id]: releaseTagMap[id]?.name || "",
+    }));
+  };
+
+  const onSaveReleaseTag = async () => {
+    if (!selectedReleaseTagId || !tagNames[selectedReleaseTagId]) return;
+
+    const releaseTag: IReleaseTag = {
+      id: selectedReleaseTagId,
+      name: tagNames[selectedReleaseTagId],
+    };
+
+    await updateReleaseTag(releaseTag, setIsSaving);
+    setSelectedReleaseTagId(null);
+  };
+
   useEffect(() => {
-    if (!selectedReleaseTagId || (prevStates.current?.isLoading && !isLoading)) {
+    if (
+      !selectedReleaseTagId ||
+      (prevStates.current?.isLoading && !isLoading)
+    ) {
       setSelectedReleaseTagId(null);
       setShowDeleteModal(false);
     }
 
     return () => {
-      prevStates.current = {
-        isLoading
-      };
+      prevStates.current = { isLoading };
     };
   }, [isLoading]);
 
-  const selectedReleaseTag = typeof selectedReleaseTagId === null ? null : releaseTagMap[selectedReleaseTagId!];
+  const selectedReleaseTag =
+    selectedReleaseTagId !== null ? releaseTagMap[selectedReleaseTagId] : null;
 
   return (
     <div className="h-full relative overflow-y-auto mt-8">
@@ -44,64 +78,87 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
             <th className="px-6 py-3 w-full" scope="col">
               Tag Name
             </th>
-
             <th className="px-6 py-3" scope="col">
               Action
             </th>
           </tr>
         </thead>
-
         <tbody>
-          {
-            !list.length &&
+          {!list.length && (
             <tr className="text-sm text-gray-500 bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-center" colSpan={2}>
+              <td
+                className="px-6 py-4 whitespace-nowrap text-center"
+                colSpan={2}
+              >
                 No tags found.
               </td>
             </tr>
-          }
-
-          {
-            list.map((releaseTagId) => {
-              const releaseTag = releaseTagMap[releaseTagId];
-              if (!releaseTag) return null;
-
-              return (
-                <tr key={releaseTag.id} className="odd:bg-white even:bg-gray-50 border-b">
-                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    {releaseTag.name}
-                  </td>
-
-                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                    <Link
-                      href="#"
-                      className="font-medium text-blue-600 hover:underline"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onEdit(releaseTag.id!);
-                      }}
+          )}
+          {list.map((releaseTagId) => {
+            const isReleaseEdit = selectedReleaseTagId === releaseTagId;
+            const releaseTag = releaseTagMap[releaseTagId];
+            if (!releaseTag) return null;
+            return (
+              <tr
+                key={releaseTag.id}
+                className="odd:bg-white even:bg-gray-50 border-b"
+              >
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  {!isReleaseEdit ? (
+                    releaseTag.name
+                  ) : (
+                    <Input
+                      placeholder="Enter tag name"
+                      value={tagNames[releaseTagId] || ""}
+                      onChange={(e) =>
+                        setTagNames({
+                          ...tagNames,
+                          [releaseTagId]: e.target.value,
+                        })
+                      }
+                      disabled={isSaving}
+                    />
+                  )}
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                  {!isReleaseEdit ? (
+                    <>
+                      <Link
+                        href="#"
+                        className="font-medium text-blue-600 hover:underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleEdit(releaseTag.id!);
+                        }}
+                      >
+                        Edit
+                      </Link>
+                      <Link
+                        href="#"
+                        className="ml-2 font-medium text-red-600 hover:underline"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          onDelete(releaseTag.id!);
+                        }}
+                      >
+                        Delete
+                      </Link>
+                    </>
+                  ) : (
+                    <Button
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                      onClick={onSaveReleaseTag}
+                      disabled={isSaving}
                     >
-                      Edit
-                    </Link>
-
-                    <Link
-                      href="#"
-                      className="ml-2 font-medium text-red-600 hover:underline"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onDelete(releaseTag.id!);
-                      }}
-                    >
-                      Delete
-                    </Link>
-                  </td>
-                </tr>
-              );
-            })
-          }
+                      {isSaving ? "Saving..." : "Save"}
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
