@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.createproject = class Project {
+exports.createProject = class Project {
   constructor(page) {
     this.page = page;
     this.Project = "New3";

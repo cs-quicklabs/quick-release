@@ -1,4 +1,4 @@
-import { ChangePassword } from "../e2e/ChangePassword";
+import { changePassword } from "../e2e/ChangePassword";
 import { LoginPage } from "../e2e/Login";
 import { test, expect } from "@playwright/test";
 
@@ -12,6 +12,6 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
 test("verify user able to click on change password settings ", async ({
   page,
 }) => {
-  const changepass = new ChangePassword(page);
-  await changepass.changePassword();
+  const password = new changePassword(page);
+  await password.changePassword();
 });

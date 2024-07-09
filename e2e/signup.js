@@ -4,10 +4,10 @@ exports.Signup = class Signup {
     this.page = page;
   }
 
-  async signup(firstname, lastname, email, company, password, confirmPassword) {
+  async signup(firstName, lastName, email, company, password, confirmPassword) {
     await this.page.getByText("Sign up").click();
-    await this.page.locator("#first-name").fill(firstname);
-    await this.page.locator("#last-name").fill(lastname);
+    await this.page.locator("#first-name").fill(firstName);
+    await this.page.locator("#last-name").fill(lastName);
     await this.page.locator("#email").fill(email);
     await this.page.locator("#organisation-name").fill(company);
     await this.page.locator('input[id="password"]').first().fill(password);

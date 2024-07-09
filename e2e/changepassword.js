@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.ChangePassword = class ChangePassword {
+exports.changePassword = class changePassword {
   constructor(page) {
     this.page = page;
   }

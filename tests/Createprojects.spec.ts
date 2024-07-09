@@ -1,5 +1,5 @@
 import { LoginPage } from "../e2e/Login";
-import { createproject } from "../e2e/Projectsdetails";
+import { createProject } from "../e2e/Projectsdetails";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
@@ -11,19 +11,19 @@ test.beforeEach(
   }
 );
 test(" Verify Admin able to create Projet", async ({ page }) => {
-  const projects = new createproject(page);
-  await projects.createproject();
+  const projects = new createProject(page);
+  await projects.createProject();
 });
 test(" Verify Admin should not able to create project with only spaces", async ({
   page,
 }) => {
-  const projects = new createproject(page);
-  await projects.projectvalidations();
+  const projects = new createProject(page);
+  await projects.projectValidations();
 });
 
 test(" Verify Admin should not able to create project with same project which are already exist", async ({
   page,
 }) => {
-  const projects = new createproject(page);
-  await projects.existproject();
+  const projects = new createProject(page);
+  await projects.existProject();
 });
