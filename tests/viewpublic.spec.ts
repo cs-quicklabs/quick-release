@@ -1,10 +1,10 @@
-import { Changelogdetail } from "../e2e/ChangelogPage";
+import { ChangelogDetail } from "../e2e/ChangelogPage";
 import { LoginPage } from "../e2e/Login";
-import { viewpublic } from "../e2e/Viewpublic";
+import { viewPublic } from "../e2e/Viewpublic";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
-  " Verify Admin able to click on newchange log ",
+  " Verify Admin able to click on new changelog ",
   async ({ page }) => {
     const login = new LoginPage(page);
 
@@ -14,11 +14,11 @@ test.beforeEach(
 );
 
 test(" Verify change log Page data ", async ({ page }) => {
-  const changelog = new Changelogdetail(page);
-  await changelog.changelogelements();
+  const changelog = new ChangelogDetail(page);
+  await changelog.changelogElements();
 });
 
 test(" Verify change log public view ", async ({ page }) => {
-  const view = new viewpublic(page);
-  await view.viewdetails();
+  const view = new viewPublic(page);
+  await view.viewDetails();
 });

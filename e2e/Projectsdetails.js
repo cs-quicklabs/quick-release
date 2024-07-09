@@ -5,7 +5,7 @@ exports.createproject = class Project {
     this.Project = "New3";
   }
 
-  async createproject() {
+  async createProject() {
     await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
@@ -19,7 +19,7 @@ exports.createproject = class Project {
     );
   }
 
-  async existproject() {
+  async existProject() {
     await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
@@ -33,7 +33,7 @@ exports.createproject = class Project {
     );
   }
 
-  async projectvalidations() {
+  async projectValidations() {
     await this.page.locator("#open-user-menu").click();
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");

@@ -1,10 +1,10 @@
 const { test, expect } = require("@playwright/test");
-exports.Changepassword = class Changepassword {
+exports.ChangePassword = class ChangePassword {
   constructor(page) {
     this.page = page;
   }
 
-  async changepassword() {
+  async changePassword() {
     await this.page.locator("#open-user-menu").click();
     await this.page.locator("#profile-settings").click();
     await expect(this.page.getByText("Profile")).toBeVisible();

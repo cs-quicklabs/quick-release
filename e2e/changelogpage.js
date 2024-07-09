@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.Changelogdetail = class Changelogdetail {
+exports.ChangelogDetail = class ChangelogDetail {
   constructor(page) {
     this.page = page;
     this.description =
@@ -8,7 +8,7 @@ exports.Changelogdetail = class Changelogdetail {
     this.title = "Test";
   }
 
-  async changelogelements() {
+  async changelogElements() {
     if (await this.page.locator("#add-new").isVisible()) {
       await expect(
         this.page.locator(
@@ -24,7 +24,7 @@ exports.Changelogdetail = class Changelogdetail {
     await this.page.waitForTimeout(5000);
   }
 
-  async editchangelog() {
+  async editChangelog() {
     await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
       this.description
     );
@@ -37,7 +37,7 @@ exports.Changelogdetail = class Changelogdetail {
     await this.page.getByText("Publish Changelog Now").click();
   }
 
-  async deletechangelog() {
+  async deleteChangelog() {
     await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
       this.description
     );

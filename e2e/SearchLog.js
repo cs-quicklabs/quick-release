@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.searchchangelog = class searchchangelog {
+exports.searchChangelog = class searchChangelog {
   constructor(page) {
     this.page = page;
     this.description =
@@ -8,7 +8,7 @@ exports.searchchangelog = class searchchangelog {
     this.title = "ABC";
   }
 
-  async searchlog() {
+  async searchChangelog() {
     {
       await this.page.locator("#search").fill(this.title);
     }

@@ -2,54 +2,54 @@ const { test, expect } = require("@playwright/test");
 exports.LoginPage = class LoginPage {
   constructor(page) {
     this.page = page;
-    this.passwordinput = 'input[id="password"]';
+    this.passwordInput = 'input[id="password"]';
     this.submit = '"button", { name: "Log in" }';
-    this.emailinput = "input[id=email]";
+    this.emailInput = "input[id=email]";
   }
 
   async login(email, password) {
-    const emailfield = this.page.locator(this.emailinput);
-    await emailfield.fill(email);
-    const passwordfield = this.page.locator(this.passwordinput);
+    const emailField = this.page.locator(this.emailInput);
+    await emailField.fill(email);
+    const passwordField = this.page.locator(this.passwordInput);
 
-    await passwordfield.fill(password);
+    await passwordField.fill(password);
     await this.page.getByRole("button", { name: "Log in" }).click();
 
     await this.page.waitForURL("http://localhost:3000/allLogs");
   }
 
-  async loginwithWhitespaces() {
-    const emailfield = this.page.locator(this.emailinput);
-    await emailfield.fill("   ");
-    const passwordfield = this.page.locator(this.passwordinput);
+  async loginWithWhiteSpaces() {
+    const emailField = this.page.locator(this.emailInput);
+    await emailField.fill("   ");
+    const passwordField = this.page.locator(this.passwordInput);
 
-    await passwordfield.fill("  ");
+    await passwordField.fill("  ");
     await this.page.getByRole("button", { name: "Log in" }).click();
     await expect(this.page.locator("#login-error")).toHaveText("Required");
   }
 
-  async loginwithInvalidmail() {
-    const emailfield = this.page.locator(this.emailinput);
-    await emailfield.fill("    ");
-    const passwordfield = this.page.locator(this.passwordinput);
+  async loginWithInvalidMail() {
+    const emailField = this.page.locator(this.emailInput);
+    await emailField.fill("    ");
+    const passwordField = this.page.locator(this.passwordInput);
 
-    await passwordfield.fill("pass1234");
+    await passwordField.fill("pass1234");
     await this.page.getByRole("button", { name: "Log in" }).click();
     await expect(this.page.locator("#login-error")).toHaveText("Required");
 
-    await this.page.locator(this.emailinput).press("Backspace");
-    await this.page.locator(this.emailinput).fill("aa@@");
+    await this.page.locator(this.emailInput).press("Backspace");
+    await this.page.locator(this.emailInput).fill("aa@@");
     await expect(this.page.locator("#login-error")).toHaveText(
       "Invalid email address"
     );
   }
 
-  async loginwithinvalidCredential(email, password) {
-    const emailfield = this.page.locator(this.emailinput);
-    await emailfield.fill(email);
-    const passwordfield = this.page.locator(this.passwordinput);
+  async loginWithInvalidCredential(email, password) {
+    const emailField = this.page.locator(this.emailInput);
+    await emailField.fill(email);
+    const passwordField = this.page.locator(this.passwordInput);
 
-    await passwordfield.fill(password);
+    await passwordField.fill(password);
     await this.page.getByRole("button", { name: "Log in" }).click();
     await expect(this.page.locator(".Toastify")).toHaveText(
       "Incorrect Credentials!"

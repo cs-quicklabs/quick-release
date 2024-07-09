@@ -8,7 +8,7 @@ exports.Changelog = class changelog {
     this.title = "Test";
   }
 
-  async cancelchangelog() {
+  async cancelChangelog() {
     if (await this.page.locator("#add-new").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator("#title").fill(this.title);
@@ -41,7 +41,7 @@ exports.Changelog = class changelog {
     }
   }
 
-  async publishchangelog() {
+  async publishChangelog() {
     if (await this.page.getByText("Add New").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);
@@ -73,7 +73,7 @@ exports.Changelog = class changelog {
     }
   }
 
-  async savechangelog() {
+  async saveChangelog() {
     if (await this.page.getByText("Add New").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);

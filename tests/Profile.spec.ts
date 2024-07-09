@@ -10,20 +10,20 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
 
 test("verify user able to click on profile settings ", async ({ page }) => {
   const Profile = new Profiles(page);
-  await Profile.profileclick();
+  await Profile.profileClick();
 });
 
 test("verify Profile page Elements ", async ({ page }) => {
   const Profile = new Profiles(page);
-  await Profile.profilepage();
+  await Profile.profilePage();
 });
 
 test("verify user able to update profile ", async ({ page }) => {
   const Profile = new Profiles(page); // 30 seconds
-  await Profile.profileupdate("Kathleen1", "Gupta");
+  await Profile.profileUpdate("Kathleen1", "Gupta");
 });
 
 test("verify user able to uploadfile ", async ({ page }) => {
   const Profile = new Profiles(page);
-  await Profile.profileupload();
+  await Profile.profileUpload();
 });

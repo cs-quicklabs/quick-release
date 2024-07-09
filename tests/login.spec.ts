@@ -17,7 +17,7 @@ test(" verify Username and Password field  with only spaces", async ({
   testInfo.setTimeout(testInfo.timeout + 300000);
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.loginwithWhitespaces();
+  await login.loginWithWhiteSpaces();
 });
 
 test("Verify username field by invalid email", async ({ page }, testInfo) => {
@@ -25,11 +25,11 @@ test("Verify username field by invalid email", async ({ page }, testInfo) => {
 
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.loginwithInvalidmail();
+  await login.loginWithInvalidMail();
 });
 
 test("Verify username field by invalid credential", async ({ page }) => {
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.loginwithinvalidCredential("divanshu@crownstack.com", "pass123");
+  await login.loginWithInvalidCredential("divanshu@crownstack.com", "pass123");
 });

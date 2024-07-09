@@ -1,9 +1,9 @@
-import { Changelogdetail } from "../e2e/ChangelogPage";
+import { ChangelogDetail } from "../e2e/ChangelogPage";
 import { LoginPage } from "../e2e/Login";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
-  " Verify Admin able to click on newchange log ",
+  " Verify Admin able to click on new changelog ",
   async ({ page }) => {
     const login = new LoginPage(page); // 30 seconds
     await page.goto("/");
@@ -12,16 +12,16 @@ test.beforeEach(
 );
 
 test(" Verify change log Page data ", async ({ page }) => {
-  const changelog = new Changelogdetail(page);
-  await changelog.changelogelements();
+  const changelog = new ChangelogDetail(page);
+  await changelog.changelogElements();
 });
 
 test("Verify user able to Edit changelog ", async ({ page }) => {
-  const changelog = new Changelogdetail(page);
-  await changelog.editchangelog();
+  const changelog = new ChangelogDetail(page);
+  await changelog.editChangelog();
 });
 
 test(" Verify user able to Delete changelog", async ({ page }) => {
-  const changelog = new Changelogdetail(page);
-  await changelog.deletechangelog();
+  const changelog = new ChangelogDetail(page);
+  await changelog.deleteChangelog();
 });

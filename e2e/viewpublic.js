@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.viewpublic = class viewpublic {
+exports.viewPublic = class viewPublic {
   constructor(page) {
     this.page = page;
     this.description =
@@ -8,7 +8,7 @@ exports.viewpublic = class viewpublic {
     this.title = "Test";
   }
 
-  async viewdetails() {
+  async viewDetails() {
     await this.page.getByText("See Details").click();
 
     await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
