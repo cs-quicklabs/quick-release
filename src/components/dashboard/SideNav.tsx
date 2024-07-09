@@ -30,12 +30,21 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
 
   const { activeProjectId } = useProjectContext();
   const {
+    activeChangeLogId,
+    map: changeLogMap,
     isLoading: isFetchingChangeLogs,
     metaData: changeLogMetaData,
     list: changeLogsList,
     getAllChangeLogs,
     loadMoreChangeLogs
   } = useChangeLogContext();
+
+  const activeChangeLog = useMemo(() => {
+    if (activeChangeLogId && changeLogMap[activeChangeLogId]) {
+      return changeLogMap[activeChangeLogId];
+    }
+    return null;
+  }, [activeChangeLogId, changeLogMap]);
 
   const fetchAllChangesLogs = useCallback(() => {
     const query: FilterType = { projectId: activeProjectId! };
@@ -69,6 +78,11 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     getAllChangeLogs(newFilter);
   };
 
+  useEffect(() => {
+    onSelectStatus(filter.status ? filter.status : filter.isArchived ? "archived" : null);
+  }, [activeChangeLog?.archivedAt]);
+
+  // function to handle clear filter
   const onClearFilter = () => {
     if (filter.status || filter.isArchived) {
       fetchAllChangesLogs();
