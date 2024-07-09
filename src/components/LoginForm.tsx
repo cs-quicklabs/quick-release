@@ -92,7 +92,7 @@ export default function LoginForm() {
       }
       verifyToken();
     }
-  }, []);
+  }, [token]);
 
   const resendEmail = async () => {
     await requestHandler(

@@ -1,8 +1,10 @@
+import { isValidArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import moment from "moment";
 import { getServerSession } from "next-auth";
@@ -28,11 +30,7 @@ export async function GET(
 
     const changeLog = await db.log.findFirst({
       where: { id },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
 
     if (!changeLog) {
@@ -40,7 +38,11 @@ export async function GET(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, changeLog, "Changelog fetched successfully")
+      new ApiResponse(
+        200,
+        computeChangeLog(changeLog),
+        "Changelog fetched successfully"
+      )
     );
   });
 }
@@ -101,23 +103,54 @@ export async function PUT(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
-    if (!userId) {
+    const user = await db.user.findUnique({ where: { id: userId } });
+    if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const body = await req.json();
+    if (!body.title || !body.description || !body.releaseVersion) {
+      throw new ApiError(400, "Missing title, description or release version");
+    }
+
+    const project = await db.project.findUnique({
+      where: {
+        id: body.projectId,
+      },
+    })
+
+    const releaseTags = await db.releaseTag.findMany({
+      where: {
+        organisationId: project?.organisationId, // TODO: Check this.
+        code: {
+          in: body.releaseTags,
+        },
+      },
+    });
+
+    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+      throw new ApiError(400, "Release category is invalid");
+    }
+
+    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+      throw new ApiError(400, "Release tag is invalid");
+    }
+
     const changeLog = await db.log.findFirst({
       where: {
         id,
         deletedAt: null,
       },
     });
+
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
+
     if (changeLog.createdById !== userId) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const updatedChangeLog = await db.log.update({
       where: { id },
       data: {
@@ -125,23 +158,29 @@ export async function PUT(
         description: body.description,
         releaseVersion: body.releaseVersion,
         releaseCategories: body.releaseCategories,
-        releaseTags: body.releaseTags,
+        // releaseTags: body.releaseTags,
+        releaseTags: {
+          deleteMany: { logId: id },
+          create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
+        },
         updatedById: userId,
         status: body.status,
         scheduledTime: body.scheduledTime ?? null,
         archivedAt: null,
       },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
+
     if (!updatedChangeLog) {
       throw new ApiError(500, "Something went wrong while updating change log");
     }
+
     return NextResponse.json(
-      new ApiResponse(200, updatedChangeLog, "Change log updated successfully")
+      new ApiResponse(
+        200,
+        computeChangeLog(updatedChangeLog),
+        "Change log updated successfully"
+      )
     );
   });
 }

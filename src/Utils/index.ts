@@ -37,6 +37,9 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   return withoutTags.trim().length > 0;
 };
 
+export const getReleaseTagCode = (tagName: string) => {
+  return tagName.toLowerCase().replaceAll(" ", "_");
+};
 export const isValidArray = (compareArray: string[], validArray: string[]) => {
   return compareArray.every(compareItem => validArray.includes(compareItem));
 }

@@ -25,6 +25,8 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { IReleaseTag } from "@/interfaces";
+
 
 type PrevStateType = {
   isLoading: boolean;
@@ -140,7 +142,7 @@ const ContentContainer = () => {
   const actionOptions = useMemo(() => [
     {
       name: "Edit",
-      onClick: () => { router.push(`/changeLog/${activeChangeLogId}`) },
+      onClick: () => { router.push(`/changeLog/${activeChangeLogId}`); },
     },
     {
       name: changelog?.archivedAt ? "Unarchive" : "Archive",
@@ -174,7 +176,7 @@ const ContentContainer = () => {
 
   const { title, description, status, releaseVersion, archivedAt, createdBy, project } = changelog;
   const releaseCategories = changelog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
-  const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  const releaseTags = (changelog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
 
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
   const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
@@ -285,26 +287,29 @@ const ContentContainer = () => {
             </div>
           </li>
 
-          <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
-            <div className="sm:flex sm:items-baseline sm:justify-between">
-              <h3 className="text-base font-medium">
-                <span className="text-gray-900">Release Tags</span>
-              </h3>
-            </div>
+          {
+            !!releaseTags.length &&
+            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+              <div className="sm:flex sm:items-baseline sm:justify-between">
+                <h3 className="text-base font-medium">
+                  <span className="text-gray-900">Release Tags</span>
+                </h3>
+              </div>
 
-            <div className="space-y-2 text-sm text-gray-800">
-              {releaseTags.map(({ value, label }) => (
-                <span
-                  key={value}
-                  className={classNames(
-                    "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
-                  )}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-          </li>
+              <div className="space-y-2 text-sm text-gray-800">
+                {releaseTags.map(({ value, label }) => (
+                  <span
+                    key={value}
+                    className={classNames(
+                      "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                    )}
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </li>
+          }
 
           {alertDetails && <Alert {...alertDetails} />}
 

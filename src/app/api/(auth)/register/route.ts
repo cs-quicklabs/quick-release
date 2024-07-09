@@ -32,24 +32,33 @@ export async function POST(request: Request, res: NextApiResponse) {
         throw new ApiError(400, "Email already exists");
       }
 
-      const organisation = await db.organisation.create({
-        data: {
-          name: body.orgName,
-        },
-      });
       const register = await db.user.create({
         data: {
           email: body.email,
           password: hashedPassword,
           firstName: body.firstName,
           lastName: body.lastName,
-          organisationId: organisation.id,
         },
       });
 
       if (!register.id) {
         throw new ApiError(400, "Unable to create user");
       }
+
+      const organisation = await db.organisation.create({
+        data: {
+          name: body.orgName,
+          createdById: register.id,
+          isActive: true,
+        },
+      });
+
+      await db.organisationUsers.create({
+        data: {
+          userId: register.id,
+          organisationId: organisation.id,
+        },
+      })
 
       const verificationToken = crypto.randomBytes(20).toString("hex");
       const registerVerificationToken = crypto
