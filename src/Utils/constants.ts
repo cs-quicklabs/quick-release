@@ -118,6 +118,12 @@ export const SelectUserDetailsFromDB = {
   profilePicture: true,
 };
 
+export const WEB_DETAILS = {
+  name: "Quick Release",
+  description: "Manage your release notes better",
+  logo: "/icons/qr-logo1.svg",
+  favicon: "/icons/favicon.svg",
+};
 export const ChangeLogIncludeDBQuery = {
   project: { select: { id: true, name: true } },
   createdBy: { select: SelectUserDetailsFromDB },

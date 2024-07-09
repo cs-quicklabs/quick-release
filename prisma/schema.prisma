@@ -41,6 +41,7 @@ model Organisation {
   user                User?                   @relation(fields: [createdById], references: [id])
   createdById         String
   name                String
+  isActive            Boolean                 @default(false)
   organisationUsers   OrganisationUsers[]
   releaseTags         ReleaseTag[]
   projects            Project[]
@@ -61,8 +62,8 @@ model Project {
   updatedAt       DateTime          @updatedAt
   name            String
   logs            Log[]
-  User            User?             @relation(fields: [adminId], references: [id])
-  adminId         String?
+  User            User?             @relation(fields: [createdById], references: [id])
+  createdById     String?
   isActive        Boolean           @default(false)
   organisation    Organisation      @relation(fields: [organisationId], references: [id])
   organisationId  String            

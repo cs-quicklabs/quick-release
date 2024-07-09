@@ -23,12 +23,11 @@ export async function GET(req: Request, res: Response) {
 
     const project = await db.project.findFirst({
       where: {
-        adminId: userId,
+        createdById: userId,
         isActive: true,
       },
     });
-
-    if (!project) {
+    if (project === null) {
       throw new ApiError(404, "Active project not found");
     }
 

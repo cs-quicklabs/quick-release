@@ -10,7 +10,7 @@
 
 */
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'MEMBER');
+CREATE TYPE "Role" AS ENUM ('SUPER_ADMIN', 'ADMIN', 'MEMBER', 'USER');
 
 -- DropForeignKey
 ALTER TABLE "Project" DROP CONSTRAINT "Project_adminId_fkey";
@@ -25,8 +25,7 @@ DROP INDEX "User_organisationId_key";
 ALTER TABLE "Log" DROP COLUMN "releaseTags";
 
 -- AlterTable
-ALTER TABLE "Organisation" ADD COLUMN     "createdById" TEXT NOT NULL,
-ADD COLUMN     "isActive" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Organisation" ADD COLUMN     "createdById" TEXT NOT NULL;
 
 -- AlterTable
 ALTER TABLE "Project" DROP COLUMN "adminId",
@@ -49,7 +48,7 @@ CREATE TABLE "OrganisationUsers" (
 CREATE TABLE "ProjectUsers" (
     "projectId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'MEMBER',
+    "role" "Role" NOT NULL DEFAULT 'USER',
 
     CONSTRAINT "ProjectUsers_pkey" PRIMARY KEY ("userId","projectId")
 );

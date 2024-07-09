@@ -37,14 +37,14 @@ export async function POST(request: NextRequest, response: Response) {
     }
     const checkProjects = await db.project.findMany({
       where: {
-        adminId: userId,
+        createdById: userId,
       },
     });
 
     const project = await db.project.create({
       data: {
         name: body.projects,
-        adminId: userId,
+        createdById: userId,
         isActive: checkProjects.length === 0 ? true : false,
         organisationId: body.organisationId,
       },

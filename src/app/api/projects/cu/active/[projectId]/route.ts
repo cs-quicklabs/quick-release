@@ -3,15 +3,12 @@ import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { checkRole } from "@/middleware/checkRole";
-import { Role } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
-  res: Response,
-  { params }: { params: { id: string } }
+  { params: { projectId } }: { params: { projectId: string } }
 ) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
@@ -22,19 +19,13 @@ export async function PATCH(
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const roleMiddleware = checkRole(
-      [Role.SUPER_ADMIN, Role.ADMIN, Role.MEMBER],
-      userId
-    );
-    await roleMiddleware(req, res, () => {});
-
-    if (!params.id) {
+    if (!projectId) {
       throw new ApiError(400, "Project Id is required");
     }
 
     const project = await db.project.findFirst({
       where: {
-        id: params.id,
+        id: projectId,
       },
     });
 
@@ -47,7 +38,7 @@ export async function PATCH(
         isActive: false,
       },
       where: {
-        adminId: userId,
+        createdById: userId,
       },
     });
     const activeProject = await db.project.update({
@@ -55,7 +46,7 @@ export async function PATCH(
         isActive: true,
       },
       where: {
-        id: params.id,
+        id: projectId,
       },
     });
 

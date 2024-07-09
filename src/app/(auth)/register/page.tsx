@@ -1,9 +1,11 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
+import { WEB_DETAILS } from "@/Utils/constants";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -98,12 +100,14 @@ const Register = () => {
           href="/"
           className="flex items-center mb-6  mt-8 text-2xl font-medium text-gray-900 dark:text-white"
         >
-          <img
+          <Image
             className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            src={WEB_DETAILS.favicon}
             alt="logo"
+            width={32}
+            height={32}
           />
-          Quick Release
+          {WEB_DETAILS.name}
         </Link>{" "}
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
