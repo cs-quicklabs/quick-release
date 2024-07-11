@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 const ForgotPassword = () => {
