@@ -27,10 +27,10 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Organisation Id is required");
     }
 
-    const tagCode = getReleaseKeyCode(name);
+    const categoryCode = getReleaseKeyCode(name);
     const releaseCategory = await db.releaseCategory.findFirst({
       where: {
-        code: tagCode,
+        code: categoryCode,
         organisationId: body.organisationId,
       },
     });
@@ -41,9 +41,7 @@ export async function POST(req: NextRequest) {
     const newReleaseCategory = await db.releaseCategory.create({
       data: {
         name: body.name,
-        code: tagCode,
-        textColor: body.textColor,
-        bgColor: body.bgColor,
+        code: categoryCode,
         organisationId: body.organisationId,
       },
     });

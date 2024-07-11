@@ -52,8 +52,6 @@ export async function PUT(
       data: {
         name: body.name,
         code: categoryCode,
-        textColor: body.textColor,
-        bgColor: body.bgColor,
       },
     });
 

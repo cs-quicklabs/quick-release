@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ChangeLogsReleaseCategories } from "@/Utils/constants";
 import { Checkbox } from "flowbite-react";
 import { useRouter, usePathname, useSearchParams, useParams } from "next/navigation";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";

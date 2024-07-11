@@ -2,22 +2,10 @@
 
 import { checkRichTextEditorIsEmpty } from "@/Utils";
 import {
-  ChangeLogsReleaseCategories,
-  ChangeLogsReleaseTags,
   ChangeLogsReleaseActions,
 } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
-// import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
-// import DatePicker from "@/components/DatePicker";
-// import { useChangeLogContext } from "@/app/context/ChangeLogContext";
-// import TimePicker from "@/components/TimePicker";
-// import moment from "moment";
-// import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, ChangeLogsReleaseActions } from "@/Utils/constants";
-// import { checkRichTextEditorIsEmpty } from "@/Utils";
-// import dynamic from "next/dynamic";
-// import Loading from "@/components/Loading";
-// import { useProjectContext } from "@/app/context/ProjectContext";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import DatePicker from "@/components/DatePicker";
 import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
@@ -200,31 +188,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 
     createChangeLog(changelogPost, setIsSaving);
   };
-
-  // const { mutate: createPost, isSaving } = useMutation({
-  //   mutationFn: (newPost: IChangeLogPost) => {
-  //     return axios.post(`/api/create-changeLogs/${activeProject?.id}`, newPost);
-  //   },
-  //   onError: (err) => {
-  //     console.error(err);
-  //   },
-  //   onSuccess: () => {
-  //     router.push("/allLogs");
-  //     router.refresh();
-  //   },
-  // });
-
-  const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(
-    () => Object.values(ChangeLogsReleaseCategories),
-    []
-  );
-  // const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(() => Object.values(ChangeLogsReleaseTags), []);
-  const releaseTagsOptions: readonly ReleaseTagsOption[] = releaseTagIds.map(
-    (id) => ({
-      value: releaseTagMap[id]?.code!,
-      label: releaseTagMap[id]?.name!,
-    })
-  );
 
   useEffect(() => {
     const setDefaultValues = () => {

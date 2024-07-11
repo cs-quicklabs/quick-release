@@ -40,8 +40,9 @@ export async function GET(
     };
 
     const releaseCategories = searchParams.get("releaseCategories")?.split(",");
+    console.log("releaseCategories", releaseCategories);
     if (releaseCategories?.length) {
-      const selectedReleaseCategories = await db.releaseTag.findMany({
+      const selectedReleaseCategories = await db.releaseCategory.findMany({
         where: {
           code: {
             in: releaseCategories,
@@ -49,6 +50,7 @@ export async function GET(
           organisationId: project?.organisationId,
         },
       });
+      console.log("selectedReleaseCategories", selectedReleaseCategories);
       getAllPublishedChangeLogsQuery.releaseCategories = {
         some: {
           releaseCategoryId: {

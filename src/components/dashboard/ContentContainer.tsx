@@ -197,7 +197,7 @@ const ContentContainer = () => {
   } = changelog;
   const releaseCategories = (
     changelog.releaseCategories as IReleaseCategory[]
-  ).map((tag) => ({ value: tag.code, label: tag.name, bgColor: tag.bgColor, textColor: tag.textColor }));
+  ).map((tag) => ({ value: tag.code, label: tag.name }));
   const releaseTags = (changelog.releaseTags as IReleaseTag[]).map((tag) => ({
     value: tag.code,
     label: tag.name,
@@ -291,13 +291,12 @@ const ContentContainer = () => {
           data-svelte-h="svelte-1g1nf9v"
         >
           <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
-            {releaseCategories.map(({ value, label, bgColor, textColor }) => (
+            {releaseCategories.map(({ value, label }) => (
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
-                style={{ backgroundColor: bgColor, color: textColor }}
               >
                 {label}
               </span>

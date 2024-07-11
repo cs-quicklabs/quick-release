@@ -125,8 +125,6 @@ model ReleaseCategory {
   id             Int                      @id @default(autoincrement())
   name           String
   code           String
-  textColor      String
-  bgColor        String
   createdAt      DateTime                 @default(now())
   updatedAt      DateTime                 @updatedAt
   organisation   Organisation?            @relation(fields: [organisationId], references: [id])

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { ChangeLogsReleaseCategories, } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { ChangeLogType } from "@/types";
 import moment from "moment";
@@ -26,7 +25,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
 
   const { title, description, createdBy, releaseVersion, project } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-  const releaseCategories = (changeLog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name, bgColor: category.bgColor, textColor: category.textColor }));
+  const releaseCategories = (changeLog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name }));
   console.log("changeLog", releaseCategories);
   // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
@@ -48,13 +47,12 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
           </p>
 
           <div className="mt-1">
-            {releaseCategories.map(({ value, label, bgColor, textColor }) => (
+            {releaseCategories.map(({ value, label }) => (
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
-                style={{ backgroundColor: bgColor, color: textColor }}
               >
                 {label}
               </span>
