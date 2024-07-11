@@ -22,6 +22,12 @@ export const POST = async (request: Request) => {
         throw new ApiError(400, "Account already verified");
       }
 
+      if (user.verificationTokenExpiry) {
+        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
+        if (tokenExpiryTimestamp < Date.now())
+          throw new ApiError(400, "Verification link has expired");
+      }
+
       await db.user.update({
         where: {
           id: user?.id,
@@ -30,11 +36,6 @@ export const POST = async (request: Request) => {
           isVerified: true,
         },
       });
-      if (user.verificationTokenExpiry) {
-        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
-        if (tokenExpiryTimestamp < Date.now())
-          throw new ApiError(400, "Verification link has expired");
-      }
       return NextResponse.json(
         new ApiResponse(200, null, "Your account has been verified"),
       )

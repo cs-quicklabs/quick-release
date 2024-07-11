@@ -16,43 +16,39 @@ export async function GET(req: NextRequest) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const loggedInUser = await db.user.findFirst({
-      where: {
-        id: userId,
-      },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        profilePicture: true,
-        email: true,
-        isActive: true,
-        isVerified: true,
-      },
-    });
-
     const orgs = await db.organisationUsers.findMany({
       where: {
         userId: userId,
       },
       select: {
-        organisation: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
+        organisationId: true,
       },
     });
+
+    if (!orgs) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+
+    const orgIds = orgs.map((org) => org.organisationId);
+
+    const activeOrg = await db.organisation.findFirst({
+      where: {
+        id: {
+          in: orgIds,
+        },
+        isActive: true,
+      },
+    });
+
+    if (!activeOrg) {
+      throw new ApiError(404, "Active organisation not found");
+    }
 
     return NextResponse.json(
       new ApiResponse(
         200,
-        {
-          ...loggedInUser,
-          orgs: orgs.map((org) => org.organisation),
-        },
-        "Current user fetched successfully"
+        activeOrg,
+        "Active organisation fetched successfully"
       )
     );
   });

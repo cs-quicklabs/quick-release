@@ -1,7 +1,6 @@
 "use client";
 
 import { useToast } from "../components/ui/use-toast";
-import AuthForm from "@/components/AuthForm";
 import { Button } from "@/components/ui/button";
 import {
   Form,

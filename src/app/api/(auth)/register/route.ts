@@ -1,3 +1,4 @@
+import { getRolesCode } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -49,6 +50,7 @@ export async function POST(request: Request, res: NextApiResponse) {
         data: {
           name: body.orgName,
           createdById: register.id,
+          isActive: true,
         },
       });
 

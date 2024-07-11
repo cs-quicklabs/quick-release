@@ -84,12 +84,12 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [] }) => {
   }, [projectName]);
 
   return (
-    <aside className="flex justify-between lg:h-full items-start lg:flex-col lg:justify-start py-6 px-2 sm:px-6 lg:col-span-3 lg:py-0 lg:px-0">
+    <aside className="flex lg:flex-col lg:justify-start py-4 px-2 sm:px-4 lg:col-span-3 lg:py-0 lg:px-0">
       <div className="p-4">
         <label className="text-base font-semibold text-gray-900">Select Categories</label>
         <p className="text-sm text-gray-500">Chose Release Categories</p>
 
-        <fieldset className="mt-4">
+        <fieldset className="lg:mt-4">
           <div className="space-y-2">
             {
               Object.values(ChangeLogsReleaseCategories).map(category => (
@@ -105,6 +105,7 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [] }) => {
                     )}
                     name={category.value}
                     checked={selectedCategories.includes(category.value)}
+                    onChange={() => onSelectCategories(category.value)}
                     readOnly
                   />
 
@@ -120,7 +121,6 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [] }) => {
           </div>
         </fieldset>
       </div>
-
       {
         !!releaseTags.length &&
         <div className="mt-4 p-4">

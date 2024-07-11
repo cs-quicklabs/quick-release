@@ -37,6 +37,10 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   return withoutTags.trim().length > 0;
 };
 
+export const getRolesCode = (text: string) => {
+  return text.toUpperCase().replaceAll(" ", "_");
+}
+
 export const getReleaseTagCode = (tagName: string) => {
   return tagName.toLowerCase().replaceAll(" ", "_");
 };

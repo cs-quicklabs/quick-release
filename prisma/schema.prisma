@@ -24,7 +24,6 @@ model User {
   resetTokenExpiry        String?
   isActive                Boolean             @default(true)
   isVerified              Boolean             @default(false)
-  role                    String              @default("ADMIN")
   verificationToken       String?             @unique
   verificationTokenExpiry String?
   projectUsers            ProjectUsers[]
@@ -42,6 +41,7 @@ model Organisation {
   user                User?                   @relation(fields: [createdById], references: [id])
   createdById         String
   name                String
+  isActive            Boolean                 @default(false)
   organisationUsers   OrganisationUsers[]
   releaseTags         ReleaseTag[]
   projects            Project[]
@@ -51,7 +51,7 @@ model OrganisationUsers {
   organisation    Organisation                @relation(fields: [organisationId], references: [id])
   organisationId  String
   user            User                        @relation(fields: [userId], references: [id])
-  userId          String
+  userId          String          
 
   @@id([organisationId,userId])
 }
@@ -62,8 +62,8 @@ model Project {
   updatedAt       DateTime          @updatedAt
   name            String
   logs            Log[]
-  User            User?             @relation(fields: [adminId], references: [id])
-  adminId         String?
+  User            User?             @relation(fields: [createdById], references: [id])
+  createdById     String?
   isActive        Boolean           @default(false)
   organisation    Organisation      @relation(fields: [organisationId], references: [id])
   organisationId  String            
@@ -75,7 +75,7 @@ model ProjectUsers {
   projectId   String
   user        User        @relation(fields: [userId], references: [id])
   userId      String
-
+  role        Role        @default(MEMBER)
   @@id([userId,projectId])
 }
 
@@ -118,4 +118,10 @@ model ReleaseTagOnLogs {
   releaseTagId Int
 
   @@id([logId, releaseTagId])
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MEMBER
 }
