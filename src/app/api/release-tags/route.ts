@@ -1,4 +1,4 @@
-import { getReleaseTagCode } from "@/Utils";
+import { getReleaseKeyCode } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Organisation Id is required");
     }
 
-    const tagCode = getReleaseTagCode(name);
+    const tagCode = getReleaseKeyCode(name);
     const releaseTag = await db.releaseTag.findFirst({
       where: {
         code: tagCode,

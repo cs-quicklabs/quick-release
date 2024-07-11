@@ -41,7 +41,7 @@ export const getRolesCode = (text: string) => {
   return text.toUpperCase().replaceAll(" ", "_");
 }
 
-export const getReleaseTagCode = (tagName: string) => {
+export const getReleaseKeyCode = (tagName: string) => {
   return tagName.toLowerCase().replaceAll(" ", "_");
 };
 export const isValidArray = (compareArray: string[], validArray: string[]) => {

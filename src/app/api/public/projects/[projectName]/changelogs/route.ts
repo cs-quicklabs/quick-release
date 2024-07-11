@@ -41,8 +41,20 @@ export async function GET(
 
     const releaseCategories = searchParams.get("releaseCategories")?.split(",");
     if (releaseCategories?.length) {
+      const selectedReleaseCategories = await db.releaseTag.findMany({
+        where: {
+          code: {
+            in: releaseCategories,
+          },
+          organisationId: project?.organisationId,
+        },
+      });
       getAllPublishedChangeLogsQuery.releaseCategories = {
-        hasSome: releaseCategories,
+        some: {
+          releaseCategoryId: {
+            in: selectedReleaseCategories.map((category) => category.id),
+          },
+        },
       };
     }
 
@@ -66,11 +78,8 @@ export async function GET(
       };
     }
 
-    const releaseTagIds = [1];
-
     const changeLogs = await db.log.findMany({
       where: getAllPublishedChangeLogsQuery,
-
       include: ChangeLogIncludeDBQuery,
       skip: start,
       take: limit,

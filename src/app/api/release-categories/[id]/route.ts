@@ -29,41 +29,43 @@ export async function PUT(
     const body = await req.json();
     const name: string = body.name?.trim();
     if (!name) {
-      throw new ApiError(400, "Tag name is required");
+      throw new ApiError(400, "Category name is required");
     }
 
     if(!body.organisationId) {
       throw new ApiError(400, "Organisation Id is required");
     }
-    const tagCode = getReleaseKeyCode(name);
-    const releaseTag = await db.releaseTag.findFirst({
+    const categoryCode = getReleaseKeyCode(name);
+    const releaseCategory = await db.releaseCategory.findFirst({
       where: {
         NOT: { id },
-        code: tagCode,
+        code: categoryCode,
         organisationId: body.organisationId,
       },
     });
-    if (releaseTag) {
-      throw new ApiError(409, "Tag name already exists");
+    if (releaseCategory) {
+      throw new ApiError(409, "Category name already exists");
     }
 
-    const updatedReleaseTag = await db.releaseTag.update({
+    const updatedReleaseCategory = await db.releaseCategory.update({
       where: { id, organisationId: body.organisationId },
       data: {
         name: body.name,
-        code: tagCode,
+        code: categoryCode,
+        textColor: body.textColor,
+        bgColor: body.bgColor,
       },
     });
 
-    if (!updatedReleaseTag) {
+    if (!updatedReleaseCategory) {
       throw new ApiError(
         500,
-        "Something went wrong while updating release tag"
+        "Something went wrong while updating release category"
       );
     }
 
     return NextResponse.json(
-      new ApiResponse(200, updatedReleaseTag, "Update release tag successfully")
+      new ApiResponse(200, updatedReleaseCategory, "Update release category successfully")
     );
   });
 }
@@ -89,26 +91,30 @@ export async function DELETE(
       throw new ApiError(400, "Organisation id is required");
     }
 
-    const releaseTag = await db.releaseTag.findFirst({
+    const releaseCategory = await db.releaseCategory.findFirst({
       where: {
         id,
         organisationId: organisationId,
       },
     });
-    if (!releaseTag) {
-      throw new ApiError(404, "Release tag not found");
+    if (!releaseCategory) {
+      throw new ApiError(404, "Release category not found");
     }
 
-    await db.releaseTagOnLogs.deleteMany({
-      where: { releaseTagId: id },
+    await db.releaseCategoryOnLogs.deleteMany({
+      where: { releaseCategoryId: id },
     });
 
-    const deletedReleaseTag = await db.releaseTag.delete({
+    const deletedReleaseCategory = await db.releaseCategory.delete({
       where: { id },
     });
 
+    if(!deletedReleaseCategory) {
+      throw new ApiError(500, "Something went wrong while deleting release category");
+    }
+
     return NextResponse.json(
-      new ApiResponse(200, null, "Delete release tag successfully")
+      new ApiResponse(200, null, "Delete release category successfully")
     );
   });
 }

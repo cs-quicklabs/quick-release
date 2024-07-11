@@ -1,7 +1,7 @@
 /*
   Warnings:
 
-  - You are about to drop the column `releaseTags` on the `Log` table. All the data in the column will be lost.
+  - You are about to drop the column `releaseCategories` on the `Log` table. All the data in the column will be lost.
   - You are about to drop the column `adminId` on the `Project` table. All the data in the column will be lost.
   - You are about to drop the column `organisationId` on the `User` table. All the data in the column will be lost.
   - You are about to drop the column `role` on the `User` table. All the data in the column will be lost.
@@ -22,7 +22,7 @@ ALTER TABLE "User" DROP CONSTRAINT "User_organisationId_fkey";
 DROP INDEX "User_organisationId_key";
 
 -- AlterTable
-ALTER TABLE "Log" DROP COLUMN "releaseTags";
+ALTER TABLE "Log" DROP COLUMN "releaseCategories";
 
 -- AlterTable
 ALTER TABLE "Organisation" ADD COLUMN     "createdById" TEXT NOT NULL,
@@ -55,23 +55,25 @@ CREATE TABLE "ProjectUsers" (
 );
 
 -- CreateTable
-CREATE TABLE "ReleaseTag" (
+CREATE TABLE "ReleaseCategory" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
+    "textColor" TEXT NOT NULL,
+    "bgColor" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "organisationId" TEXT NOT NULL,
 
-    CONSTRAINT "ReleaseTag_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ReleaseCategory_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ReleaseTagOnLogs" (
+CREATE TABLE "ReleaseCategoryOnLogs" (
     "logId" TEXT NOT NULL,
-    "releaseTagId" INTEGER NOT NULL,
+    "releaseCategoryId" INTEGER NOT NULL,
 
-    CONSTRAINT "ReleaseTagOnLogs_pkey" PRIMARY KEY ("logId","releaseTagId")
+    CONSTRAINT "ReleaseCategoryOnLogs_pkey" PRIMARY KEY ("logId","releaseCategoryId")
 );
 
 -- AddForeignKey
@@ -96,10 +98,10 @@ ALTER TABLE "ProjectUsers" ADD CONSTRAINT "ProjectUsers_projectId_fkey" FOREIGN 
 ALTER TABLE "ProjectUsers" ADD CONSTRAINT "ProjectUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ReleaseTag" ADD CONSTRAINT "ReleaseTag_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ReleaseCategory" ADD CONSTRAINT "ReleaseCategory_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ReleaseTagOnLogs" ADD CONSTRAINT "ReleaseTagOnLogs_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Log"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ReleaseCategoryOnLogs" ADD CONSTRAINT "ReleaseCategoryOnLogs_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Log"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ReleaseTagOnLogs" ADD CONSTRAINT "ReleaseTagOnLogs_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTag"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ReleaseCategoryOnLogs" ADD CONSTRAINT "ReleaseCategoryOnLogs_releaseCategoryId_fkey" FOREIGN KEY ("releaseCategoryId") REFERENCES "ReleaseCategory"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

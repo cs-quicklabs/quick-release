@@ -138,6 +138,18 @@ export const ChangeLogIncludeDBQuery = {
       },
     },
   },
+  releaseCategories: {
+    select: {
+      releaseCategory: {
+        select: {
+          code: true,
+          name: true,
+          textColor: true,
+          bgColor: true,
+        },
+      },
+    },
+  },
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds
