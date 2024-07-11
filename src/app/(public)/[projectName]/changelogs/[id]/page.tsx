@@ -6,7 +6,7 @@ import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, REVALIDATE_API } fr
 import { classNames } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ChangeLogType } from "@/types";
-import { IReleaseTag } from "@/interfaces";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 
 type PagePayloadType = {
   params: {
@@ -53,7 +53,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
   }
 
   const { title, description, releaseVersion } = changelog;
-  const releaseCategories = changelog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
+  const releaseCategories = (changelog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name, bgColor: category.bgColor, textColor: category.textColor }));
   // const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changelog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changelog.scheduledTime ? moment(changelog.scheduledTime).format("MMMM DD, YYYY") : "";
@@ -84,9 +84,9 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1",
-                  `${bgColor} ${textColor}`
+                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
+                style={{ backgroundColor: bgColor, color: textColor }}
               >
                 {label}
               </span>

@@ -7,7 +7,7 @@ import { ChangeLogType } from "@/types";
 import moment from "moment";
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
-import { IReleaseTag } from "@/interfaces";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 
 const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +26,8 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
 
   const { title, description, createdBy, releaseVersion, project } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-  const releaseCategories = changeLog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
+  const releaseCategories = (changeLog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name, bgColor: category.bgColor, textColor: category.textColor }));
+  console.log("changeLog", releaseCategories);
   // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changeLog.scheduledTime ? moment(changeLog.scheduledTime).format("MMMM DD, yyyy") : "-";
@@ -51,9 +52,9 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1",
-                  `${bgColor} ${textColor}`
+                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
+                style={{ backgroundColor: bgColor, color: textColor }}
               >
                 {label}
               </span>

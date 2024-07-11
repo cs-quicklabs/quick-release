@@ -1,9 +1,9 @@
 "use client";
-
 import ChangePasswordSVG from "@/svg-icons/ChangePasswordSVG";
 import EmailPrefrencesSVG from "@/svg-icons/EmailPrefrencesSVG";
 import LockIcon from "@/svg-icons/LockIcon";
 import ProfileSVG from "@/svg-icons/ProfileSVG";
+import { SwatchIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -34,6 +34,11 @@ const SettingsNav = (
       href: "/settings/team/tags",
       text: "Tags",
       icon: <LockIcon />,
+    },
+    {
+      href: "/settings/team/categories",
+      text: "Categories",
+      icon: <SwatchIcon className="w-6 h-6" />,
     },
   ];
   return (
