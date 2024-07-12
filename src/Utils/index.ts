@@ -14,6 +14,7 @@ export const requestHandler = async (
   onSuccess: (data: any) => void,
   onError: (errorMessage: string) => void
 ) => {
+  toast.dismiss();
   setLoading?.(true);
   try {
     const response = await api();

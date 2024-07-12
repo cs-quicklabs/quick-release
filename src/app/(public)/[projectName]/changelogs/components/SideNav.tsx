@@ -34,6 +34,7 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories =
 
   const updateQueryParams = (categories: string | null, tags: string | null) => {
     if (!categories && !tags) {
+      fetchAllChangesLogs(null, null);
       return router.push(pathname);
     }
 
