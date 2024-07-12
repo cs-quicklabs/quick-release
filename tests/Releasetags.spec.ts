@@ -1,12 +1,12 @@
 import { LoginPage } from "../e2e/Login";
-import { Signout } from "../e2e/Signout";
+import { releaseTags } from "../e2e/Releasetag";
 import { test, expect } from "@playwright/test";
 
-test("verify user able to  signout ", async ({ page }, testInfo) => {
+test("verify user able to add release tags", async ({ page }, testInfo) => {
   testInfo.setTimeout(testInfo.timeout + 300000);
   const login = new LoginPage(page);
   await page.goto("/");
   await login.login("divanshu@crownstack.com", "pass1234");
-  const signout = new Signout(page);
-  await signout.logout();
+  const releasetag = new releaseTags(page);
+  await releasetag.releaseTag();
 });

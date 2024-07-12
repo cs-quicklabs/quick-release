@@ -16,5 +16,15 @@ exports.Signup = class Signup {
       .fill(confirmPassword);
     await this.page.getByRole("checkbox", { name: "terms" }).check();
     await this.page.getByText("Create an account").click();
+    await expect(this.page.locator(".Toastify")).toHaveText(
+      "User registered successfully"
+    );
+    // await this.page.goto("https://yopmail.com/en/");
+    // await this.page.getByPlaceholder("Enter your inbox here").click();
+    // await this.page.getByPlaceholder("Enter your inbox here").fill("divanshu");
+    // await this.page
+    //   .getByRole("button", { title: "Check Inbox @yopmail.com" })
+    //   .click();
+    // await this.page.getByText("notifications@lx-medical.com").click();
   }
 };

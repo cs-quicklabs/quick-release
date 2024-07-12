@@ -1,4 +1,3 @@
-import { Changelog } from "../e2e/Changelog";
 import { LoginPage } from "../e2e/Login";
 import { searchChangelog } from "../e2e/SearchLog";
 import { test, expect } from "@playwright/test";
@@ -8,7 +7,7 @@ test.beforeEach(
   async ({ page }) => {
     const login = new LoginPage(page);
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "Divanshu@123");
+    await login.login("divanshu@crownstack.com", "pass1234");
   }
 );
 

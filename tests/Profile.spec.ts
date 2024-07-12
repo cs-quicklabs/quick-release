@@ -5,7 +5,7 @@ import { test, expect } from "@playwright/test";
 test.beforeEach(" Verify Admin able login ", async ({ page }) => {
   const login = new LoginPage(page);
   await page.goto("/");
-  await login.login("divanshu@crownstack.com", "Divanshu@123");
+  await login.login("divanshu@crownstack.com", "pass1234");
 });
 
 test("verify user able to click on profile settings ", async ({ page }) => {

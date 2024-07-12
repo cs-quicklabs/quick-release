@@ -9,6 +9,7 @@ exports.Changelog = class changelog {
   }
 
   async cancelChangelog() {
+    await this.page.waitForTimeout(5000);
     if (await this.page.locator("#add-new").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator("#title").fill(this.title);
@@ -42,6 +43,7 @@ exports.Changelog = class changelog {
   }
 
   async publishChangelog() {
+    await this.page.waitForTimeout(5000);
     if (await this.page.getByText("Add New").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);
@@ -74,6 +76,7 @@ exports.Changelog = class changelog {
   }
 
   async saveChangelog() {
+    await this.page.waitForTimeout(5000);
     if (await this.page.getByText("Add New").isVisible()) {
       await this.page.locator("#add-new").click();
       await this.page.locator('input[name="title"]').fill(this.title);
@@ -92,6 +95,7 @@ exports.Changelog = class changelog {
       await this.page.getByText("Save as Draft", { exact: true }).click();
       await this.page.getByText("Save as Draft Changelog").click();
     } else {
+      console.log("click");
       await this.page
         .locator("//button[normalize-space()='New Changelog']")
         .click();
@@ -112,5 +116,4 @@ exports.Changelog = class changelog {
       await this.page.getByText("Save as Draft Changelog").click();
     }
   }
-  m;
 };

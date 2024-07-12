@@ -349,8 +349,9 @@ export function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
                               )}
+                              
                             >
-                              <div className="flex  items-center">
+                              <div className="flex  items-center" id="profile-settings">
                                 Profile Settings
                               </div>
                             </Link>
@@ -364,10 +365,10 @@ export function Navbar() {
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
-                              )}
-                              id="profile-settings"
+                              )
+                            }
                             >
-                              <div className="flex  items-center">
+                              <div className="flex  items-center" id="team-setting">
                                 Team Settings
                               </div>
                             </Link>

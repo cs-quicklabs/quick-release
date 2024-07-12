@@ -2,7 +2,7 @@ const { test, expect } = require("@playwright/test");
 exports.createProject = class Project {
   constructor(page) {
     this.page = page;
-    this.Project = "New3";
+    this.Project = "New5";
   }
 
   async createProject() {
@@ -12,7 +12,7 @@ exports.createProject = class Project {
     await projectInput.click();
     await projectInput.fill(this.Project);
 
-    await expect(projectInput).toHaveValue(this.Project);
+    await expect(projectInput).toHaveValue("New5");
     await this.page.getByText("Save").click();
     await expect(this.page.locator("//div[@class='Toastify']")).toHaveText(
       "Created Successfully"
@@ -24,9 +24,9 @@ exports.createProject = class Project {
     await this.page.getByText("Add new project").click();
     const projectInput = this.page.locator("#company-website");
     await projectInput.click();
-    await projectInput.fill("testproject");
+    await projectInput.fill(this.Project);
 
-    await expect(projectInput).toHaveValue("testproject");
+    await expect(projectInput).toHaveValue("New5");
     await this.page.getByText("Save").click();
     await expect(this.page.locator("//div[@class='Toastify']")).toHaveText(
       "Project name is already taken"

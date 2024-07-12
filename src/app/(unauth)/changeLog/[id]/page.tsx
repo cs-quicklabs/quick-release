@@ -375,6 +375,7 @@ const AddChangeLog = ({ params }: { params: { id: string; }; }) => {
                                 classNames={{
                                   control: () => "max-w-[640px]",
                                 }}
+                                
                                 isMulti
                                 name={name}
                                 options={releaseCategoriesOptions}
