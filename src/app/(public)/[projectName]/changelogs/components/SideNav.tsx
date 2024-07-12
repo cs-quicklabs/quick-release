@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ChangeLogsReleaseCategories } from "@/Utils/constants";
 import { Checkbox } from "flowbite-react";
 import { useRouter, usePathname, useSearchParams, useParams } from "next/navigation";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
@@ -10,9 +9,10 @@ import { ReleaseTagType } from "@/types";
 
 type SideNavProps = {
   releaseTags?: ReleaseTagType[];
+  releaseCategories?: ReleaseTagType[];
 };
 
-const SideNav: React.FC<SideNavProps> = ({ releaseTags = [] }) => {
+const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories = [] }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { projectName } = useParams();
@@ -92,17 +92,16 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [] }) => {
         <fieldset className="lg:mt-4">
           <div className="space-y-2">
             {
-              Object.values(ChangeLogsReleaseCategories).map(category => (
+              releaseCategories.map(category => (
                 <div
                   key={category.value}
                   className="flex items-center"
                   onClick={() => onSelectCategories(category.value)}
                 >
                   <Checkbox
-                    className={classNames(
-                      "h-4 w-4 rounded border-gray-300 focus:ring-transparent",
-                      `${category.textColor}`
-                    )}
+                    className={
+                      "h-4 w-4 rounded border-gray-300 focus:ring-transparent"
+                    }
                     name={category.value}
                     checked={selectedCategories.includes(category.value)}
                     onChange={() => onSelectCategories(category.value)}

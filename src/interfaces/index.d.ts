@@ -8,6 +8,11 @@ export interface IReleaseCategoriesOption {
     readonly label: string;
   }
 
+  export interface ReleaseCategoriesOption {
+    readonly value: string;
+    readonly label: string;
+  }
+
   export interface IChangeLogPost extends FormChangeLogPost {
     id?: string;
     status: string;
@@ -60,5 +65,14 @@ export interface IReleaseCategoriesOption {
     id?: number;
     name?: string;
     code?: string;
+    organisationId?: string;
+  }
+
+  export interface IReleaseCategory {
+    id?: number;
+    name?: string;
+    code?: string;
+    textColor?: string;
+    bgColor?: string;
     organisationId?: string;
   }

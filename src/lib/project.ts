@@ -10,6 +10,7 @@ export const getOneProject = async (
         organisation: {
           select: {
             releaseTags: true,
+            releaseCategories: true,
           },
         }
       },

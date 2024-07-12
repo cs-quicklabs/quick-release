@@ -72,10 +72,6 @@ export async function DELETE(
       throw new ApiError(404, "Change log not found");
     }
 
-    if (changeLog.createdById !== userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const deleteChangeLog = await db.log.update({
       where: { id },
       data: {
@@ -128,7 +124,16 @@ export async function PUT(
       },
     });
 
-    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+    const releaseCategories = await db.releaseCategory.findMany({
+      where: {
+        organisationId: project?.organisationId, // TODO: Check this.
+        code: {
+          in: body.releaseCategories,
+        },
+      },
+    });
+
+    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
       throw new ApiError(400, "Release category is invalid");
     }
 
@@ -157,7 +162,10 @@ export async function PUT(
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
-        releaseCategories: body.releaseCategories,
+        releaseCategories: {
+          deleteMany: { logId: id },
+          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+        },
         // releaseTags: body.releaseTags,
         releaseTags: {
           deleteMany: { logId: id },

@@ -1,13 +1,12 @@
 "use client";
 
 import React, { useMemo, useRef } from "react";
-import { ChangeLogsReleaseCategories, } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { ChangeLogType } from "@/types";
 import moment from "moment";
 import Link from "next/link";
 import { classNames } from "@/lib/utils";
-import { IReleaseTag } from "@/interfaces";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 
 const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const contentContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +25,8 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
 
   const { title, description, createdBy, releaseVersion, project } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-  const releaseCategories = changeLog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
+  const releaseCategories = (changeLog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name }));
+  console.log("changeLog", releaseCategories);
   // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changeLog.scheduledTime ? moment(changeLog.scheduledTime).format("MMMM DD, yyyy") : "-";
@@ -47,12 +47,11 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
           </p>
 
           <div className="mt-1">
-            {releaseCategories.map(({ value, label, bgColor, textColor }) => (
+            {releaseCategories.map(({ value, label }) => (
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1",
-                  `${bgColor} ${textColor}`
+                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { classNames } from "@/lib/utils";
 import { IReleaseTag, ReleaseTagsOption } from "@/interfaces";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
-import { getReleaseTagCode } from "@/Utils";
+import { getReleaseKeyCode } from "@/Utils";
 
 
 const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
@@ -20,7 +20,7 @@ const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
   const onCreate = (tagName: string) => {
     const newReleaseTag: IReleaseTag = {
       name: tagName,
-      code: getReleaseTagCode(tagName)
+      code: getReleaseKeyCode(tagName)
     };
     createReleaseTag(newReleaseTag, setIsLoading, false);
 
