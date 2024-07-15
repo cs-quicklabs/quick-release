@@ -24,7 +24,6 @@ exports.createProject = class Project {
     await this.projectInput.fill(this.projectName + Numeric);
     await expect(this.projectInput).toHaveValue(this.projectName + Numeric);
     await this.saveButton.click();
-    await this.page.waitForTimeout(5000);
     await expect(this.toastMessage).toHaveText("Project created successfully");
   }
 

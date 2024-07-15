@@ -8,9 +8,9 @@ exports.Changelog = class changelog {
     this.title = "Test";
 
     this.addNewButton = this.page.locator("#add-new");
-    this.newChangelogButton = this.page.locator(
-      "//button[normalize-space()='New Changelog']"
-    );
+    this.newChangelogButton = this.page.getByRole("button", {
+      name: "New Changelog",
+    });
     this.titleInput = this.page.locator('input[name="title"]');
     this.descriptionEditor = this.page.locator(
       "//div[@class='ql-editor ql-blank']"

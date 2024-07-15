@@ -9,7 +9,7 @@ test.beforeEach(
     const login = new LoginPage(page);
 
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "pass1234");
+    await login.login("divanshu@crownstack.com", "Divanshu@123");
   }
 );
 

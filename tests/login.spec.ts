@@ -8,7 +8,7 @@ test("Verify user able to login with valid credential", async ({
   const login = new LoginPage(page); // 30 seconds
   // await login.gotoLoginPage();
   await page.goto("/");
-  await login.login("divanshu@crownstack.com", "pass1234");
+  await login.login("divanshu@crownstack.com", "Divanshu@123");
 });
 
 test(" verify Username and Password field  with only spaces", async ({
