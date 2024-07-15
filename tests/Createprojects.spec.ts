@@ -18,12 +18,12 @@ test(" Verify Admin should not able to create project with only spaces", async (
   page,
 }) => {
   const projects = new createProject(page);
-  await projects.projectValidations();
+  await projects.projectValidationWithEmptyName();
 });
 
 test(" Verify Admin should not able to create project with same project which are already exist", async ({
   page,
 }) => {
   const projects = new createProject(page);
-  await projects.existProject();
+  await projects.attemptToCreateExistingProject();
 });

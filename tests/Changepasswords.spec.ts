@@ -13,5 +13,5 @@ test("verify user able to click on change password settings ", async ({
   page,
 }) => {
   const password = new changePassword(page);
-  await password.changePassword();
+  await password.changePassword("pass1234", "Divanshu@123");
 });

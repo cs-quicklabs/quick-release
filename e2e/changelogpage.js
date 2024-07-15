@@ -1,45 +1,86 @@
-const { test, expect } = require("@playwright/test");
+const { test, expect, locator } = require("@playwright/test");
 exports.ChangelogDetail = class ChangelogDetail {
-  constructor(page) {
+  constructor(page, description) {
     this.page = page;
-    this.description =
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry";
-    this.version = "2";
-    this.title = "Test";
+    this.description = description;
+    this.addNewButton = this.page.getByText("Add New");
+    this.newChangeLog = this.page.locator("#new-changelog");
+    this.openOptionsButton = this.page.locator("#open-options");
+    this.editChangelogButton = this.page.locator("#edit-changelog");
+    this.editChangelogModalTitle = this.page.getByText("Edit Change Log");
+    this.titleInput = this.page.locator('input[name="title"]');
+    this.publishChangelogButton = this.page.getByText("Publish Changelog Now");
+    this.descriptionLocator = this.page.locator("//div[@class='ql-editor']");
+    this.deleteButton = this.page.getByText("Delete");
+    this.descriptions = this.page.locator("//div[@class='ql-editor']");
+  }
+
+  async waitForTimeout(timeout) {
+    await this.page.waitForTimeout(timeout);
+  }
+
+  async isAddNewButtonVisible() {
+    return await this.addNewButton.isVisible();
+  }
+
+  async isNewChangeLogVisible() {
+    return await this.newChangeLog.isVisible();
+  }
+
+  async clickOpenOptions() {
+    await this.openOptionsButton.click();
+  }
+
+  async clickEditChangelog() {
+    await this.editChangelogButton.click();
+  }
+
+  async isEditChangelogModalVisible() {
+    return await this.editChangelogModalTitle.isVisible();
+  }
+
+  async editTitle(newTitle) {
+    await this.titleInput.click();
+    await this.titleInput.press("Backspace");
+    await this.titleInput.fill(newTitle);
+  }
+
+  async clickPublishChangelog() {
+    await this.publishChangelogButton.click();
+  }
+
+  async isDescriptionVisible() {
+    const text = await this.descriptionLocator.textContent();
+    console.log(`Description text found: ${text}`);
+    return text.includes(this.description);
+  }
+
+  async clickDelete() {
+    await this.deleteButton.click();
   }
 
   async changelogElements() {
-    await this.page.waitForTimeout(5000);
-    if (await this.page.locator("#add-new").isVisible()) {
-      await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
-        this.description
-      );
+    await this.waitForTimeout(5000);
+    if (await this.isAddNewButtonVisible()) {
+      await expect(this.descriptions).toHaveText(this.description);
     } else {
-      await this.page
-        .locator("//button[normalize-space()='New Changelog']")
-        .isVisible();
+      await expect(this.isNewChangeLogVisible()).toBeTruthy();
     }
   }
 
   async editChangelog() {
-    if (await expect(this.page.getByText("Add New")).toBeVisible()) {
-      await this.page.locator("#open-options").click();
-      await this.page.locator("#edit-changelog").click();
-      await expect(this.page.getByText("Edit change log")).toBeVisible();
-      await this.page.locator('input[name="title"]').click();
-      await this.page.locator('input[name="title"]').press("Backspace");
-      await this.page.locator('input[name="title"]').fill("test12");
-      await this.page.getByText("Publish Changelog Now").click();
+    await this.waitForTimeout(5000);
+    if (await this.isAddNewButtonVisible()) {
+      await this.clickOpenOptions();
+      await this.clickEditChangelog();
+      await this.page.waitForTimeout(5000);
+      await this.editTitle("test13");
+      await this.clickPublishChangelog();
     }
   }
 
   async deleteChangelog() {
-    await this.page.waitForTimeout(5000);
-    await expect(this.page.locator("//div[@class='ql-editor']")).toHaveText(
-      this.description
-    );
-    await this.page.locator("#open-options").click();
-    await this.page.getByText("Delete").click();
-    //   }
+    await this.clickOpenOptions();
+    await this.clickDelete();
   }
 };

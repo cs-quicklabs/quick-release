@@ -8,22 +8,20 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
   await login.login("divanshu@crownstack.com", "pass1234");
 });
 
-test("verify user able to click on profile settings ", async ({ page }) => {
-  const Profile = new Profiles(page);
-  await Profile.profileClick();
+test("should update profile", async ({ page }) => {
+  const profiles = new Profiles(page);
+  await profiles.updateProfile("John", "Doe");
 });
 
-test("verify Profile page Elements ", async ({ page }) => {
-  const Profile = new Profiles(page);
-  await Profile.profilePage();
+test("should upload profile avatar", async ({ page }) => {
+  const profiles = new Profiles(page);
+  await profiles.uploadProfileAvatar(
+    "C:/Users/Admin/OneDrive/Pictures/Screenshots/Test.png"
+  );
 });
 
-test("verify user able to update profile ", async ({ page }) => {
-  const Profile = new Profiles(page); // 30 seconds
-  await Profile.profileUpdate("Kathleen1", "Gupta");
-});
-
-test("verify user able to uploadfile ", async ({ page }) => {
-  const Profile = new Profiles(page);
-  await Profile.profileUpload();
+test("should verify profile page elements", async ({ page }) => {
+  const profiles = new Profiles(page);
+  await profiles.openUserMenuAndNavigateToSettings();
+  await profiles.verifyProfilePageElements();
 });

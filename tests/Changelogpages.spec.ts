@@ -12,7 +12,10 @@ test.beforeEach(
 );
 
 test(" Verify change log Page data ", async ({ page }) => {
-  const changelog = new ChangelogDetail(page);
+  const changelog = new ChangelogDetail(
+    page,
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+  );
   await changelog.changelogElements();
 });
 

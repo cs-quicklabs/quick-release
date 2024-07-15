@@ -14,7 +14,7 @@ test.beforeEach(
 
 test("verify user able to Add Tags ", async ({ page }) => {
   const releasetag = new releaseTags(page);
-  await releasetag.releaseTag();
+  await releasetag.createReleaseTag();
 });
 
 test("verify user able to Edit Tags", async ({ page }) => {

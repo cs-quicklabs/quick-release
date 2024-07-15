@@ -13,12 +13,7 @@ test.beforeEach(
   }
 );
 
-test(" Verify change log Page data ", async ({ page }) => {
-  const changelog = new ChangelogDetail(page);
-  await changelog.changelogElements();
-});
-
 test(" Verify change log public view ", async ({ page }) => {
   const view = new viewPublic(page);
-  await view.viewDetails();
+  await view.viewChangelogDetails();
 });
