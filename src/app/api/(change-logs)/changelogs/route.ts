@@ -40,7 +40,16 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+    const releaseCategories = await db.releaseCategory.findMany({
+      where: {
+        organisationId: project?.organisationId, // TODO: Check this.
+        code: {
+          in: body.releaseCategories,
+        },
+      },
+    }); 
+
+    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
       throw new ApiError(400, "Release category is invalid");
     }
 
@@ -53,7 +62,9 @@ export async function POST(req: NextRequest) {
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
-        releaseCategories: body.releaseCategories,
+        releaseCategories: {
+          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+        },
         projectId: body.projectId,
         // releaseTags: body.releaseTags,
         releaseTags: {

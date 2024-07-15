@@ -1,60 +1,4 @@
-import {
-  ReleaseCategoryType,
-  ChangeLogsStatusType,
-  ReleaseTagType,
-} from "@/types";
-
-export const ChangeLogsReleaseCategories = Object.freeze<{
-  [key: string]: ReleaseCategoryType;
-}>({
-  new: {
-    value: "new",
-    label: "New",
-    textColor: "text-green-800",
-    bgColor: "bg-green-100",
-  },
-  improvement: {
-    value: "improvement",
-    label: "Improvement",
-    textColor: "text-gray-800",
-    bgColor: "bg-gray-100",
-  },
-  bug_fix: {
-    value: "bug_fix",
-    label: "Bug Fix",
-    textColor: "text-red-800",
-    bgColor: "bg-red-100",
-  },
-  maintenance: {
-    value: "maintenance",
-    label: "Maintenance",
-    textColor: "text-indigo-800",
-    bgColor: "bg-indigo-100",
-  },
-  refactor: {
-    value: "refactor",
-    label: "Refactor",
-    textColor: "text-yellow-800",
-    bgColor: "bg-yellow-100",
-  },
-});
-
-export const ChangeLogsReleaseTags = Object.freeze<{
-  [key: string]: ReleaseTagType;
-}>({
-  ios: {
-    value: "ios",
-    label: "iOS",
-  },
-  android: {
-    value: "android",
-    label: "Android",
-  },
-  web: {
-    value: "web",
-    label: "Web",
-  },
-});
+import { ChangeLogsStatusType } from "@/types";
 
 export const ChangeLogsReleaseActions = Object.freeze({
   published: {
@@ -131,6 +75,16 @@ export const ChangeLogIncludeDBQuery = {
   releaseTags: {
     select: {
       releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  releaseCategories: {
+    select: {
+      releaseCategory: {
         select: {
           code: true,
           name: true,

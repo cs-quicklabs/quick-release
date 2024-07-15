@@ -295,7 +295,10 @@ export function Navbar() {
                                 <Menu.Item
                                   key={item.id}
                                   as="div"
-                                  onClick={() => activeProject(item.id)}
+                                  onClick={() => {
+                                    activeProject(item.id);
+                                    router.push("/");
+                                  }}
                                   className="hover:bg-gray-100  cursor-pointer pl-4"
                                 >
                                   <div
@@ -467,12 +470,21 @@ export function Navbar() {
               </div>
               <div className="px-2 py-3">
                 <Link
-                  href="/settings/profile"
+                  href="/settings/profile/general"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                >
                   <div className="flex items-center">
-                    <Link href="/settings/profile">Profile Settings</Link>
+                    <Link href="/settings/profile/general">Profile Settings</Link>
+                  </div>
+                </Link>
+                <Link
+                  href="/settings/team/tags"
+                  // onClick={handleLogout}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <div className="flex items-center">
+                    <Link href="/settings/team/tags">Team Settings</Link>
                   </div>
                 </Link>
                 <a

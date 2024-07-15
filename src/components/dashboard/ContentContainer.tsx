@@ -1,12 +1,7 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
 import AlertModal from "../AlertModal";
-import {
-  ChangeLogsReleaseCategories,
-  ChangeLogsReleaseTags,
-  ChangeLogsStatus,
-} from "@/Utils/constants";
+import { ChangeLogsStatus } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import Alert, { AlertPropsType } from "@/components/Alert";
 import { Button } from "@/components/ui/button";
@@ -16,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 import { classNames } from "@/lib/utils";
 import {
   EllipsisVerticalIcon,
@@ -25,8 +21,7 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { IReleaseTag } from "@/interfaces";
-
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -36,7 +31,10 @@ type PrevStateType = {
 const ContentContainer = () => {
   const router = useRouter();
   const contentContainerRef = useRef<HTMLDivElement>(null);
-  const prevStates = useRef<PrevStateType>({ isLoading: false, activeChangeLogId: null });
+  const prevStates = useRef<PrevStateType>({
+    isLoading: false,
+    activeChangeLogId: null,
+  });
 
   const {
     activeChangeLogId,
@@ -76,13 +74,23 @@ const ContentContainer = () => {
     if (!changelog) return null;
 
     const { status, createdBy, project } = changelog;
-    const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-    const scheduledTime = changelog.scheduledTime ? moment(changelog.scheduledTime).format("MMMM DD, YYYY") : "";
-    const updatedAt = changelog.updatedAt ? moment(changelog.updatedAt).format("MMMM DD, YYYY") : "";
-    const archivedAt = changelog.archivedAt ? moment(changelog.archivedAt).format("MMMM DD, YYYY") : "";
+    const fullName = `${createdBy?.firstName || ""} ${
+      createdBy?.lastName || ""
+    }`.trim();
+    const scheduledTime = changelog.scheduledTime
+      ? moment(changelog.scheduledTime).format("MMMM DD, YYYY")
+      : "";
+    const updatedAt = changelog.updatedAt
+      ? moment(changelog.updatedAt).format("MMMM DD, YYYY")
+      : "";
+    const archivedAt = changelog.archivedAt
+      ? moment(changelog.archivedAt).format("MMMM DD, YYYY")
+      : "";
     const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
     const editChangeLogLink = `/changeLog/${activeChangeLogId}`;
-    const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
+    const changeLogStatus = archivedAt
+      ? ChangeLogsStatus.archived
+      : ChangeLogsStatus[status];
     const logStatus = changeLogStatus?.id;
 
     switch (logStatus) {
@@ -94,7 +102,7 @@ const ContentContainer = () => {
           containerClassName: "bg-green-50 shadow-green",
           iconClassName: "text-green-400",
           messageClassName: "text-green-700",
-          actionClassName: "text-green-700 hover:text-green-600"
+          actionClassName: "text-green-700 hover:text-green-600",
         };
       }
 
@@ -106,7 +114,7 @@ const ContentContainer = () => {
           containerClassName: "bg-yellow-50 shadow-yellow",
           iconClassName: "text-yellow-400",
           messageClassName: "text-yellow-700",
-          actionClassName: "text-yellow-700 hover:text-yellow-600"
+          actionClassName: "text-yellow-700 hover:text-yellow-600",
         };
       }
 
@@ -118,7 +126,7 @@ const ContentContainer = () => {
           containerClassName: "bg-gray-100 shadow-gray",
           iconClassName: "text-gray-400",
           messageClassName: "text-gray-700",
-          actionClassName: "text-gray-700 hover:text-gray-600"
+          actionClassName: "text-gray-700 hover:text-gray-600",
         };
       }
 
@@ -130,7 +138,7 @@ const ContentContainer = () => {
           containerClassName: "bg-red-50 shadow-red",
           iconClassName: "text-red-400",
           messageClassName: "text-red-700",
-          actionClassName: "text-red-700 hover:text-red-600"
+          actionClassName: "text-red-700 hover:text-red-600",
         };
       }
 
@@ -139,22 +147,27 @@ const ContentContainer = () => {
     }
   }, [changelog]);
 
-  const actionOptions = useMemo(() => [
-    {
-      name: "Edit",
+  const actionOptions = useMemo(
+    () => [
+      {
+        name: "Edit",
       id:"edit-changelog",
-      onClick: () => { router.push(`/changeLog/${activeChangeLogId}`) },
-    },
-    {
-      name: changelog?.archivedAt ? "Unarchive" : "Archive",
-      onClick: () => setShowToggleArchivedModal(true),
-    },
-    {
-      name: "Delete",
+        onClick: () => {
+          router.push(`/changeLog/${activeChangeLogId}`)
+        },
+      },
+      {
+        name: changelog?.archivedAt ? "Unarchive" : "Archive",
+        onClick: () => setShowToggleArchivedModal(true),
+      },
+      {
+        name: "Delete",
       id:"delete-changelog",
-      onClick: () => setShowDeleteModal(true),
-    },
-  ], [changelog]);
+        onClick: () => setShowDeleteModal(true),
+      },
+    ],
+    [changelog]
+  );
 
   if (!changelog) {
     return (
@@ -175,14 +188,32 @@ const ContentContainer = () => {
       </section>
     );
   }
+  const {
+    title,
+    description,
+    status,
+    releaseVersion,
+    archivedAt,
+    createdBy,
+    project,
+  } = changelog;
+  const releaseCategories = (
+    changelog.releaseCategories as IReleaseCategory[]
+  ).map((tag) => ({ value: tag.code, label: tag.name }));
+  const releaseTags = (changelog.releaseTags as IReleaseTag[]).map((tag) => ({
+    value: tag.code,
+    label: tag.name,
+  }));
 
-  const { title, description, status, releaseVersion, archivedAt, createdBy, project } = changelog;
-  const releaseCategories = changelog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
-  const releaseTags = (changelog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
-
-  const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
-  const changeLogStatus = archivedAt ? ChangeLogsStatus.archived : ChangeLogsStatus[status];
-  const createdAt = changelog.createdAt ? moment(changelog.createdAt).format("MMMM DD, YYYY") : "";
+  const fullName = `${createdBy?.firstName || ""} ${
+    createdBy?.lastName || ""
+  }`.trim();
+  const changeLogStatus = archivedAt
+    ? ChangeLogsStatus.archived
+    : ChangeLogsStatus[status];
+  const createdAt = changelog.createdAt
+    ? moment(changelog.createdAt).format("MMMM DD, YYYY")
+    : "";
   const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
 
   return (
@@ -192,16 +223,13 @@ const ContentContainer = () => {
     >
       <div
         ref={contentContainerRef}
-        className="flex-1 overflow-y-auto pb-10 no-scrollbar" >
+        className="flex-1 overflow-y-auto pb-10 no-scrollbar"
+      >
         <div className="bg-white pt-5 pb-6 shadow border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center">
-                <h1
-                  className="text-lg font-medium text-gray-900"
-                >
-                  {title}
-                </h1>
+                <h1 className="text-lg font-medium text-gray-900">{title}</h1>
 
                 <Link href={publicLink}>
                   <ArrowUpRightIcon className="w-4 h-4 ml-2" />
@@ -267,12 +295,11 @@ const ContentContainer = () => {
           data-svelte-h="svelte-1g1nf9v"
         >
           <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
-            {releaseCategories.map(({ value, label, bgColor, textColor }) => (
+            {releaseCategories.map(({ value, label }) => (
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1",
-                  `${bgColor} ${textColor}`
+                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}
@@ -290,9 +317,7 @@ const ContentContainer = () => {
               />
             </div>
           </li>
-
-          {
-            !!releaseTags.length &&
+          {!!releaseTags.length && (
             <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
               <div className="sm:flex sm:items-baseline sm:justify-between">
                 <h3 className="text-base font-medium">
@@ -313,7 +338,7 @@ const ContentContainer = () => {
                 ))}
               </div>
             </li>
-          }
+          )}
 
           {alertDetails && <Alert {...alertDetails} />}
 
@@ -340,12 +365,16 @@ const ContentContainer = () => {
         show={showToggleArchivedModal}
         title={`${archivedAt ? "Unarchive" : "Archive"} change log`}
         message={
-          changeLogStatus?.id === "published" ?
-            "This is change log is in Public view. Are you sure you want to archive it?" :
-            `Are you sure you want to ${archivedAt ? "unarchive" : "archive"} this change log?`
+          changeLogStatus?.id === "published"
+            ? "This is change log is in Public view. Are you sure you want to archive it?"
+            : `Are you sure you want to ${
+                archivedAt ? "unarchive" : "archive"
+              } this change log?`
         }
         onClickCancel={() => setShowToggleArchivedModal(false)}
-        onClickOk={() => toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)}
+        onClickOk={() =>
+          toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)
+        }
         loading={isLoading}
       />
 
@@ -354,7 +383,9 @@ const ContentContainer = () => {
         title="Publish change log"
         message="Are you sure you want to publish now this change log?"
         onClickCancel={() => setShowPublishNowModal(false)}
-        onClickOk={() => publishNowOneChangeLog(activeChangeLogId!, setIsLoading)}
+        onClickOk={() =>
+          publishNowOneChangeLog(activeChangeLogId!, setIsLoading)
+        }
         loading={isLoading}
         modalSize="xl"
       />

@@ -56,8 +56,6 @@ export type ChangeLogsStatusType = {
 export type ReleaseCategoryType = {
   value: string;
   label: string;
-  textColor: string;
-  bgColor: string;
 };
 
 export type ReleaseTagType = {

@@ -12,6 +12,7 @@ import { ChangeLogProvider } from "./context/ChangeLogContext";
 import { ProjectProvider } from "./context/ProjectContext";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { ReleaseTagProvider } from "./context/ReleaseTagContext";
+import { ReleaseCategoryProvider } from "./context/ReleaseCategoryContext";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -39,6 +40,7 @@ export default async function RootLayout({
         <AuthProvider>
           <Provider>
             <UserProvider>
+              <ReleaseCategoryProvider>
               <ReleaseTagProvider>
                 <ProjectProvider>
                   <ChangeLogProvider>
@@ -49,6 +51,7 @@ export default async function RootLayout({
                   </ChangeLogProvider>
                 </ProjectProvider>
               </ReleaseTagProvider>
+              </ReleaseCategoryProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>
