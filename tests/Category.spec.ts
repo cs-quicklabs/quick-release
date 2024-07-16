@@ -1,5 +1,6 @@
 import { releaseCategory } from "../e2e/Category";
 import { LoginPage } from "../e2e/Login";
+import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
@@ -8,7 +9,7 @@ test.beforeEach(
     testInfo.setTimeout(testInfo.timeout + 300000);
     const login = new LoginPage(page);
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "Divanshu@123");
+    await login.login(validCredentials.mail, validCredentials.password);
   }
 );
 

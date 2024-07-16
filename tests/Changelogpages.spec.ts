@@ -1,5 +1,6 @@
 import { ChangelogDetail } from "../e2e/ChangelogPage";
 import { LoginPage } from "../e2e/Login";
+import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(
@@ -7,7 +8,7 @@ test.beforeEach(
   async ({ page }) => {
     const login = new LoginPage(page); // 30 seconds
     await page.goto("/");
-    await login.login("divanshu@crownstack.com", "Divanshu@123");
+    await login.login(validCredentials.mail, validCredentials.password);
   }
 );
 

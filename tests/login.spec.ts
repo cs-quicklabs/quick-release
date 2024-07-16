@@ -1,4 +1,5 @@
 import { LoginPage } from "../e2e/Login";
+import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test("Verify user able to login with valid credential", async ({
@@ -8,7 +9,7 @@ test("Verify user able to login with valid credential", async ({
   const login = new LoginPage(page); // 30 seconds
   // await login.gotoLoginPage();
   await page.goto("/");
-  await login.login("divanshu@crownstack.com", "Divanshu@123");
+  await login.login(validCredentials.mail, validCredentials.password);
 });
 
 test(" verify Username and Password field  with only spaces", async ({
