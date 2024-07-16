@@ -20,7 +20,6 @@ exports.releaseCategory = class releaseCategory {
   async navigateToTeamSetting() {
     await this.userMenu.click();
     await this.teamSetting.click();
-    await this.page.waitForTimeout(5000);
   }
 
   async navigateToCategories() {
@@ -43,6 +42,7 @@ exports.releaseCategory = class releaseCategory {
 
   async editCategory() {
     await this.navigateToCategories();
+    await this.categoryLink.waitFor("visible");
     await this.editLink.click();
     await this.editCategoryNameInput.click();
     await this.editCategoryNameInput.press("Backspace");
@@ -53,7 +53,7 @@ exports.releaseCategory = class releaseCategory {
 
   async deleteCategory() {
     await this.navigateToCategories();
-    await this.page.waitForTimeout(5000); // This seems redundant
+    await this.page.waitForTimeout(5000);
     await this.deleteLink.click();
   }
 };

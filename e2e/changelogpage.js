@@ -10,13 +10,9 @@ exports.ChangelogDetail = class ChangelogDetail {
     this.editChangelogModalTitle = this.page.getByText("Edit Change Log");
     this.titleInput = this.page.locator('input[name="title"]');
     this.publishChangelogButton = this.page.getByText("Publish Changelog Now");
-    this.descriptionLocator = this.page.locator("//div[@class='ql-editor']");
+    this.descriptionLocator = this.page.locator(".ql-editor");
     this.deleteButton = this.page.getByText("Delete");
     this.descriptions = this.page.locator("//div[@class='ql-editor']");
-  }
-
-  async waitForTimeout(timeout) {
-    await this.page.waitForTimeout(timeout);
   }
 
   async isAddNewButtonVisible() {
@@ -60,7 +56,7 @@ exports.ChangelogDetail = class ChangelogDetail {
   }
 
   async changelogElements() {
-    await this.waitForTimeout(5000);
+    await this.addNewButton.waitFor("visible");
     if (await this.isAddNewButtonVisible()) {
       await expect(this.descriptions).toHaveText(this.description);
     } else {
@@ -69,7 +65,7 @@ exports.ChangelogDetail = class ChangelogDetail {
   }
 
   async editChangelog() {
-    await this.waitForTimeout(5000);
+    await this.addNewButton.waitFor("visible");
     if (await this.isAddNewButtonVisible()) {
       await this.clickOpenOptions();
       await this.clickEditChangelog();

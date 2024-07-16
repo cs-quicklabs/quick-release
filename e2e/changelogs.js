@@ -12,9 +12,7 @@ exports.Changelog = class changelog {
       name: "New Changelog",
     });
     this.titleInput = this.page.locator('input[name="title"]');
-    this.descriptionEditor = this.page.locator(
-      "//div[@class='ql-editor ql-blank']"
-    );
+    this.descriptionEditor = this.page.locator(".ql-editor");
     this.versionInput = this.page.getByPlaceholder("Enter release version");
     this.statusInput = this.page.locator("#react-select-3-input");
     this.newStatusOption = this.page.getByText("New", { exact: true });
@@ -98,7 +96,7 @@ exports.Changelog = class changelog {
   }
 
   async publishChangelog() {
-    await this.waitForTimeout(5000);
+    await this.addNewButton.waitFor("visible");
     if (await this.addNewButton.isVisible()) {
       await this.clickAddNewButton();
     } else {
@@ -112,7 +110,7 @@ exports.Changelog = class changelog {
   }
 
   async saveChangelog() {
-    await this.waitForTimeout(5000);
+    await this.addNewButton.waitFor("visible");
     if (await this.addNewButton.isVisible()) {
       await this.clickAddNewButton();
     } else {

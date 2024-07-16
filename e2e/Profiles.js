@@ -11,7 +11,6 @@ exports.Profiles = class Profiles {
   async openUserMenuAndNavigateToSettings() {
     await this.userMenuButton.click();
     await this.profileSettingsButton.click();
-    await this.page.waitForTimeout(5000);
     await expect(
       this.page.locator("text=Change your personal profile settings")
     ).toBeVisible();

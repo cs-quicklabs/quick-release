@@ -3,15 +3,11 @@ import { releaseTags } from "../e2e/Releasetag";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
-test.beforeEach(
-  "verify user able to add release tags",
-  async ({ page }, testInfo) => {
-    testInfo.setTimeout(testInfo.timeout + 300000);
-    const login = new LoginPage(page);
-    await page.goto("/");
-    await login.login(validCredentials.mail, validCredentials.password);
-  }
-);
+test.beforeEach("verify user able to add release tags", async ({ page }) => {
+  const login = new LoginPage(page);
+  await page.goto("/");
+  await login.login(validCredentials.mail, validCredentials.password);
+});
 
 test("verify user able to Add Tags ", async ({ page }) => {
   const releasetag = new releaseTags(page);

@@ -2,28 +2,21 @@ import { LoginPage } from "../e2e/Login";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
-test("Verify user able to login with valid credential", async ({
-  page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 30000);
-  const login = new LoginPage(page); // 30 seconds
-  // await login.gotoLoginPage();
+test("Verify user able to login with valid credential", async ({ page }) => {
+  const login = new LoginPage(page);
   await page.goto("/");
   await login.login(validCredentials.mail, validCredentials.password);
 });
 
 test(" verify Username and Password field  with only spaces", async ({
   page,
-}, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 300000);
+}) => {
   const login = new LoginPage(page);
   await page.goto("/");
   await login.loginWithWhiteSpaces();
 });
 
-test("Verify username field by invalid email", async ({ page }, testInfo) => {
-  testInfo.setTimeout(testInfo.timeout + 30000);
-
+test("Verify username field by invalid email", async ({ page }) => {
   const login = new LoginPage(page);
   await page.goto("/");
   await login.loginWithInvalidMail();

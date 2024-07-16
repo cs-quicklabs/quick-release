@@ -19,7 +19,6 @@ exports.releaseTags = class releaseTags {
   async navigateToTeamSetting() {
     await this.userMenu.click();
     await this.teamSetting.click();
-    await this.page.waitForTimeout(5000);
   }
 
   async createReleaseTag() {
@@ -28,7 +27,6 @@ exports.releaseTags = class releaseTags {
     console.log(numeric);
     await this.tagNameInput.fill(this.tagname + numeric);
     await this.saveButton.click();
-    await this.page.waitForTimeout(5000);
     await expect(this.toastMessage).toHaveText(
       "Create release tag successfully"
     );
@@ -46,7 +44,7 @@ exports.releaseTags = class releaseTags {
 
   async deleteReleaseTag() {
     await this.navigateToTeamSetting();
-    await this.page.waitForTimeout(5000); // This seems redundant
+    await this.deleteLink.waitFor("visible"); // This seems redundant
     await this.deleteLink.click();
   }
 };

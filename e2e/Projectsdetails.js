@@ -39,7 +39,7 @@ exports.createProject = class Project {
   async projectValidationWithEmptyName() {
     await this.openUserMenuAndNavigateToAddProject();
     await this.projectInput.click();
-    await this.projectInput.fill("   "); // Fill with empty spaces to trigger validation
+    await this.projectInput.fill("   ");
     await this.saveButton.click();
     await expect(this.emailError).toHaveText("Required");
   }
