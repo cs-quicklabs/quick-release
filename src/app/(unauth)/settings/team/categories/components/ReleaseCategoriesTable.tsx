@@ -105,6 +105,7 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                   ) : (
                     <Input
                       placeholder="Enter category name"
+                      id="editCategoryName"
                       value={categoryNames[releaseCategoryId] || ""}
                       onChange={(e) =>
                         setCategoryNames({
@@ -145,6 +146,7 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveReleaseCategory}
                       disabled={isSaving}
+                       id="savecategory"
                     >
                       {isSaving ? "Saving..." : "Save"}
                     </Button>

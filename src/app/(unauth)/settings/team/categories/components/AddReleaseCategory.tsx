@@ -68,6 +68,7 @@ const AddReleaseCategory: React.FC<AddReleaseCategoryProps> = ({
 
         <Input
           placeholder="Enter category name"
+          id="categoryName"
           value={categoryName}
           onChange={(e) => setCategoryName(e.target.value)}
           disabled={isSaving}
