@@ -30,7 +30,6 @@ exports.LoginPage = class LoginPage {
     await this.fillEmail(email);
     await this.fillPassword(password);
     await this.clickLogin();
-    await this.waitForURL("http://localhost:3000/allLogs");
   }
 
   async loginWithWhiteSpaces() {
