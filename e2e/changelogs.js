@@ -81,7 +81,7 @@ exports.Changelog = class changelog {
   }
 
   async cancelChangelog() {
-    await this.waitForTimeout(5000);
+    await this.addNewButton.waitFor("visible");
     if (await this.addNewButton.isVisible()) {
       await this.clickAddNewButton();
     } else {
@@ -92,7 +92,6 @@ exports.Changelog = class changelog {
     await this.fillVersion();
     await this.selectStatus();
     await this.clickCancelButton();
-    await this.waitForTimeout(5000);
   }
 
   async publishChangelog() {
