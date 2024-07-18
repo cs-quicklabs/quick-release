@@ -194,7 +194,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     if (page <= 1) {
       setMap(changeLogMap);
       setList(changeLogIds);
-      setActiveChangeLogId(activeChangeLogId ? activeChangeLogId : changeLogIds[0]);
+      setActiveChangeLogId(changeLogIds[0] ?? null);
     } else {
       setMap((prevMap) => Object.assign({}, prevMap, changeLogMap));
       setList((prevList) => {

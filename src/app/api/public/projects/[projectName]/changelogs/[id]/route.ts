@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -33,10 +34,13 @@ export async function GET(
       deletedAt: null,
       status: "published",
     };
-    const changeLog = await db.changelogs.findFirst({
-      where: changeLogQuery,
-      include: ChangeLogIncludeDBQuery,
-    });
+    const changeLog = privacyResponse(
+      await db.changelogs.findFirst({
+        where: changeLogQuery,
+        include: ChangeLogIncludeDBQuery,
+      })
+    )
+    console.log(changeLog, "changeLog");
     if (!changeLog) {
       throw new ApiError(404, "Changelog not found");
     }

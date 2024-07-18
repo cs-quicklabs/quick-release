@@ -1,6 +1,6 @@
--- STEP:1 Creating new tables without dropping the old tables
+DROP TABLE IF EXISTS "UsersRoles", "Users", "Organizations", "OrganizationsUsers", "Projects", "ProjectsUsers", "Changelogs", "ReleaseTags", "ChangelogReleaseTags", "ReleaseCategories", "ChangelogReleaseCategories" CASCADE;
 
-CREATE TABLE "UsersRoles" (
+CREATE TABLE IF NOT EXISTS "UsersRoles" (
     "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE "UsersRoles" (
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE "Users" (
+CREATE TABLE IF NOT EXISTS "Users" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -26,7 +26,7 @@ CREATE TABLE "Users" (
     "verificationTokenExpiry" TEXT
 );
 
-CREATE TABLE "Organizations" (
+CREATE TABLE IF NOT EXISTS "Organizations" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -35,14 +35,14 @@ CREATE TABLE "Organizations" (
     "name" TEXT NOT NULL
 );
 
-CREATE TABLE "OrganizationsUsers" (
+CREATE TABLE IF NOT EXISTS "OrganizationsUsers" (
     "organizationsId" INTEGER NOT NULL,
     "usersId" INTEGER NOT NULL,
     "isActive" BOOLEAN DEFAULT false,
     PRIMARY KEY ("organizationsId", "usersId")
 );
 
-CREATE TABLE "Projects" (
+CREATE TABLE IF NOT EXISTS "Projects" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -52,7 +52,7 @@ CREATE TABLE "Projects" (
     "organizationsId" INTEGER
 );
 
-CREATE TABLE "ProjectsUsers" (
+CREATE TABLE IF NOT EXISTS "ProjectsUsers" (
     "projectsId" INTEGER NOT NULL,
     "usersId" INTEGER NOT NULL,
     "roleId" INTEGER NOT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE "ProjectsUsers" (
     PRIMARY KEY ("usersId", "projectsId", "roleId")
 );
 
-CREATE TABLE "Changelogs" (
+CREATE TABLE IF NOT EXISTS "Changelogs" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -77,7 +77,7 @@ CREATE TABLE "Changelogs" (
     "archivedAt" TIMESTAMP(3)
 );
 
-CREATE TABLE "ReleaseTags" (
+CREATE TABLE IF NOT EXISTS "ReleaseTags" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -87,13 +87,13 @@ CREATE TABLE "ReleaseTags" (
     "organizationsId" INTEGER NOT NULL
 );
 
-CREATE TABLE "ChangelogReleaseTags" (
+CREATE TABLE IF NOT EXISTS "ChangelogReleaseTags" (
     "logId" INTEGER NOT NULL,
     "releaseTagId" INTEGER NOT NULL,
     PRIMARY KEY ("logId", "releaseTagId")
 );
 
-CREATE TABLE "ReleaseCategories" (
+CREATE TABLE IF NOT EXISTS "ReleaseCategories" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE "ReleaseCategories" (
     "organizationsId" INTEGER NOT NULL
 );
 
-CREATE TABLE "ChangelogReleaseCategories" (
+CREATE TABLE IF NOT EXISTS "ChangelogReleaseCategories" (
     "logId" INTEGER NOT NULL,
     "releaseCategoryId" INTEGER NOT NULL,
     PRIMARY KEY ("logId", "releaseCategoryId")
