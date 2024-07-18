@@ -68,8 +68,8 @@ const page = () => {
   return (
     <main className="max-w-xl pb-12 px-4 lg:col-span-6">
       <div>
-        <h1 className="text-lg font-semibold dark:text-white">
-          Change Password
+      <h1 className="text-lg font-semibold dark:text-white" id="change-password">
+       Change Password
         </h1>{" "}
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           Please change your password.

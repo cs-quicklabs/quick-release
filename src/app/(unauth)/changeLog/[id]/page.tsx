@@ -277,6 +277,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                           <Input
                             placeholder="Enter change log title"
                             {...field}
+                            id="title"
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />
@@ -294,6 +295,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
+                            id="description"
                             value={value}
                             onChange={onChange}
                             onModal="ChangeLogs"

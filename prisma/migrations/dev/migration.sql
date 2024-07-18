@@ -1,5 +1,6 @@
--- STEP:1 Craeting new tables without droping the old tables
-CREATE TABLE "UserRoles" (
+-- STEP:1 Creating new tables without dropping the old tables
+
+CREATE TABLE "UsersRoles" (
     "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
@@ -7,7 +8,6 @@ CREATE TABLE "UserRoles" (
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create new Users table
 CREATE TABLE "Users" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
@@ -26,7 +26,6 @@ CREATE TABLE "Users" (
     "verificationTokenExpiry" TEXT
 );
 
--- Create new Organizations table
 CREATE TABLE "Organizations" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
@@ -36,15 +35,13 @@ CREATE TABLE "Organizations" (
     "name" TEXT NOT NULL
 );
 
--- Create OrganizationUsers table
-CREATE TABLE "OrganizationUsers" (
-    "organisationId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+CREATE TABLE "OrganizationsUsers" (
+    "organizationsId" INTEGER NOT NULL,
+    "usersId" INTEGER NOT NULL,
     "isActive" BOOLEAN DEFAULT false,
-    PRIMARY KEY ("organisationId", "userId")
+    PRIMARY KEY ("organizationsId", "usersId")
 );
 
--- Create new Projects table
 CREATE TABLE "Projects" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
@@ -52,20 +49,18 @@ CREATE TABLE "Projects" (
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "name" TEXT NOT NULL,
     "createdById" INTEGER,
-    "organisationId" INTEGER
+    "organizationsId" INTEGER
 );
 
--- Create ProjectUsers table
-CREATE TABLE "ProjectUsers" (
-    "projectId" INTEGER NOT NULL,
-    "userId" INTEGER NOT NULL,
+CREATE TABLE "ProjectsUsers" (
+    "projectsId" INTEGER NOT NULL,
+    "usersId" INTEGER NOT NULL,
     "roleId" INTEGER NOT NULL,
     "isActive" BOOLEAN DEFAULT false,
-    PRIMARY KEY ("userId", "projectId", "roleId")
+    PRIMARY KEY ("usersId", "projectsId", "roleId")
 );
 
--- Create new ChangeLogs table
-CREATE TABLE "ChangeLogs" (
+CREATE TABLE "Changelogs" (
     "id" SERIAL PRIMARY KEY,
     "cuid" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
@@ -73,7 +68,7 @@ CREATE TABLE "ChangeLogs" (
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "releaseVersion" TEXT NOT NULL,
-    "projectId" INTEGER,
+    "projectsId" INTEGER,
     "scheduledTime" TIMESTAMP(3),
     "status" TEXT NOT NULL,
     "createdById" INTEGER NOT NULL,
@@ -82,52 +77,48 @@ CREATE TABLE "ChangeLogs" (
     "archivedAt" TIMESTAMP(3)
 );
 
--- Create ReleaseTags table
 CREATE TABLE "ReleaseTags" (
     "id" SERIAL PRIMARY KEY,
+    "cuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "organisationId" INTEGER NOT NULL
+    "organizationsId" INTEGER NOT NULL
 );
 
--- Create ChangeLogReleaseTags table
-CREATE TABLE "ChangeLogReleaseTags" (
+CREATE TABLE "ChangelogReleaseTags" (
     "logId" INTEGER NOT NULL,
     "releaseTagId" INTEGER NOT NULL,
     PRIMARY KEY ("logId", "releaseTagId")
 );
 
--- Create ReleaseCategories table
 CREATE TABLE "ReleaseCategories" (
     "id" SERIAL PRIMARY KEY,
+    "cuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-    "organisationId" INTEGER NOT NULL
+    "organizationsId" INTEGER NOT NULL
 );
 
--- Create ChangeLogReleaseCategories table
-CREATE TABLE "ChangeLogReleaseCategories" (
+CREATE TABLE "ChangelogReleaseCategories" (
     "logId" INTEGER NOT NULL,
     "releaseCategoryId" INTEGER NOT NULL,
     PRIMARY KEY ("logId", "releaseCategoryId")
 );
 
-
-
-
-
-
-INSERT INTO "UserRoles" ("name", "code")
+-- Insert role data
+INSERT INTO "UsersRoles" ("name", "code")
 VALUES
     ('SuperAdmin', 'SUPER_ADMIN'),
     ('Admin', 'ADMIN'),
     ('Member', 'MEMBER');
 
--- STEP:2 Copy data from old User table to new User table
+-- STEP:2 Copy data from old tables to new tables
+
+-- Copy data from old User table to new User table
 INSERT INTO "Users" (
     "cuid", "createdAt", "updatedAt", "firstName", "lastName", "profilePicture",
     "email", "password", "resetToken", "resetTokenExpiry", "isActive", "isVerified",
@@ -148,9 +139,9 @@ SELECT
 FROM "Organisation" org
 JOIN "Users" u ON org."createdById" = u."cuid";
 
--- Copy data from OrganisationUsers table to new OrganizationUsers table
-INSERT INTO "OrganizationUsers" (
-    "organisationId", "userId", "isActive"
+-- Copy data from OrganisationUsers table to new OrganizationsUsers table
+INSERT INTO "OrganizationsUsers" (
+    "organizationsId", "usersId", "isActive"
 )
 SELECT
     org."id", u."id", false
@@ -160,7 +151,7 @@ JOIN "Users" u ON orgUser."userId" = u."cuid";
 
 -- Copy data from old Project table to new Projects table
 INSERT INTO "Projects" (
-    "cuid", "createdAt", "updatedAt", "name", "createdById", "organisationId"
+    "cuid", "createdAt", "updatedAt", "name", "createdById", "organizationsId"
 )
 SELECT
     p."id"::text AS "cuid", p."createdAt", p."updatedAt", p."name", u."id", org."id"
@@ -168,19 +159,18 @@ FROM "Project" p
 JOIN "Users" u ON p."createdById" = u."cuid"
 JOIN "Organizations" org ON p."organisationId" = org."cuid";
 
--- Copy data from ProjectUsers table to new ProjectsUsers table
-INSERT INTO "ProjectUsers" (
-    "projectId", "userId", "roleId", "isActive"
+-- Copy data from ProjectsUsers table to new ProjectsUsers table
+INSERT INTO "ProjectsUsers" (
+    "projectsId", "usersId", "roleId", "isActive"
 )
 SELECT
-    "Projects"."id", "Users"."id", 1, false
-FROM "ProjectUsers"
-JOIN "Projects" ON "ProjectUsers"."projectId" = "Projects"."cuid"
-JOIN "Users" ON "ProjectUsers"."userId" = "Users"."cuid";
+    p."id", u."id", 1, false
+FROM "ProjectUsers" pu
+JOIN "Projects" p  ON pu."projectId" = p."cuid"
+JOIN "Users" u ON pu."userId" = u."cuid";
 
-
--- Copy data from old Log table to new ChangeLogs table
-INSERT INTO "ChangeLogs" (
+-- Copy data from old Log table to new Changelogs table
+INSERT INTO "Changelogs" (
     "cuid", "createdAt", "updatedAt", "title", "description", "releaseVersion",
     "projectsId", "scheduledTime", "status", "createdById", "updatedById", "deletedAt", "archivedAt"
 )
@@ -188,7 +178,7 @@ SELECT
     l."id"::text AS "cuid", l."createdAt", l."updatedAt", l."title", l."description", l."releaseVersion",
     p."id", l."scheduledTime", l."status", u."id", u."id", "deletedAt", "archivedAt"
 FROM "Log" l
-JOIN "Projects" p ON l."createdById" = p."cuid";
+JOIN "Projects" p ON l."projectId" = p."cuid"
 JOIN "Users" u ON l."createdById" = u."cuid";
 
 -- Copy data from old ReleaseTag table to new ReleaseTags table
@@ -201,40 +191,36 @@ FROM "ReleaseTag" rt
 JOIN "Organizations" org ON rt."organisationId" = org."cuid";
 
 -- Copy data from old ReleaseTagOnLogs table to new ChangeLogReleaseTags table
-INSERT INTO "ChangeLogReleaseTags" (
+INSERT INTO "ChangelogReleaseTags" (
     "logId", "releaseTagId"
 )
 SELECT
-    "ChangeLogs"."id", "ReleaseTags"."id"
-FROM "ReleaseTagOnLog"
-JOIN "ChangeLogs" ON "ReleaseTagOnLog"."logId" = "ChangeLogs"."cuid"
-JOIN "ReleaseTags" ON "ReleaseTagOnLog"."releaseTagId" = "ReleaseTags"."cuid";
+    ch."id", rt."id"
+FROM "ReleaseTagOnLogs" rtlogs
+JOIN "Changelogs" ch ON rtlogs."logId" = ch."cuid"::text
+JOIN "ReleaseTags" rt ON rtlogs."releaseTagId" = rt."id";
 
--- Copy data from old ReleaseTag table to new ReleaseTags table
+-- Copy data from old ReleaseCategory table to new ReleaseCategories table
 INSERT INTO "ReleaseCategories" (
     "cuid", "createdAt", "updatedAt", "name", "code", "organizationsId"
 )
 SELECT
-    rt."id"::text AS "cuid", rt."createdAt", rt."updatedAt", rt."name", rt."code", org."id"
-FROM "ReleaseCategory" rt
-JOIN "Organizations" org ON rt."organisationId" = org."cuid";
+    rc."id"::text AS "cuid", rc."createdAt", rc."updatedAt", rc."name", rc."code", org."id"
+FROM "ReleaseCategory" rc
+JOIN "Organizations" org ON rc."organisationId" = org."cuid";
 
--- Copy data from old ReleaseTagOnLogs table to new ChangeLogReleaseTags table
-INSERT INTO "ChangeLogReleaseCategories" (
+-- Copy data from old ReleaseCategoryOnLogs table to new ChangelogReleaseCategories table
+INSERT INTO "ChangelogReleaseCategories" (
     "logId", "releaseCategoryId"
 )
 SELECT
-    "ChangeLogs"."id", "ReleaseCategories"."id"
-FROM "ReleaseCategoryOnLogs"
-JOIN "ChangeLogs" ON "ReleaseCategoryOnLogs"."logId" = "ChangeLogs"."cuid"
-JOIN "ReleaseCategories" ON "ReleaseCategoryOnLogs"."releaseCategoryId" = "ReleaseCategories"."cuid";
+    ch."id", rc."id"
+FROM "ReleaseCategoryOnLogs" rclogs
+JOIN "Changelogs" ch ON rclogs."logId" = ch."cuid"::text
+JOIN "ReleaseCategories" rc ON rclogs."releaseCategoryId" = rc."id";
 
 
-
-
-
-
--- Add constraints and foreign keys to the new tables
+-- STEP:3 Add constraints and foreign keys to the new tables
 
 -- Users table constraints
 ALTER TABLE "Users" ADD CONSTRAINT "Users_email_key" UNIQUE ("email");
@@ -246,18 +232,31 @@ ALTER TABLE "Organizations" ADD CONSTRAINT "Organizations_createdById_fkey" FORE
 
 -- Projects table constraints
 ALTER TABLE "Projects" ADD CONSTRAINT "Projects_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE "Projects" ADD CONSTRAINT "Projects_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Projects" ADD CONSTRAINT "Projects_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- ChangeLogs table constraints
-ALTER TABLE "ChangeLogs" ADD CONSTRAINT "ChangeLogs_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Projects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-ALTER TABLE "ChangeLogs" ADD CONSTRAINT "ChangeLogs_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "ChangeLogs" ADD CONSTRAINT "ChangeLogs_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- OrganizationUsers table constraints
-ALTER TABLE "OrganizationUsers" ADD CONSTRAINT "OrganizationUsers_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "OrganizationUsers" ADD CONSTRAINT "OrganizationUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+-- OrganizationsUsers table constraints
+ALTER TABLE "OrganizationsUsers" ADD CONSTRAINT "OrganizationsUsers_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrganizationsUsers" ADD CONSTRAINT "OrganizationsUsers_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- ProjectUsers table constraints
-ALTER TABLE "ProjectUsers" ADD CONSTRAINT "ProjectUsers_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Projects"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-ALTER TABLE "ProjectUsers" ADD CONSTRAINT "ProjectUsers_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON
+-- ReleaseTags table constraints
+ALTER TABLE "ReleaseTags" ADD CONSTRAINT "ReleaseTags_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
+-- ReleaseCategories table constraints
+ALTER TABLE "ReleaseCategories" ADD CONSTRAINT "ReleaseCategories_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- ProjectsUsers table constraints
+ALTER TABLE "ProjectsUsers" ADD CONSTRAINT "ProjectsUsers_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProjectsUsers" ADD CONSTRAINT "ProjectsUsers_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- ChangelogReleaseTags table constraints
+ALTER TABLE "ChangelogReleaseTags" ADD CONSTRAINT "ChangelogReleaseTags_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Changelogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChangelogReleaseTags" ADD CONSTRAINT "ChangelogReleaseTags_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTags"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- ChangelogReleaseCategories table constraints
+ALTER TABLE "ChangelogReleaseCategories" ADD CONSTRAINT "ChangelogReleaseCategories_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Changelogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ChangelogReleaseCategories" ADD CONSTRAINT "ChangelogReleaseCategories_releaseCategoryId_fkey" FOREIGN KEY ("releaseCategoryId") REFERENCES "ReleaseCategories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

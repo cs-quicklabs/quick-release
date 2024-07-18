@@ -80,7 +80,7 @@ const RegisterForm = () => {
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="First Name" {...field} />
+                    <Input placeholder="First Name"{...field} />
                   </FormControl>
                   <FormMessage className="text-red-600" />
                 </FormItem>
@@ -114,6 +114,7 @@ const RegisterForm = () => {
                       placeholder="abc@gmail.com"
                       {...field}
                       type="email"
+                    
                     />
                   </FormControl>
                   <FormMessage className="text-red-600" />
