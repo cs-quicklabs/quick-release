@@ -23,14 +23,13 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
 
   if (!changeLog) return null;
 
-  const { title, description, createdBy, releaseVersion, project } = changeLog;
+  const { title, description, createdBy, releaseVersion, projects } = changeLog;
   const fullName = `${createdBy?.firstName || ""} ${createdBy?.lastName || ""}`.trim();
   const releaseCategories = (changeLog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name }));
-  console.log("changeLog", releaseCategories);
   // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changeLog.scheduledTime ? moment(changeLog.scheduledTime).format("MMMM DD, yyyy") : "-";
-  const publicLink = `/${project?.name}/changelogs/${id}`;
+  const publicLink = `/${projects?.name}/changelogs/${id}`;
 
   return (
     <main className="max-w-2xl border-b border-gray-100">

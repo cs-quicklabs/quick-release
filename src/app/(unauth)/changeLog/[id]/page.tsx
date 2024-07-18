@@ -172,7 +172,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
         (category) => category.value
       ),
       releaseTags: data.releaseTags.map((category) => category.value),
-      projectId: activeProjectId!,
+      projectsId: activeProjectId!,
       scheduledTime:
         selectedAction.id === "published"
           ? moment().toDate()
@@ -181,7 +181,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 
     if (params.id !== "add") {
       changelogPost.id = params.id;
-      changelogPost.projectId = changelog?.projectId!;
+      changelogPost.projectsId = changelog?.projects?.cuid;
       updateChangeLog(changelogPost, setIsSaving);
       return;
     }

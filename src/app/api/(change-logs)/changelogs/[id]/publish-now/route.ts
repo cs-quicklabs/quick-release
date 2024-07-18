@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -26,9 +27,9 @@ export async function POST(
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const changeLog = await db.log.findFirst({
+    const changeLog = await db.changelogs.findFirst({
       where: {
-        id,
+        cuid: id,
         deletedAt: null,
       },
     });
@@ -36,12 +37,8 @@ export async function POST(
       throw new ApiError(404, "Change log not found");
     }
 
-    if (changeLog.createdById !== userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
-    const updatedChangeLog = await db.log.update({
-      where: { id },
+    const updatedChangeLog = await db.changelogs.update({
+      where: { cuid: id },
       data: {
         status: "published",
         scheduledTime: new Date(),
@@ -56,7 +53,7 @@ export async function POST(
     return NextResponse.json(
       new ApiResponse(
         200,
-        computeChangeLog(updatedChangeLog),
+        computeChangeLog(privacyResponse(updatedChangeLog)),
         "Published change log successfully"
       )
     );

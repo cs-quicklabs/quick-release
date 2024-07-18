@@ -14,13 +14,22 @@ export async function PATCH(req: NextRequest,
 
     // @ts-ignore
     const userId = session?.user?.id;
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const orgsAccessByUser = await db.organisationUsers.findFirst({
+    const organization = await db.organizations.findUnique({
       where: {
-        organisationId: orgsId,
+        cuid: orgsId,
+      },
+    });
+
+    const orgsAccessByUser = await db.organizationsUsers.findUnique({
+      // @ts-ignore
+      where: {
+        organizationsId: organization?.id,
+        usersId: user?.id,
       },
     });
 
@@ -28,20 +37,20 @@ export async function PATCH(req: NextRequest,
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const orgIds = await db.organisationUsers.findMany({
+    const orgIds = await db.organizationsUsers.findMany({
       where: {
-        userId: userId,
+        usersId: user?.id,
       },
       select: {
-        organisationId: true,
+        organizationsId: true,
       },
     });
 
-    const orgs = orgIds.map((org) => org.organisationId);
+    const orgs = orgIds.map((org) => org.organizationsId);
 
-    await db.organisation.updateMany({
+    await db.organizationsUsers.updateMany({
       where: {
-        id: {
+        organizationsId: {
           in: orgs,
         },
       },
@@ -50,9 +59,11 @@ export async function PATCH(req: NextRequest,
       },
     });
 
-    await db.organisation.update({
+    await db.organizationsUsers.update({
+      // @ts-ignore
       where: {
-        id: orgsId,
+        organizationsId: organization?.id,
+        usersId: user?.id,
       },
       data: {
         isActive: true,
@@ -63,7 +74,7 @@ export async function PATCH(req: NextRequest,
       new ApiResponse(
         200,
         null,
-        "Current organisation activated successfully"
+        "Current organizations activated successfully"
       )
     );
   });

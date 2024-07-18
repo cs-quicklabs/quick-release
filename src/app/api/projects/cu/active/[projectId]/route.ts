@@ -15,6 +15,11 @@ export async function PATCH(
 
     // @ts-ignore
     const userId = session?.user?.id;
+    const user = await db.users.findUnique({
+      where: {
+        cuid: userId,
+      },
+    })
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -23,9 +28,9 @@ export async function PATCH(
       throw new ApiError(400, "Project Id is required");
     }
 
-    const project = await db.project.findFirst({
+    const project = await db.projects.findFirst({
       where: {
-        id: projectId,
+        cuid: projectId,
       },
     });
 
@@ -33,21 +38,23 @@ export async function PATCH(
       throw new ApiError(404, "Project not found");
     }
 
-    await db.project.updateMany({
+    await db.projectsUsers.updateMany({
       data: {
         isActive: false,
       },
       where: {
-        createdById: userId,
+        usersId: user?.id,
       },
     });
-    const activeProject = await db.project.update({
+    const activeProject = await db.projectsUsers.update({
       data: {
         isActive: true,
       },
+      // @ts-ignore
       where: {
-        id: projectId,
-      },
+          usersId: user?.id,
+          projectsId: project?.id,
+        },
     });
 
     if (!activeProject) {

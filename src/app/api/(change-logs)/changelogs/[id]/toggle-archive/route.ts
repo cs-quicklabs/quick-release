@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -22,26 +23,24 @@ export async function POST(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const changeLog = await db.log.findFirst({
+    const changeLog = await db.changelogs.findFirst({
       where: {
-        id,
+        cuid: id,
         deletedAt: null,
       },
     });
+    
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
 
-    if (changeLog.createdById !== userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
-    const updatedChangeLog = await db.log.update({
-      where: { id },
+    const updatedChangeLog = await db.changelogs.update({
+      where: { cuid: id },
       data: {
         archivedAt: changeLog.archivedAt ? null : new Date(),
       },
@@ -58,7 +57,7 @@ export async function POST(
     return NextResponse.json(
       new ApiResponse(
         200,
-        computeChangeLog(updatedChangeLog),
+        computeChangeLog(privacyResponse(updatedChangeLog)),
         `${
           updatedChangeLog.archivedAt ? "Archive" : "Unarchive"
         } change log successfully`

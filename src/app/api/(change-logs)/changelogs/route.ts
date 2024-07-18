@@ -1,4 +1,4 @@
-import { isValidArray } from "@/Utils";
+import { isValidArray, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -25,24 +25,30 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Missing title, description or release version");
     }
 
-    const project = await db.project.findUnique({
+    const project = await db.projects.findUnique({
       where: {
-        id: body.projectId,
+        cuid: body.projectsId,
       },
     })
 
-    const releaseTags = await db.releaseTag.findMany({
+    const orgs = await db.organizations.findUnique({
       where: {
-        organisationId: project?.organisationId, // TODO: Check this.
+        cuid: body?.organizationsId,
+      }
+    })
+
+    const releaseTags = await db.releaseTags.findMany({
+      where: {
+        organizationsId: orgs?.id, // TODO: Check this.
         code: {
           in: body.releaseTags,
         },
       },
     });
 
-    const releaseCategories = await db.releaseCategory.findMany({
+    const releaseCategories = await db.releaseCategories.findMany({
       where: {
-        organisationId: project?.organisationId, // TODO: Check this.
+        organizationsId: orgs?.id, // TODO: Check this.
         code: {
           in: body.releaseCategories,
         },
@@ -57,7 +63,11 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Release tag is invalid");
     }
 
-    const newChangeLog = await db.log.create({
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+
+    const newChangeLog = await db.changelogs.create({
       data: {
         title: body.title,
         description: body.description,
@@ -65,13 +75,13 @@ export async function POST(req: NextRequest) {
         releaseCategories: {
           create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
         },
-        projectId: body.projectId,
+        projectsId: project.id,
         // releaseTags: body.releaseTags,
         releaseTags: {
           create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
         },
-        createdById: userId,
-        updatedById: userId,
+        createdById: user?.id,
+        updatedById: user?.id,
         status: body.status,
         scheduledTime: body.scheduledTime ?? null,
       },
@@ -96,14 +106,14 @@ export async function GET(req: NextRequest) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
-    const userId = session?.user?.id!;
+    const userId = session?.user?.id;
 
-    if(!userId) {
+    if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null };
-
 
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
@@ -111,10 +121,16 @@ export async function GET(req: NextRequest) {
 
     const projectId = searchParams.get("projectId");
     if (projectId) {
-      query.projectId = projectId;
+      const project = await db.projects.findUnique({
+        where: {
+          cuid: projectId,
+        },
+      });
+      if (!project) {
+        throw new ApiError(404, "Project not found");
+      }
+      query.projectsId = project.id;
     }
-
-
 
     const status = searchParams.get("status");
     if (status) {
@@ -127,23 +143,19 @@ export async function GET(req: NextRequest) {
       query.archivedAt = { not: null };
     }
 
+    const changeLogs = privacyResponseArray(
+      await db.changelogs.findMany({
+        where: query,
+        include: ChangeLogIncludeDBQuery,
+        skip: start,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    );
 
-
-    const changeLogs = await db.log.findMany({
-      where: query,
-      include: ChangeLogIncludeDBQuery,
-      skip: start,
-      take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
-    if (!changeLogs) {
-      throw new ApiError(404, "Change logs not found");
-    }
-
-    const totalChangeLogs = await db.log.count({ where: query });
+    const totalChangeLogs = await db.changelogs.count({ where: query });
     const hasNextPage = totalChangeLogs > page * limit;
     const nextPage = hasNextPage ? page + 1 : null;
 
@@ -151,9 +163,7 @@ export async function GET(req: NextRequest) {
       new ApiResponse(
         200,
         {
-          changeLogs: changeLogs.map((changeLog) =>
-            computeChangeLog(changeLog)
-          ),
+          changeLogs: changeLogs.map((changeLog: any) => computeChangeLog(changeLog)),
           page,
           limit,
           total: totalChangeLogs,
@@ -165,3 +175,4 @@ export async function GET(req: NextRequest) {
     );
   });
 }
+

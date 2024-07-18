@@ -8,7 +8,7 @@ export const POST = async (request: Request) => {
   return asyncHandler(async () => {
     const body = await request.json();
     if (body.token) {
-      const user = await db.user.findUnique({
+      const user = await db.users.findUnique({
         where: {
           verificationToken: body.token,
         },
@@ -28,7 +28,7 @@ export const POST = async (request: Request) => {
           throw new ApiError(400, "Verification link has expired");
       }
 
-      await db.user.update({
+      await db.users.update({
         where: {
           id: user?.id,
         },

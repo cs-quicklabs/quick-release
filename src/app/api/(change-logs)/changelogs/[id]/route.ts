@@ -1,4 +1,4 @@
-import { isValidArray } from "@/Utils";
+import { isValidArray, privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -28,8 +28,8 @@ export async function GET(
     }
     const { id } = params;
 
-    const changeLog = await db.log.findFirst({
-      where: { id },
+    const changeLog = await db.changelogs.findFirst({
+      where: { cuid: id, deletedAt: null },
       include: ChangeLogIncludeDBQuery,
     });
 
@@ -40,7 +40,7 @@ export async function GET(
     return NextResponse.json(
       new ApiResponse(
         200,
-        computeChangeLog(changeLog),
+        computeChangeLog(privacyResponse(changeLog)),
         "Changelog fetched successfully"
       )
     );
@@ -57,14 +57,14 @@ export async function DELETE(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const changeLog = await db.log.findFirst({
+    const changeLog = await db.changelogs.findFirst({
       where: {
-        id,
+        cuid: id,
         deletedAt: null,
       },
     });
@@ -72,10 +72,10 @@ export async function DELETE(
       throw new ApiError(404, "Change log not found");
     }
 
-    const deleteChangeLog = await db.log.update({
-      where: { id },
+    const deleteChangeLog = await db.changelogs.update({
+      where: { cuid: id },
       data: {
-        updatedById: userId,
+        updatedById: user?.id,
         deletedAt: new Date(),
       },
     });
@@ -99,7 +99,7 @@ export async function PUT(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -109,24 +109,24 @@ export async function PUT(
       throw new ApiError(400, "Missing title, description or release version");
     }
 
-    const project = await db.project.findUnique({
+    const project = await db.projects.findUnique({
       where: {
-        id: body.projectId,
+        cuid: body.projectsId,
       },
     })
 
-    const releaseTags = await db.releaseTag.findMany({
+    const releaseTags = await db.releaseTags.findMany({
       where: {
-        organisationId: project?.organisationId, // TODO: Check this.
+        organizationsId: project?.organizationsId!, // TODO: Check this.
         code: {
           in: body.releaseTags,
         },
       },
     });
 
-    const releaseCategories = await db.releaseCategory.findMany({
+    const releaseCategories = await db.releaseCategories.findMany({
       where: {
-        organisationId: project?.organisationId, // TODO: Check this.
+        organizationsId: project?.organizationsId!, // TODO: Check this.
         code: {
           in: body.releaseCategories,
         },
@@ -141,9 +141,9 @@ export async function PUT(
       throw new ApiError(400, "Release tag is invalid");
     }
 
-    const changeLog = await db.log.findFirst({
+    const changeLog = await db.changelogs.findFirst({
       where: {
-        id,
+        cuid: id,
         deletedAt: null,
       },
     });
@@ -152,26 +152,24 @@ export async function PUT(
       throw new ApiError(404, "Change log not found");
     }
 
-    if (changeLog.createdById !== userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
 
-    const updatedChangeLog = await db.log.update({
-      where: { id },
+
+    const updatedChangeLog = await db.changelogs.update({
+      where: {cuid: id},
       data: {
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
         releaseCategories: {
-          deleteMany: { logId: id },
+          deleteMany: { logId: changeLog?.id },
           create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
         },
         // releaseTags: body.releaseTags,
         releaseTags: {
-          deleteMany: { logId: id },
+          deleteMany: { logId: changeLog?.id },
           create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
         },
-        updatedById: userId,
+        updatedById: user?.id,
         status: body.status,
         scheduledTime: body.scheduledTime ?? null,
         archivedAt: null,
@@ -186,7 +184,7 @@ export async function PUT(
     return NextResponse.json(
       new ApiResponse(
         200,
-        computeChangeLog(updatedChangeLog),
+        computeChangeLog(privacyResponse(updatedChangeLog)),
         "Change log updated successfully"
       )
     );

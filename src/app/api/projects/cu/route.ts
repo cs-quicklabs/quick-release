@@ -1,3 +1,4 @@
+import { privacyResponse, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -12,14 +13,29 @@ export async function GET(req: Request, res: Response) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id;
+    const user = await db.users.findUnique({
+      where: {
+        cuid: userId,
+      },
+    })
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const query: { [key: string]: any } = { createdById: userId };
+    const query: { [key: string]: any } = { createdById: user?.id };
 
-    const projects = await db.project.findMany({ where: query });
-    const totalProjects = await db.project.count({ where: query });
+    const projects = privacyResponseArray(
+      await db.projects.findMany({ 
+        where: query,
+        select: {
+          cuid: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
+        }
+       })
+    );
+    const totalProjects = await db.projects.count({ where: query });
     return NextResponse.json(
       new ApiResponse(
         200,

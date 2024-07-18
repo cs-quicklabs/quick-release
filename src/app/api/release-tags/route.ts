@@ -1,4 +1,4 @@
-import { getReleaseKeyCode } from "@/Utils";
+import { getReleaseKeyCode, privacyResponse, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -23,26 +23,40 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Tag name is required");
     }
 
-    if(!body.organisationId) {
-      throw new ApiError(400, "Organisation Id is required");
+    if(!body.organizationsId) {
+      throw new ApiError(400, "organizations Id is required");
     }
 
+    const orgs = await db.organizations.findUnique({
+      where: {
+        cuid: body?.organizationsId,
+      }
+    })
+
     const tagCode = getReleaseKeyCode(name);
-    const releaseTag = await db.releaseTag.findFirst({
+    const releaseTag = await db.releaseTags.findFirst({
       where: {
         code: tagCode,
-        organisationId: body.organisationId,
+        organizationsId: orgs?.id,
       },
     });
     if (releaseTag) {
       throw new ApiError(409, "Tag name already exists");
     }
 
-    const newReleaseTag = await db.releaseTag.create({
+    const newReleaseTag = await db.releaseTags.create({
       data: {
         name: body.name,
         code: tagCode,
-        organisationId: body.organisationId,
+        organizationsId: orgs?.id,
+      },
+      select: {
+        id: true,
+        cuid: true,
+        name: true,
+        code: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -54,7 +68,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiResponse(200, newReleaseTag, "Create release tag successfully")
+      new ApiResponse(200, privacyResponse(newReleaseTag), "Create release tag successfully")
     );
   });
 }
@@ -64,24 +78,42 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const organisationId = req.nextUrl.searchParams.get('organisationId');
-    if (!organisationId) {
-      throw new ApiError(400, "Organisation id is required");
+    const organizationsId = req.nextUrl.searchParams.get('organizationsId');
+    if (!organizationsId) {
+      throw new ApiError(400, "Organization id is required");
     }
 
-    const releaseTags = await db.releaseTag.findMany({
+    const orgId = await db.organizations.findFirst({
       where: {
-        organisationId: organisationId,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+        cuid: organizationsId
+      }
     });
+
+    if (!orgId) {
+      throw new ApiError(404, "Organization not found");
+    }
+
+    const releaseTags = privacyResponseArray(
+      await db.releaseTags.findMany({
+        where: {
+          organizationsId: orgId?.id,
+        },
+        select: {
+          id: true,
+          cuid: true,
+          name: true,
+          code: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    );
 
     return NextResponse.json(
       new ApiResponse(
