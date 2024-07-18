@@ -42,3 +42,15 @@ next-env.d.ts
 .env.vercel.txt
 .env.vercel
 # End of https://www.toptal.com/developers/gitignore/api/nextjs
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

@@ -67,6 +67,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
 
         <Input
           placeholder="Enter tag name"
+          id="tagname"
           value={tagName}
           onChange={(e) => setTagName(e.target.value)}
           disabled={isSaving}
@@ -74,6 +75,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
       </div>
 
       <Button
+      
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         onClick={onSaveReleaseTag}
         disabled={isSaving}

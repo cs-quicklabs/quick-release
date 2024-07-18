@@ -151,8 +151,9 @@ const ContentContainer = () => {
     () => [
       {
         name: "Edit",
+      id:"edit-changelog",
         onClick: () => {
-          router.push(`/changeLog/${activeChangeLogId}`);
+          router.push(`/changeLog/${activeChangeLogId}`)
         },
       },
       {
@@ -161,6 +162,7 @@ const ContentContainer = () => {
       },
       {
         name: "Delete",
+      id:"delete-changelog",
         onClick: () => setShowDeleteModal(true),
       },
     ],
@@ -264,6 +266,7 @@ const ContentContainer = () => {
                       <EllipsisVerticalIcon
                         name="Open options"
                         className="h-5 w-5"
+                        id="open-options"
                       />
                     </Button>
                   </DropdownMenuTrigger>
@@ -272,6 +275,7 @@ const ContentContainer = () => {
                     {actionOptions.map((option) => (
                       <DropdownMenuItem
                         className="cursor-pointer bg-white hover:bg-gray-100"
+                        id={option?.id}
                         key={option.name}
                         onClick={option.onClick}
                       >
