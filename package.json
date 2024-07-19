@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "prisma db execute --file ./prisma/migrations/dev/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'"
+    "postinstall": "prisma db execute --file ./prisma/migrations/dev/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'",
+    "prebuild": "ts-node ./db/seed-prod.ts || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",

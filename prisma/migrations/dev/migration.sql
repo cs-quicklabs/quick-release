@@ -133,9 +133,10 @@ INSERT INTO "Organizations" (
     "cuid", "createdAt", "updatedAt", "createdById", "name"
 )
 SELECT
-    org."id"::text AS "cuid", org."createdAt", org."updatedAt", u."id", org."name"
+    org."id"::text AS "cuid", org."createdAt", org."updatedAt", users."id", org."name"
 FROM "Organisation" org
-JOIN "Users" u ON org."createdById" = u."cuid";
+JOIN "User" u ON org."id" = u."organisationId";
+JOIN "Users" users ON u."id" = users."cuid";
 
 -- Copy data from OrganisationUsers table to new OrganizationsUsers table
 INSERT INTO "OrganizationsUsers" (
@@ -143,9 +144,8 @@ INSERT INTO "OrganizationsUsers" (
 )
 SELECT
     org."id", u."id", false
-FROM "OrganisationUsers" orgUser
-JOIN "Organizations" org ON orgUser."organisationId" = org."cuid"
-JOIN "Users" u ON orgUser."userId" = u."cuid";
+FROM "Organizations" org
+JOIN "Users" u ON org."createdById" = u."id"
 
 -- Copy data from old Project table to new Projects table
 INSERT INTO "Projects" (
@@ -154,8 +154,8 @@ INSERT INTO "Projects" (
 SELECT
     p."id"::text AS "cuid", p."createdAt", p."updatedAt", p."name", u."id", org."id"
 FROM "Project" p
-JOIN "Users" u ON p."createdById" = u."cuid"
-JOIN "Organizations" org ON p."organisationId" = org."cuid";
+JOIN "Users" u ON p."adminId" = u."cuid"
+JOIN "Organizations" org ON u."id" = org."createdById";
 
 -- Copy data from ProjectsUsers table to new ProjectsUsers table
 INSERT INTO "ProjectsUsers" (
@@ -163,9 +163,8 @@ INSERT INTO "ProjectsUsers" (
 )
 SELECT
     p."id", u."id", 1, false
-FROM "ProjectUsers" pu
-JOIN "Projects" p  ON pu."projectId" = p."cuid"
-JOIN "Users" u ON pu."userId" = u."cuid";
+FROM "Projects" p
+JOIN "Users" u ON p."createdById" = u."id";
 
 -- Copy data from old Log table to new Changelogs table
 INSERT INTO "Changelogs" (
@@ -178,44 +177,6 @@ SELECT
 FROM "Log" l
 JOIN "Projects" p ON l."projectId" = p."cuid"
 JOIN "Users" u ON l."createdById" = u."cuid";
-
--- Copy data from old ReleaseTag table to new ReleaseTags table
-INSERT INTO "ReleaseTags" (
-    "cuid", "createdAt", "updatedAt", "name", "code", "organizationsId"
-)
-SELECT
-    rt."id"::text AS "cuid", rt."createdAt", rt."updatedAt", rt."name", rt."code", org."id"
-FROM "ReleaseTag" rt
-JOIN "Organizations" org ON rt."organisationId" = org."cuid";
-
--- Copy data from old ReleaseTagOnLogs table to new ChangeLogReleaseTags table
-INSERT INTO "ChangelogReleaseTags" (
-    "logId", "releaseTagId"
-)
-SELECT
-    ch."id", rt."id"
-FROM "ReleaseTagOnLogs" rtlogs
-JOIN "Changelogs" ch ON rtlogs."logId" = ch."cuid"::text
-JOIN "ReleaseTags" rt ON rtlogs."releaseTagId" = rt."id";
-
--- Copy data from old ReleaseCategory table to new ReleaseCategories table
-INSERT INTO "ReleaseCategories" (
-    "cuid", "createdAt", "updatedAt", "name", "code", "organizationsId"
-)
-SELECT
-    rc."id"::text AS "cuid", rc."createdAt", rc."updatedAt", rc."name", rc."code", org."id"
-FROM "ReleaseCategory" rc
-JOIN "Organizations" org ON rc."organisationId" = org."cuid";
-
--- Copy data from old ReleaseCategoryOnLogs table to new ChangelogReleaseCategories table
-INSERT INTO "ChangelogReleaseCategories" (
-    "logId", "releaseCategoryId"
-)
-SELECT
-    ch."id", rc."id"
-FROM "ReleaseCategoryOnLogs" rclogs
-JOIN "Changelogs" ch ON rclogs."logId" = ch."cuid"::text
-JOIN "ReleaseCategories" rc ON rclogs."releaseCategoryId" = rc."id";
 
 
 -- STEP:3 Add constraints and foreign keys to the new tables
