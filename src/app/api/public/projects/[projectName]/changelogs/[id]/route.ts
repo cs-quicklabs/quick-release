@@ -40,7 +40,6 @@ export async function GET(
         include: ChangeLogIncludeDBQuery,
       })
     )
-    console.log(changeLog, "changeLog");
     if (!changeLog) {
       throw new ApiError(404, "Changelog not found");
     }

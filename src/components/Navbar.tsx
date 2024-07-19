@@ -97,8 +97,8 @@ export function Navbar() {
     <>
       <AlertModal
         show={open}
-        title="Sign Out"
-        message="Are you sure you want to sign out?"
+        title="Logout"
+        message="Are you sure you want to logout?"
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() => logout(setIsLogOut)}
@@ -389,13 +389,13 @@ export function Navbar() {
                               {isLogOut ? (
                                 <div className="flex  items-center gap-4">
                                   <span className="text-sm font-[490] text-black">
-                                    Sign out
+                                    Logout
                                   </span>
                                   <Loader width="w-6" color="border-black" />
                                 </div>
                               ) : (
                                 <div className="flex  items-center font-[490] text-black text-sm">
-                                  <span>Sign out</span>
+                                  <span>Logout</span>
                                 </div>
                               )}
                             </a>
@@ -491,7 +491,7 @@ export function Navbar() {
                   onClick={() => setOpen(true)}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                   >
-                  <span>Sign out</span>
+                  <span>Logout</span>
                 </a>
               </div>
             </Disclosure.Panel>

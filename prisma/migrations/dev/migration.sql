@@ -1,5 +1,3 @@
-DROP TABLE IF EXISTS "UsersRoles", "Users", "Organizations", "OrganizationsUsers", "Projects", "ProjectsUsers", "Changelogs", "ReleaseTags", "ChangelogReleaseTags", "ReleaseCategories", "ChangelogReleaseCategories" CASCADE;
-
 CREATE TABLE IF NOT EXISTS "UsersRoles" (
     "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL,

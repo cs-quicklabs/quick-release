@@ -155,7 +155,7 @@ export async function PUT(
 
 
     const updatedChangeLog = await db.changelogs.update({
-      where: {cuid: id},
+      where: {id: changeLog?.id},
       data: {
         title: body.title,
         description: body.description,
