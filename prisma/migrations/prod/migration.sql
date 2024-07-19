@@ -1,3 +1,4 @@
+-- DROP TABLE IF EXISTS "UsersRoles", "Users", "Organizations", "Projects", "OrganizationsUsers", "ProjectsUsers", "Changelogs", "ReleaseTags", "ReleaseCategories", "ChangelogReleaseTags", "ChangelogReleaseCategories" CASCADE;
 CREATE TABLE IF NOT EXISTS "UsersRoles" (
     "id" SERIAL PRIMARY KEY,
     "name" TEXT NOT NULL,
@@ -133,10 +134,10 @@ INSERT INTO "Organizations" (
     "cuid", "createdAt", "updatedAt", "createdById", "name"
 )
 SELECT
-    org."id"::text AS "cuid", org."createdAt", org."updatedAt", users."id", org."name"
+    org."id"::text AS "cuid", org."createdAt", org."updatedAt", u2."id", org."name"
 FROM "Organisation" org
-JOIN "User" u ON org."id" = u."organisationId";
-JOIN "Users" users ON u."id" = users."cuid";
+JOIN "User" u ON org."id" = u."organisationId"
+JOIN "Users" u2 ON u."id" = u2."cuid";
 
 -- Copy data from OrganisationUsers table to new OrganizationsUsers table
 INSERT INTO "OrganizationsUsers" (
@@ -145,7 +146,7 @@ INSERT INTO "OrganizationsUsers" (
 SELECT
     org."id", u."id", false
 FROM "Organizations" org
-JOIN "Users" u ON org."createdById" = u."id"
+JOIN "Users" u ON org."createdById" = u."id";
 
 -- Copy data from old Project table to new Projects table
 INSERT INTO "Projects" (
@@ -177,6 +178,26 @@ SELECT
 FROM "Log" l
 JOIN "Projects" p ON l."projectId" = p."cuid"
 JOIN "Users" u ON l."createdById" = u."cuid";
+
+-- Create ReleaseTags with cuid
+INSERT INTO "ReleaseTags" (
+    "cuid", "name", "code", "organizationsId"
+)
+VALUES
+    (gen_random_uuid()::text, 'Web', 'web', 1),
+    (gen_random_uuid()::text, 'Android', 'android', 1),
+    (gen_random_uuid()::text, 'IOS', 'ios', 1);
+
+-- Create ReleaseCategories with cuid
+INSERT INTO "ReleaseCategories" (
+    "cuid", "name", "code", "organizationsId"
+)
+VALUES
+    (gen_random_uuid()::text, 'New', 'new', 1),
+    (gen_random_uuid()::text, 'Improvement', 'improvement', 1),
+    (gen_random_uuid()::text, 'Bug Fix', 'bug_fix', 1),
+    (gen_random_uuid()::text, 'Maintenance', 'maintenance', 1),
+    (gen_random_uuid()::text, 'Refactor', 'refactor', 1);
 
 
 -- STEP:3 Add constraints and foreign keys to the new tables
