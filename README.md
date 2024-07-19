@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Quick Release
+##  Introduction
+A lot of SaaS products have to do a lot of things again and again for proper management of customer feedbacks, bugs and they often need to communicate with their users what they are building. Therefore lot of SaaS Products end up building lot of common features which generally waste time which can be focused on other business needs. Therefore we are building a product named Quick Releases, which provides these common features to different SaaS products owners. They can integrate Quick Release with their own SaaS products and save some bandwidth. These modules/features include
 
-## Getting Started
+
+
+#### Change logs:
+Change logs or release notes are needed to tell users what are new in the SaaS products.
+
+#### Roadmaps: 
+Roadmaps are way to informing users of SaaS products what features are coming, what is under development and what is coming next.
+
+
+
+#### Feedbacks: 
+Almost every product needs a way to collect feedbacks from it's users. We are building this feature in Quick Release.
+
+
+
+#### Bug Reporting: 
+So that users can quickly report bugs and send it to SaaS product owners. This is some very basic bug reporting mechanism.
+
+
+
+Quick Releases when integrated with some SaaS product will enable above features out of the box to SaaS product and SaaS owners do not have to build these features themselves. This because a lot more useful if you are running lot of projects like we do in Quicklabs.
+
+## Setup Process
 
 First, run the development server:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+1. Run the package installation cmd.
+```
+npm install
+```
+2. Now set the prisma and posgres for db connection
+```
+// update the env from env.example file
+```
+3. Make sure your $POSTGRES_PRISMA_URL file is update based on your db server
+4. Run the migration command
+- for dev
+```
+npx prisma db push
+```
+- for prod
+```
+npx prisma migrate deploy
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Now run the next js server
+```
+npm run dev
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+After above steps open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
