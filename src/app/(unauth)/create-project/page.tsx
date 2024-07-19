@@ -2,24 +2,22 @@
 
 import { useProjectContext } from "@/app/context/ProjectContext";
 import BaseTemplate from "@/templates/BaseTemplate";
-import { User } from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { useUserContext } from "@/app/context/UserContext";
+import { requestHandler, showNotification } from "@/Utils";
+import { createProjectRequest } from "@/fetchHandlers/project";
 
 const Project = () => {
-  const { data } = useSession();
   const router = useRouter();
-  const [projects, setProjects] = React.useState([]);
-  const [activeUser, setActiveUser] = useState<User>();
-  const [loading, setLoading] = React.useState(false);
   const [loader, setLoader] = useState(false);
+  const { getAllProjects } = useProjectContext();
+  const { loggedInUser } = useUserContext();
   const formSchema = z.object({
     projects: z
       .string()
@@ -43,59 +41,22 @@ const Project = () => {
     },
   });
 
-  const { getAllProjects } = useProjectContext();
-
-  const getActiveUser = async () => {
-    try {
-      const res = await axios.get("/api/get-active-user");
-      setActiveUser(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  useEffect(() => {
-    getActiveUser();
-  }, []);
-
-  const getProjects = async () => {
-    setLoading(true);
-    try {
-      const projects = await axios.get(`/api/get-projects/${activeUser?.id}`);
-      setProjects(projects.data);
-    } catch (err) {
-      console.log(err, "error");
-    }
-    setLoading(false);
-  };
-  React.useEffect(() => {
-    const fetchData = async () => {
-      if (activeUser?.id) {
-        await getProjects();
-      }
-    };
-
-    fetchData();
-  }, [activeUser?.id]);
-
   async function createProject(values: z.infer<typeof formSchema>, e: any) {
     toast.dismiss();
     e.preventDefault();
-    try {
-      setLoader(true);
-      const response = await axios.post(`api/add-project/${activeUser?.id}`, {
-        projects: values.projects.trim(),
-      });
-      getAllProjects();
-      toast.success(response.data.message);
-      router.push("/allLogs");
-      // getProjects();
-    } catch (error: any) {
-      if (error) {
-        toast.error(error.response.data.message);
+    await requestHandler(
+      async () => await createProjectRequest({ ...values, organizationsId: loggedInUser?.orgs[0]?.id }),
+      setLoader,
+      (res: any) => {
+        const { message } = res;
+        getAllProjects();
+        router.push("/allLogs")
+        showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
       }
-    }
-    setLoader(false);
+    );
   }
 
   return (
@@ -162,3 +123,4 @@ const Project = () => {
 };
 
 export default Project;
+

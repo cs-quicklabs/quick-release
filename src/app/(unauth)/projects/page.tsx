@@ -1,5 +1,6 @@
 "use client";
 
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -52,20 +53,7 @@ const Projects = () => {
       >
         <div className="flex flex-col items-center justify-center">
           <p className="pb-1">Add Project</p>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-10 h-16"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-            />
-          </svg>
+          <PlusCircleIcon className="w-8 h-8" />
         </div>
       </Link>
     </div>

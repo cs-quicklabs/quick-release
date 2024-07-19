@@ -1,4 +1,4 @@
-import { selectedData } from "@/Utils";
+import { privacyResponse, selectedData } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -12,7 +12,7 @@ export const POST = async (request: Request) => {
       throw new ApiError(400, "Invalid Token");
     }
 
-    const user = await db.user.findUnique({
+    const user = await db.users.findUnique({
       where: {
         resetToken: token,
       },
@@ -29,7 +29,7 @@ export const POST = async (request: Request) => {
       }
     }
     return NextResponse.json(
-      new ApiResponse(200, selectedData(user), "Your account has been verified")
+      new ApiResponse(200, privacyResponse(user), "Your account has been verified")
     );
   });
 };

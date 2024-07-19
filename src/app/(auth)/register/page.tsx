@@ -1,9 +1,11 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
+import { WEB_DETAILS } from "@/Utils/constants";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -98,12 +100,14 @@ const Register = () => {
           href="/"
           className="flex items-center mb-6  mt-8 text-2xl font-medium text-gray-900 dark:text-white"
         >
-          <img
+          <Image
             className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            src={WEB_DETAILS.favicon}
             alt="logo"
+            width={32}
+            height={32}
           />
-          Quick Release
+          {WEB_DETAILS.name}
         </Link>{" "}
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -145,7 +149,7 @@ const Register = () => {
                   </label>{" "}
                   <input
                     type="text"
-                    id="first-name"
+                    id="last-name"
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     placeholder="Last name"
                     {...register("lastName")}
@@ -186,7 +190,7 @@ const Register = () => {
                 </label>{" "}
                 <input
                   type="text"
-                  id="first-name"
+                  id="organisation-name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                   placeholder="Company name"
                   {...register("orgName")}
@@ -240,7 +244,7 @@ const Register = () => {
                 <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
                     type={showConfirmPassword ? "text" : "password"}
-                    id="password"
+                    id="confirm-password"
                     placeholder="••••••••"
                     {...register("confirmPassword")}
                     className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"

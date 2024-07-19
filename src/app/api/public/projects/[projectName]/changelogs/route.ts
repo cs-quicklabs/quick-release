@@ -1,7 +1,9 @@
+import { privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,7 +20,10 @@ export async function GET(
     projectName = projectName.toLowerCase();
 
     const projectQuery = { name: projectName };
-    const project = await db.project.findFirst({ where: projectQuery });
+    const project = await db.projects.findFirst({
+      where: projectQuery,
+      include: { Users: true },
+    });
     if (!project) {
       throw new ApiError(404, "Project not found");
     }
@@ -29,7 +34,7 @@ export async function GET(
     const start = (page - 1) * limit;
 
     const getAllPublishedChangeLogsQuery: { [key: string]: any } = {
-      projectId: project.id,
+      projectsId: project.id,
       deletedAt: null,
       archivedAt: null,
       status: "published",
@@ -37,33 +42,56 @@ export async function GET(
 
     const releaseCategories = searchParams.get("releaseCategories")?.split(",");
     if (releaseCategories?.length) {
+      const selectedReleaseCategories = await db.releaseCategories.findMany({
+        where: {
+          code: {
+            in: releaseCategories,
+          },
+          organizationsId: project?.organizationsId!,
+        },
+      });
       getAllPublishedChangeLogsQuery.releaseCategories = {
-        hasSome: releaseCategories,
+        some: {
+          releaseCategoryId: {
+            in: selectedReleaseCategories.map((category) => category.id),
+          },
+        },
       };
     }
 
     const releaseTags = searchParams.get("releaseTags")?.split(",");
     if (releaseTags?.length) {
+      const selectedReleaseTags = await db.releaseTags.findMany({
+        where: {
+          code: {
+            in: releaseTags,
+          },
+          organizationsId: project?.organizationsId!,
+        },
+      });
+
       getAllPublishedChangeLogsQuery.releaseTags = {
-        hasSome: releaseTags,
+        some: {
+          releaseTagId: {
+            in: selectedReleaseTags.map((tag) => tag.id),
+          },
+        },
       };
     }
 
-    const changeLogs = await db.log.findMany({
-      where: getAllPublishedChangeLogsQuery,
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
-      skip: start,
-      take: limit,
-      orderBy: {
-        scheduledTime: "desc",
-      },
-    });
+    const changeLogs = privacyResponseArray(
+      await db.changelogs.findMany({
+        where: getAllPublishedChangeLogsQuery,
+        include: ChangeLogIncludeDBQuery,
+        skip: start,
+        take: limit,
+        orderBy: {
+          scheduledTime: "desc",
+        },
+      })
+    );
 
-    const totalChangeLogs = await db.log.count({
+    const totalChangeLogs = await db.changelogs.count({
       where: getAllPublishedChangeLogsQuery,
     });
     const hasNextPage = totalChangeLogs > page * limit;
@@ -73,7 +101,9 @@ export async function GET(
       new ApiResponse(
         200,
         {
-          changeLogs,
+          changeLogs: changeLogs.map((changeLog: any) =>
+            computeChangeLog(changeLog)
+          ),
           page,
           limit,
           total: totalChangeLogs,

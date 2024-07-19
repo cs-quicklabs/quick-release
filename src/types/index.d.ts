@@ -1,3 +1,5 @@
+import { IReleaseCategory } from "@/interfaces";
+
 export type FormInputPost = {
   title: string;
   content: string;
@@ -24,16 +26,16 @@ export type ChangeLogType = {
   title: string;
   description: string;
   releaseVersion: string;
-  releaseCategories: string[];
-  releaseTags: string[];
+  releaseCategories: string[] | IReleaseCategory[];
+  releaseTags: string[] | IReleaseTag[];
 
-  project?: Project;
-  projectId: string;
+  projects?: Project;
+  projectsId: string;
 
   scheduledTime?: Date;
 
   status: string;
-
+  organizationsId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 
@@ -56,8 +58,6 @@ export type ChangeLogsStatusType = {
 export type ReleaseCategoryType = {
   value: string;
   label: string;
-  textColor: string;
-  bgColor: string;
 };
 
 export type ReleaseTagType = {
@@ -69,4 +69,5 @@ export type ApiFilterQueryType = {
   page?: number;
   limit?: number;
   [key: string]: any;
+  organizationsId?: string;
 };

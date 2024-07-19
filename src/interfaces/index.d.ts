@@ -8,6 +8,11 @@ export interface IReleaseCategoriesOption {
     readonly label: string;
   }
 
+  export interface ReleaseCategoriesOption {
+    readonly value: string;
+    readonly label: string;
+  }
+
   export interface IChangeLogPost extends FormChangeLogPost {
     id?: string;
     status: string;
@@ -28,11 +33,12 @@ export interface IReleaseCategoriesOption {
     isActive: Boolean;
     isVerified: Boolean;
     role: String;
-    organisationId: String;
-    organisation?: Organisation;
+    organizationsId: String;
+    organizations?: organizations;
     projects: Project[];
     verificationToken?: String;
     verificationTokenExpiry?: String;
+    orgs: organizations[];
   }
   
   export interface IFile {
@@ -53,4 +59,20 @@ export interface IReleaseCategoriesOption {
     User?: User;
     adminId?: String;
     isActive: Boolean;
+  }
+
+  export interface IReleaseTag {
+    id?: number;
+    name?: string;
+    code?: string;
+    organizationsId?: string;
+  }
+
+  export interface IReleaseCategory {
+    id?: number;
+    name?: string;
+    code?: string;
+    textColor?: string;
+    bgColor?: string;
+    organizationsId?: string;
   }

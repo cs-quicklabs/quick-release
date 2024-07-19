@@ -1,13 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags } from "@/Utils/constants";
 import { Checkbox } from "flowbite-react";
 import { useRouter, usePathname, useSearchParams, useParams } from "next/navigation";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { classNames } from "@/lib/utils";
+import { ReleaseTagType } from "@/types";
 
-const SideNav = () => {
+type SideNavProps = {
+  releaseTags?: ReleaseTagType[];
+  releaseCategories?: ReleaseTagType[];
+};
+
+const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories = [] }) => {
   const router = useRouter();
   const pathname = usePathname();
   const { projectName } = useParams();
@@ -29,6 +34,7 @@ const SideNav = () => {
 
   const updateQueryParams = (categories: string | null, tags: string | null) => {
     if (!categories && !tags) {
+      fetchAllChangesLogs(null, null);
       return router.push(pathname);
     }
 
@@ -79,27 +85,27 @@ const SideNav = () => {
   }, [projectName]);
 
   return (
-    <aside className="flex justify-between lg:h-full items-start lg:flex-col lg:justify-start py-6 px-2 sm:px-6 lg:col-span-3 lg:py-0 lg:px-0">
+    <aside className="flex lg:flex-col lg:justify-start py-4 px-2 sm:px-4 lg:col-span-3 lg:py-0 lg:px-0">
       <div className="p-4">
         <label className="text-base font-semibold text-gray-900">Select Categories</label>
         <p className="text-sm text-gray-500">Chose Release Categories</p>
 
-        <fieldset className="mt-4">
+        <fieldset className="lg:mt-4">
           <div className="space-y-2">
             {
-              Object.values(ChangeLogsReleaseCategories).map(category => (
+              releaseCategories.map(category => (
                 <div
                   key={category.value}
                   className="flex items-center"
                   onClick={() => onSelectCategories(category.value)}
                 >
                   <Checkbox
-                    className={classNames(
-                      "h-4 w-4 rounded border-gray-300 focus:ring-transparent",
-                      `${category.textColor}`
-                    )}
+                    className={
+                      "h-4 w-4 rounded border-gray-300 focus:ring-transparent"
+                    }
                     name={category.value}
                     checked={selectedCategories.includes(category.value)}
+                    onChange={() => onSelectCategories(category.value)}
                     readOnly
                   />
 
@@ -115,39 +121,41 @@ const SideNav = () => {
           </div>
         </fieldset>
       </div>
+      {
+        !!releaseTags.length &&
+        <div className="mt-4 p-4">
+          <label className="text-base font-semibold text-gray-900">Select Release tags</label>
+          <p className="text-sm text-gray-500">Chose Release tags</p>
 
-      <div className="mt-4 p-4">
-        <label className="text-base font-semibold text-gray-900">Select Release tags</label>
-        <p className="text-sm text-gray-500">Chose Release tags</p>
-
-        <fieldset className="mt-4">
-          <div className="space-y-2">
-            {
-              Object.values(ChangeLogsReleaseTags).map(tag => (
-                <div
-                  key={tag.value}
-                  className="flex items-center"
-                  onClick={() => onSelectTags(tag.value)}
-                >
-                  <Checkbox
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                    name={tag.value}
-                    checked={selectedTags.includes(tag.value)}
-                    readOnly
-                  />
-
-                  <label
-                    className="ml-3 block text-sm font-medium leading-6 text-gray-900"
-                    htmlFor={tag.value}
+          <fieldset className="mt-4">
+            <div className="space-y-2">
+              {
+                releaseTags.map(tag => (
+                  <div
+                    key={tag.value}
+                    className="flex items-center"
+                    onClick={() => onSelectTags(tag.value)}
                   >
-                    {tag.label}
-                  </label>
-                </div>
-              ))
-            }
-          </div>
-        </fieldset>
-      </div>
+                    <Checkbox
+                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      name={tag.value}
+                      checked={selectedTags.includes(tag.value)}
+                      readOnly
+                    />
+
+                    <label
+                      className="ml-3 block text-sm font-medium leading-6 text-gray-900"
+                      htmlFor={tag.value}
+                    >
+                      {tag.label}
+                    </label>
+                  </div>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
+      }
     </aside>
   );
 };
