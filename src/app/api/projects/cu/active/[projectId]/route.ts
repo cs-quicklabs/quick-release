@@ -15,6 +15,7 @@ export async function PATCH(
 
     // @ts-ignore
     const userId = session?.user?.id;
+
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -23,9 +24,19 @@ export async function PATCH(
       throw new ApiError(400, "Project Id is required");
     }
 
-    const project = await db.project.findFirst({
+    const user = await db.users.findUnique({
       where: {
-        id: projectId,
+        cuid: userId,
+      },
+    });
+
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const project = await db.projects.findFirst({
+      where: {
+        cuid: projectId,
       },
     });
 
@@ -33,20 +44,35 @@ export async function PATCH(
       throw new ApiError(404, "Project not found");
     }
 
-    await db.project.updateMany({
+    // Update all project users to inactive for the user
+    await db.projectsUsers.updateMany({
       data: {
         isActive: false,
       },
       where: {
-        createdById: userId,
+        usersId: user.id,
       },
     });
-    const activeProject = await db.project.update({
+
+    // Find the specified project user
+    const projectUser = await db.projectsUsers.findFirst({
+      where: {
+        usersId: user.id,
+        projectsId: project.id,
+      },
+    });
+
+    // Update the specified project user to active
+    const activeProject = await db.projectsUsers.update({
       data: {
         isActive: true,
       },
       where: {
-        id: projectId,
+        usersId_projectsId_roleId: {
+          usersId: user.id,
+          projectsId: project.id,
+          roleId: projectUser?.roleId!,
+        },
       },
     });
 

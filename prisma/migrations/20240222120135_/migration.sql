@@ -12,19 +12,19 @@ CREATE TABLE "User" (
     "isActive" BOOLEAN NOT NULL DEFAULT true,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "role" TEXT NOT NULL DEFAULT 'ADMIN',
-    "organisationId" TEXT NOT NULL,
+    "organizationsId" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "Organisation" (
+CREATE TABLE "organizations" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
 
-    CONSTRAINT "Organisation_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "organizations_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -60,16 +60,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_resetToken_key" ON "User"("resetToken");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_organisationId_key" ON "User"("organisationId");
+CREATE UNIQUE INDEX "User_organizationsId_key" ON "User"("organizationsId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Organisation_name_key" ON "Organisation"("name");
+CREATE UNIQUE INDEX "organizations_name_key" ON "organizations"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Project_name_key" ON "Project"("name");
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_adminId_fkey" FOREIGN KEY ("adminId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

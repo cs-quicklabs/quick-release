@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -12,16 +13,17 @@ export async function GET(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const orgs = await db.organisationUsers.findMany({
+    const orgs = await db.organizationsUsers.findMany({
       where: {
-        userId: userId,
+        usersId: user?.id,
       },
       select: {
-        organisationId: true,
+        organizationsId: true,
       },
     });
 
@@ -29,11 +31,11 @@ export async function GET(req: NextRequest) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const orgIds = orgs.map((org) => org.organisationId);
+    const orgIds = orgs.map((org) => org.organizationsId);
 
-    const activeOrg = await db.organisation.findFirst({
+    const activeOrg = await db.organizationsUsers.findFirst({
       where: {
-        id: {
+        organizationsId: {
           in: orgIds,
         },
         isActive: true,
@@ -41,14 +43,14 @@ export async function GET(req: NextRequest) {
     });
 
     if (!activeOrg) {
-      throw new ApiError(404, "Active organisation not found");
+      throw new ApiError(404, "Active organizations not found");
     }
 
     return NextResponse.json(
       new ApiResponse(
         200,
-        activeOrg,
-        "Active organisation fetched successfully"
+        privacyResponse(activeOrg),
+        "Active organizations fetched successfully"
       )
     );
   });

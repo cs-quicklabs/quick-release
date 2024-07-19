@@ -25,7 +25,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       }
       const hashedPassword = await hash(body.password, 10);
 
-      const existingEmail = await db.user.findUnique({
+      const existingEmail = await db.users.findUnique({
         where: { email: body.email },
       });
 
@@ -33,7 +33,7 @@ export async function POST(request: Request, res: NextApiResponse) {
         throw new ApiError(400, "Email already exists");
       }
 
-      const register = await db.user.create({
+      const register = await db.users.create({
         data: {
           email: body.email,
           password: hashedPassword,
@@ -46,18 +46,18 @@ export async function POST(request: Request, res: NextApiResponse) {
         throw new ApiError(400, "Unable to create user");
       }
 
-      const organisation = await db.organisation.create({
+      const organizations = await db.organizations.create({
         data: {
           name: body.orgName,
           createdById: register.id,
-          isActive: true,
         },
       });
 
-      await db.organisationUsers.create({
+      await db.organizationsUsers.create({
         data: {
-          userId: register.id,
-          organisationId: organisation.id,
+          usersId: register.id,
+          organizationsId: organizations.id,
+          isActive: true,
         },
       })
 
@@ -71,7 +71,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       register.verificationToken = registerVerificationToken;
       register.verificationTokenExpiry = verificationTokenExpires;
 
-      await db.user.update({
+      await db.users.update({
         where: {
           email: body.email,
         },

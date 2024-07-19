@@ -42,7 +42,7 @@ const ReleaseCategoryProvider: React.FC<ProviderProps> = ({ children }) => {
   const createReleaseCategory = async (data: IReleaseCategory, setIsLoading: (loading: boolean) => void, isNotify = true) => {
     setError("");
     await requestHandler(
-      async () => await createReleaseCategoriesRequest({ ...data, organisationId: loggedInUser?.orgs[0]?.id }),
+      async () => await createReleaseCategoriesRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -65,7 +65,7 @@ const ReleaseCategoryProvider: React.FC<ProviderProps> = ({ children }) => {
   // Function to handle get all release tags
   const getAllReleaseCategories = async (setIsLoading: (loading: boolean) => void) => {
     await requestHandler(
-      async () => await getAllReleaseCategoriesRequest({organisationId: loggedInUser?.orgs[0]?.id}),
+      async () => await getAllReleaseCategoriesRequest({organizationsId: loggedInUser?.orgs[0]?.id}),
       setIsLoading,
       (res: any) => {
         const { data } = res;
@@ -92,7 +92,7 @@ const ReleaseCategoryProvider: React.FC<ProviderProps> = ({ children }) => {
   const updateReleaseCategory = async (data: IReleaseCategory, setIsLoading: (loading: boolean) => void) => {
     setError("");
     await requestHandler(
-      async () => await updateReleaseCategoriesRequest({ ...data, organisationId: loggedInUser?.orgs[0]?.id }),
+      async () => await updateReleaseCategoriesRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -115,7 +115,7 @@ const ReleaseCategoryProvider: React.FC<ProviderProps> = ({ children }) => {
   const deleteReleaseCategory = async (id: number, setIsLoading: (loading: boolean) => void) => {
     setError("");
     await requestHandler(
-      async () => await deleteReleaseCategoriesRequest({ id, organisationId: loggedInUser?.orgs[0]?.id }),
+      async () => await deleteReleaseCategoriesRequest({ id, organizationsId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { message } = res;

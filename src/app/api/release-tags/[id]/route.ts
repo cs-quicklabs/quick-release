@@ -1,4 +1,4 @@
-import { getReleaseKeyCode } from "@/Utils";
+import { getReleaseKeyCode, privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -16,12 +16,12 @@ export async function PUT(
   { params }: { params: ParamsType }
 ) {
   return asyncHandler(async () => {
-    const id: number = parseInt(params.id);
+    const cuid = params.id;
 
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -32,26 +32,40 @@ export async function PUT(
       throw new ApiError(400, "Tag name is required");
     }
 
-    if(!body.organisationId) {
-      throw new ApiError(400, "Organisation Id is required");
+    if(!body.organizationsId) {
+      throw new ApiError(400, "organizations Id is required");
     }
+
+    const orgs = await db.organizations.findUnique({
+      where: {  
+        cuid: body?.organizationsId,
+      }
+    })
     const tagCode = getReleaseKeyCode(name);
-    const releaseTag = await db.releaseTag.findFirst({
+    const releaseTag = await db.releaseTags.findFirst({
       where: {
-        NOT: { id },
+        NOT: { cuid },
         code: tagCode,
-        organisationId: body.organisationId,
+        organizationsId: orgs?.id,
       },
     });
     if (releaseTag) {
       throw new ApiError(409, "Tag name already exists");
     }
 
-    const updatedReleaseTag = await db.releaseTag.update({
-      where: { id, organisationId: body.organisationId },
+    const updatedReleaseTag = await db.releaseTags.update({
+      where: { cuid, organizationsId: orgs?.id },
       data: {
         name: body.name,
         code: tagCode,
+      },
+      select: {
+        id: true,
+        cuid: true,
+        name: true,
+        code: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -63,7 +77,7 @@ export async function PUT(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, updatedReleaseTag, "Update release tag successfully")
+      new ApiResponse(200, privacyResponse(updatedReleaseTag), "Update release tag successfully")
     );
   });
 }
@@ -73,39 +87,56 @@ export async function DELETE(
   { params }: { params: ParamsType }
 ) {
   return asyncHandler(async () => {
-    const id: number = parseInt(params.id);
+    const cuid = params.id;
 
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const organisationId = req.nextUrl.searchParams.get("organisationId");
+    const organizationsId = req.nextUrl.searchParams.get("organizationsId");
 
-    if (!organisationId) {
-      throw new ApiError(400, "Organisation id is required");
+    if (!organizationsId) {
+      throw new ApiError(400, "organizations id is required");
     }
 
-    const releaseTag = await db.releaseTag.findFirst({
+    const orgs = await db.organizations.findFirst({
       where: {
-        id,
-        organisationId: organisationId,
+        cuid: organizationsId,
+      },
+    });
+    
+    if (!orgs) {
+      throw new ApiError(404, "Organization not found");
+    }
+
+    const releaseTag = await db.releaseTags.findFirst({
+      where: {
+        cuid,
+        organizationsId: orgs?.id,
       },
     });
     if (!releaseTag) {
       throw new ApiError(404, "Release tag not found");
     }
 
-    await db.releaseTagOnLogs.deleteMany({
-      where: { releaseTagId: id },
+    await db.changelogReleaseTags.deleteMany({
+      where: { releaseTagId: releaseTag?.id },
     });
 
-    const deletedReleaseTag = await db.releaseTag.delete({
-      where: { id },
+    const deletedReleaseTag = await db.releaseTags.delete({
+      where: { cuid },
     });
+
+    if (!deletedReleaseTag) {
+      throw new ApiError(
+        500,
+        "Something went wrong while deleting release tag"
+      );
+    }
 
     return NextResponse.json(
       new ApiResponse(200, null, "Delete release tag successfully")

@@ -143,9 +143,9 @@ const RegisterForm = () => {
               name="orgName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Organisation Name</FormLabel>
+                  <FormLabel>Organization Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Organisation Name" {...field}/>
+                    <Input placeholder="Organization Name" {...field} />
                   </FormControl>
                   <FormMessage className="text-red-600" />
                 </FormItem>

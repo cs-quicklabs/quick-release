@@ -14,6 +14,7 @@ import {
   getAllPublicChangeLogsRequest,
 } from "@/fetchHandlers/changelog";
 import { useProjectContext } from "./ProjectContext";
+import { useUserContext } from "./UserContext";
 
 type ChangeLogMapType = {
   [key: string]: ChangeLogType | null;
@@ -88,13 +89,14 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   const [activeChangeLogId, setActiveChangeLogId] = useState<string | null>(null);
 
   const { activeProjectId } = useProjectContext();
+  const { loggedInUser } = useUserContext();
 
   const defaultBoardKey = useMemo(() => JSON.stringify({ projectId: activeProjectId }), [activeProjectId]);
 
   // Function to handle create change log
   const createChangeLog = async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => {
     await requestHandler(
-      async () => await createChangeLogRequest(data),
+      async () => await createChangeLogRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -142,7 +144,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
 
   const updateChangeLog = async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => {
     await requestHandler(
-      async () => await updateOneChangeLogRequest(data),
+      async () => await updateOneChangeLogRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;

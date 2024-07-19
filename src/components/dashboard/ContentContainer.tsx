@@ -73,7 +73,7 @@ const ContentContainer = () => {
   const alertDetails = useMemo<AlertPropsType | null>(() => {
     if (!changelog) return null;
 
-    const { status, createdBy, project } = changelog;
+    const { status, createdBy, projects } = changelog;
     const fullName = `${createdBy?.firstName || ""} ${
       createdBy?.lastName || ""
     }`.trim();
@@ -86,7 +86,7 @@ const ContentContainer = () => {
     const archivedAt = changelog.archivedAt
       ? moment(changelog.archivedAt).format("MMMM DD, YYYY")
       : "";
-    const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
+    const publicLink = `/${projects?.name}/changelogs/${activeChangeLogId}`;
     const editChangeLogLink = `/changeLog/${activeChangeLogId}`;
     const changeLogStatus = archivedAt
       ? ChangeLogsStatus.archived
@@ -195,7 +195,7 @@ const ContentContainer = () => {
     releaseVersion,
     archivedAt,
     createdBy,
-    project,
+    projects,
   } = changelog;
   const releaseCategories = (
     changelog.releaseCategories as IReleaseCategory[]
@@ -214,7 +214,7 @@ const ContentContainer = () => {
   const createdAt = changelog.createdAt
     ? moment(changelog.createdAt).format("MMMM DD, YYYY")
     : "";
-  const publicLink = `/${project?.name}/changelogs/${activeChangeLogId}`;
+  const publicLink = `/${projects?.name}/changelogs/${activeChangeLogId}`;
 
   return (
     <section

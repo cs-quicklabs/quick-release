@@ -45,7 +45,7 @@ const Project = () => {
     toast.dismiss();
     e.preventDefault();
     await requestHandler(
-      async () => await createProjectRequest({ ...values, organisationId: loggedInUser?.orgs[0]?.id }),
+      async () => await createProjectRequest({ ...values, organizationsId: loggedInUser?.orgs[0]?.id }),
       setLoader,
       (res: any) => {
         const { message } = res;

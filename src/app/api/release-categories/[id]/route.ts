@@ -1,4 +1,4 @@
-import { getReleaseKeyCode } from "@/Utils";
+import { getReleaseKeyCode, privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -16,12 +16,12 @@ export async function PUT(
   { params }: { params: ParamsType }
 ) {
   return asyncHandler(async () => {
-    const id: number = parseInt(params.id);
+    const cuid = params.id;
 
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -32,26 +32,40 @@ export async function PUT(
       throw new ApiError(400, "Category name is required");
     }
 
-    if(!body.organisationId) {
-      throw new ApiError(400, "Organisation Id is required");
+    if(!body.organizationsId) {
+      throw new ApiError(400, "organizations Id is required");
     }
-    const categoryCode = getReleaseKeyCode(name);
-    const releaseCategory = await db.releaseCategory.findFirst({
+
+    const orgs = await db.organizations.findUnique({
       where: {
-        NOT: { id },
+        cuid: body?.organizationsId,
+      }
+    })
+    const categoryCode = getReleaseKeyCode(name);
+    const releaseCategory = await db.releaseCategories.findFirst({
+      where: {
+        NOT: { cuid },
         code: categoryCode,
-        organisationId: body.organisationId,
+        organizationsId: orgs?.id,
       },
     });
     if (releaseCategory) {
       throw new ApiError(409, "Category name already exists");
     }
 
-    const updatedReleaseCategory = await db.releaseCategory.update({
-      where: { id, organisationId: body.organisationId },
+    const updatedReleaseCategory = await db.releaseCategories.update({
+      where: { cuid, organizationsId: orgs?.id },
       data: {
         name: body.name,
         code: categoryCode,
+      },
+      select: {
+        id: true,
+        cuid: true,
+        name: true,
+        code: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
 
@@ -63,7 +77,7 @@ export async function PUT(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, updatedReleaseCategory, "Update release category successfully")
+      new ApiResponse(200, privacyResponse(updatedReleaseCategory), "Update release category successfully")
     );
   });
 }
@@ -73,38 +87,48 @@ export async function DELETE(
   { params }: { params: ParamsType }
 ) {
   return asyncHandler(async () => {
-    const id: number = parseInt(params.id);
+    const cuid = params.id;
 
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-    const user = await db.user.findUnique({ where: { id: userId } });
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const organisationId = req.nextUrl.searchParams.get("organisationId");
+    const organizationsId = req.nextUrl.searchParams.get("organizationsId");
 
-    if (!organisationId) {
-      throw new ApiError(400, "Organisation id is required");
+    if (!organizationsId) {
+      throw new ApiError(400, "organizations id is required");
     }
 
-    const releaseCategory = await db.releaseCategory.findFirst({
+    const org = await db.organizations.findFirst({
       where: {
-        id,
-        organisationId: organisationId,
+        cuid: organizationsId
+      }
+    });
+
+    if (!org?.id) {
+      throw new ApiError(404, "Organization not found");
+    }
+
+    const releaseCategory = await db.releaseCategories.findFirst({
+      where: {
+        cuid,
+        organizationsId: org?.id,
       },
     });
     if (!releaseCategory) {
       throw new ApiError(404, "Release category not found");
     }
 
-    await db.releaseCategoryOnLogs.deleteMany({
-      where: { releaseCategoryId: id },
+    await db.changelogReleaseCategories.deleteMany({
+      where: { releaseCategoryId: releaseCategory?.id },
     });
 
-    const deletedReleaseCategory = await db.releaseCategory.delete({
-      where: { id },
+    const deletedReleaseCategory = await db.releaseCategories.delete({
+      where: { cuid },
     });
 
     if(!deletedReleaseCategory) {

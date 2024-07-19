@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -22,21 +23,23 @@ export async function GET(
     const { projectName, id } = params;
 
     const projectQuery = { name: projectName };
-    const project = await db.project.findFirst({ where: projectQuery });
+    const project = await db.projects.findFirst({ where: projectQuery });
     if (!project) {
       throw new ApiError(404, "Project not found");
     }
 
     const changeLogQuery = {
-      id,
-      projectId: project.id,
+      cuid: id,
+      projectsId: project.id,
       deletedAt: null,
       status: "published",
     };
-    const changeLog = await db.log.findFirst({
-      where: changeLogQuery,
-      include: ChangeLogIncludeDBQuery,
-    });
+    const changeLog = privacyResponse(
+      await db.changelogs.findFirst({
+        where: changeLogQuery,
+        include: ChangeLogIncludeDBQuery,
+      })
+    )
     if (!changeLog) {
       throw new ApiError(404, "Changelog not found");
     }
