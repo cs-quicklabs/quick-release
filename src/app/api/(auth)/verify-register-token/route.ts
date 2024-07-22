@@ -15,7 +15,7 @@ export const POST = async (request: Request) => {
       });
 
       if (!user) {
-        throw new ApiError(400, "Invalid Token");
+        throw new ApiError(400, "Link is expired");
       }
 
       if(user.isVerified){
@@ -40,7 +40,7 @@ export const POST = async (request: Request) => {
       )
     }
     else{
-      throw new ApiError(400, "Token not found");
+      throw new ApiError(400, "Link is invalid");
     }
   })
 };

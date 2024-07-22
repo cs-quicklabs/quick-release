@@ -118,22 +118,23 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   }, [changeLogsList]);
 
   const formSchema = z.object({
-    title: z.string().trim().min(1, { message: "Required" }),
+    title: z.string().trim().min(1, { message: "Required" }).max(50, {
+      message: "Title can not be more than 50 characters",
+    }),
     description: z
       .string()
       .trim()
       .min(1, { message: "Required" })
       .refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-    releaseVersion: z.string().trim().min(1, { message: "Required" }),
+    releaseVersion: z.string().trim().min(1, { message: "Required" }).max(20,{
+      message: "Release Version can not be more than 20 characters",
+    }),
     releaseCategories: z.array(
       z.object({
         value: z.string(),
         label: z.string(),
       })
     ),
-    // releaseTags: z.string().min(1, { message: "Required" }).max(50, {
-    //   message: "Last Name can be maximum 50 characters",
-    // }),
     releaseTags: z
       .array(
         z.object({
@@ -187,19 +188,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 
     createChangeLog(changelogPost, setIsSaving);
   };
-
-  // const { mutate: createPost, isSaving } = useMutation({
-  //   mutationFn: (newPost: IChangeLogPost) => {
-  //     return axios.post(`/api/create-changeLogs/${activeProject?.id}`, newPost);
-  //   },
-  //   onError: (err) => {
-  //     console.error(err);
-  //   },
-  //   onSuccess: () => {
-  //     router.push("/allLogs");
-  //     router.refresh();
-  //   },
-  // });
 
   const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(
     () => Object.values(ChangeLogsReleaseCategories),
@@ -466,9 +454,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                 >
                   Cancel
                 </Button>
-                {/* <Button className="bg-blue-500 text-white" type="submit">
-                  Create Change Log
-                </Button> */}
 
                 <ListboxButton
                   selected={selectedAction}
