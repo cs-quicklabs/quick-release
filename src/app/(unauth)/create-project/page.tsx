@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { useUserContext } from "@/app/context/UserContext";
 import { requestHandler, showNotification } from "@/Utils";
-import { createProjectRequest } from "@/fetchHandlers/project";
+import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
 
 const Project = () => {
   const router = useRouter();
@@ -59,6 +59,19 @@ const Project = () => {
       }
     );
   }
+
+  const activeProject = async (projectId: string) => {
+    await requestHandler(
+      async () => await setActiveProjectRequest(projectId),
+      null,
+      (res: any) => {
+        setActiveProject(projectId);
+      },
+      (errMessage: any) => {
+        showNotification("error", errMessage);
+      }
+    )
+  };
 
   return (
     <BaseTemplate>

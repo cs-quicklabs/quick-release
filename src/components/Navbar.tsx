@@ -279,59 +279,57 @@ export function Navbar() {
                             />
                           </div>
                         ) : (
-                          <div className="max-h-72 flex flex-col h-screen overflow-hidden">
-                            <div className="overflow-hidden">
-                              <div className="max-h-full overflow-y-auto">
-                                {projects.map((item: any) => {
-                                  return (
-                                    <Menu.Item
-                                      key={item.id}
-                                      as="div"
-                                      onClick={() => {
-                                        activeProject(item.id);
-                                        router.push("/");
-                                      }}
-                                      className="hover:bg-gray-100  cursor-pointer pl-4"
+                          <div className="max-h-96 flex flex-col overflow-hidden">
+                            <div className="max-h-full overflow-y-auto">
+                              {projects.map((item: any) => {
+                                return (
+                                  <Menu.Item
+                                    key={item.id}
+                                    as="div"
+                                    onClick={() => {
+                                      activeProject(item.id);
+                                      router.push("/");
+                                    }}
+                                    className="hover:bg-gray-100  cursor-pointer pl-4"
+                                  >
+                                    <div
+                                      className={`text-sm ${item.id === activeProjectId
+                                        ? "flex items-center"
+                                        : "flex items-center"
+                                        }`}
                                     >
-                                      <div
-                                        className={`text-sm ${item.id === activeProjectId
-                                          ? "flex items-center"
-                                          : "flex items-center"
-                                          }`}
-                                      >
-                                        <div className="flex py-2 w-fit">
-                                          {item.name.length > 20 ? (
-                                            <Tooltip
-                                              placement="left"
-                                              content={item.name}
-                                            >
-                                              {handleTrancate(item.name, 20)}
-                                            </Tooltip>
-                                          ) : (
-                                            <p>{item.name}</p>
-                                          )}
-                                        </div>
-
-                                        {item.id === activeProjectId ? (
-                                          <div className="ml-1">
-                                            <CheckCircleIcon className="w-5 h-5" />
-                                          </div>
-                                        ) : null}
-                                        {loading.activeProjectLoading[item.id] && (
-                                          <div className="flex items-center justify-center py-2">
-                                            <Oval
-                                              height={25}
-                                              width={25}
-                                              color="black"
-                                              secondaryColor="white"
-                                            />
-                                          </div>
+                                      <div className="flex py-2 w-fit">
+                                        {item.name.length > 20 ? (
+                                          <Tooltip
+                                            placement="left"
+                                            content={item.name}
+                                          >
+                                            {handleTrancate(item.name, 20)}
+                                          </Tooltip>
+                                        ) : (
+                                          <p>{item.name}</p>
                                         )}
                                       </div>
-                                    </Menu.Item>
-                                  );
-                                })}
-                              </div>
+
+                                      {item.id === activeProjectId ? (
+                                        <div className="ml-1">
+                                          <CheckCircleIcon className="w-5 h-5" />
+                                        </div>
+                                      ) : null}
+                                      {loading.activeProjectLoading[item.id] && (
+                                        <div className="flex items-center justify-center py-2">
+                                          <Oval
+                                            height={25}
+                                            width={25}
+                                            color="black"
+                                            secondaryColor="white"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </Menu.Item>
+                                );
+                              })}
                             </div>
                           </div>
                         )}
