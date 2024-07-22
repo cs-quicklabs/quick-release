@@ -9,6 +9,7 @@ import "react-quill/dist/quill.snow.css";
 import ImageUploader from "quill-image-uploader";
 import { requestHandler, showNotification } from "@/Utils";
 import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
+import './custom-quill.css';
 
 Quill.register("modules/imageUploader", ImageUploader);
 
@@ -71,7 +72,6 @@ const RichTextEditor = ({
       formats={RichTextEditor.formats}
       placeholder={placeholder}
       id={id}
-
     />
   );
 };
