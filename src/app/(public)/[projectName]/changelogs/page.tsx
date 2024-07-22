@@ -25,8 +25,8 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
     return notFound();
   }
 
-  const releaseTags = project.organisation?.releaseTags.map(tag => ({ label: tag.name, value: tag.code }));
-  const releaseCategories = project.organisation?.releaseCategories.map(category => ({ label: category.name, value: category.code }));
+  const releaseTags = project.organizations?.releaseTags.map(tag => ({ label: tag.name, value: tag.code }));
+  const releaseCategories = project.organizations?.releaseCategories.map(category => ({ label: category.name, value: category.code }));
 
   return (
     <div className="mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8">

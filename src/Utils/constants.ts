@@ -55,7 +55,7 @@ export const ChangeLogsStatus = Object.freeze<ChangeLogsStatusType>({
 
 // select user details from db only which are alow to view publish
 export const SelectUserDetailsFromDB = {
-  id: true,
+  cuid: true,
   firstName: true,
   lastName: true,
   email: true,
@@ -69,7 +69,7 @@ export const WEB_DETAILS = {
   favicon: "/icons/favicon.svg",
 };
 export const ChangeLogIncludeDBQuery = {
-  project: { select: { id: true, name: true } },
+  projects: { select: { cuid: true, name: true } },
   createdBy: { select: SelectUserDetailsFromDB },
   updatedBy: { select: SelectUserDetailsFromDB },
   releaseTags: {
@@ -92,6 +92,9 @@ export const ChangeLogIncludeDBQuery = {
       },
     },
   },
+  createdById: false,
+  updatedById: false,
+  projectsId: false,
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

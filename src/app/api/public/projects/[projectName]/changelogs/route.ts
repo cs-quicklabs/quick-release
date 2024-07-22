@@ -1,3 +1,4 @@
+import { privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -19,9 +20,9 @@ export async function GET(
     projectName = projectName.toLowerCase();
 
     const projectQuery = { name: projectName };
-    const project = await db.project.findFirst({
+    const project = await db.projects.findFirst({
       where: projectQuery,
-      include: { User: true },
+      include: { Users: true },
     });
     if (!project) {
       throw new ApiError(404, "Project not found");
@@ -33,24 +34,22 @@ export async function GET(
     const start = (page - 1) * limit;
 
     const getAllPublishedChangeLogsQuery: { [key: string]: any } = {
-      projectId: project.id,
+      projectsId: project.id,
       deletedAt: null,
       archivedAt: null,
       status: "published",
     };
 
     const releaseCategories = searchParams.get("releaseCategories")?.split(",");
-    console.log("releaseCategories", releaseCategories);
     if (releaseCategories?.length) {
-      const selectedReleaseCategories = await db.releaseCategory.findMany({
+      const selectedReleaseCategories = await db.releaseCategories.findMany({
         where: {
           code: {
             in: releaseCategories,
           },
-          organisationId: project?.organisationId,
+          organizationsId: project?.organizationsId!,
         },
       });
-      console.log("selectedReleaseCategories", selectedReleaseCategories);
       getAllPublishedChangeLogsQuery.releaseCategories = {
         some: {
           releaseCategoryId: {
@@ -62,12 +61,12 @@ export async function GET(
 
     const releaseTags = searchParams.get("releaseTags")?.split(",");
     if (releaseTags?.length) {
-      const selectedReleaseTags = await db.releaseTag.findMany({
+      const selectedReleaseTags = await db.releaseTags.findMany({
         where: {
           code: {
             in: releaseTags,
           },
-          organisationId: project?.organisationId,
+          organizationsId: project?.organizationsId!,
         },
       });
 
@@ -80,17 +79,19 @@ export async function GET(
       };
     }
 
-    const changeLogs = await db.log.findMany({
-      where: getAllPublishedChangeLogsQuery,
-      include: ChangeLogIncludeDBQuery,
-      skip: start,
-      take: limit,
-      orderBy: {
-        scheduledTime: "desc",
-      },
-    });
+    const changeLogs = privacyResponseArray(
+      await db.changelogs.findMany({
+        where: getAllPublishedChangeLogsQuery,
+        include: ChangeLogIncludeDBQuery,
+        skip: start,
+        take: limit,
+        orderBy: {
+          scheduledTime: "desc",
+        },
+      })
+    );
 
-    const totalChangeLogs = await db.log.count({
+    const totalChangeLogs = await db.changelogs.count({
       where: getAllPublishedChangeLogsQuery,
     });
     const hasNextPage = totalChangeLogs > page * limit;
@@ -100,7 +101,7 @@ export async function GET(
       new ApiResponse(
         200,
         {
-          changeLogs: changeLogs.map((changeLog) =>
+          changeLogs: changeLogs.map((changeLog: any) =>
             computeChangeLog(changeLog)
           ),
           page,

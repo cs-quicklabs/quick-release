@@ -16,7 +16,7 @@ const updateReleaseCategoriesRequest = (data: IReleaseCategory) => {
 };
 
 const deleteReleaseCategoriesRequest = (data: IReleaseCategory) => {
-  return apiClient.delete(`/release-categories/${data.id}`, { params : { organisationId: data.organisationId } });
+  return apiClient.delete(`/release-categories/${data.id}`, { params : { organizationsId: data.organizationsId } });
 };
 
 export {

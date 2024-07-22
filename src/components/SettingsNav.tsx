@@ -47,9 +47,10 @@ const SettingsNav = (
         {navLinks.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
-            <>
+            <div
+              key={item.text}
+            >
               <Link
-                key={item.text}
                 href={item.href}
                 className={`${
                   isActive ? "bg-gray-200" : ""
@@ -58,7 +59,7 @@ const SettingsNav = (
                 <div className="py-[2px]">{item.icon}</div>
                 <span className="truncate ml-2">{item.text}</span>
               </Link>
-            </>
+            </div>
           );
         })}
       </nav>

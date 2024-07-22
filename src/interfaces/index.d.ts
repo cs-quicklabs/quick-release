@@ -33,12 +33,12 @@ export interface IReleaseCategoriesOption {
     isActive: Boolean;
     isVerified: Boolean;
     role: String;
-    organisationId: String;
-    organisation?: Organisation;
+    organizationsId: String;
+    organizations?: organizations;
     projects: Project[];
     verificationToken?: String;
     verificationTokenExpiry?: String;
-    orgs: Organisation[];
+    orgs: organizations[];
   }
   
   export interface IFile {
@@ -65,7 +65,7 @@ export interface IReleaseCategoriesOption {
     id?: number;
     name?: string;
     code?: string;
-    organisationId?: string;
+    organizationsId?: string;
   }
 
   export interface IReleaseCategory {
@@ -74,5 +74,5 @@ export interface IReleaseCategoriesOption {
     code?: string;
     textColor?: string;
     bgColor?: string;
-    organisationId?: string;
+    organizationsId?: string;
   }

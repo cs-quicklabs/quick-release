@@ -8,6 +8,7 @@ import { NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { ApiError } from "@/Utils/ApiError";
 import { NextResponse } from "next/server";
+import { privacyResponse } from "@/Utils";
 
 export async function POST(
   request: Request,
@@ -26,8 +27,8 @@ export async function POST(
       throw new ApiError(400, "All fields are required");
     }
 
-    const existingUser = await db.user.findUnique({
-      where: { id: params.id },
+    const existingUser = await db.users.findUnique({
+      where: { cuid: params.id },
     });
     if (!existingUser) {
       throw new ApiError(404, "User not found");
@@ -47,12 +48,12 @@ export async function POST(
       throw new ApiError(400, "New Password cannot be same as old password");
     }
 
-    const update = await db.user.update({
+    const update = await db.users.update({
       data: {
         password: newHashedPassword,
       },
       where: {
-        id: existingUser.id,
+        id: existingUser?.id,
       },
     });
 
@@ -63,7 +64,7 @@ export async function POST(
     await sendPasswordUpdatedEmail(existingUser.email, existingUser.firstName);
     
     return NextResponse.json(
-      new ApiResponse(200, update, "Password has been updated successfully")
+      new ApiResponse(200, privacyResponse(update), "Password has been updated successfully")
     );
   })
 }

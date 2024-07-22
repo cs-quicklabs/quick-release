@@ -16,7 +16,7 @@ const updateReleaseTagRequest = (data: IReleaseTag) => {
 };
 
 const deleteReleaseTagRequest = (data: IReleaseTag) => {
-  return apiClient.delete(`/release-tags/${data.id}`, { params : { organisationId: data.organisationId } });
+  return apiClient.delete(`/release-tags/${data.id}`, { params : { organizationsId: data.organizationsId } });
 };
 
 export {
