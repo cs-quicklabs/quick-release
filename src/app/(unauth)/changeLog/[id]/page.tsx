@@ -2,15 +2,16 @@
 
 import { checkRichTextEditorIsEmpty } from "@/Utils";
 import {
-  ChangeLogsReleaseCategories,
-  ChangeLogsReleaseTags,
   ChangeLogsReleaseActions,
 } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import DatePicker from "@/components/DatePicker";
 import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
 import Loading from "@/components/Loading";
+import ReleaseCategorySelectMenu from "@/components/ReleaseCategorySelectMenu";
+import ReleaseTagSelectMenu from "@/components/ReleaseTagSelectMenu";
 import TimePicker from "@/components/TimePicker";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,16 +31,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import BaseTemplate from "@/templates/BaseTemplate";
-import {
-  ChangeLogType,
-  FormChangeLogPost
-} from "@/types";
 import {
   IReleaseCategoriesOption,
+  IReleaseCategory,
+  IReleaseTag,
   ReleaseTagsOption,
 } from "@/interfaces";
-
+import BaseTemplate from "@/templates/BaseTemplate";
+import { ChangeLogType, FormChangeLogPost } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import moment from "moment";
@@ -56,7 +55,7 @@ import React, {
 } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 // import { useMutation } from "react-query";
-import Select from "react-select";
+import Select, { GroupBase, MenuProps, components } from "react-select";
 import * as z from "zod";
 
 const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
@@ -70,9 +69,11 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   });
 
   const router = useRouter();
+  const { map: releaseTagMap, list: releaseTagIds } = useReleaseTagContext();
   const {
     error,
     createChangeLog,
+    getChangeLog,
     updateChangeLog,
     getAllChangeLogs,
     list: changeLogsList,
@@ -172,7 +173,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
         (category) => category.value
       ),
       releaseTags: data.releaseTags.map((category) => category.value),
-      projectId: activeProjectId!,
+      projectsId: activeProjectId!,
       scheduledTime:
         selectedAction.id === "published"
           ? moment().toDate()
@@ -181,7 +182,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 
     if (params.id !== "add") {
       changelogPost.id = params.id;
-      changelogPost.projectId = changelog?.projectId!;
+      changelogPost.projectsId = changelog?.projects?.cuid;
       updateChangeLog(changelogPost, setIsSaving);
       return;
     }
@@ -189,29 +190,24 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     createChangeLog(changelogPost, setIsSaving);
   };
 
-  const releaseCategoriesOptions: readonly IReleaseCategoriesOption[] = useMemo(
-    () => Object.values(ChangeLogsReleaseCategories),
-    []
-  );
-  const releaseTagsOptions: readonly ReleaseTagsOption[] = useMemo(
-    () => Object.values(ChangeLogsReleaseTags),
-    []
-  );
-
   useEffect(() => {
     const setDefaultValues = () => {
       if (changelog) {
+        const selectedReleaseTags = changelog.releaseTags as IReleaseTag[];
+        const selectedReleaseCategories =
+          changelog.releaseCategories as IReleaseCategory[];
+
         form.reset({
           title: changelog.title,
           description: changelog.description,
           releaseVersion: changelog.releaseVersion,
-          releaseCategories: changelog.releaseCategories.map((category) => ({
-            value: category,
-            label: category,
+          releaseCategories: selectedReleaseCategories.map((category) => ({
+            value: category.code,
+            label: category.name,
           })),
-          releaseTags: changelog.releaseTags.map((category) => ({
-            value: category,
-            label: category,
+          releaseTags: selectedReleaseTags.map((tag) => ({
+            value: tag.code,
+            label: tag.name,
           })),
           scheduledTime: moment(changelog.scheduledTime).toDate(),
         });
@@ -282,6 +278,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                           <Input
                             placeholder="Enter change log title"
                             {...field}
+                            id="title"
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />
@@ -297,13 +294,9 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                       <FormItem>
                         <FormLabel>Description</FormLabel>
                         <FormControl>
-                          {/* <Tiptap
-                            description={field.value}
-                            onChange={field.onChange}
-                          /> */}
-
                           <RichTextEditor
                             placeholder="Enter change log description"
+                            id="description"
                             value={value}
                             onChange={onChange}
                             onModal="ChangeLogs"
@@ -347,18 +340,15 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                             render={({
                               field: { onChange, onBlur, value, name },
                             }) => (
-                              <Select
-                                classNames={{
-                                  control: () => "max-w-[640px]",
-                                }}
-                                isMulti
-                                name={name}
-                                options={releaseCategoriesOptions}
+                              <ReleaseCategorySelectMenu
                                 className="basic-multi-select"
                                 classNamePrefix="select"
+                                isMulti
+                                name={name}
                                 onBlur={onBlur}
                                 onChange={onChange}
                                 value={value}
+                                menuPlacement="top"
                               />
                             )}
                           />
@@ -383,20 +373,15 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                             render={({
                               field: { onChange, onBlur, value, name },
                             }) => (
-                              <Select
-                                classNames={{
-                                  control: () => "max-w-[640px]",
-                                }}
-                                isMulti
-                                name={name}
-                                options={releaseTagsOptions}
+                              <ReleaseTagSelectMenu
                                 className="basic-multi-select"
                                 classNamePrefix="select"
+                                isMulti
+                                name={name}
                                 onBlur={onBlur}
-                                onChange={(selectedOptions) => {
-                                  onChange(selectedOptions);
-                                }}
+                                onChange={onChange}
                                 value={value}
+                                menuPlacement="top"
                               />
                             )}
                           />

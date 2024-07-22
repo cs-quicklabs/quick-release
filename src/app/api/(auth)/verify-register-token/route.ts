@@ -8,7 +8,7 @@ export const POST = async (request: Request) => {
   return asyncHandler(async () => {
     const body = await request.json();
     if (body.token) {
-      const user = await db.user.findUnique({
+      const user = await db.users.findUnique({
         where: {
           verificationToken: body.token,
         },
@@ -22,7 +22,13 @@ export const POST = async (request: Request) => {
         throw new ApiError(400, "Account already verified");
       }
 
-      await db.user.update({
+      if (user.verificationTokenExpiry) {
+        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
+        if (tokenExpiryTimestamp < Date.now())
+          throw new ApiError(400, "Verification link has expired");
+      }
+
+      await db.users.update({
         where: {
           id: user?.id,
         },
@@ -30,11 +36,6 @@ export const POST = async (request: Request) => {
           isVerified: true,
         },
       });
-      if (user.verificationTokenExpiry) {
-        let tokenExpiryTimestamp = parseInt(user.verificationTokenExpiry);
-        if (tokenExpiryTimestamp < Date.now())
-          throw new ApiError(400, "Verification link has expired");
-      }
       return NextResponse.json(
         new ApiResponse(200, null, "Your account has been verified"),
       )

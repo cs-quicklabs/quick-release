@@ -42,8 +42,9 @@ export const authOptions: NextAuthOptions = {
         email: {},
         password: {},
       },
+      // @ts-ignore
       async authorize(credentials, req) {
-        const uniqueUser = await db.user.findUnique({
+        const uniqueUser = await db.users.findUnique({
           where: {
             email: credentials?.email,
           },
@@ -69,7 +70,7 @@ export const authOptions: NextAuthOptions = {
         if (checkPassword) {
           return {
             user: uniqueUser,
-            id: uniqueUser.id,
+            id: uniqueUser.cuid,
             email: uniqueUser.email,
           };
         }
@@ -83,7 +84,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
-          id: user.id,
+          id: user?.id,
         };
       }
       return token;

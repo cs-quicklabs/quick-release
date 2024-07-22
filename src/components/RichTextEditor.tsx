@@ -19,13 +19,15 @@ type RichTextEditorProps = {
   value?: string;
   onChange?(value: string): void,
   onModal: string;
+  id:string;
 };
 
 const RichTextEditor = ({
   placeholder = "",
   value = "",
   onChange,
-  onModal
+  onModal,
+  id
 }: RichTextEditorProps) => {
 
   const imageUploader = useMemo(() => ({
@@ -68,6 +70,8 @@ const RichTextEditor = ({
       modules={{ ...RichTextEditor.modules, imageUploader }}
       formats={RichTextEditor.formats}
       placeholder={placeholder}
+      id={id}
+
     />
   );
 };

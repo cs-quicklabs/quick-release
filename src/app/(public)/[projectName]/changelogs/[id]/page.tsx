@@ -2,10 +2,11 @@ import React from "react";
 import Link from "next/link";
 import moment from "moment";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
-import { ChangeLogsReleaseCategories, ChangeLogsReleaseTags, REVALIDATE_API } from "@/Utils/constants";
+import { REVALIDATE_API } from "@/Utils/constants";
 import { classNames } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { ChangeLogType } from "@/types";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 
 type PagePayloadType = {
   params: {
@@ -52,8 +53,9 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
   }
 
   const { title, description, releaseVersion } = changelog;
-  const releaseCategories = changelog.releaseCategories.map((id) => ChangeLogsReleaseCategories[id!]);
-  const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  const releaseCategories = (changelog.releaseCategories as IReleaseCategory[]).map(category => ({ value: category.code, label: category.name }));
+  // const releaseTags = changelog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
+  const releaseTags = (changelog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changelog.scheduledTime ? moment(changelog.scheduledTime).format("MMMM DD, YYYY") : "";
 
   return (
@@ -62,8 +64,10 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         <button
           className="mb-2 inline-flex items-center gap-x-1.5 shadow-sm px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
           type="button"
+          id="see-all-changelogs"
+          
         >
-          <ArrowLeftIcon className="w-6 h-6" />
+          <ArrowLeftIcon className="w-6 h-6"/>
 
           See All Changelogs
         </button>
@@ -78,12 +82,11 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
           <p className="mt-1 truncate text-sm text-gray-500">Published on {scheduledTime} as Version {releaseVersion}</p>
 
           <div className="mt-1">
-            {releaseCategories.map(({ value, label, bgColor, textColor }) => (
+            {releaseCategories.map(({ value, label }) => (
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1",
-                  `${bgColor} ${textColor}`
+                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}
@@ -100,18 +103,21 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         />
       </div>
 
-      <div className="text-sm text-gray-800 mt-6">
-        {releaseTags.map(({ value, label }) => (
-          <span
-            key={value}
-            className={classNames(
-              "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
-            )}
-          >
-            {label}
-          </span>
-        ))}
-      </div>
+      {
+        !!releaseTags.length &&
+        <div className="text-sm text-gray-800 mt-6">
+          {releaseTags.map(({ value, label }) => (
+            <span
+              key={value}
+              className={classNames(
+                "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+              )}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+      }
     </main>
   );
 };

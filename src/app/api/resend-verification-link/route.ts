@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     if(!body.email) {
       throw new ApiError(400, "Email is required");
     }
-    const user = await db.user.findUnique({
+    const user = await db.users.findUnique({
       where: {
         email: body.email,
       },
@@ -34,9 +34,9 @@ export async function POST(request: Request) {
     user.verificationTokenExpiry = verificationTokenExpires;
     
     
-    const userUpdated = await db.user.update({
+    const userUpdated = await db.users.update({
       where: {
-        id: user.id,
+        id: user?.id,
       },
       data: {
         verificationToken: verificationToken,

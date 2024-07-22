@@ -1,22 +1,25 @@
 "use client";
-
 import ChangePasswordSVG from "@/svg-icons/ChangePasswordSVG";
 import EmailPrefrencesSVG from "@/svg-icons/EmailPrefrencesSVG";
+import LockIcon from "@/svg-icons/LockIcon";
 import ProfileSVG from "@/svg-icons/ProfileSVG";
+import { SwatchIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const SettingsNav = () => {
+const SettingsNav = (
+  {isProfileSettings = true}: {isProfileSettings?: boolean}
+) => {
   const pathname = usePathname();
-  const navLinks = [
+  const navLinks = isProfileSettings ? [
     {
-      href: "/settings/profile",
+      href: "/settings/profile/general",
       text: "Profile",
       icon: <ProfileSVG />,
     },
     {
-      href: "/settings/change-password",
+      href: "/settings/profile/password",
       text: "Change Password",
       icon: <ChangePasswordSVG />,
     },
@@ -25,6 +28,18 @@ const SettingsNav = () => {
       text: "Email Prefrences",
       icon: <EmailPrefrencesSVG />,
     },
+
+  ] : [
+    {
+      href: "/settings/team/tags",
+      text: "Tags",
+      icon: <LockIcon />,
+    },
+    {
+      href: "/settings/team/categories",
+      text: "Categories",
+      icon: <SwatchIcon className="w-6 h-6" />,
+    },
   ];
   return (
     <aside className="px-2 py-6 sm:px-6 lg:py-0 lg:px-0 lg:col-span-3">
@@ -32,9 +47,10 @@ const SettingsNav = () => {
         {navLinks.map((item) => {
           const isActive = pathname.startsWith(item.href);
           return (
-            <>
+            <div
+              key={item.text}
+            >
               <Link
-                key={item.text}
                 href={item.href}
                 className={`${
                   isActive ? "bg-gray-200" : ""
@@ -43,7 +59,7 @@ const SettingsNav = () => {
                 <div className="py-[2px]">{item.icon}</div>
                 <span className="truncate ml-2">{item.text}</span>
               </Link>
-            </>
+            </div>
           );
         })}
       </nav>

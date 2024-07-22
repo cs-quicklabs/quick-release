@@ -1,2 +1,2 @@
 -- DropIndex
-DROP INDEX "Organisation_name_key";
+DROP INDEX "organizations_name_key";
