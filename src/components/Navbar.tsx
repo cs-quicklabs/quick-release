@@ -21,7 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
@@ -34,8 +34,8 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [open, setOpen] = React.useState(false);
-  const [isLogOut, setIsLogOut] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [isLogOut, setIsLogOut] = useState(false);
   const { loggedInUser, logout } = useUserContext();
   const {
     activeProjectId,
@@ -44,7 +44,7 @@ export function Navbar() {
     setActiveProject,
   } = useProjectContext();
 
-  const [loading, setLoading] = React.useState({
+  const [loading, setLoading] = useState({
     projectLoading: false,
     activeProjectLoading: false as any,
     activeUserLoading: true,
@@ -53,17 +53,7 @@ export function Navbar() {
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
-    await requestHandler(
-      async () => await setActiveProjectRequest(projectId),
-      null,
-      (res: any) => {
-        router.refresh();
-        setActiveProject(projectId);
-      },
-      (errMessage: any) => {
-        showNotification("error", errMessage);
-      }
-    )
+    setActiveProject(projectId);
   };
 
   const navigation = useMemo(() => {

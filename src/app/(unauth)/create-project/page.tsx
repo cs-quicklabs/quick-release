@@ -16,7 +16,7 @@ import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/p
 const Project = () => {
   const router = useRouter();
   const [loader, setLoader] = useState(false);
-  const { getAllProjects, setActiveProject, } = useProjectContext();
+  const { getAllProjects, setActiveProject } = useProjectContext();
   const { loggedInUser } = useUserContext();
   const formSchema = z.object({
     projects: z
@@ -50,13 +50,9 @@ const Project = () => {
       (res: any) => {
         const { message } = res;
         getAllProjects();
-        router.push("/allLogs")
-        router.refresh();
-        const projectID = res?.data?.project?.id;
-        activeProject(projectID);
-        setTimeout(() => {
-          showNotification("success", message);
-        }, 500);
+        setActiveProject(res.data.id);
+        showNotification("success", message);
+        router.push("/allLogs");
       },
       (errMessage) => {
         showNotification("error", errMessage);
