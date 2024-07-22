@@ -60,7 +60,6 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
       size: file.size,
     };
   } catch (error) {
-    console.log("uploadFileToS3 error:", error);
     throw new ApiError(500, "Something went wrong while uploading file");
   }
 };

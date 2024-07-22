@@ -10,7 +10,7 @@ export async function POST(request: Request) {
   return asyncHandler(async () => {
     const body = await request.json();
     if (!body?.email) throw new ApiError(400, "Missing email");
-    const existingUser = await db.user.findUnique({
+    const existingUser = await db.users.findUnique({
       where: {
         email: body.email,
       },
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     existingUser.resetToken = passwordResetToken;
     existingUser.resetTokenExpiry = passwordResetExpires;
 
-    const update = await db.user.update({
+    const update = await db.users.update({
       where: {
         email: body.email,
       },

@@ -15,7 +15,7 @@ export const POST = async (request: Request) => {
       throw new ApiError(400, "Passwords do not match");
 
     const hashedPassword = await hash(password, 10);
-    const update = await db.user.update({
+    const update = await db.users.update({
       where: {
         email: email,
       },
