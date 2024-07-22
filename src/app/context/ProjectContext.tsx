@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getAllProjectsRequest, getOneActiveProjectRequest } from "@/fetchHandlers/project";
+import { getAllProjectsRequest, getOneActiveProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
 import { requestHandler, showNotification } from "@/Utils";
 import { Project } from "@/interfaces";
 import { useUserContext } from "./UserContext";
@@ -30,7 +30,7 @@ const ProjectContext = createContext<ProjectContextType>({
   activeProjectId: null,
   getAllProjects: async () => { },
   getActiveProject: async (setIsLoading: ((loading: boolean) => void) | null) => { },
-  setActiveProject: (projectId: string) => { }
+  setActiveProject: (projectId: string) => { },
 });
 
 // Create a hook to access the ProjectContext
@@ -104,6 +104,19 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
+  const setActiveProject = async (projectId: string) => {
+    await requestHandler(
+      async () => await setActiveProjectRequest(projectId),
+      setIsLoading,
+      (res: any) => {
+        setActiveProjectId(projectId);
+      },
+      (errMessage: any) => {
+        showNotification("error", errMessage);
+      }
+    )
+  };
+
   useEffect(() => {
     if (loggedInUser) {
       getAllProjects();
@@ -121,7 +134,7 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
         meta,
         getAllProjects,
         getActiveProject,
-        setActiveProject: setActiveProjectId
+        setActiveProject,
       }}
     >
       {children}
