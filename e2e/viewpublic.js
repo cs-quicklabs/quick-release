@@ -32,7 +32,7 @@ exports.viewPublic = class viewPublic {
   }
 
   async viewChangelogDetails() {
-    await this.seeDetailsButton.waitFor("Visible");
+    await this.page.waitForTimeout(5000)
     if (await this.isSeeDetailsVisible()) {
       await this.clickSeeDetails();
       await this.verifyChangelogDescription();

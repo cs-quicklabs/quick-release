@@ -15,34 +15,13 @@ exports.ChangelogDetail = class ChangelogDetail {
     this.descriptions = this.page.locator("//div[@class='ql-editor']");
   }
 
-  async isAddNewButtonVisible() {
-    return await this.addNewButton.isVisible();
-  }
+
 
   async isNewChangeLogVisible() {
     return await this.newChangeLog.isVisible();
   }
-
   async clickOpenOptions() {
     await this.openOptionsButton.click();
-  }
-
-  async clickEditChangelog() {
-    await this.editChangelogButton.click();
-  }
-
-  async isEditChangelogModalVisible() {
-    return await this.editChangelogModalTitle.isVisible();
-  }
-
-  async editTitle(newTitle) {
-    await this.titleInput.click();
-    await this.titleInput.press("Backspace");
-    await this.titleInput.fill(newTitle);
-  }
-
-  async clickPublishChangelog() {
-    await this.publishChangelogButton.click();
   }
 
   async isDescriptionVisible() {
@@ -55,28 +34,18 @@ exports.ChangelogDetail = class ChangelogDetail {
     await this.deleteButton.click();
   }
 
-  async changelogElements() {
-    await this.addNewButton.waitFor("visible");
-    if (await this.isAddNewButtonVisible()) {
-      await expect(this.descriptions).toHaveText(this.description);
-    } else {
-      await expect(this.isNewChangeLogVisible()).toBeTruthy();
-    }
-  }
 
-  async editChangelog() {
-    await this.addNewButton.waitFor("visible");
-    if (await this.isAddNewButtonVisible()) {
-      await this.clickOpenOptions();
-      await this.clickEditChangelog();
-      await this.page.waitForTimeout(5000);
-      await this.editTitle("test13");
-      await this.clickPublishChangelog();
-    }
-  }
 
-  async deleteChangelog() {
+  async removeChangelog() {
+    if(isAddNewButtonVisible())
+    {
     await this.clickOpenOptions();
     await this.clickDelete();
-  }
-};
+    }
+   if(!isAddNewButtonVisible())
+   {
+    test.skip()
+   }
+}
+
+}

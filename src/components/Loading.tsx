@@ -5,7 +5,7 @@ import Spin from "./Spin";
 
 const Loading = () => {
   return (
-    <div role="status" className="text-center h-full flex items-center justify-center">
+    <div id="loading" role="status" className="text-center h-full flex items-center justify-center">
       <Spin />
 
       <span className="sr-only">Loading...</span>

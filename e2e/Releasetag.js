@@ -30,21 +30,16 @@ exports.releaseTags = class releaseTags {
     await expect(this.toastMessage).toHaveText(
       "Create release tag successfully"
     );
-  }
-
-  async editReleaseTag() {
-    await this.navigateToTeamSetting();
     await this.editLink.click();
     await this.editTagNameInput.click();
     await this.editTagNameInput.press("Backspace");
-    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     await this.editTagNameInput.fill(this.tagname + numeric);
     await this.editSaveButton.click();
   }
 
   async deleteReleaseTag() {
     await this.navigateToTeamSetting();
-    await this.deleteLink.waitFor("visible"); // This seems redundant
+    await this.deleteLink.waitFor("visible"); 
     await this.deleteLink.click();
   }
 };

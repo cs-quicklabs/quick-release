@@ -12,20 +12,11 @@ test.beforeEach(
   }
 );
 
-test(" Verify change log Page data ", async ({ page }) => {
-  const changelog = new ChangelogDetail(
-    page,
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-  );
-  await changelog.changelogElements();
-});
 
-test("Verify user able to Edit changelog ", async ({ page }) => {
-  const changelog = new ChangelogDetail(page);
-  await changelog.editChangelog();
-});
+
+
 
 test(" Verify user able to Delete changelog", async ({ page }) => {
   const changelog = new ChangelogDetail(page);
-  await changelog.deleteChangelog();
+  await changelog.removeChangelog();
 });

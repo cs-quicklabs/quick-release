@@ -9,15 +9,12 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
   await login.login(validCredentials.mail, validCredentials.password);
 });
 
-test("verify user able to Add Tags ", async ({ page }) => {
+test("verify user able to Add and edit Tags ", async ({ page }) => {
   const releasetag = new releaseTags(page);
   await releasetag.createReleaseTag();
 });
 
-test("verify user able to Edit Tags", async ({ page }) => {
-  const editreleasetag = new releaseTags(page);
-  await editreleasetag.editReleaseTag();
-});
+
 test("verify user able to Delete Tags", async ({ page }) => {
   const deletereleasetag = new releaseTags(page);
   await deletereleasetag.deleteReleaseTag();

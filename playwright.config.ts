@@ -11,6 +11,7 @@ import { defineConfig, devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+  timeout: 2 * 80 * 1000,
   expect: {
     timeout: 30 * 1000,
   },
@@ -35,7 +36,7 @@ export default defineConfig({
     // trace: "on-first-retry",
     headless: true,
   },
-  timeout: 5 * 60 * 1000,
+  // timeout: 5* 60 * 1000,
   /* Configure projects for major browsers */
   projects: [
     {

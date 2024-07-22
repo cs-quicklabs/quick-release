@@ -34,26 +34,19 @@ exports.releaseCategory = class releaseCategory {
     console.log(numeric);
     await this.categoryNameInput.fill(this.categoryName + numeric);
     await this.saveButton.click();
-    await this.page.waitForTimeout(5000);
     await expect(this.toastMessage).toHaveText(
       "Create release Category successfully"
     );
-  }
-
-  async editCategory() {
-    await this.navigateToCategories();
-    await this.categoryLink.waitFor("visible");
     await this.editLink.click();
     await this.editCategoryNameInput.click();
     await this.editCategoryNameInput.press("Backspace");
-    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     await this.editCategoryNameInput.fill(this.categoryName + numeric);
     await this.editSaveButton.click();
   }
 
+ 
   async deleteCategory() {
     await this.navigateToCategories();
-    await this.page.waitForTimeout(5000);
     await this.deleteLink.click();
   }
 };
