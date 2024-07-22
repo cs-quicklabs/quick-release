@@ -9,6 +9,7 @@ import "react-quill/dist/quill.snow.css";
 import ImageUploader from "quill-image-uploader";
 import { requestHandler, showNotification } from "@/Utils";
 import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
+import './custom-quill.css';
 
 Quill.register("modules/imageUploader", ImageUploader);
 
@@ -61,6 +62,8 @@ const RichTextEditor = ({
     }
   }), [onModal]);
 
+  const style = useMemo(() => ({ fontSize: "14px" }), []);
+
   return (
     <ReactQuill
       theme="snow"
@@ -71,7 +74,7 @@ const RichTextEditor = ({
       formats={RichTextEditor.formats}
       placeholder={placeholder}
       id={id}
-
+      style={style}
     />
   );
 };
