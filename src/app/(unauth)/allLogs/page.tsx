@@ -12,6 +12,7 @@ import EmptyPage from "@/components/dashboard/EmptyPage";
 import ContentContainer from "@/components/dashboard/ContentContainer";
 import { Button } from "@/components/ui/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
+import ScreenLoader from "@/components/ScreenLoader";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
@@ -47,14 +48,9 @@ export default function AllLogs() {
 
   // show loading if fetching current active project or change logs
   if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || isLoading) {
-    return (
-      <BaseTemplate>
-        <div className="w-full h-full flex items-center justify-center">
-          <Loading />
-        </div>
-      </BaseTemplate>
-    );
+    return <ScreenLoader />;
   }
+
 
   const renderEmptyPage = () => {
     const emptyProps = activeProjectId
@@ -79,7 +75,7 @@ export default function AllLogs() {
   };
 
   if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
-    return delayed ? renderEmptyPage() : <Loading />;
+    return delayed ? renderEmptyPage() : <ScreenLoader />;
   }
 
 
