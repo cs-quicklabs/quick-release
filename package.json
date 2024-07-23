@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma migrate deploy || echo 'Migration file not found, skipping migration' && prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma migrate deploy || echo 'Migration file not found, skipping migration'",
-    "prebuild": "prisma db execute --file ./prisma/migrations/dev/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'"
+    "postinstall": "prisma db execute --file ./prisma/migrations/prod/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'",
+    "prebuild": "ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",
@@ -73,9 +73,9 @@
   "devDependencies": {
     "@playwright/test": "^1.45.1",
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20",
+    "@types/node": "^20.14.11",
     "@types/nodemailer": "^6.4.14",
-    "@types/react": "^18",
+    "@types/react": "^18.3.3",
     "@types/react-color": "^3.0.12",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
@@ -85,6 +85,7 @@
     "postcss": "^8",
     "prisma": "^5.15.0",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
   }
 }
