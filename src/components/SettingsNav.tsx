@@ -23,11 +23,11 @@ const SettingsNav = (
       text: "Change Password",
       icon: <ChangePasswordSVG />,
     },
-    {
-      href: "/allLogs",
-      text: "Email Prefrences",
-      icon: <EmailPrefrencesSVG />,
-    },
+    // {
+    //   href: "/allLogs",
+    //   text: "Email Prefrences",
+    //   icon: <EmailPrefrencesSVG />,
+    // },
 
   ] : [
     {

@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma migrate deploy && next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma db execute --file ./prisma/migrations/prod/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'",
-    "prebuild": "ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
+    "postinstall": "prisma migrate deploy || echo 'Migration file not found, skipping migration'",
+    "prebuild": "prisma db execute --file ./prisma/migrations/prod/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.515.0",

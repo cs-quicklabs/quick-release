@@ -21,7 +21,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
@@ -34,8 +34,8 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
-  const [open, setOpen] = React.useState(false);
-  const [isLogOut, setIsLogOut] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [isLogOut, setIsLogOut] = useState(false);
   const { loggedInUser, logout } = useUserContext();
   const {
     activeProjectId,
@@ -44,7 +44,7 @@ export function Navbar() {
     setActiveProject,
   } = useProjectContext();
 
-  const [loading, setLoading] = React.useState({
+  const [loading, setLoading] = useState({
     projectLoading: false,
     activeProjectLoading: false as any,
     activeUserLoading: true,
@@ -53,17 +53,7 @@ export function Navbar() {
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
-    await requestHandler(
-      async () => await setActiveProjectRequest(projectId),
-      null,
-      (res: any) => {
-        router.refresh();
-        setActiveProject(projectId);
-      },
-      (errMessage: any) => {
-        showNotification("error", errMessage);
-      }
-    )
+    setActiveProject(projectId);
   };
 
   const navigation = useMemo(() => {
@@ -289,58 +279,59 @@ export function Navbar() {
                             />
                           </div>
                         ) : (
-                          <>
-                            {projects.map((item: any) => {
-                              return (
-                                <Menu.Item
-                                  key={item.id}
-                                  as="div"
-                                  onClick={() => {
-                                    activeProject(item.id);
-                                    router.push("/");
-                                  }}
-                                  className="hover:bg-gray-100  cursor-pointer pl-4"
-                                >
-                                  <div
-                                    className={`text-sm ${
-                                      item.id === activeProjectId
+                          <div className="max-h-96 flex flex-col overflow-hidden">
+                            <div className="max-h-full overflow-y-auto">
+                              {projects.map((item: any) => {
+                                return (
+                                  <Menu.Item
+                                    key={item.id}
+                                    as="div"
+                                    onClick={() => {
+                                      activeProject(item.id);
+                                      router.push("/");
+                                    }}
+                                    className="hover:bg-gray-100  cursor-pointer pl-4"
+                                  >
+                                    <div
+                                      className={`text-sm ${item.id === activeProjectId
                                         ? "flex items-center"
                                         : "flex items-center"
-                                    }`}
-                                  >
-                                    <div className="flex py-2 w-fit">
-                                      {item.name.length > 20 ? (
-                                        <Tooltip
-                                          placement="left"
-                                          content={item.name}
-                                        >
-                                          {handleTrancate(item.name, 20)}
-                                        </Tooltip>
-                                      ) : (
-                                        <p>{item.name}</p>
+                                        }`}
+                                    >
+                                      <div className="flex py-2 w-fit">
+                                        {item.name.length > 20 ? (
+                                          <Tooltip
+                                            placement="left"
+                                            content={item.name}
+                                          >
+                                            {handleTrancate(item.name, 20)}
+                                          </Tooltip>
+                                        ) : (
+                                          <p>{item.name}</p>
+                                        )}
+                                      </div>
+
+                                      {item.id === activeProjectId ? (
+                                        <div className="ml-1">
+                                          <CheckCircleIcon className="w-5 h-5" />
+                                        </div>
+                                      ) : null}
+                                      {loading.activeProjectLoading[item.id] && (
+                                        <div className="flex items-center justify-center py-2">
+                                          <Oval
+                                            height={25}
+                                            width={25}
+                                            color="black"
+                                            secondaryColor="white"
+                                          />
+                                        </div>
                                       )}
                                     </div>
-
-                                    {item.id === activeProjectId ? (
-                                      <div className="ml-1">
-                                        <CheckCircleIcon className="w-5 h-5" />
-                                      </div>
-                                    ) : null}
-                                    {loading.activeProjectLoading[item.id] && (
-                                      <div className="flex items-center justify-center py-2">
-                                        <Oval
-                                          height={25}
-                                          width={25}
-                                          color="black"
-                                          secondaryColor="white"
-                                        />
-                                      </div>
-                                    )}
-                                  </div>
-                                </Menu.Item>
-                              );
-                            })}
-                          </>
+                                  </Menu.Item>
+                                );
+                              })}
+                            </div>
+                          </div>
                         )}
 
                         <Menu.Item>
@@ -352,7 +343,7 @@ export function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
                               )}
-                              
+
                             >
                               <div className="flex  items-center" id="profile-settings">
                                 Profile Settings
@@ -369,7 +360,7 @@ export function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
                               )
-                            }
+                              }
                             >
                               <div className="flex  items-center" id="team-setting">
                                 Team Settings
@@ -473,7 +464,7 @@ export function Navbar() {
                   href="/settings/profile/general"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-               >
+                >
                   <div className="flex items-center">
                     <Link href="/settings/profile/general">Profile Settings</Link>
                   </div>

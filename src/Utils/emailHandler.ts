@@ -5,13 +5,20 @@ type EmailParams = {
   from: string;
   subject: string;
   html: string;
+};
+
+function sendEmail(params: EmailParams): Promise<void> {
+  return new Promise((resolve, reject) => {
+    transport.sendMail(params, (error: Error | null) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve();
+    });
+  });
 }
 
-export async function sendEmail(params: EmailParams) {
-  transport.sendMail(params);
-}
-
-export async function sendVerificationEmail(email: string, verificationToken: string, firstName: string) {
+export async function sendVerificationEmail(email: string, verificationToken: string, firstName: string): Promise<void> {
   const verificationUrl = `${process.env.BASEURL}/?token=${verificationToken}`;
   const emailBody = `Hi ${firstName},<br/>
     Welcome to Quicklabs! We're thrilled to have you on board.<br/>
@@ -34,7 +41,7 @@ export async function sendVerificationEmail(email: string, verificationToken: st
   await sendEmail(emailParams);
 }
 
-export async function sendResetPasswordEmail(email: string, resetToken: string, firstName: string) {
+export async function sendResetPasswordEmail(email: string, resetToken: string, firstName: string): Promise<void> {
   const resetUrl = `${process.env.BASEURL}/reset-password?token=${resetToken}`;
   const emailBody = `Hello ${firstName},<br/>
     Someone has requested a link to change your password. You can do this through the link below.<br/>
@@ -57,7 +64,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
   await sendEmail(emailParams);
 }
 
-export async function sendPasswordUpdatedEmail(email: string, firstName: string) {
+export async function sendPasswordUpdatedEmail(email: string, firstName: string): Promise<void> {
   const emailBody = `Hi ${firstName},<br/>
     Your password has been updated successfully.<br/>,
     <br/>
@@ -75,4 +82,3 @@ export async function sendPasswordUpdatedEmail(email: string, firstName: string)
 
   await sendEmail(emailParams);
 }
-

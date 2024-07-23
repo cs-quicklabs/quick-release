@@ -101,7 +101,7 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories =
                 >
                   <Checkbox
                     className={
-                      "h-4 w-4 rounded border-gray-300 focus:ring-transparent"
+                      "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     }
                     name={category.value}
                     checked={selectedCategories.includes(category.value)}
