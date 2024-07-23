@@ -49,7 +49,6 @@ const Project = () => {
       setLoader,
       (res: any) => {
         const { message } = res;
-        getAllProjects();
         setActiveProject(res.data.id);
         showNotification("success", message);
         router.push("/allLogs");
