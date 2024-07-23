@@ -52,29 +52,34 @@ export default function LoginForm() {
     toast.dismiss();
     try {
       setLoader(true);
-      const res = await signIn("credentials", {
+      const res = await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
-      if (!res?.error) {
-        router.push("/allLogs");
-      }
-      if (res?.error === "Incorrect Credentials!") {
-        toast.error(res.error as string);
-      }
-      if (res?.error === "Your Account is not Verified Yet, Check Email") {
-        setUserEmail(values.email);
-        setIsOpen(true);
+      if (res?.error) {
+        handleLoginError(res.error, values.email);
+      } else {
+        router.push('/allLogs');
       }
     } catch (error) {
-      if (error) {
-        toast.error(error ? "Invalid Credentials" : "");
-      }
+      toast.error('Invalid Credentials');
     } finally {
       setLoader(false);
     }
   }
+  
+  function handleLoginError(error: string, email?: string) {
+    if (error === 'Incorrect Credentials!') {
+      toast.error(error);
+    } else if (error === 'Your Account is not Verified Yet, Check Email') {
+      setUserEmail(email!);
+      setIsOpen(true);
+    } else {
+      toast.error('An unknown error occurred');
+    }
+  }
+
   useEffect(() => {
       if (token) {
         const verifyToken = async () => {

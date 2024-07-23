@@ -3,10 +3,12 @@ import { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
 export const showNotification = (type: TypeOptions, message: string) => {
-  toast(message, {
-    type,
-    closeOnClick: true,
-  });
+  setTimeout(() => {
+    toast(message, {
+      type,
+      closeOnClick: true,
+    })
+  }, 500);
 };
 
 export const requestHandler = async (
@@ -70,7 +72,7 @@ export const handleTrancate = (text: string, trucateNum: number) => {
 };
 
 export const privacyResponse = (data: any) => {
-  const { id, cuid, password, ...rest } = data;
+  const { id, cuid, password, organizationsId, createdById, ...rest } = data;
   return {
     id: cuid,
     ...rest,
