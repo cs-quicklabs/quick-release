@@ -11,12 +11,12 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { useUserContext } from "@/app/context/UserContext";
 import { requestHandler, showNotification } from "@/Utils";
-import { createProjectRequest } from "@/fetchHandlers/project";
+import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
 
 const Project = () => {
   const router = useRouter();
   const [loader, setLoader] = useState(false);
-  const { getAllProjects } = useProjectContext();
+  const { getAllProjects, setActiveProject } = useProjectContext();
   const { loggedInUser } = useUserContext();
   const formSchema = z.object({
     projects: z
@@ -50,14 +50,28 @@ const Project = () => {
       (res: any) => {
         const { message } = res;
         getAllProjects();
-        router.push("/allLogs")
+        setActiveProject(res.data.id);
         showNotification("success", message);
+        router.push("/allLogs");
       },
       (errMessage) => {
         showNotification("error", errMessage);
       }
     );
   }
+
+  const activeProject = async (projectId: string) => {
+    await requestHandler(
+      async () => await setActiveProjectRequest(projectId),
+      null,
+      (res: any) => {
+        setActiveProject(projectId);
+      },
+      (errMessage: any) => {
+        showNotification("error", errMessage);
+      }
+    )
+  };
 
   return (
     <BaseTemplate>

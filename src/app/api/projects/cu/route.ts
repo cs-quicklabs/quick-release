@@ -24,8 +24,7 @@ export async function GET(req: Request, res: Response) {
 
     const query: { [key: string]: any } = { createdById: user?.id };
 
-    const projects = privacyResponseArray(
-      await db.projects.findMany({ 
+    const projects = await db.projects.findMany({ 
         where: query,
         select: {
           cuid: true,
@@ -33,13 +32,20 @@ export async function GET(req: Request, res: Response) {
           createdAt: true,
           updatedAt: true,
         }
-       })
+       });
+    
+    const sortedProjects = privacyResponseArray(
+      projects.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      })
     );
+
+
     const totalProjects = await db.projects.count({ where: query });
     return NextResponse.json(
       new ApiResponse(
         200,
-        { projects, totalProjects },
+        { projects: sortedProjects, totalProjects },
         "Projects fetched successfully"
       )
     );
