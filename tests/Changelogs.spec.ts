@@ -2,7 +2,6 @@ import { Changelog } from "../e2e/Changelogs";
 import { LoginPage } from "../e2e/Login";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
-import { ChangelogDetail } from "../e2e/ChangelogPage";
 
 test.beforeEach(
   " Verify Admin able to click on newchangelog ",
@@ -29,4 +28,14 @@ test(" Verify admin should able to edit and Save log draft ", async ({ page }) =
   const changelog = new Changelog(page);
   await changelog.saveChangelog();
 });
+
+test(" Verify user able to Delete changelog", async ({ page }) => {
+  const changelog = new Changelog(page);
+  await changelog.deleteChangelog();
+});
+test(" Verify user able to edit changelog", async ({ page }) => {
+  const changelog = new Changelog(page);
+  await changelog.editChangelog();
+});
+
 

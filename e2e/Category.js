@@ -37,6 +37,17 @@ exports.releaseCategory = class releaseCategory {
     await expect(this.toastMessage).toHaveText(
       "Create release Category successfully"
     );
+  }
+
+  async editCategory() {
+    await this.navigateToCategories();
+    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+    console.log(numeric);
+    await this.categoryNameInput.fill(this.categoryName + numeric);
+    await this.saveButton.click();
+    await expect(this.toastMessage).toHaveText(
+      "Create release Category successfully"
+    );
     await this.editLink.click();
     await this.editCategoryNameInput.click();
     await this.editCategoryNameInput.press("Backspace");
@@ -44,9 +55,17 @@ exports.releaseCategory = class releaseCategory {
     await this.editSaveButton.click();
   }
 
+
  
   async deleteCategory() {
     await this.navigateToCategories();
+    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+    console.log(numeric);
+    await this.categoryNameInput.fill(this.categoryName + numeric);
+    await this.saveButton.click();
+    await expect(this.toastMessage).toHaveText(
+      "Create release Category successfully"
+    );
     await this.deleteLink.click();
   }
 };

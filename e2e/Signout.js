@@ -3,7 +3,7 @@ exports.Signout = class Signout {
   constructor(page) {
     this.page = page;
     this.userMenuButton = this.page.locator("#open-user-menu");
-    this.signOutButton = this.page.locator("text=Sign out");
+    this.signOutButton = this.page.locator("text=Logout");
     this.confirmLogoutButton = this.page.locator(
       "button:has-text('Yes, I\\'m sure')"
     );

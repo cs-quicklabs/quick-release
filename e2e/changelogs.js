@@ -26,6 +26,7 @@ exports.Changelog = class changelog {
     this.changeStatusButton = this.page.getByRole("button", {
       name: "Change published status",
     });
+    this.deleteButton = this.page.getByText("Delete");
     this.saveAsDraftOption = this.page.getByText("Save as Draft", {
       exact: true,
     });
@@ -41,6 +42,14 @@ exports.Changelog = class changelog {
 
   async clickAddNewButton() {
     await this.addNewButton.click();
+  }
+  async clickDelete() {
+    const deleteButtonExists = await this.deleteButton.isVisible();
+    if (deleteButtonExists) {
+      await this.deleteButton.click();
+    } else {
+      console.log("Delete button not found.");
+    }
   }
 
   async clickNewChangelogButton() {
@@ -166,7 +175,7 @@ exports.Changelog = class changelog {
   }
 
   
-  async saveChangelog() {
+  async editChangelog() {
    
     const maxRetries = 10; 
     const retryInterval = 3000; 
@@ -199,6 +208,66 @@ exports.Changelog = class changelog {
     await this.clickChangeStatusButton();
     await this.clickSaveAsDraftOption();
     await this.clickSaveAsDraftChangelogButton();
+        
+  }
+  async saveChangelog() {
+   
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isAddNewButtonVisible = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isAddNewButtonVisible = await this.addNewButton.isVisible();
+      if (isAddNewButtonVisible) {
+        await this.clickAddNewButton();
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    
+    if (!isAddNewButtonVisible) {
+      await this.clickNewChangelogButton();
+    }
+    await this.fillTitle();
+    await this.fillDescription();
+    await this.fillVersion();
+    await this.selectStatusCategory();
+    await this.selectStatusTags();
+    await this.clickChangeStatusButton();
+    await this.clickSaveAsDraftOption();
+    await this.clickSaveAsDraftChangelogButton();
+        
+  }
+  async deleteChangelog() {
+   
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isAddNewButtonVisible = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isAddNewButtonVisible = await this.addNewButton.isVisible();
+      if (isAddNewButtonVisible) {
+        await this.clickAddNewButton();
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    
+    if (!isAddNewButtonVisible) {
+      await this.clickNewChangelogButton();
+    }
+    await this.fillTitle();
+    await this.fillDescription();
+    await this.fillVersion();
+    await this.selectStatusCategory();
+    await this.selectStatusTags();
+    await this.clickChangeStatusButton();
+    await this.clickSaveAsDraftOption();
+    await this.clickSaveAsDraftChangelogButton();
+    await this.clickOpenOptions();
+    await this.clickDelete();
         
   }
 };
