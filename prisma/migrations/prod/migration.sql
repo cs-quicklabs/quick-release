@@ -179,25 +179,33 @@ FROM "Log" l
 JOIN "Projects" p ON l."projectId" = p."cuid"
 JOIN "Users" u ON l."createdById" = u."cuid";
 
--- Create ReleaseTags with cuid
-INSERT INTO "ReleaseTags" (
-    "cuid", "name", "code", "organizationsId"
-)
-VALUES
-    (gen_random_uuid()::text, 'Web', 'web', 1),
-    (gen_random_uuid()::text, 'Android', 'android', 1),
-    (gen_random_uuid()::text, 'IOS', 'ios', 1);
+-- Insert default ReleaseTags for all organizations
+INSERT INTO "ReleaseTags" ("cuid", "name", "code", "organizationsId")
+SELECT gen_random_uuid()::text, 'Web', 'web', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'Android', 'android', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'IOS', 'ios', org."id"
+FROM "Organizations" org;
 
--- Create ReleaseCategories with cuid
-INSERT INTO "ReleaseCategories" (
-    "cuid", "name", "code", "organizationsId"
-)
-VALUES
-    (gen_random_uuid()::text, 'New', 'new', 1),
-    (gen_random_uuid()::text, 'Improvement', 'improvement', 1),
-    (gen_random_uuid()::text, 'Bug Fix', 'bug_fix', 1),
-    (gen_random_uuid()::text, 'Maintenance', 'maintenance', 1),
-    (gen_random_uuid()::text, 'Refactor', 'refactor', 1);
+-- Insert default ReleaseCategories for all organizations
+INSERT INTO "ReleaseCategories" ("cuid", "name", "code", "organizationsId")
+SELECT gen_random_uuid()::text, 'New', 'new', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'Improvement', 'improvement', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'Bug Fix', 'bug_fix', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'Maintenance', 'maintenance', org."id"
+FROM "Organizations" org
+UNION ALL
+SELECT gen_random_uuid()::text, 'Refactor', 'refactor', org."id"
+FROM "Organizations" org;
 
 
 -- STEP:3 Add constraints and foreign keys to the new tables
