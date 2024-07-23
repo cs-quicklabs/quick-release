@@ -20,9 +20,13 @@ export default function AllLogs() {
   const [showSideNav, setShowSideNav] = useState(false);
 
   useEffect(() => {
-    if (!loading && !activeProjectId) {
-      getActiveProject(setLoading);
-    }
+    const fetchActiveProject = async () => {
+      if (!activeProjectId) {
+        await getActiveProject(setLoading);
+      }
+    };
+
+    fetchActiveProject();
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -43,7 +47,6 @@ export default function AllLogs() {
     );
   }
 
-  // show empty project or change log page
   if (!activeProjectId || !metaData?.hasProjectChangeLogs) {
     const emptyProps = {
       title: "No Project added.",
@@ -61,8 +64,8 @@ export default function AllLogs() {
 
     return (
       <BaseTemplate>
-        <EmptyPage {...emptyProps} />
-      </BaseTemplate>
+          <EmptyPage {...emptyProps} />
+        </BaseTemplate>
     );
   }
 
