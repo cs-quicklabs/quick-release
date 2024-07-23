@@ -1,16 +1,19 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-const db = new PrismaClient()
+const db = new PrismaClient();
 
 async function main() {
   try {
-    // Fetch all logs from the old schema
-    const oldLogs = await db.log.findMany();
+    // Check if data already exists
     const changelogReleaseTags = await db.changelogReleaseTags.findMany();
-    if(changelogReleaseTags && changelogReleaseTags.length > 0) {
+    if (changelogReleaseTags && changelogReleaseTags.length > 0) {
+      console.log('Data already seeded.');
       return;
     }
-    
+
+    // Fetch all logs from the old schema
+    const oldLogs = await db.log.findMany();
+
     for (const log of oldLogs) {
       // Insert release tags relationships
       for (const tagCode of log.releaseTags) {
@@ -23,8 +26,7 @@ async function main() {
               releaseTagId: tag.id,
             },
           });
-        }
-        else {
+        } else {
           console.log(`Tag ${tagCode} not found`);
         }
       }
@@ -40,8 +42,7 @@ async function main() {
               releaseCategoryId: category.id,
             },
           });
-        }
-        else {
+        } else {
           console.log(`Category ${categoryCode} not found`);
         }
       }
