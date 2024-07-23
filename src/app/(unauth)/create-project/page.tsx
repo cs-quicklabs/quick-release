@@ -49,6 +49,7 @@ const Project = () => {
       setLoader,
       (res: any) => {
         const { message } = res;
+        getAllProjects();
         setActiveProject(res.data.id);
         showNotification("success", message);
         router.push("/allLogs");
@@ -58,19 +59,6 @@ const Project = () => {
       }
     );
   }
-
-  const activeProject = async (projectId: string) => {
-    await requestHandler(
-      async () => await setActiveProjectRequest(projectId),
-      null,
-      (res: any) => {
-        setActiveProject(projectId);
-      },
-      (errMessage: any) => {
-        showNotification("error", errMessage);
-      }
-    )
-  };
 
   return (
     <BaseTemplate>

@@ -110,7 +110,6 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
       setIsLoading,
       (res: any) => {
         setActiveProjectId(projectId);
-        getAllProjects();
       },
       (errMessage: any) => {
         showNotification("error", errMessage);

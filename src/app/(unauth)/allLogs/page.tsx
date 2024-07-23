@@ -18,6 +18,7 @@ export default function AllLogs() {
   const { activeProjectId, getActiveProject, isLoading } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
+  const [delayed, setDelayed] = useState(false);
 
   useEffect(() => {
     const fetchActiveProject = async () => {
@@ -35,6 +36,14 @@ export default function AllLogs() {
       getAllChangeLogs(query);
     }
   }, [activeProjectId]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayed(true);
+    }, 500); // Adjust the delay time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // show loading if fetching current active project or change logs
   if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || isLoading) {
@@ -70,7 +79,7 @@ export default function AllLogs() {
   };
 
   if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
-    return setTimeout(() => renderEmptyPage(), 500);
+    return delayed ? renderEmptyPage() : <Loading />;
   }
 
 
