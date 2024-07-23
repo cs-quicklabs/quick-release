@@ -15,7 +15,7 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
-  const { activeProjectId, getActiveProject } = useProjectContext();
+  const { activeProjectId, getActiveProject, isLoading } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
@@ -37,7 +37,7 @@ export default function AllLogs() {
   }, [activeProjectId]);
 
   // show loading if fetching current active project or change logs
-  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs)) {
+  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || isLoading) {
     return (
       <BaseTemplate>
         <div className="w-full h-full flex items-center justify-center">
@@ -47,27 +47,32 @@ export default function AllLogs() {
     );
   }
 
-  if (!activeProjectId || !metaData?.hasProjectChangeLogs) {
-    const emptyProps = {
-      title: "No Project added.",
-      description: "Get started by creating your first project.",
-      btnText: "New Project",
-      navigateTo: "/create-project"
-    };
-
-    if (activeProjectId) {
-      emptyProps.title = "No Changelog added.";
-      emptyProps.description = "Get started by creating your first changelog post.";
-      emptyProps.btnText = "New Changelog";
-      emptyProps.navigateTo = "/changeLog/add";
-    }
+  const renderEmptyPage = () => {
+    const emptyProps = activeProjectId
+      ? {
+          title: "No Changelog added.",
+          description: "Get started by creating your first changelog post.",
+          btnText: "New Changelog",
+          navigateTo: "/changeLog/add",
+        }
+      : {
+          title: "No Project added.",
+          description: "Get started by creating your first project.",
+          btnText: "New Project",
+          navigateTo: "/create-project",
+        };
 
     return (
       <BaseTemplate>
-          <EmptyPage {...emptyProps} />
-        </BaseTemplate>
+        <EmptyPage {...emptyProps} />
+      </BaseTemplate>
     );
+  };
+
+  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
+    return setTimeout(() => renderEmptyPage(), 500);
   }
+
 
   return (
     <BaseTemplate>
