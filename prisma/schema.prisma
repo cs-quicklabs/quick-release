@@ -11,6 +11,7 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+// old schema
 model User {
   id                      String        @id @default(cuid())
   createdAt               DateTime      @default(now())
@@ -72,4 +73,152 @@ model Log {
   updatedById       String
   deletedAt         DateTime?
   archivedAt        DateTime?
+}
+
+// new schema
+model UsersRoles {
+  id            Int             @id @default(autoincrement())
+  name          String
+  code          String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  projectsUsers ProjectsUsers[]
+}
+
+model Users {
+  id                      Int                  @id @default(autoincrement())
+  cuid                    String               @unique @default(cuid())
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+  firstName               String
+  lastName                String
+  profilePicture          String?
+  email                   String               @unique
+  password                String
+  resetToken              String?              @unique
+  resetTokenExpiry        String?
+  isActive                Boolean              @default(true)
+  isVerified              Boolean              @default(false)
+  verificationToken       String?              @unique
+  verificationTokenExpiry String?
+  projectsUsers           ProjectsUsers[]
+  organizations           Organizations[]
+  projects                Projects[]
+  organizationsUsers      OrganizationsUsers[]
+  createdLogs             Changelogs[]         @relation("CreatedLogs")
+  updatedLogs             Changelogs[]         @relation("UpdatedLogs")
+}
+
+model Organizations {
+  id                 Int                  @id @default(autoincrement())
+  cuid               String               @unique @default(cuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  users              Users?               @relation(fields: [createdById], references: [id])
+  createdById        Int?
+  name               String
+  organizationsUsers OrganizationsUsers[]
+  releaseTags        ReleaseTags[]
+  releaseCategories  ReleaseCategories[]
+  projects           Projects[]
+}
+
+model OrganizationsUsers {
+  organizations   Organizations @relation(fields: [organizationsId], references: [id])
+  organizationsId Int
+  users           Users         @relation(fields: [usersId], references: [id])
+  usersId         Int
+  isActive        Boolean       @default(false)
+
+  @@id([organizationsId, usersId])
+}
+
+model Projects {
+  id              Int             @id @default(autoincrement())
+  cuid            String          @unique @default(cuid())
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  name            String
+  logs            Changelogs[]
+  Users           Users?          @relation(fields: [createdById], references: [id])
+  createdById     Int?
+  organizations   Organizations?  @relation(fields: [organizationsId], references: [id])
+  organizationsId Int?
+  projectsUsers   ProjectsUsers[]
+}
+
+model ProjectsUsers {
+  projects   Projects   @relation(fields: [projectsId], references: [id])
+  projectsId Int
+  users      Users      @relation(fields: [usersId], references: [id])
+  usersId    Int
+  role       UsersRoles @relation(fields: [roleId], references: [id])
+  roleId     Int
+  isActive   Boolean    @default(false)
+
+  @@id([usersId, projectsId, roleId])
+}
+
+model Changelogs {
+  id                Int                          @id @default(autoincrement())
+  cuid              String                       @unique @default(cuid())
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  title             String
+  description       String
+  releaseVersion    String
+  releaseCategories ChangelogReleaseCategories[]
+  releaseTags       ChangelogReleaseTags[]
+  projects          Projects?                    @relation(fields: [projectsId], references: [id])
+  projectsId        Int?
+  scheduledTime     DateTime?
+  status            String
+  createdBy         Users                        @relation("CreatedLogs", fields: [createdById], references: [id])
+  createdById       Int
+  updatedBy         Users                        @relation("UpdatedLogs", fields: [updatedById], references: [id])
+  updatedById       Int
+  deletedAt         DateTime?
+  archivedAt        DateTime?
+}
+
+model ReleaseTags {
+  id              Int                    @id @default(autoincrement())
+  cuid            String                 @unique @default(cuid())
+  name            String
+  code            String
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  organizations   Organizations?         @relation(fields: [organizationsId], references: [id])
+  organizationsId Int
+  logs            ChangelogReleaseTags[]
+}
+
+model ChangelogReleaseTags {
+  log          Changelogs  @relation(fields: [logId], references: [id])
+  logId        Int
+  releaseTag   ReleaseTags @relation(fields: [releaseTagId], references: [id])
+  releaseTagId Int
+
+  @@id([logId, releaseTagId])
+}
+
+model ReleaseCategories {
+  id              Int                          @id @default(autoincrement())
+  cuid            String                       @unique @default(cuid())
+  name            String
+  code            String
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+  organizations   Organizations?               @relation(fields: [organizationsId], references: [id])
+  organizationsId Int
+  logs            ChangelogReleaseCategories[]
+}
+
+model ChangelogReleaseCategories {
+  log               Changelogs        @relation(fields: [logId], references: [id])
+  logId             Int
+  releaseCategory   ReleaseCategories @relation(fields: [releaseCategoryId], references: [id])
+  releaseCategoryId Int
+
+  @@id([logId, releaseCategoryId])
 }

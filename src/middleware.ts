@@ -18,6 +18,20 @@ export function middleware(request: NextRequest) {
 
   if (
     token &&
+    (request.nextUrl.pathname === "/settings/profile")
+  ) {
+    return NextResponse.redirect(new URL("/settings/profile/general", request.url));
+  }
+
+  if (
+    token &&
+    (request.nextUrl.pathname === "/settings/team")
+  ) {
+    return NextResponse.redirect(new URL("/settings/team/tags", request.url));
+  }
+
+  if (
+    token &&
     (request.nextUrl.pathname === "/" ||
       request.nextUrl.pathname === "/register")
   ) {

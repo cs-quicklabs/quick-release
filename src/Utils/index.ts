@@ -1,11 +1,14 @@
+import { db } from "@/lib/db";
 import { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
 export const showNotification = (type: TypeOptions, message: string) => {
-  toast(message, {
-    type,
-    closeOnClick: true,
-  });
+  setTimeout(() => {
+    toast(message, {
+      type,
+      closeOnClick: true,
+    })
+  }, 500);
 };
 
 export const requestHandler = async (
@@ -14,6 +17,7 @@ export const requestHandler = async (
   onSuccess: (data: any) => void,
   onError: (errorMessage: string) => void
 ) => {
+  toast.dismiss();
   setLoading?.(true);
   try {
     const response = await api();
@@ -37,9 +41,16 @@ export const checkRichTextEditorIsEmpty = (text: string) => {
   return withoutTags.trim().length > 0;
 };
 
+export const getRolesCode = (text: string) => {
+  return text.toUpperCase().replaceAll(" ", "_");
+};
+
+export const getReleaseKeyCode = (tagName: string) => {
+  return tagName.toLowerCase().replaceAll(" ", "_");
+};
 export const isValidArray = (compareArray: string[], validArray: string[]) => {
-  return compareArray.every(compareItem => validArray.includes(compareItem));
-}
+  return compareArray.every((compareItem) => validArray.includes(compareItem));
+};
 
 export const selectedData = (userData: any) => {
   return {
@@ -58,4 +69,22 @@ export const handleTrancate = (text: string, trucateNum: number) => {
     return `${text.slice(0, trucateNum)}...`;
   }
   return text;
-}
+};
+
+export const privacyResponse = (data: any) => {
+  const { id, cuid, password, organizationsId, createdById, ...rest } = data;
+  return {
+    id: cuid,
+    ...rest,
+  };
+};
+
+export const privacyResponseArray = (data: any) => {
+  return data.map((item: any) => {
+    const { id, cuid, password, ...rest } = item;
+    return {
+      id: cuid,
+      ...rest,
+    };
+  });
+};

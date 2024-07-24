@@ -12,21 +12,21 @@ export async function POST(
     throw new Error("Invalid User");
   }
   try {
-    const checkUserFromEmail = await db.user.findFirst({
+    const checkUserFromEmail = await db.users.findFirst({
       where: {
         email: body.email,
       },
     });
     if (checkUserFromEmail) {
       body.isVerified = true;
-      if (checkUserFromEmail.id !== params.id) {
+      if (checkUserFromEmail.cuid !== params.id) {
         throw new Error("This Email Already Exists");
       }
     } else {
       body.isVerified = false;
-      const user = await db.user.update({
+      const user = await db.users.update({
         where: {
-          id: params.id,
+          cuid: params.id,
         },
         data: {
           email: body.email,
@@ -63,10 +63,10 @@ export async function POST(
         html: emailBody,
       };
       try {
-        if (user.id) {
+        if (user?.id) {
           transport.sendMail(msg);
         }
-        await db.user.update({
+        await db.users.update({
           where: {
             email: body.email,
           },
@@ -79,7 +79,7 @@ export async function POST(
           status: 200,
         });
       } catch (err) {
-        await db.user.update({
+        await db.users.update({
           where: {
             email: body.email,
           },
@@ -91,9 +91,9 @@ export async function POST(
         throw new Error("Unable to sent verification link");
       }
     }
-    const updatedUser = await db.user.update({
+    const updatedUser = await db.users.update({
       where: {
-        id: params.id,
+        cuid: params.id,
       },
       data: {
         email: body.email,

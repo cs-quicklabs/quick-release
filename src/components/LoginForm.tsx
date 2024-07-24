@@ -13,6 +13,8 @@ import { z } from "zod";
 import { requestHandler, showNotification } from "@/Utils";
 import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/fetchHandlers/authentication";
 import AlertModal from "./AlertModal";
+import Image from "next/image";
+import { WEB_DETAILS } from "@/Utils/constants";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -50,29 +52,34 @@ export default function LoginForm() {
     toast.dismiss();
     try {
       setLoader(true);
-      const res = await signIn("credentials", {
+      const res = await signIn('credentials', {
         email: values.email,
         password: values.password,
         redirect: false,
       });
-      if (!res?.error) {
-        router.push("/allLogs");
-      }
-      if (res?.error === "Incorrect Credentials!") {
-        toast.error(res.error as string);
-      }
-      if (res?.error === "Your Account is not Verified Yet, Check Email") {
-        setUserEmail(values.email);
-        setIsOpen(true);
+      if (res?.error) {
+        handleLoginError(res.error, values.email);
+      } else {
+        router.push('/allLogs');
       }
     } catch (error) {
-      if (error) {
-        toast.error(error ? "Invalid Credentials" : "");
-      }
+      toast.error('Invalid Credentials');
     } finally {
       setLoader(false);
     }
   }
+  
+  function handleLoginError(error: string, email?: string) {
+    if (error === 'Incorrect Credentials!') {
+      toast.error(error);
+    } else if (error === 'Your Account is not Verified Yet, Check Email') {
+      setUserEmail(email!);
+      setIsOpen(true);
+    } else {
+      toast.error('An unknown error occurred');
+    }
+  }
+
   useEffect(() => {
       if (token) {
         const verifyToken = async () => {
@@ -113,10 +120,12 @@ export default function LoginForm() {
           href="/"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
         >
-          <img
+          <Image
             className="w-8 h-8 mr-2"
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
+            src={WEB_DETAILS.favicon}
             alt="logo"
+            width={32}
+            height={32}
           />
           Quick Release
         </Link>
@@ -144,7 +153,7 @@ export default function LoginForm() {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <span className="text-red-600 text-[12px]">
+                  <span className="text-red-600 text-[12px]" id="login-error">
                     {errors.email.message}
                   </span>
                 )}
@@ -222,6 +231,7 @@ export default function LoginForm() {
               </div>{" "}
               <button
                 type="submit"
+                id="login"
                 className="w-full mt-4 text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 {loader ? (

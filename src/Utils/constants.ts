@@ -1,60 +1,4 @@
-import {
-  ReleaseCategoryType,
-  ChangeLogsStatusType,
-  ReleaseTagType,
-} from "@/types";
-
-export const ChangeLogsReleaseCategories = Object.freeze<{
-  [key: string]: ReleaseCategoryType;
-}>({
-  new: {
-    value: "new",
-    label: "New",
-    textColor: "text-green-800",
-    bgColor: "bg-green-100",
-  },
-  improvement: {
-    value: "improvement",
-    label: "Improvement",
-    textColor: "text-gray-800",
-    bgColor: "bg-gray-100",
-  },
-  bug_fix: {
-    value: "bug_fix",
-    label: "Bug Fix",
-    textColor: "text-red-800",
-    bgColor: "bg-red-100",
-  },
-  maintenance: {
-    value: "maintenance",
-    label: "Maintenance",
-    textColor: "text-indigo-800",
-    bgColor: "bg-indigo-100",
-  },
-  refactor: {
-    value: "refactor",
-    label: "Refactor",
-    textColor: "text-yellow-800",
-    bgColor: "bg-yellow-100",
-  },
-});
-
-export const ChangeLogsReleaseTags = Object.freeze<{
-  [key: string]: ReleaseTagType;
-}>({
-  ios: {
-    value: "ios",
-    label: "iOS",
-  },
-  android: {
-    value: "android",
-    label: "Android",
-  },
-  web: {
-    value: "web",
-    label: "Web",
-  },
-});
+import { ChangeLogsStatusType } from "@/types";
 
 export const ChangeLogsReleaseActions = Object.freeze({
   published: {
@@ -111,12 +55,46 @@ export const ChangeLogsStatus = Object.freeze<ChangeLogsStatusType>({
 
 // select user details from db only which are alow to view publish
 export const SelectUserDetailsFromDB = {
-  id: true,
+  cuid: true,
   firstName: true,
   lastName: true,
   email: true,
   profilePicture: true,
-  role: true,
 };
 
-export const REVALIDATE_API = 0; // revalidate/cache api response for 60 seconds
+export const WEB_DETAILS = {
+  name: "Quick Release",
+  description: "Manage your release notes better",
+  logo: "/icons/qr-logo1.svg",
+  favicon: "/icons/favicon.svg",
+};
+export const ChangeLogIncludeDBQuery = {
+  projects: { select: { cuid: true, name: true } },
+  createdBy: { select: SelectUserDetailsFromDB },
+  updatedBy: { select: SelectUserDetailsFromDB },
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  releaseCategories: {
+    select: {
+      releaseCategory: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  createdById: false,
+  updatedById: false,
+  projectsId: false,
+};
+
+export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

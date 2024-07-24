@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import Image from "next/image";
 
 const Profile = () => {
   const router = useRouter();
@@ -199,7 +200,7 @@ const Profile = () => {
                           <>
                             <div className="flex ">
                               <label htmlFor="fileInput">
-                                <img
+                                <Image
                                   alt="No Image"
                                   className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
                                   src={fileName}
@@ -225,7 +226,7 @@ const Profile = () => {
                         ) : (
                           <>
                             <label htmlFor="fileInput">
-                              <img
+                              <Image
                                 alt="No Image"
                                 className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
                                 src="/images/userAvatar.png"

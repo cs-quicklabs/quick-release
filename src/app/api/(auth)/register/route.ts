@@ -1,3 +1,4 @@
+import { getRolesCode } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -24,7 +25,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       }
       const hashedPassword = await hash(body.password, 10);
 
-      const existingEmail = await db.user.findUnique({
+      const existingEmail = await db.users.findUnique({
         where: { email: body.email },
       });
 
@@ -32,24 +33,33 @@ export async function POST(request: Request, res: NextApiResponse) {
         throw new ApiError(400, "Email already exists");
       }
 
-      const organisation = await db.organisation.create({
-        data: {
-          name: body.orgName,
-        },
-      });
-      const register = await db.user.create({
+      const register = await db.users.create({
         data: {
           email: body.email,
           password: hashedPassword,
           firstName: body.firstName,
           lastName: body.lastName,
-          organisationId: organisation.id,
         },
       });
 
       if (!register.id) {
         throw new ApiError(400, "Unable to create user");
       }
+
+      const organizations = await db.organizations.create({
+        data: {
+          name: body.orgName,
+          createdById: register.id,
+        },
+      });
+
+      await db.organizationsUsers.create({
+        data: {
+          usersId: register.id,
+          organizationsId: organizations.id,
+          isActive: true,
+        },
+      })
 
       const verificationToken = crypto.randomBytes(20).toString("hex");
       const registerVerificationToken = crypto
@@ -61,7 +71,7 @@ export async function POST(request: Request, res: NextApiResponse) {
       register.verificationToken = registerVerificationToken;
       register.verificationTokenExpiry = verificationTokenExpires;
 
-      await db.user.update({
+      await db.users.update({
         where: {
           email: body.email,
         },

@@ -1,9 +1,10 @@
-import { isValidArray } from "@/Utils";
+import { isValidArray, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
-import { SelectUserDetailsFromDB } from "@/Utils/constants";
+import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
 import { authOptions } from "@/lib/auth";
+import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -13,42 +14,78 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
-    if(!userId) {
+    const user = await db.users.findUnique({ where: { cuid: userId } });
+    if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const body = await req.json();
 
     if (!body.title || !body.description || !body.releaseVersion) {
       throw new ApiError(400, "Missing title, description or release version");
     }
 
-    if (!isValidArray(body.releaseCategories, ["new", "improvement", "bug_fix", "refactor", "maintenance"])) {
+    const project = await db.projects.findUnique({
+      where: {
+        cuid: body.projectsId,
+      },
+    })
+
+    const orgs = await db.organizations.findUnique({
+      where: {
+        cuid: body?.organizationsId,
+      }
+    })
+
+    const releaseTags = await db.releaseTags.findMany({
+      where: {
+        organizationsId: orgs?.id, // TODO: Check this.
+        code: {
+          in: body.releaseTags,
+        },
+      },
+    });
+
+    const releaseCategories = await db.releaseCategories.findMany({
+      where: {
+        organizationsId: orgs?.id, // TODO: Check this.
+        code: {
+          in: body.releaseCategories,
+        },
+      },
+    }); 
+
+    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
       throw new ApiError(400, "Release category is invalid");
     }
 
-    if (!isValidArray(body.releaseTags, ["ios", "web", "android"])) {
+    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
       throw new ApiError(400, "Release tag is invalid");
     }
 
-    const newChangeLog = await db.log.create({
+    if (!project) {
+      throw new ApiError(404, "Project not found");
+    }
+
+    const newChangeLog = await db.changelogs.create({
       data: {
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
-        releaseCategories: body.releaseCategories,
-        projectId: body.projectId,
-        releaseTags: body.releaseTags,
-        createdById: userId,
-        updatedById: userId,
+        releaseCategories: {
+          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+        },
+        projectsId: project.id,
+        // releaseTags: body.releaseTags,
+        releaseTags: {
+          create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
+        },
+        createdById: user?.id,
+        updatedById: user?.id,
         status: body.status,
         scheduledTime: body.scheduledTime ?? null,
       },
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
+      include: ChangeLogIncludeDBQuery,
     });
 
     if (!newChangeLog) {
@@ -56,7 +93,11 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json(
-      new ApiResponse(200, newChangeLog, "Create changelog successfully")
+      new ApiResponse(
+        200,
+        computeChangeLog(newChangeLog),
+        "Create changelog successfully"
+      )
     );
   });
 }
@@ -65,11 +106,12 @@ export async function GET(req: NextRequest) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
-    const userId = session?.user?.id!;
+    const userId = session?.user?.id;
 
-    if(!userId) {
+    if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
+
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null };
 
@@ -79,7 +121,15 @@ export async function GET(req: NextRequest) {
 
     const projectId = searchParams.get("projectId");
     if (projectId) {
-      query.projectId = projectId;
+      const project = await db.projects.findUnique({
+        where: {
+          cuid: projectId,
+        },
+      });
+      if (!project) {
+        throw new ApiError(404, "Project not found");
+      }
+      query.projectsId = project.id;
     }
 
     const status = searchParams.get("status");
@@ -93,21 +143,19 @@ export async function GET(req: NextRequest) {
       query.archivedAt = { not: null };
     }
 
-    const changeLogs = await db.log.findMany({
-      where: query,
-      include: {
-        project: { select: { id: true, name: true } },
-        createdBy: { select: SelectUserDetailsFromDB },
-        updatedBy: { select: SelectUserDetailsFromDB },
-      },
-      skip: start,
-      take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+    const changeLogs = privacyResponseArray(
+      await db.changelogs.findMany({
+        where: query,
+        include: ChangeLogIncludeDBQuery,
+        skip: start,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    );
 
-    const totalChangeLogs = await db.log.count({ where: query });
+    const totalChangeLogs = await db.changelogs.count({ where: query });
     const hasNextPage = totalChangeLogs > page * limit;
     const nextPage = hasNextPage ? page + 1 : null;
 
@@ -115,7 +163,7 @@ export async function GET(req: NextRequest) {
       new ApiResponse(
         200,
         {
-          changeLogs,
+          changeLogs: changeLogs.map((changeLog: any) => computeChangeLog(changeLog)),
           page,
           limit,
           total: totalChangeLogs,
@@ -127,3 +175,4 @@ export async function GET(req: NextRequest) {
     );
   });
 }
+

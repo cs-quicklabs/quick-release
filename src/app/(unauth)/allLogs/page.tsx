@@ -12,17 +12,23 @@ import EmptyPage from "@/components/dashboard/EmptyPage";
 import ContentContainer from "@/components/dashboard/ContentContainer";
 import { Button } from "@/components/ui/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
+import ScreenLoader from "@/components/ScreenLoader";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
-  const { activeProjectId, getActiveProject } = useProjectContext();
+  const { activeProjectId, getActiveProject, isLoading } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
+  const [delayed, setDelayed] = useState(false);
 
   useEffect(() => {
-    if (!loading && !activeProjectId) {
-      getActiveProject(setLoading);
-    }
+    const fetchActiveProject = async () => {
+      if (!activeProjectId) {
+        await getActiveProject(setLoading);
+      }
+    };
+
+    fetchActiveProject();
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -32,39 +38,46 @@ export default function AllLogs() {
     }
   }, [activeProjectId]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDelayed(true);
+    }, 500); // Adjust the delay time as needed
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // show loading if fetching current active project or change logs
-  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs)) {
-    return (
-      <BaseTemplate>
-        <div className="w-full h-full flex items-center justify-center">
-          <Loading />
-        </div>
-      </BaseTemplate>
-    );
+  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || isLoading) {
+    return <ScreenLoader />;
   }
 
-  // show empty project or change log page
-  if (!activeProjectId || !metaData?.hasProjectChangeLogs) {
-    const emptyProps = {
-      title: "No Project added.",
-      description: "Get started by creating your first project.",
-      btnText: "New Project",
-      navigateTo: "/create-project"
-    };
 
-    if (activeProjectId) {
-      emptyProps.title = "No Changelog added.";
-      emptyProps.description = "Get started by creating your first changelog post.";
-      emptyProps.btnText = "New Changelog";
-      emptyProps.navigateTo = "/changeLog/add";
-    }
+  const renderEmptyPage = () => {
+    const emptyProps = activeProjectId
+      ? {
+          title: "No Changelog added.",
+          description: "Get started by creating your first changelog post.",
+          btnText: "New Changelog",
+          navigateTo: "/changeLog/add",
+        }
+      : {
+          title: "No Project added.",
+          description: "Get started by creating your first project.",
+          btnText: "New Project",
+          navigateTo: "/create-project",
+        };
 
     return (
       <BaseTemplate>
         <EmptyPage {...emptyProps} />
       </BaseTemplate>
     );
+  };
+
+  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
+    return delayed ? renderEmptyPage() : <ScreenLoader />;
   }
+
 
   return (
     <BaseTemplate>
@@ -93,6 +106,7 @@ export default function AllLogs() {
           <div className="mt-4 flex md:mt-0 md:ml-4">
             <Link href="/changeLog/add">
               <button
+                id="add-new"
                 type="button"
                 className="ml-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                 Add New
