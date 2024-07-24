@@ -47,7 +47,6 @@ exports.ChangelogDetail = class ChangelogDetail {
 
   async isDescriptionVisible() {
     const text = await this.descriptionLocator.textContent();
-    console.log(`Description text found: ${text}`);
     return text.includes(this.description);
   }
 
