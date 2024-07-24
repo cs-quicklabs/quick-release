@@ -4528,7 +4528,7 @@ date-fns@^2.30.0:
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-date-fns@^3.3.1:
+date-fns@^3.3.1, date-fns@^3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-3.6.0.tgz#f20ca4fe94f8b754951b24240676e8618c0206bf"
   integrity sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==
@@ -8392,10 +8392,12 @@ react-color@^2.19.3:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
-react-day-picker@^8.10.0:
-  version "8.10.1"
-  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-8.10.1.tgz#4762ec298865919b93ec09ba69621580835b8e80"
-  integrity sha512-TMx7fNbhLk15eqcMt+7Z7S2KF7mfTId/XJDjKE8f+IUcFn0l08/kI4FiYTL/0yuOLmEcbR4Fwe3GJf/NiiMnPA==
+react-day-picker@^9.0.3:
+  version "9.0.3"
+  resolved "https://registry.yarnpkg.com/react-day-picker/-/react-day-picker-9.0.3.tgz#4c8d65d14c444f39e7eef0eb8ae572a373ad0d84"
+  integrity sha512-/vz4hWvNWFzBAaxS/US9Q/Yj1tYMe6u5UgzAxy58XCSkEsldZ/jLb+mLSl9vdcmCkAbV846Ypb7R3FpKGrYPag==
+  dependencies:
+    date-fns "^3.6.0"
 
 react-dom@^18:
   version "18.3.1"
