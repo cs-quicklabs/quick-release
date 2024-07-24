@@ -7,8 +7,13 @@ const s3Client = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY_ID!,
   },
+<<<<<<< Updated upstream
   endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
     ? `https://${process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT}`
+=======
+  endpoint: process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+    ? `https://${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`
+>>>>>>> Stashed changes
     : undefined,
 });
 
@@ -19,8 +24,13 @@ const buildFilePublishUrl = (path: string) => {
     : undefined;
   const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
+<<<<<<< Updated upstream
   return endpoint
     ? `https://${bucketName}.${endpoint}/${path}`
+=======
+  return  process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+    ? `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`
+>>>>>>> Stashed changes
     : `https://s3.${region}.amazonaws.com/${bucketName}/${path}`;
 };
 
@@ -36,7 +46,13 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
     const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
+<<<<<<< Updated upstream
     const uploadCommand = process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
+=======
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
+
+    const uploadCommand = process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+>>>>>>> Stashed changes
       ? new PutObjectCommand({
           Bucket: bucketName,
           Key: fileKey,
