@@ -6,11 +6,11 @@ test("verify user able to  signup", async ({ page, browser }) => {
   await page.goto("/");
   const signupPage = new Signup(page);
 
-  // Navigate to the signup form
+
   await signupPage.navigateToSignUp();
   const uniqueEmail = await signupPage.generateRandomEmail();
 
-  // Fill out the signup for
+
   await signupPage.fillSignupForm(
     "John",
     "Doe",
@@ -20,9 +20,9 @@ test("verify user able to  signup", async ({ page, browser }) => {
     "password123"
   );
 
-  // Submit the form
+
   await signupPage.submitForm();
 
-  // Verify the toast message
+
   await signupPage.verifyToastMessage("User registered successfully");
 });
