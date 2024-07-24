@@ -18,7 +18,6 @@ exports.createProject = class Project {
 
   async createProject() {
     const Numeric = await Math.floor(10000 + Math.random() * 90000).toString();
-    await console.log(Numeric);
     await this.openUserMenuAndNavigateToAddProject();
     await this.projectInput.click();
     await this.projectInput.fill(this.projectName + Numeric);

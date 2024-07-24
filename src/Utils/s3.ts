@@ -51,7 +51,6 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
           ContentType: fileType,
         });
     const result = await s3Client.send(uploadCommand);
-    console.log("result", result);
     return {
       name: fileName,
       path: fileKey,
