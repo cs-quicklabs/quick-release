@@ -16,19 +16,15 @@ import ScreenLoader from "@/components/ScreenLoader";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
-  const { activeProjectId, getActiveProject, isLoading } = useProjectContext();
+  const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
   const [delayed, setDelayed] = useState(false);
 
   useEffect(() => {
-    const fetchActiveProject = async () => {
-      if (!activeProjectId) {
-        await getActiveProject(setLoading);
-      }
-    };
-
-    fetchActiveProject();
+    if (!activeProjectId) {
+      getActiveProject(setLoading);
+    }
   }, [activeProjectId]);
 
   useEffect(() => {
@@ -47,7 +43,7 @@ export default function AllLogs() {
   }, []);
 
   // show loading if fetching current active project or change logs
-  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || isLoading) {
+  if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || setActiveProjectLoading) {
     return <ScreenLoader />;
   }
 

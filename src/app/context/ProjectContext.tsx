@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { getAllProjectsRequest, getOneActiveProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
+import { createProjectRequest, getAllProjectsRequest, getOneActiveProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
 import { requestHandler, showNotification } from "@/Utils";
 import { Project } from "@/interfaces";
 import { useUserContext } from "./UserContext";
@@ -16,6 +16,7 @@ type ProjectContextType = {
   list: string[];
   meta: { [key: string]: any; };
   activeProjectId: string | null;
+  createProject: (values: Project) => Promise<void>;
   getAllProjects: () => Promise<void>;
   getActiveProject: (setIsLoading: ((loading: boolean) => void) | null) => Promise<void>;
   setActiveProject: (projectId: string) => void;
@@ -28,6 +29,7 @@ const ProjectContext = createContext<ProjectContextType>({
   list: [],
   meta: {},
   activeProjectId: null,
+  createProject: async (values: Project) => { },
   getAllProjects: async () => { },
   getActiveProject: async (setIsLoading: ((loading: boolean) => void) | null) => { },
   setActiveProject: (projectId: string) => { },
@@ -49,6 +51,29 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
   const [meta, setMeta] = useState({});
 
   const { loggedInUser } = useUserContext();
+
+  const createProject = async (values: Project) => {
+    await requestHandler(
+      async () => await createProjectRequest({ ...values, organizationsId: loggedInUser?.orgs[0]?.id }),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        const projectId = data.id!;
+
+        setMap((prevMap) => ({
+          ...prevMap,
+          [projectId]: data,
+        }));
+        setList(prevList => [projectId, ...prevList]);
+        setActiveProject(projectId);
+        showNotification("success", message);
+      },
+      (errorMsg) => {
+        console.log("error:", errorMsg);
+        showNotification("error", errorMsg);
+      }
+    );
+  };
 
   // Function to handle get all projects details
   const getAllProjects = async () => {
@@ -105,14 +130,18 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   const setActiveProject = async (projectId: string) => {
+    const prevActiveProjectId = activeProjectId;
+    setActiveProjectId(projectId);
     await requestHandler(
       async () => await setActiveProjectRequest(projectId),
       setIsLoading,
       (res: any) => {
-        setActiveProjectId(projectId);
+        const { message } = res;
+        // showNotification("success", message);
       },
       (errMessage: any) => {
         showNotification("error", errMessage);
+        setActiveProjectId(prevActiveProjectId);
       }
     )
   };
@@ -132,6 +161,7 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
         map,
         list,
         meta,
+        createProject,
         getAllProjects,
         getActiveProject,
         setActiveProject,

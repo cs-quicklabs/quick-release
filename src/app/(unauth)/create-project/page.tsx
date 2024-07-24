@@ -15,9 +15,7 @@ import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/p
 
 const Project = () => {
   const router = useRouter();
-  const [loader, setLoader] = useState(false);
-  const { getAllProjects, setActiveProject } = useProjectContext();
-  const { loggedInUser } = useUserContext();
+  const { createProject, isLoading: loader } = useProjectContext();
   const formSchema = z.object({
     projects: z
       .string()
@@ -41,24 +39,10 @@ const Project = () => {
     },
   });
 
-  async function createProject(values: z.infer<typeof formSchema>, e: any) {
-    toast.dismiss();
-    e.preventDefault();
-    await requestHandler(
-      async () => await createProjectRequest({ ...values, organizationsId: loggedInUser?.orgs[0]?.id }),
-      setLoader,
-      (res: any) => {
-        const { message } = res;
-        getAllProjects();
-        setActiveProject(res.data.id);
-        showNotification("success", message);
-        router.push("/allLogs");
-      },
-      (errMessage) => {
-        showNotification("error", errMessage);
-      }
-    );
-  }
+  const createProjectRequestHandler = async (data: z.infer<typeof formSchema>) => {
+    await createProject(data as any);  
+    router.push("/allLogs");
+  };
 
   return (
     <BaseTemplate>
@@ -76,7 +60,7 @@ const Project = () => {
             </div>{" "}
             <form
               className="mt-5 sm:flex sm:items-center"
-              onSubmit={handleSubmit(createProject)}
+              onSubmit={handleSubmit(createProjectRequestHandler)}
             >
               <div className="w-full sm:max-w-xs">
                 <label htmlFor="email" className="sr-only">
