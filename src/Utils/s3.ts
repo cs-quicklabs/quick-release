@@ -7,7 +7,7 @@ const s3Client = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY_ID!,
   },
-  endpoint: process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+  endpoint: process.env.VERCEL_GIT_COMMIT_REF === "main"
     ? `https://${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`
     : undefined,
 });
