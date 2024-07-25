@@ -372,6 +372,8 @@ const ContentContainer = () => {
               } this change log?`
         }
         onClickCancel={() => setShowToggleArchivedModal(false)}
+        okBtnClassName={!archivedAt ? "bg-red-600 hover:bg-red-800" : undefined}
+        spinClassName={!archivedAt ? "!fill-red-600" : undefined}
         onClickOk={() =>
           toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)
         }
