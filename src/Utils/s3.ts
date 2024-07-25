@@ -15,8 +15,7 @@ const s3Client = new S3Client({
 const buildFilePublishUrl = (path: string) => {
   const region = process.env.NEXT_PUBLIC_AWS_S3_REGION;
   const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
-
-  return  process.env.VERCEL_GIT_COMMIT_REF === "main"
+  return process.env.VERCEL_GIT_COMMIT_REF === "main"
     ? `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`
     : `https://s3.${region}.amazonaws.com/${bucketName}/${path}`;
 };
@@ -34,7 +33,7 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
 
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
-    const uploadCommand = process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+    const uploadCommand = process.env.VERCEL_GIT_COMMIT_REF === "main"
       ? new PutObjectCommand({
           Bucket: bucketName,
           Key: fileKey,
