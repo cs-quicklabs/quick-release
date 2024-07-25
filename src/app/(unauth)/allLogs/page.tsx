@@ -17,7 +17,7 @@ import ScreenLoader from "@/components/ScreenLoader";
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
   const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading } = useProjectContext();
-  const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
+  const { isLoading: isFetchingChangeLogs, metaData, activeChangeLogId, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
   const [delayed, setDelayed] = useState(false);
 
@@ -51,17 +51,17 @@ export default function AllLogs() {
   const renderEmptyPage = () => {
     const emptyProps = activeProjectId
       ? {
-          title: "No Changelog added.",
-          description: "Get started by creating your first changelog post.",
-          btnText: "New Changelog",
-          navigateTo: "/changeLog/add",
-        }
+        title: "No Changelog added.",
+        description: "Get started by creating your first changelog post.",
+        btnText: "New Changelog",
+        navigateTo: "/changeLog/add",
+      }
       : {
-          title: "No Project added.",
-          description: "Get started by creating your first project.",
-          btnText: "New Project",
-          navigateTo: "/create-project",
-        };
+        title: "No Project added.",
+        description: "Get started by creating your first project.",
+        btnText: "New Project",
+        navigateTo: "/create-project",
+      };
 
     return (
       <BaseTemplate>
@@ -70,7 +70,7 @@ export default function AllLogs() {
     );
   };
 
-  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
+  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs) || !activeChangeLogId) {
     return delayed ? renderEmptyPage() : <ScreenLoader />;
   }
 
