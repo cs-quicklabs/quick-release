@@ -3,6 +3,7 @@ import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
@@ -30,6 +31,8 @@ export async function POST(req: NextRequest) {
         cuid: body.projectsId,
       },
     })
+
+    await roleChecker(user?.id!, project?.id!);
 
     const orgs = await db.organizations.findUnique({
       where: {
@@ -107,6 +110,7 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id;
+    const user = await db.users.findUnique({ where: { cuid: userId } });
 
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
@@ -129,8 +133,10 @@ export async function GET(req: NextRequest) {
       if (!project) {
         throw new ApiError(404, "Project not found");
       }
+      await roleChecker(user?.id!, project?.id!);
       query.projectsId = project.id;
     }
+    
 
     const status = searchParams.get("status");
     if (status) {

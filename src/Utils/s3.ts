@@ -34,7 +34,7 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
 
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
-    const uploadCommand = process.env.NODE_ENV === "production" || process.env.VERCEL_GIT_COMMIT_REF === "main"
+    const uploadCommand = process.env.VERCEL_GIT_COMMIT_REF === "main"
       ? new PutObjectCommand({
           Bucket: bucketName,
           Key: fileKey,
