@@ -15,7 +15,6 @@ const s3Client = new S3Client({
 const buildFilePublishUrl = (path: string) => {
   const region = process.env.NEXT_PUBLIC_AWS_S3_REGION;
   const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
-
   return process.env.VERCEL_GIT_COMMIT_REF === "main"
     ? `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`
     : `https://s3.${region}.amazonaws.com/${bucketName}/${path}`;
