@@ -7,12 +7,11 @@ import React, { useEffect, useState } from "react";
 import SideNav from "@/components/dashboard/SideNav";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
-import Loading from "@/components/Loading";
 import EmptyPage from "@/components/dashboard/EmptyPage";
 import ContentContainer from "@/components/dashboard/ContentContainer";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
-import ScreenLoader from "@/components/ScreenLoader";
+import ScreenLoader from "@/atoms/ScreenLoader";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);

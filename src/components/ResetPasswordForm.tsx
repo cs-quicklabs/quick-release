@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/atoms/button";
 import {
   FormField,
   FormItem,
@@ -7,9 +7,9 @@ import {
   FormControl,
   FormMessage,
   Form,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useToast } from "@/components/ui/use-toast";
+} from "@/atoms/form";
+import { Input } from "@/atoms/input";
+import { useToast } from "@/atoms/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { Loader } from "lucide-react";

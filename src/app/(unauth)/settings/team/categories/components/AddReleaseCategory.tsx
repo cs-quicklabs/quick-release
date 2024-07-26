@@ -1,6 +1,6 @@
 import { useReleaseCategoryContext } from "@/app/context/ReleaseCategoryContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/atoms/button";
+import { Input } from "@/atoms/input";
 import { IReleaseCategory } from "@/interfaces";
 import React, { useEffect, useRef, useState } from "react";
 import { SketchPicker } from "react-color";

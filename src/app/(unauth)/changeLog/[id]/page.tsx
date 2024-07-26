@@ -6,24 +6,21 @@ import {
 } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
-import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import NotFound from "@/app/not-found";
-import DatePicker from "@/components/DatePicker";
-import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
-import Loading from "@/components/Loading";
+import DatePicker from "@/atoms/DatePicker";
+import ListboxButton, { ListboxOption } from "@/atoms/ListboxButton";
 import ReleaseCategorySelectMenu from "@/components/ReleaseCategorySelectMenu";
 import ReleaseTagSelectMenu from "@/components/ReleaseTagSelectMenu";
-import ScreenLoader from "@/components/ScreenLoader";
-import TimePicker from "@/components/TimePicker";
-import { Button } from "@/components/ui/button";
+import ScreenLoader from "@/atoms/ScreenLoader";
+import TimePicker from "@/atoms/TimePicker";
+import { Button } from "@/atoms/button";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/atoms/card";
 import {
   Form,
   FormControl,
@@ -31,8 +28,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/atoms/form";
+import { Input } from "@/atoms/input";
 import {
   IReleaseCategory,
   IReleaseTag,
@@ -53,7 +50,7 @@ import React, {
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
 
-const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
   ssr: true,
 });
 

@@ -2,7 +2,7 @@
 
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
-import Loader from "./Loader";
+import Loader from "../atoms/Loader";
 import { handleTrancate, requestHandler, showNotification } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
@@ -25,7 +25,7 @@ import { useMemo, useState } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
-import CheckCircleIcon from "@/svg-icons/CheckCircleIcon";
+import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -212,7 +212,7 @@ export function Navbar() {
                           src={
                             (loggedInUser?.profilePicture as string)
                               ? (loggedInUser?.profilePicture as string)
-                              : "/images/userAvatar.png"
+                              : WEB_DETAILS?.avtar
                           }
                           alt={fullName}
                           width={32}
@@ -427,7 +427,7 @@ export function Navbar() {
                     src={
                       (loggedInUser?.profilePicture as string)
                         ? (loggedInUser?.profilePicture as string)
-                        : "/images/userAvatar.png"
+                        : WEB_DETAILS.avtar
                     }
                     alt={fullName}
                     width={40}

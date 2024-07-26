@@ -2,8 +2,7 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { resetPasswordRequest, verifyResetTokenRequest } from "@/fetchHandlers/authentication";
-import Loader from "@/components/Loader";
-import Loading from "@/components/Loading";
+import Loading from "@/atoms/Loading";
 import { AuthType } from "@/types";
 import { User } from "@/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";

@@ -4,8 +4,8 @@ import React, { useEffect, useRef } from "react";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { classNames } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import Spin from "@/components/Spin";
+import { Button } from "@/atoms/button";
+import Spin from "@/atoms/Spin";
 import ChangeLogListItem from "./ChangeLogListItem";
 import { InboxIcon } from "@heroicons/react/20/solid";
 

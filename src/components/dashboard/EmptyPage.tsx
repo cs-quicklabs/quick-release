@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { FolderPlusIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/atoms/button";
 
 type EmptyPagePropsType = {
   title?: string;

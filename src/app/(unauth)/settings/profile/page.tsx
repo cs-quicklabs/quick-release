@@ -3,7 +3,7 @@
 import { requestHandler, showNotification } from "@/Utils";
 import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
 import { useUserContext } from "@/app/context/UserContext";
-import Modal from "@/components/Modal";
+import Modal from "@/atoms/Modal";
 import SettingsNav from "@/components/SettingsNav";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { User } from "@/interfaces";
@@ -18,6 +18,7 @@ import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import Image from "next/image";
+import { WEB_DETAILS } from "@/Utils/constants";
 
 const Profile = () => {
   const router = useRouter();
@@ -229,7 +230,7 @@ const Profile = () => {
                               <Image
                                 alt="No Image"
                                 className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                                src="/images/userAvatar.png"
+                                src={WEB_DETAILS.avtar}
                                 height={20}
                                 width={20}
                               />
