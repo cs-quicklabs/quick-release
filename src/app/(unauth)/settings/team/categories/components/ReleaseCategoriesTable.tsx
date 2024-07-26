@@ -1,7 +1,7 @@
 import { useReleaseCategoryContext } from "@/app/context/ReleaseCategoryContext";
 import AlertModal from "@/components/AlertModal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/atoms/button";
+import { Input } from "@/atoms/input";
 import { IReleaseCategory } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";

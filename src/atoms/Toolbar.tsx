@@ -9,7 +9,7 @@ import {
   ListOrdered,
   Heading1,
 } from "lucide-react";
-import { Toggle } from "../components/ui/toggle";
+import { Toggle } from "./toggle";
 
 type Props = {
   editor: Editor | null;

@@ -1,7 +1,7 @@
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import AlertModal from "@/components/AlertModal";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/atoms/button";
+import { Input } from "@/atoms/input";
 import { IReleaseTag } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -76,10 +76,10 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr className="text-xs text-gray-700 bg-gray-50">
             <th className="px-6 py-3 w-full" scope="col">
-              Tag Name
+              {"Tag Name"}
             </th>
             <th className="px-6 py-3" scope="col">
-              Action
+              {"Action"}
             </th>
           </tr>
         </thead>
@@ -90,7 +90,7 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
                 className="px-6 py-4 whitespace-nowrap text-center"
                 colSpan={2}
               >
-                No tags found.
+                {"No tags found."}
               </td>
             </tr>
           )}
@@ -132,7 +132,7 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
                           handleEdit(releaseTag.id!);
                         }}
                       >
-                        Edit
+                        {"Edit"}
                       </Link>
                       <Link
                         href="#"
@@ -142,7 +142,7 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
                           onDelete(releaseTag.id!);
                         }}
                       >
-                        Delete
+                        {"Delete"}
                       </Link>
                     </>
                   ) : (

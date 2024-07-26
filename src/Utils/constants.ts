@@ -65,8 +65,9 @@ export const SelectUserDetailsFromDB = {
 export const WEB_DETAILS = {
   name: "Quick Release",
   description: "Manage your release notes better",
-  logo: "/icons/qr-logo1.svg",
-  favicon: "/icons/favicon.svg",
+  logo: "/logo.svg",
+  favicon: "/favicon.svg",
+  avtar: "/userAvatar.png",
 };
 export const ChangeLogIncludeDBQuery = {
   projects: { select: { cuid: true, name: true } },

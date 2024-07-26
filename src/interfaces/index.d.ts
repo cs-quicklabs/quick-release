@@ -32,9 +32,6 @@ export interface IReleaseCategoriesOption {
     resetTokenExpiry?: String;
     isActive: Boolean;
     isVerified: Boolean;
-    role: String;
-    organizationsId: String;
-    organizations?: organizations;
     projects: Project[];
     verificationToken?: String;
     verificationTokenExpiry?: String;

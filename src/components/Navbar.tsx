@@ -2,7 +2,7 @@
 
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
-import Loader from "./Loader";
+import Loader from "../atoms/Loader";
 import { handleTrancate, requestHandler, showNotification } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
@@ -25,7 +25,7 @@ import { useMemo, useState } from "react";
 import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
-import CheckCircleIcon from "@/svg-icons/CheckCircleIcon";
+import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -112,7 +112,7 @@ export function Navbar() {
                       height={40}
                     />
                     <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
-                      Quick Release
+                      {WEB_DETAILS.name}
                     </span>
                   </div>
                 </div>
@@ -184,14 +184,14 @@ export function Navbar() {
                     type="button"
                     className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                   >
-                    <span className="sr-only">View notifications</span>{" "}
+                    <span className="sr-only">{"View notifications"}</span>{" "}
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                   <Menu as="div" className="relative ml-3">
                     <div>
                       <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                         <span className="absolute -inset-0.5" />
-                        <span className="sr-only" id="Open-main-menu">Open main menu</span>
+                        <span className="sr-only" id="Open-main-menu">{"Open main menu"}</span>
                         {open ? (
                           <XMarkIcon
                             className="block h-6 w-6"
@@ -206,13 +206,13 @@ export function Navbar() {
                       </Disclosure.Button>
                       <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
-                        <span className="sr-only" id="open-user-menu">Open user menu</span>
+                        <span className="sr-only" id="open-user-menu">{"Open user menu"}</span>
                         <img
                           className="h-8 w-8 rounded-full"
                           src={
                             (loggedInUser?.profilePicture as string)
                               ? (loggedInUser?.profilePicture as string)
-                              : "/images/userAvatar.png"
+                              : WEB_DETAILS?.avtar
                           }
                           alt={fullName}
                           width={32}
@@ -265,7 +265,7 @@ export function Navbar() {
                             className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                           >
                             <PlusCircleIcon className="h-5 w-5 mr-2" />
-                            Add new project
+                            {"Add new project"}
                           </Link>
                         </Menu.Item>
 
@@ -346,7 +346,7 @@ export function Navbar() {
 
                             >
                               <div className="flex  items-center" id="profile-settings">
-                                Profile Settings
+                                {"Profile Settings"}
                               </div>
                             </Link>
                           )}
@@ -363,7 +363,7 @@ export function Navbar() {
                               }
                             >
                               <div className="flex  items-center" id="team-setting">
-                                Team Settings
+                                {"Team Settings"}
                               </div>
                             </Link>
                           )}
@@ -380,13 +380,13 @@ export function Navbar() {
                               {isLogOut ? (
                                 <div className="flex  items-center gap-4">
                                   <span className="text-sm font-[490] text-black">
-                                    Logout
+                                    {"Logout"}
                                   </span>
                                   <Loader width="w-6" color="border-black" />
                                 </div>
                               ) : (
                                 <div className="flex  items-center font-[490] text-black text-sm">
-                                  <span>Logout</span>
+                                  <span>{"Logout"}</span>
                                 </div>
                               )}
                             </a>
@@ -427,7 +427,7 @@ export function Navbar() {
                     src={
                       (loggedInUser?.profilePicture as string)
                         ? (loggedInUser?.profilePicture as string)
-                        : "/images/userAvatar.png"
+                        : WEB_DETAILS.avtar
                     }
                     alt={fullName}
                     width={40}
@@ -466,7 +466,7 @@ export function Navbar() {
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <div className="flex items-center">
-                    <Link href="/settings/profile/general">Profile Settings</Link>
+                    <Link href="/settings/profile/general">{"Profile Settings"}</Link>
                   </div>
                 </Link>
                 <Link
@@ -475,7 +475,7 @@ export function Navbar() {
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <div className="flex items-center">
-                    <Link href="/settings/team/tags">Team Settings</Link>
+                    <Link href="/settings/team/tags">{"Team Settings"}</Link>
                   </div>
                 </Link>
                 <a

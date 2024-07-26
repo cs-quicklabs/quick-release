@@ -6,7 +6,7 @@ import { requestHandler, showNotification } from "@/Utils";
 import { User } from "@/interfaces";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Loading from "@/components/Loading";
+import Loading from "@/atoms/Loading";
 
 type UserContextType = {
   isLoading: boolean;

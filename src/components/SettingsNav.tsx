@@ -1,8 +1,7 @@
 "use client";
-import ChangePasswordSVG from "@/svg-icons/ChangePasswordSVG";
-import EmailPrefrencesSVG from "@/svg-icons/EmailPrefrencesSVG";
-import LockIcon from "@/svg-icons/LockIcon";
-import ProfileSVG from "@/svg-icons/ProfileSVG";
+import ChangePasswordSVG from "@/assets/icons/ChangePasswordSVG";
+import LockIcon from "@/assets/icons/LockIcon";
+import ProfileSVG from "@/assets/icons/ProfileSVG";
 import { SwatchIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

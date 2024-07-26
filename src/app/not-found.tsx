@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/atoms/button";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { usePathname } from "next/navigation";
 

@@ -1,5 +1,5 @@
 import React from "react";
-import Spin from "./Spin";
+import Spin from "../atoms/Spin";
 
 
 

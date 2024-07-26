@@ -2,11 +2,8 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
-import Modal from "@/components/Modal";
-import SettingsNav from "@/components/SettingsNav";
+import Modal from "@/atoms/Modal";
 import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
-import { User } from "@/interfaces";
-import BaseTemplate from "@/templates/BaseTemplate";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -18,6 +15,7 @@ import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import Image from "next/image";
+import { WEB_DETAILS } from "@/Utils/constants";
 
 const Profile = () => {
   const router = useRouter();
@@ -166,13 +164,13 @@ const Profile = () => {
   };
 
   return (
-    <main className="max-w-xl pb-12 px-4 lg:col-span-6">
+    <main className="pb-12 px-4 col-span-12 lg:col-span-7">
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
-          Profile Settings
+          {"Profile Settings"}
         </h1>{" "}
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Change your personal profile settings
+          {"Change your personal profile settings"}
         </p>{" "}
         <form
           className="w-full mt-6"
@@ -183,7 +181,7 @@ const Profile = () => {
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               htmlFor="file_input"
             >
-              Upload avatar
+              {"Upload avatar"}
             </label>{" "}
             <div className="items-center w-full sm:flex">
               {imageUploadLoading ? (
@@ -228,7 +226,7 @@ const Profile = () => {
                         <Image
                           alt="No Image"
                           className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                          src="/images/userAvatar.png"
+                          src={WEB_DETAILS.avtar}
                           height={20}
                           width={20}
                         />
@@ -251,7 +249,7 @@ const Profile = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              First Name
+              {"First Name"}
             </label>{" "}
             <input
               type="text"
@@ -270,7 +268,7 @@ const Profile = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Last Name
+              {"Last Name"}
             </label>{" "}
             <input
               type="text"
@@ -289,7 +287,7 @@ const Profile = () => {
               htmlFor="password"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Email
+              {"Email"}
             </label>{" "}
             <input
               type="email"
@@ -305,7 +303,7 @@ const Profile = () => {
           </div>{" "}
           <button
             type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             {loading.profileLoading ? (
               <div className="flex items-center justify-center gap-4">
@@ -333,7 +331,7 @@ const Profile = () => {
             }}
             loading={loading.profileLoading}
           >
-            <div>Are you sure you want to change your email address?</div>
+            <div>{"Are you sure you want to change your email address?"}</div>
           </Modal>
         ) : null}
         {isOpenImageModal ? (

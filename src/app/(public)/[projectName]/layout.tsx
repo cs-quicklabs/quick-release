@@ -7,8 +7,8 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="contents h-full overflow-hidden">
-      <div className={`sticky top-0 bg-white z-10`}>
+    <div className="contents overflow-hidden">
+      <div className={`sticky top-0 bg-gray-50 z-10`}>
         <NavPublic />
       </div>
       <div>{children}</div>
