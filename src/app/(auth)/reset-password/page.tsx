@@ -115,7 +115,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Set New Password
+                {"Set New Password"}
               </h1>{" "}
               <form
                 className="space-y-4 md:space-y-6"
@@ -126,7 +126,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    New Password
+                    {"New Password"}
                   </label>{" "}
                   <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                     <input
@@ -159,7 +159,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                     htmlFor="confirm-password"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Confirm password
+                    {"Confirm password"}
                   </label>{" "}
                   <input
                     type="password"

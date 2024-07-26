@@ -59,7 +59,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
   const scheduledTime = changelog.scheduledTime ? moment(changelog.scheduledTime).format("MMMM DD, YYYY") : "";
 
   return (
-    <main className="max-w-2xl mx-auto p-4">
+    <main className="max-w-4xl mx-auto p-4">
       <Link href={`/${projectName}/changelogs`}>
         <button
           className="mb-2 inline-flex items-center gap-x-1.5 shadow-sm px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
@@ -69,7 +69,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
         >
           <ArrowLeftIcon className="w-6 h-6"/>
 
-          See All Changelogs
+          {"See All Changelogs"}
         </button>
       </Link>
 
@@ -79,7 +79,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
             {title}
           </h2>
 
-          <p className="mt-1 truncate text-sm text-gray-500">Published on {scheduledTime} as Version {releaseVersion}</p>
+          <p className="mt-1 truncate text-sm text-gray-500">{`Published on ${scheduledTime} as Version ${releaseVersion}`}</p>
 
           <div className="mt-1">
             {releaseCategories.map(({ value, label }) => (

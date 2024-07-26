@@ -234,7 +234,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-4xl px-4 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -257,7 +257,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>{"Title"}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -276,7 +276,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{"Description"}</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
@@ -297,7 +297,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Version</FormLabel>
+                        <FormLabel>{"Release Version"}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"
@@ -310,13 +310,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
 
-                <div className="grid gap-2 max-w-2xl">
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="releaseCategories"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Categories (Optional)</FormLabel>
+                        <FormLabel>{"Release Categories (Optional)"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseCategories"
@@ -343,13 +343,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
 
-                <div className="grid gap-2 max-w-2xl">
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="releaseTags"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Tags (Optional)</FormLabel>
+                        <FormLabel>{"Release Tags (Optional)"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseTags"
@@ -383,7 +383,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                       name="scheduledTime"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Schedule Release On</FormLabel>
+                          <FormLabel>{"Schedule Release On"}</FormLabel>
 
                           <div className="grid gap-2 grid-cols-2">
                             <FormControl>
@@ -421,7 +421,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   type="button"
                   onClick={router.back}
                 >
-                  Cancel
+                  {"Cancel"}
                 </Button>
 
                 <ListboxButton

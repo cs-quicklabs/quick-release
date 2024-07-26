@@ -62,8 +62,6 @@ const RichTextEditor = ({
     }
   }), [onModal]);
 
-  const style = useMemo(() => ({ fontSize: "14px" }), []);
-
   return (
     <ReactQuill
       theme="snow"

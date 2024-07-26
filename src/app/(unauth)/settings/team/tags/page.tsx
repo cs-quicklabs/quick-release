@@ -12,12 +12,11 @@ const TagsPage = () => {
   >(null);
 
   return (
-    <main className="h-full overflow-y-auto max-w-2xl pb-12 px-4 lg:col-span-6 no-scrollbar">
-      <h1 className="text-lg font-semibold">Tags</h1>
+    <main className="h-full overflow-y-auto max-w-3xl pb-12 px-4 lg:col-span-7 no-scrollbar">
+      <h1 className="text-lg font-semibold">{"Tags"}</h1>
 
       <p className="text-gray-500 text-sm">
-        Tags can be assigned to changelogs or posts to define the categories
-        they belong to.
+        {"Tags can be assigned to changelogs or posts to define the categories they belong to."}
       </p>
 
       <AddReleaseTag

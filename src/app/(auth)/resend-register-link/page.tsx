@@ -65,7 +65,7 @@ const ResendRegisterLink = () => {
       <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
           <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-            Resend Verification Email
+            {"Resend Verification Email"}
           </h1>{" "}
           <form
             className="space-y-4 md:space-y-6"
@@ -76,7 +76,7 @@ const ResendRegisterLink = () => {
                 htmlFor="email"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Your email
+                {"Your email"}
               </label>{" "}
               <input
                 type="email"
@@ -109,12 +109,12 @@ const ResendRegisterLink = () => {
               )}{" "}
             </button>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-              Login to your account{" "}
+              {"Login to your account "}
               <Link
                 href="/"
                 className="font-medium text-primary-600 hover:underline dark:text-primary-500"
               >
-                Log In
+                {"Log In"}
               </Link>
             </p>
           </form>

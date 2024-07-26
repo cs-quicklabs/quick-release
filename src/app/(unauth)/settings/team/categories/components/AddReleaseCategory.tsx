@@ -3,7 +3,6 @@ import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
 import { IReleaseCategory } from "@/interfaces";
 import React, { useEffect, useRef, useState } from "react";
-import { SketchPicker } from "react-color";
 
 type AddReleaseCategoryProps = {
   selectedReleaseCategoryId: number | null;
