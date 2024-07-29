@@ -14,6 +14,12 @@ export const POST = async (request: Request) => {
         },
       });
 
+      const org = await db.organizations.findFirst({
+        where: {
+          createdById: user?.id,
+        },
+      });
+
       if (!user) {
         throw new ApiError(400, "Link is expired");
       }
@@ -36,6 +42,55 @@ export const POST = async (request: Request) => {
           isVerified: true,
         },
       });
+
+      const releaseTags = [
+        { name: 'Web', code: 'web' },
+        { name: 'Android', code: 'android' },
+        { name: 'IOS', code: 'ios' },
+      ];
+    
+      const releaseCategories = [
+        { name: 'New', code: 'new' },
+        { name: 'Improvement', code: 'improvement' },
+        { name: 'Bug Fix', code: 'bug_fix' },
+        { name: 'Maintenance', code: 'maintenance' },
+        { name: 'Refactor', code: 'refactor' },
+      ];
+
+      const existingReleaseTags = await db.releaseTags.findMany({
+        where: {
+          organizationsId: org?.id,
+        },
+      });
+
+      const existingReleaseCategories = await db.releaseCategories.findMany({
+        where: {
+          organizationsId: org?.id,
+        },
+      });
+
+      if(existingReleaseTags.length === 0 && existingReleaseCategories.length === 0){
+        for (const tag of releaseTags) {
+          await db.releaseTags.create({
+            data: {
+              name: tag.name,
+              code: tag.code,
+              organizationsId: org?.id,
+            },
+          });
+        }
+  
+        for (const category of releaseCategories) {
+          await db.releaseCategories.create({
+            data: {
+              name: category.name,
+              code: category.code,
+              organizationsId: org?.id,
+            },
+          });
+        }
+      }
+      
       return NextResponse.json(
         new ApiResponse(200, null, "Your account has been verified"),
       )

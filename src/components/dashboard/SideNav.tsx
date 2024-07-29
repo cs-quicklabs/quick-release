@@ -68,32 +68,15 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     const newFilter: FilterType = { projectId: activeProjectId! };
     if (status === "archived") {
       newFilter.isArchived = true;
-      newFilter.status = undefined;
-      newFilter.deletedAt = undefined;
-    }
-    else if (status === "deleted") {
-      newFilter.isDeleted = true;
-      newFilter.status = undefined;
-      newFilter.archivedAt = undefined;
+      newFilter.status = null;
     }
      else {
       newFilter.status = status;
-      newFilter.isArchived = undefined;
-      newFilter.isDeleted = undefined;
+      newFilter.isArchived = null;
     }
     setFilter(newFilter);
     getAllChangeLogs(newFilter);
   };
-
-  useEffect(() => {
-    onSelectStatus(filter.status ? filter.status : filter.isArchived ? "archived" : null);
-  }, [activeChangeLog?.archivedAt]);
-
-  useEffect(() => {
-    if(activeChangeLog?.deletedAt) {
-      onSelectStatus(filter.status ? filter.status : filter.isDeleted ? "deleted" : null);
-    }
-  }, [activeChangeLog?.deletedAt]);
 
   // function to handle clear filter
   const onClearFilter = () => {

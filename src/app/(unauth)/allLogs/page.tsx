@@ -16,9 +16,8 @@ import ScreenLoader from "@/atoms/ScreenLoader";
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
   const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading } = useProjectContext();
-  const { isLoading: isFetchingChangeLogs, metaData, activeChangeLogId, list: changeLogsList, getAllChangeLogs } = useChangeLogContext();
+  const { isLoading: isFetchingChangeLogs, metaData, activeChangeLogId, list: changeLogs, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
-  const [delayed, setDelayed] = useState(false);
 
   useEffect(() => {
     if (!activeProjectId) {
@@ -32,14 +31,6 @@ export default function AllLogs() {
       getAllChangeLogs(query);
     }
   }, [activeProjectId]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDelayed(true);
-    }, 500); // Adjust the delay time as needed
-
-    return () => clearTimeout(timer);
-  }, []);
 
   // show loading if fetching current active project or change logs
   if ((!activeProjectId && loading) || (!metaData?.hasProjectChangeLogs && isFetchingChangeLogs) || setActiveProjectLoading) {
@@ -70,10 +61,8 @@ export default function AllLogs() {
 
   const prevQuery = metaData?.prevQuery;
 
-  console.log(prevQuery)
-
-  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs) || (!prevQuery?.isDeleted && !prevQuery?.status && !prevQuery?.isArchived && !activeChangeLogId)) {
-    return delayed ? renderEmptyPage() : <ScreenLoader />;
+  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs) || (!changeLogs && !activeChangeLogId && !isFetchingChangeLogs)) {
+    return renderEmptyPage();
   }
 
 
