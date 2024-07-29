@@ -252,7 +252,7 @@ export function Navbar() {
                                       </p>
                                     </Tooltip>
                                   ) : (
-                                    <p className="font-medium">{fullName}</p>
+                                    <p className="font-medium">{email}</p>
                                   )}
                                 </div>
                               </div>
