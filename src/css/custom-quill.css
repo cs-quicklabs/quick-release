@@ -1,6 +1,6 @@
 .ql-editor{
     font-size: 14px !important;
 }
-.ql-container{
-    min-height: 26rem !important;
+.ql-container > div{
+    min-height: 30rem !important;
 }

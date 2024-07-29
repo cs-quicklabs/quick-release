@@ -16,7 +16,7 @@ import ScreenLoader from "@/atoms/ScreenLoader";
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
   const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading } = useProjectContext();
-  const { isLoading: isFetchingChangeLogs, metaData, getAllChangeLogs } = useChangeLogContext();
+  const { isLoading: isFetchingChangeLogs, metaData, activeChangeLogId, list: changeLogsList, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
   const [delayed, setDelayed] = useState(false);
 
@@ -46,7 +46,6 @@ export default function AllLogs() {
     return <ScreenLoader />;
   }
 
-
   const renderEmptyPage = () => {
     const emptyProps = activeProjectId
       ? {
@@ -69,7 +68,11 @@ export default function AllLogs() {
     );
   };
 
-  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs)) {
+  const prevQuery = metaData?.prevQuery;
+
+  console.log(prevQuery)
+
+  if ((!activeProjectId && !loading) || (!metaData?.hasProjectChangeLogs && !isFetchingChangeLogs) || (!prevQuery?.isDeleted && !prevQuery?.status && !prevQuery?.isArchived && !activeChangeLogId)) {
     return delayed ? renderEmptyPage() : <ScreenLoader />;
   }
 
