@@ -234,7 +234,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-4xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-5xl px-4 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
