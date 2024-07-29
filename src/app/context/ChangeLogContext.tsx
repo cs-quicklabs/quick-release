@@ -288,6 +288,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
           [changeLogId]: data,
         }));
         showNotification("success", message);
+        getAllChangeLogs(metaData?.prevQuery!);
       },
       (errMessage) => {
         showNotification("error", errMessage);

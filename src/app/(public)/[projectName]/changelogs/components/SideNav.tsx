@@ -88,7 +88,7 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories =
     <aside className="flex lg:flex-col lg:justify-start gap-4 py-4 px-2 sm:px-4 lg:col-span-3 lg:py-0 lg:px-0">
       <div className="px-2 py-2 sm:p-4">
         <label className="text-base font-semibold text-gray-900">{"Select Categories"}</label>
-        <p className="text-sm text-gray-500">{"Chose Release Categories"}</p>
+        <p className="text-sm text-gray-500">{"Choose Release Categories"}</p>
 
         <fieldset className="mt-4">
           <div className="space-y-2">
@@ -125,7 +125,7 @@ const SideNav: React.FC<SideNavProps> = ({ releaseTags = [], releaseCategories =
         !!releaseTags.length &&
         <div className="px-2 py-2 sm:p-4">
           <label className="text-base font-semibold text-gray-900">{"Select Release tags"}</label>
-          <p className="text-sm text-gray-500">{"Chose Release tags"}</p>
+          <p className="text-sm text-gray-500">{"Choose Release tags"}</p>
 
           <fieldset className="mt-4">
             <div className="space-y-2">
