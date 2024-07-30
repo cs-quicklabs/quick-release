@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
+import { useProjectContext } from "@/app/context/ProjectContext";
 
 const Profile = () => {
   const router = useRouter();
@@ -26,6 +27,9 @@ const Profile = () => {
   const [loading, setLoading] = useState({
     profileLoading: false,
   });
+  const [loader, setLoader] = useState(false);
+
+  const { activeProjectId, getActiveProject } = useProjectContext();
   const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
     firstName: z.string().trim().min(1, { message: "Required" }).max(50, {
@@ -71,6 +75,12 @@ const Profile = () => {
 
     setDefaultValues();
   }, [loggedInUser]);
+
+  useEffect(() => {
+    if(!activeProjectId) {
+      getActiveProject(setLoader);
+    }
+  }, [activeProjectId]);
 
   const formValues = getValues();
 
