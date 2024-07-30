@@ -42,6 +42,12 @@ const RichTextEditor = ({
           return reject(errMessage);
         }
 
+        if(file.size > 1024 * 1024 * 3) {
+          const errMessage = "File size should be less than 3 MB";
+          showNotification("error", errMessage);
+          return reject(errMessage);
+        }
+
         const formData = new FormData();
         formData.append("file", file);
         formData.append("onModal", onModal);
