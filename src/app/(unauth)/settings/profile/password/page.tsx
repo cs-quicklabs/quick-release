@@ -66,13 +66,13 @@ const page = () => {
   };
 
   return (
-    <main className="max-w-xl pb-12 px-4 lg:col-span-6">
+    <main className="pb-12 px-4 col-span-12 lg:col-span-7">
       <div>
       <h1 className="text-lg font-semibold dark:text-white" id="change-password">
-       Change Password
+       {"Change Password"}
         </h1>{" "}
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          Please change your password.
+          {"Please change your password."}
         </p>{" "}
         <form className="w-full mt-6" onSubmit={handleSubmit(updatePassword)}>
           <div className="mb-5 mt-6">
@@ -80,7 +80,7 @@ const page = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Old Password
+              {"Old Password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
               <input
@@ -112,7 +112,7 @@ const page = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              New Password
+              {"New Password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
               <input
@@ -144,7 +144,7 @@ const page = () => {
               htmlFor="••••••••"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              Confirm password
+              {"Confirm password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
               <input

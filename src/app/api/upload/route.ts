@@ -7,6 +7,8 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 const allowedModals = ["ChangeLogs", "ProfilePictures"];
+const MAX_FILE_SIZE_MB = 3;
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
 export async function POST(req: NextRequest) {
   return asyncHandler(async () => {
@@ -30,13 +32,17 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Invalid file data");
     }
 
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      throw new ApiError(400, `File size should not exceed ${MAX_FILE_SIZE_MB} MB`);
+    }
+
     if (typeof onModal !== "string" || !allowedModals.includes(onModal)) {
       throw new ApiError(400, `Invalid modal name: ${onModal}`);
     }
 
     const uploadedFileDetails = await uploadFileToS3(file, onModal);
     return NextResponse.json(
-      new ApiResponse(201, uploadedFileDetails, "File Uploaded successfully")
+      new ApiResponse(201, uploadedFileDetails, "File uploaded successfully")
     );
   });
 }

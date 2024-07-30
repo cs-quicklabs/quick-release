@@ -7,8 +7,8 @@ import { FunnelIcon, InboxIcon } from "@heroicons/react/20/solid";
 
 import Link from "next/link";
 import { ChangeLogsStatus } from "@/Utils/constants";
-import Spin from "@/components/Spin";
-import { Button } from "../ui/button";
+import Spin from "@/atoms/Spin";
+import { Button } from "../../atoms/button";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import { classNames } from "@/lib/utils";
 
@@ -68,19 +68,15 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     const newFilter: FilterType = { projectId: activeProjectId! };
     if (status === "archived") {
       newFilter.isArchived = true;
-      newFilter.status = undefined;
-    } else {
-      newFilter.isArchived = undefined;
-      newFilter.status = status;
+      newFilter.status = null;
     }
-
+     else {
+      newFilter.status = status;
+      newFilter.isArchived = null;
+    }
     setFilter(newFilter);
     getAllChangeLogs(newFilter);
   };
-
-  useEffect(() => {
-    onSelectStatus(filter.status ? filter.status : filter.isArchived ? "archived" : null);
-  }, [activeChangeLog?.archivedAt]);
 
   // function to handle clear filter
   const onClearFilter = () => {

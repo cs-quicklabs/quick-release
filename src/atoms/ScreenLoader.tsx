@@ -1,5 +1,5 @@
-import BaseTemplate from "@/templates/BaseTemplate";
 import Loading from "./Loading";
+import BaseTemplate from "@/templates/BaseTemplate";
 
 export default function ScreenLoader() {
     return (

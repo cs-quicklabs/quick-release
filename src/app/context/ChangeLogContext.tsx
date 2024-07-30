@@ -288,6 +288,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
           [changeLogId]: data,
         }));
         showNotification("success", message);
+        getAllChangeLogs(metaData?.prevQuery!);
       },
       (errMessage) => {
         showNotification("error", errMessage);
@@ -311,6 +312,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         setList(prevList => prevList.filter(id => id !== changeLogId));
         setMetaData(prevMetaData => ({
           ...prevMetaData,
+          prevQuery: {
+            ...prevMetaData.prevQuery,
+            deletedAt: new Date().toISOString()
+          },
           total: (prevMetaData?.total || 1) - 1
         }));
         setActiveChangeLogId(null);
