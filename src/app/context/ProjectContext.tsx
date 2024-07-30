@@ -5,6 +5,7 @@ import { createProjectRequest, getAllProjectsRequest, getOneActiveProjectRequest
 import { requestHandler, showNotification } from "@/Utils";
 import { Project } from "@/interfaces";
 import { useUserContext } from "./UserContext";
+import { useRouter } from "next/navigation";
 
 type ProjectMapType = {
   [key: string]: Project | null;
@@ -49,6 +50,7 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [list, setList] = useState<string[]>([]);
   const [meta, setMeta] = useState({});
+  const router = useRouter();
 
   const { loggedInUser } = useUserContext();
 
@@ -67,6 +69,7 @@ const ProjectProvider: React.FC<ProviderProps> = ({ children }) => {
         setList(prevList => [projectId, ...prevList]);
         setActiveProject(projectId);
         showNotification("success", message);
+        router.push(`/allLogs`);
       },
       (errorMsg) => {
         console.log("error:", errorMsg);

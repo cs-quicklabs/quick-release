@@ -40,8 +40,7 @@ const Project = () => {
   });
 
   const createProjectRequestHandler = async (data: z.infer<typeof formSchema>) => {
-    await createProject(data as any);  
-    router.push("/allLogs");
+    createProject(data as any);  
   };
 
   return (
