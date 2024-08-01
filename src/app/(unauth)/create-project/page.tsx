@@ -15,9 +15,7 @@ import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/p
 
 const Project = () => {
   const router = useRouter();
-  const [loader, setLoader] = useState(false);
-  const { getAllProjects, setActiveProject } = useProjectContext();
-  const { loggedInUser } = useUserContext();
+  const { createProject, isLoading: loader } = useProjectContext();
   const formSchema = z.object({
     projects: z
       .string()
@@ -41,36 +39,9 @@ const Project = () => {
     },
   });
 
-  async function createProject(values: z.infer<typeof formSchema>, e: any) {
-    toast.dismiss();
-    e.preventDefault();
-    await requestHandler(
-      async () => await createProjectRequest({ ...values, organizationsId: loggedInUser?.orgs[0]?.id }),
-      setLoader,
-      (res: any) => {
-        const { message } = res;
-        getAllProjects();
-        setActiveProject(res.data.id);
-        showNotification("success", message);
-        router.push("/allLogs");
-      },
-      (errMessage) => {
-        showNotification("error", errMessage);
-      }
-    );
-  }
-
-  const activeProject = async (projectId: string) => {
-    await requestHandler(
-      async () => await setActiveProjectRequest(projectId),
-      null,
-      (res: any) => {
-        setActiveProject(projectId);
-      },
-      (errMessage: any) => {
-        showNotification("error", errMessage);
-      }
-    )
+  const createProjectRequestHandler = async (data: z.infer<typeof formSchema>) => {
+    await createProject(data as any);  
+    router.push("/allLogs");
   };
 
   return (
@@ -79,25 +50,24 @@ const Project = () => {
         <div className=" shadow sm:rounded-lg bg-white">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-base font-semibold leading-6 text-gray-900">
-              Create Your Project
+              {"Create Your Project"}
             </h3>{" "}
             <div className="mt-2 w-full text-sm text-gray-500">
               <p>
-                Please select a name your team. This will be used as slug to
-                create a URL for your product as well.
+                {"Please select a name your team. This will be used as slug to create a URL for your product as well."}
               </p>
             </div>{" "}
             <form
               className="mt-5 sm:flex sm:items-center"
-              onSubmit={handleSubmit(createProject)}
+              onSubmit={handleSubmit(createProjectRequestHandler)}
             >
               <div className="w-full sm:max-w-xs">
                 <label htmlFor="email" className="sr-only">
-                  Email
+                  {"Email"}
                 </label>{" "}
                 <div className="mt-1 flex rounded-md shadow-sm">
                   <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
-                    release.quicklabs.in/
+                    {"release.quicklabs.in/"}
                   </span>{" "}
                   <input
                     type="text"

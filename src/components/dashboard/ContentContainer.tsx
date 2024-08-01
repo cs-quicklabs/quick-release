@@ -3,14 +3,14 @@
 import AlertModal from "../AlertModal";
 import { ChangeLogsStatus } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
-import Alert, { AlertPropsType } from "@/components/Alert";
-import { Button } from "@/components/ui/button";
+import Alert, { AlertPropsType } from "@/atoms/Alert";
+import { Button } from "@/atoms/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/atoms/dropdown-menu";
 import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 import { classNames } from "@/lib/utils";
 import {
@@ -372,6 +372,8 @@ const ContentContainer = () => {
               } this change log?`
         }
         onClickCancel={() => setShowToggleArchivedModal(false)}
+        okBtnClassName={!archivedAt ? "bg-red-600 hover:bg-red-800" : undefined}
+        spinClassName={!archivedAt ? "!fill-red-600" : undefined}
         onClickOk={() =>
           toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)
         }

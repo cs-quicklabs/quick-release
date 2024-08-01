@@ -24,7 +24,6 @@ exports.releaseTags = class releaseTags {
   async createReleaseTag() {
     await this.navigateToTeamSetting();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
-    console.log(numeric);
     await this.tagNameInput.fill(this.tagname + numeric);
     await this.saveButton.click();
     await expect(this.toastMessage).toHaveText(

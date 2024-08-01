@@ -31,7 +31,6 @@ exports.releaseCategory = class releaseCategory {
   async createCategory() {
     await this.navigateToCategories();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
-    console.log(numeric);
     await this.categoryNameInput.fill(this.categoryName + numeric);
     await this.saveButton.click();
     await expect(this.toastMessage).toHaveText(

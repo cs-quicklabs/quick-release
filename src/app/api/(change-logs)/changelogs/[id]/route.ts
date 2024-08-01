@@ -3,6 +3,7 @@ import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { computeChangeLog } from "@/lib/changeLog";
 import { db } from "@/lib/db";
@@ -22,8 +23,8 @@ export async function GET(
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id!;
-
-    if (!userId) {
+    const user = await db.users.findUnique({ where: { cuid: userId } });
+    if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
     const { id } = params;
@@ -36,6 +37,10 @@ export async function GET(
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
+
+    const projectId = changeLog?.projectsId;
+
+    await roleChecker(user?.id, projectId!);
 
     return NextResponse.json(
       new ApiResponse(
@@ -71,6 +76,8 @@ export async function DELETE(
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
+    const projectId = changeLog?.projectsId;
+    await roleChecker(user?.id!, projectId!);
 
     const deleteChangeLog = await db.changelogs.update({
       where: { cuid: id },
@@ -103,6 +110,20 @@ export async function PUT(
     if (!user) {
       throw new ApiError(401, "Unauthorized request");
     }
+
+    const changeLog = await db.changelogs.findFirst({
+      where: {
+        cuid: id,
+        deletedAt: null,
+      },
+    });
+
+    if (!changeLog) {
+      throw new ApiError(404, "Change log not found");
+    }
+
+    const projectId = changeLog?.projectsId;
+    await roleChecker(user?.id!, projectId!);
 
     const body = await req.json();
     if (!body.title || !body.description || !body.releaseVersion) {
@@ -139,17 +160,6 @@ export async function PUT(
 
     if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
       throw new ApiError(400, "Release tag is invalid");
-    }
-
-    const changeLog = await db.changelogs.findFirst({
-      where: {
-        cuid: id,
-        deletedAt: null,
-      },
-    });
-
-    if (!changeLog) {
-      throw new ApiError(404, "Change log not found");
     }
 
 

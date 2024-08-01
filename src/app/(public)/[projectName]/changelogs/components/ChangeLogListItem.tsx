@@ -32,7 +32,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   const publicLink = `/${projects?.name}/changelogs/${id}`;
 
   return (
-    <main className="max-w-2xl border-b border-gray-100">
+    <main className="max-w-3xl border-b border-gray-100">
       <div className="md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <Link href={publicLink}>
@@ -42,7 +42,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
           </Link>
 
           <p className="mt-1 truncate text-sm text-gray-500">
-            {fullName} published on {scheduledTime} as Version {releaseVersion}
+            {`${fullName} published on ${scheduledTime} as Version ${releaseVersion}`}
           </p>
 
           <div className="mt-1">
@@ -73,7 +73,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
             className="text-sm"
             href={publicLink}
           >
-            Read More <span aria-hidden="true">→</span>
+            {"Read More "}<span aria-hidden="true">→</span>
           </Link>
         }
 

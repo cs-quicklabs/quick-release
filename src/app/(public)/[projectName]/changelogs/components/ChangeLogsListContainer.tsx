@@ -4,8 +4,8 @@ import React, { useEffect, useRef } from "react";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { classNames } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import Spin from "@/components/Spin";
+import { Button } from "@/atoms/button";
+import Spin from "@/atoms/Spin";
 import ChangeLogListItem from "./ChangeLogListItem";
 import { InboxIcon } from "@heroicons/react/20/solid";
 
@@ -34,7 +34,7 @@ const ChangeLogsListContainer = () => {
           <div className="text-center">
             <InboxIcon className="mx-auto h-12 w-12 text-gray-400" />
 
-            <h3 className="mt-2 text-sm font-semibold text-gray-900">No records found</h3>
+            <h3 className="mt-2 text-sm font-semibold text-gray-900">{"No records found"}</h3>
           </div>
         </main>
       }
@@ -60,7 +60,7 @@ const ChangeLogsListContainer = () => {
           className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           onClick={loadMorePublicChangeLogs}
         >
-          Load More
+          {"Load More"}
         </Button>
       </div>
 
@@ -72,7 +72,7 @@ const ChangeLogsListContainer = () => {
           <div className="flex items-center justify-center text-xl">
             <Spin className="h-6 w-6 mr-2" />
 
-            <span>Loading...</span>
+            <span>{"Loading..."}</span>
           </div>
         </div>
       )}

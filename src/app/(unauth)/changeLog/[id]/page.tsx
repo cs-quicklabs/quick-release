@@ -6,22 +6,21 @@ import {
 } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
-import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
-import DatePicker from "@/components/DatePicker";
-import ListboxButton, { ListboxOption } from "@/components/ListboxButton";
-import Loading from "@/components/Loading";
+import NotFound from "@/app/not-found";
+import DatePicker from "@/atoms/DatePicker";
+import ListboxButton, { ListboxOption } from "@/atoms/ListboxButton";
 import ReleaseCategorySelectMenu from "@/components/ReleaseCategorySelectMenu";
 import ReleaseTagSelectMenu from "@/components/ReleaseTagSelectMenu";
-import TimePicker from "@/components/TimePicker";
-import { Button } from "@/components/ui/button";
+import ScreenLoader from "@/atoms/ScreenLoader";
+import TimePicker from "@/atoms/TimePicker";
+import { Button } from "@/atoms/button";
 import {
-  Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/atoms/card";
 import {
   Form,
   FormControl,
@@ -29,36 +28,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@/atoms/form";
+import { Input } from "@/atoms/input";
 import {
-  IReleaseCategoriesOption,
   IReleaseCategory,
   IReleaseTag,
-  ReleaseTagsOption,
 } from "@/interfaces";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { ChangeLogType, FormChangeLogPost } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, {
-  use,
   useCallback,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-// import { useMutation } from "react-query";
-import Select, { GroupBase, MenuProps, components } from "react-select";
 import * as z from "zod";
 
-const RichTextEditor = dynamic(() => import("@/components/RichTextEditor"), {
+const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
   ssr: true,
 });
 
@@ -69,19 +61,17 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   });
 
   const router = useRouter();
-  const { map: releaseTagMap, list: releaseTagIds } = useReleaseTagContext();
   const {
     error,
     createChangeLog,
     getChangeLog,
     updateChangeLog,
-    getAllChangeLogs,
-    list: changeLogsList,
     map: changeLogMap,
   } = useChangeLogContext();
   const [isSaving, setIsSaving] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchChangeLogLoading, setFetchChangeLogLoading] = useState(false);
   const actions: ListboxOption[] = useMemo(
     () => Object.values(ChangeLogsReleaseActions),
     []
@@ -93,12 +83,8 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
   const { activeProjectId, getActiveProject } = useProjectContext();
 
   const fetchChangeLog = useCallback(async () => {
-    getAllChangeLogs({ projectId: activeProjectId! });
-  }, [activeProjectId]);
-
-  const changelog = useMemo(() => {
-    return changeLogMap[params.id] || null;
-  }, [changeLogMap[params.id]]);
+    await getChangeLog(params.id, setFetchChangeLogLoading);
+  }, [params.id]);
 
   useEffect(() => {
     if (params.id !== "add") {
@@ -107,16 +93,10 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     getActiveProject(setIsLoading);
   }, [params.id]);
 
-  useEffect(() => {
-    if (params.id !== "add" && changeLogsList && changeLogsList.length > 0) {
-      const changeLogId = changeLogsList.find(
-        (changeLog) => changeLog === params.id
-      );
-      if (!changeLogId) {
-        router.push("/error");
-      }
-    }
-  }, [changeLogsList]);
+  const changelog = useMemo(() => {
+    return changeLogMap[params.id] || null;
+  }, [changeLogMap[params.id]]);
+
 
   const formSchema = z.object({
     title: z.string().trim().min(1, { message: "Required" }).max(50, {
@@ -237,20 +217,24 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     };
   }, [isSaving, loading]);
 
-  if (!changelog && loading && params.id !== "add") {
+  if (!changelog && loading && params.id !== "add" && fetchChangeLogLoading && !isLoading) {
+    return (
+      <ScreenLoader />
+    );
+  }
+
+  if(!changelog && params.id !== "add" && !fetchChangeLogLoading && !isLoading) {
     return (
       <BaseTemplate>
-        <div className="w-full h-full flex items-center justify-center">
-          <Loading />
-        </div>
+        <NotFound />
       </BaseTemplate>
-    );
+    )
   }
 
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-5xl px-4 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -273,7 +257,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
+                        <FormLabel>{"Title"}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -292,7 +276,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>Description</FormLabel>
+                        <FormLabel>{"Description"}</FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
@@ -313,7 +297,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Version</FormLabel>
+                        <FormLabel>{"Release Version"}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"
@@ -326,13 +310,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
 
-                <div className="grid gap-2 max-w-2xl">
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="releaseCategories"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Categories (Optional)</FormLabel>
+                        <FormLabel>{"Release Categories (Optional)"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseCategories"
@@ -359,13 +343,13 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   />
                 </div>
 
-                <div className="grid gap-2 max-w-2xl">
+                <div className="grid gap-2">
                   <FormField
                     control={form.control}
                     name="releaseTags"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Release Tags (Optional)</FormLabel>
+                        <FormLabel>{"Release Tags (Optional)"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseTags"
@@ -399,7 +383,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                       name="scheduledTime"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Schedule Release On</FormLabel>
+                          <FormLabel>{"Schedule Release On"}</FormLabel>
 
                           <div className="grid gap-2 grid-cols-2">
                             <FormControl>
@@ -437,7 +421,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                   type="button"
                   onClick={router.back}
                 >
-                  Cancel
+                  {"Cancel"}
                 </Button>
 
                 <ListboxButton
@@ -461,3 +445,4 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 };
 
 export default AddChangeLog;
+                                                                                                                                                        

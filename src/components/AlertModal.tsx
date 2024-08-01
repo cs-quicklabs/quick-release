@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import Spin from "./Spin";
+import Spin from "../atoms/Spin";
 import { Modal } from "flowbite-react";
 
 import { classNames } from "@/lib/utils";

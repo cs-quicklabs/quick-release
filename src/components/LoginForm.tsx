@@ -127,12 +127,12 @@ export default function LoginForm() {
             width={32}
             height={32}
           />
-          Quick Release
+          {WEB_DETAILS.name}
         </Link>
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
+              {"Sign in to your account"}
             </h1>{" "}
             <form
               className="space-y-4 md:space-y-6"
@@ -143,7 +143,7 @@ export default function LoginForm() {
                   htmlFor="email"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Your email
+                  {"Your email"}
                 </label>{" "}
                 <input
                   type="email"
@@ -178,7 +178,7 @@ export default function LoginForm() {
                   htmlFor="password"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Password
+                  {"Password"}
                 </label>{" "}
                 <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
                   <input
@@ -217,7 +217,7 @@ export default function LoginForm() {
                       htmlFor="remember"
                       className="text-gray-500 dark:text-gray-300"
                     >
-                      Remember me
+                      {"Remember me"}
                     </label>
                   </div>
                 </div>
@@ -226,14 +226,16 @@ export default function LoginForm() {
                   href="/forget-password"
                   className=" mb-[-10px] text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
                 >
-                  Forgot password?
+                  {"Forgot password?"}
                 </Link>
               </div>{" "}
               <button
                 type="submit"
                 id="login"
-                className="w-full mt-4 text-white bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-              >
+                disabled={loader}
+                className={
+                  `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
+                }>
                 {loader ? (
                   <div className="flex items-center justify-center gap-4">
                     <Oval
@@ -248,12 +250,12 @@ export default function LoginForm() {
                 )}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?{" "}
+                {"Don’t have an account yet? "}
                 <Link
                   href="/register"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600 text-opacity-[1]"
                 >
-                  Sign up
+                  {"Sign up"}
                 </Link>
               </p>
             </form>

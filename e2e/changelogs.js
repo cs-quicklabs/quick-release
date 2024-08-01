@@ -59,7 +59,6 @@ exports.Changelog = class changelog {
 
   async fillTitle() {
     const Numeric = await Math.floor(10000 + Math.random() * 90000).toString();
-    await console.log(Numeric);
     await this.titleInput.fill(this.title + Numeric);
   }
 

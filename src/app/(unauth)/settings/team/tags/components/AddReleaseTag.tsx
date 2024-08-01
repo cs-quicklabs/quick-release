@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/atoms/button";
+import { Input } from "@/atoms/input";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import { IReleaseTag } from "@/interfaces";
 
@@ -62,7 +62,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
         <label
           className="block mb-2 text-sm font-medium text-gray-900"
         >
-          Add new tag
+          {"Add new tag"}
         </label>
 
         <Input

@@ -2,25 +2,21 @@ import { ApiError } from "./ApiError";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
-  region: process.env.NEXT_PUBLIC_AWS_S3_REGION,
+  region: process.env.NEXT_PUBLIC_AWS_S3_REGION!,
   credentials: {
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY_ID!,
   },
-  endpoint: process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
-    ? `https://${process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT}`
+  endpoint: process.env.VERCEL_GIT_COMMIT_REF === "main"
+    ? `https://${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`
     : undefined,
 });
 
 const buildFilePublishUrl = (path: string) => {
   const region = process.env.NEXT_PUBLIC_AWS_S3_REGION;
-  const endpoint = process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
-    ? process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
-    : undefined;
   const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
-
-  return endpoint
-    ? `https://${bucketName}.${endpoint}/${path}`
+  return process.env.VERCEL_GIT_COMMIT_REF === "main"
+    ? `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`
     : `https://s3.${region}.amazonaws.com/${bucketName}/${path}`;
 };
 
@@ -34,9 +30,10 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
 
     const fileBlob = new Blob([file]);
     const fileBuffer = Buffer.from(await fileBlob.arrayBuffer());
+
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
-    const uploadCommand = process.env.NEXT_PUBLIC_AWS_S3_ENDPOINT
+    const uploadCommand = process.env.VERCEL_GIT_COMMIT_REF === "main"
       ? new PutObjectCommand({
           Bucket: bucketName,
           Key: fileKey,
@@ -51,7 +48,6 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
           ContentType: fileType,
         });
     const result = await s3Client.send(uploadCommand);
-    console.log("result", result);
     return {
       name: fileName,
       path: fileKey,
@@ -60,6 +56,7 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
       size: file.size,
     };
   } catch (error) {
+    console.log("uploadFileToS3 error:", error);
     throw new ApiError(500, "Something went wrong while uploading file");
   }
 };
