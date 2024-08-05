@@ -1,8 +1,9 @@
-import { isValidArray, privacyResponse } from "@/Utils";
+import { extractImageUrls, isValidArray, privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import { deleteFileFromS3 } from "@/Utils/s3";
 import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { computeChangeLog } from "@/lib/changeLog";
@@ -111,7 +112,7 @@ export async function PUT(
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const changeLog = await db.changelogs.findFirst({
+    const changeLog = await db.changelogs.findUnique({
       where: {
         cuid: id,
         deletedAt: null,
@@ -121,7 +122,7 @@ export async function PUT(
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
-
+    
     const projectId = changeLog?.projectsId;
     await roleChecker(user?.id!, projectId!);
 
@@ -144,7 +145,6 @@ export async function PUT(
         },
       },
     });
-
     const releaseCategories = await db.releaseCategories.findMany({
       where: {
         organizationsId: project?.organizationsId!, // TODO: Check this.
@@ -161,8 +161,14 @@ export async function PUT(
     if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
       throw new ApiError(400, "Release tag is invalid");
     }
-
-
+    const oldImageUrls = extractImageUrls(changeLog?.description!);
+    const newImageUrls = extractImageUrls(body.description);
+  
+    const imageUrlsToDelete = oldImageUrls.filter((imageUrl) => !newImageUrls.includes(imageUrl));
+    console.log("imageUrlsToDelete", imageUrlsToDelete)
+    for( const imageUrl of imageUrlsToDelete ) {
+      await deleteFileFromS3(imageUrl, "ChangeLogs");
+    }
 
     const updatedChangeLog = await db.changelogs.update({
       where: {id: changeLog?.id},

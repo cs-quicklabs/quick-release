@@ -1,16 +1,18 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getLoggedInUserDetailsRequest } from "@/fetchHandlers/authentication";
+import { getLoggedInUserDetailsRequest, updateLoggedInUserDetailsRequest } from "@/fetchHandlers/user";
 import { requestHandler, showNotification } from "@/Utils";
 import { User } from "@/interfaces";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loading from "@/atoms/Loading";
+import { ProfileType } from "@/types";
 
 type UserContextType = {
   isLoading: boolean;
   loggedInUser: User | null;
+  updateUserDetails: (data: ProfileType) => Promise<void>;
   logout: (setIsLoading: ((loading: boolean) => void) | null) => Promise<void>;
 };
 
@@ -18,6 +20,7 @@ type UserContextType = {
 const UserContext = createContext<UserContextType>({
   isLoading: false,
   loggedInUser: null,
+  updateUserDetails: async (data: ProfileType) => {},
   logout: async (setIsLoading: ((loading: boolean) => void) | null) => { }
 });
 
@@ -49,6 +52,26 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
     );
   };
 
+  const updateUserDetails = async (data: ProfileType) => {
+    await requestHandler(
+      async () => await updateLoggedInUserDetailsRequest(data),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        if(loggedInUser?.email !== data?.email) {
+          logout(setIsLoading);
+          showNotification("success", "Verification mail sent to new email address.");
+        }
+        else if(loggedInUser?.profilePicture !== data?.profilePicture) {}
+        else showNotification("success", message);
+        setLoggedInUser(data);
+      },
+      (errorMsg) => {
+        showNotification("error", errorMsg);
+      }
+    );
+  };
+
   // Function to handle user logout
   const logout = async (setIsLoading: ((loading: boolean) => void) | null) => {
     setIsLoading?.(true);
@@ -69,7 +92,7 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
 
   // Provide logged in user-related data and functions through the context
   return (
-    <UserContext.Provider value={{ isLoading, loggedInUser, logout }}>
+    <UserContext.Provider value={{ isLoading, loggedInUser, logout, updateUserDetails }}>
       {
         (isLoading && !loggedInUser) || status === "loading" ? (
           <div className="h-screen">
