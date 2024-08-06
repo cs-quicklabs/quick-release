@@ -15,12 +15,12 @@ import ScreenLoader from "@/atoms/ScreenLoader";
 
 export default function AllLogs() {
   const [loading, setLoading] = useState(false);
-  const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading } = useProjectContext();
+  const { activeProjectId, getActiveProject, isLoading: setActiveProjectLoading, list: projectList } = useProjectContext();
   const { isLoading: isFetchingChangeLogs, metaData, activeChangeLogId, list: changeLogs, getAllChangeLogs } = useChangeLogContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
   useEffect(() => {
-    if (!activeProjectId) {
+    if (!activeProjectId && projectList.length > 0) {
       getActiveProject(setLoading);
     }
   }, [activeProjectId]);

@@ -17,6 +17,7 @@ import {
   updateFeedbackBoardRequest,
 } from "../../fetchHandlers/feedbacks";
 import { useProjectContext } from "./ProjectContext";
+import { usePathname } from "next/navigation";
 
 type FeedbackBoardMapType = {
   [key: string]: IFeedbackBoard | null;
@@ -53,6 +54,7 @@ type ProviderProps = {
 
 // Create a component that provides change log related data and functions
 const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
+  const router = usePathname();
   const [map, setMap] = useState<FeedbackBoardMapType>({});
   const [list, setList] = useState<number[]>([]);
   const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
@@ -78,7 +80,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
           ...prevMap,
           [feedbackBoardId]: data,
         }));
-        setList((prevList) => [feedbackBoardId, ...prevList]);
+        setList((prevList) => [...prevList, feedbackBoardId]);
         isNotify && showNotification("success", message);
       },
       (errMessage) => {
@@ -94,7 +96,9 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
     console.log("get all release tags", activeProjectId);
     await requestHandler(
       async () =>
-        await getAllFeedbackBoardsRequest({ projectsId: loggedInUser?.activeProjectId! }),
+        await getAllFeedbackBoardsRequest({
+          projectsId: loggedInUser?.activeProjectId!,
+        }),
       setIsLoading,
       (res: any) => {
         const { data } = res;
@@ -159,7 +163,10 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
     setError("");
     await requestHandler(
       async () =>
-        await deleteFeedbackBoardRequest({ id, projectsId: loggedInUser?.activeProjectId! }),
+        await deleteFeedbackBoardRequest({
+          id,
+          projectsId: loggedInUser?.activeProjectId!,
+        }),
       setIsLoading,
       (res: any) => {
         const { message } = res;
@@ -180,7 +187,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (loggedInUser) {
+    if (loggedInUser && router === "/settings/team/boards") {
       getAllFeedbackBoards(() => {});
     }
   }, [loggedInUser]);

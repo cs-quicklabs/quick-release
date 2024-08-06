@@ -5,7 +5,7 @@ import FeedbackBoardTable from "./components/FeedbackBoardTable";
 import { useUserContext } from "@/app/context/UserContext";
 
 const BoardsPage = () => {
-  const { loggedInUser, getLoggedInUserDetails } = useUserContext();
+  const { getLoggedInUserDetails } = useUserContext();
   useEffect(() => {
     getLoggedInUserDetails();
   }, []);
