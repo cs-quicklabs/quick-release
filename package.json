@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma migrate deploy || echo 'Migration file not found, skipping migration' && prisma generate && next build",
+    "build": "prisma db push && prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma db execute --file ./prisma/migrations/prod/migration.sql && prisma generate || echo 'Migration file not found, skipping migration'",
     "prebuild": "ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {

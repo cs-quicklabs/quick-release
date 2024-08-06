@@ -13,7 +13,7 @@ import { ProjectProvider } from "./context/ProjectContext";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { ReleaseTagProvider } from "./context/ReleaseTagContext";
 import { ReleaseCategoryProvider } from "./context/ReleaseCategoryContext";
-
+import { FeedbackBoardProvider } from "./context/FeedbackContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
       rel: "icon",
       url: WEB_DETAILS.favicon,
     },
-  ]
+  ],
 };
 
 export default async function RootLayout({
@@ -33,25 +33,27 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <html lang="en">
       <body className="bg-gray-50">
         <AuthProvider>
           <Provider>
             <UserProvider>
-              <ReleaseCategoryProvider>
-              <ReleaseTagProvider>
-                <ProjectProvider>
-                  <ChangeLogProvider>
-                    <div className="bg-gray-50 h-screen">
-                      {children}
-                    </div>
-                    <ToastContainer pauseOnHover={false} pauseOnFocusLoss={false} />
-                  </ChangeLogProvider>
-                </ProjectProvider>
-              </ReleaseTagProvider>
-              </ReleaseCategoryProvider>
+              <FeedbackBoardProvider>
+                <ReleaseCategoryProvider>
+                  <ReleaseTagProvider>
+                    <ProjectProvider>
+                      <ChangeLogProvider>
+                        <div className="bg-gray-50 h-screen">{children}</div>
+                        <ToastContainer
+                          pauseOnHover={false}
+                          pauseOnFocusLoss={false}
+                        />
+                      </ChangeLogProvider>
+                    </ProjectProvider>
+                  </ReleaseTagProvider>
+                </ReleaseCategoryProvider>
+              </FeedbackBoardProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>

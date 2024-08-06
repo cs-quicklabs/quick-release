@@ -12,13 +12,15 @@ type UserContextType = {
   isLoading: boolean;
   loggedInUser: User | null;
   logout: (setIsLoading: ((loading: boolean) => void) | null) => Promise<void>;
+  getLoggedInUserDetails: () => Promise<void>;
 };
 
 // Create a context to manage user related data and functions
 const UserContext = createContext<UserContextType>({
   isLoading: false,
   loggedInUser: null,
-  logout: async (setIsLoading: ((loading: boolean) => void) | null) => { }
+  logout: async (setIsLoading: ((loading: boolean) => void) | null) => { },
+  getLoggedInUserDetails: async () => { },
 });
 
 // Create a hook to access the UserContext
@@ -69,7 +71,7 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
 
   // Provide logged in user-related data and functions through the context
   return (
-    <UserContext.Provider value={{ isLoading, loggedInUser, logout }}>
+    <UserContext.Provider value={{ isLoading, loggedInUser, logout, getLoggedInUserDetails }}>
       {
         (isLoading && !loggedInUser) || status === "loading" ? (
           <div className="h-screen">

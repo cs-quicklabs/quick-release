@@ -36,6 +36,7 @@ export interface IReleaseCategoriesOption {
     verificationToken?: String;
     verificationTokenExpiry?: String;
     orgs: organizations[];
+    activeProjectId?: String;
   }
   
   export interface IFile {
@@ -69,7 +70,15 @@ export interface IReleaseCategoriesOption {
     id?: number;
     name?: string;
     code?: string;
-    textColor?: string;
-    bgColor?: string;
     organizationsId?: string;
   }
+
+  export interface IFeedbackBoard {
+    id?: number;
+    name?: string;
+    code?: string;
+    isDefault?: boolean;
+    projectsId?: String;
+  }
+
+  

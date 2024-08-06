@@ -333,7 +333,23 @@ export function Navbar() {
                             </div>
                           </div>
                         )}
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              href="/settings/account/tags"
+                              // onClick={handleLogout}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                              )}
 
+                            >
+                              <div className="flex  items-center" id="profile-settings">
+                                {"Account Settings"}
+                              </div>
+                            </Link>
+                          )}
+                        </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
                             <Link
@@ -354,7 +370,7 @@ export function Navbar() {
                         <Menu.Item>
                           {({ active }) => (
                             <Link
-                              href="/settings/team/tags"
+                              href="/settings/team/boards"
                               // onClick={handleLogout}
                               className={classNames(
                                 active ? "bg-gray-100" : "",
@@ -460,6 +476,15 @@ export function Navbar() {
                 </div>
               </div>
               <div className="px-2 py-3">
+              <Link
+                  href="/settings/account/tags"
+                  // onClick={handleLogout}
+                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                >
+                  <div className="flex items-center">
+                    <Link href="/settings/team/boards">{"Account Settings"}</Link>
+                  </div>
+                </Link>
                 <Link
                   href="/settings/profile/general"
                   // onClick={handleLogout}
@@ -470,7 +495,7 @@ export function Navbar() {
                   </div>
                 </Link>
                 <Link
-                  href="/settings/team/tags"
+                  href="/settings/team/boards"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >

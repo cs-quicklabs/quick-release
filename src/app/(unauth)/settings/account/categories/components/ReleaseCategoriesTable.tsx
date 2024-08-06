@@ -164,7 +164,10 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() => deleteReleaseCategory(selectedReleaseCategoryId!, setIsLoading)}
-        onClickCancel={() => setShowDeleteModal(false)}
+        onClickCancel={() => {
+          setShowDeleteModal(false)
+          setSelectedReleaseCategoryId(null)
+        }}
         loading={isLoading}
       />
     </div>
