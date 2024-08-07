@@ -24,7 +24,9 @@ const Profile = () => {
     updateUserDetails,
     isLoading: updateLoading,
   } = useUserContext();
-  const [profileImgUrl, setProfileImgUrl] = useState<any>(loggedInUser?.profilePicture);
+  const [profileImgUrl, setProfileImgUrl] = useState<any>(
+    loggedInUser?.profilePicture
+  );
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const [loader, setLoader] = useState(false);
@@ -137,7 +139,8 @@ const Profile = () => {
       remove: () => {
         return new Promise(async (resolve, reject) => {
           await requestHandler(
-            async () => await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
+            async () =>
+              await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
             setImageUploadLoading,
             (res: any) => {
               setProfileImgUrl("");
@@ -150,7 +153,7 @@ const Profile = () => {
               reject(errMessage);
             }
           );
-        })
+        });
       },
     }),
     []

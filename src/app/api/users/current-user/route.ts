@@ -57,6 +57,20 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    const activeProjectId = await db.projectsUsers.findFirst({
+      where: {
+        usersId: user?.id,
+        isActive: true,
+      },
+      select: {
+        projects: {
+          select: {
+            cuid: true,
+          },
+        },
+      },
+    });
+
     return NextResponse.json(
       new ApiResponse(
         200,
@@ -68,6 +82,7 @@ export async function GET(req: NextRequest) {
               name: org.organizations.name,
             };
           }),
+          activeProjectId: activeProjectId?.projects.cuid,
         },
         "Current user fetched successfully"
       )

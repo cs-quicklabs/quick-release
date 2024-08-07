@@ -1,64 +1,65 @@
-import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
+// import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import AlertModal from "@/components/AlertModal";
 import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
-import { IReleaseTag } from "@/interfaces";
+import { IFeedbackBoard } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackContext";
+import { useProjectContext } from "@/app/context/ProjectContext";
+import { useUserContext } from "@/app/context/UserContext";
 
-type ReleaseTagsTableProps = {
-  onEdit: (id: number) => void;
-};
-
-const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
+const ReleaseCategoriesTable: React.FC<{}> = () => {
   const prevStates = useRef({ isLoading: false });
-  const [tagNames, setTagNames] = useState<{ [key: number]: string }>({});
+  const [boardNames, setBoardNames] = useState<{ [key: number]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
-
+  const { loggedInUser } = useUserContext();
   const {
-    map: releaseTagMap,
+    map: feedbackBoardMap,
     list,
-    deleteReleaseTag,
-    updateReleaseTag,
-  } = useReleaseTagContext();
+    deleteFeedbackBoard,
+    updateFeedbackBoard,
+  } = useFeedbackBoardContext();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [selectedReleaseTagId, setSelectedReleaseTagId] = useState<
+  const [selectedFeedbackBoardId, setSelectedFeedbackBoardId] = useState<
     number | null
   >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
-    setSelectedReleaseTagId(id);
+    setSelectedFeedbackBoardId(id);
     setShowDeleteModal(true);
   };
 
   const handleEdit = (id: number) => {
-    setSelectedReleaseTagId(id);
-    setTagNames((prev) => ({
+    setSelectedFeedbackBoardId(id);
+    setBoardNames((prev) => ({
       ...prev,
-      [id]: releaseTagMap[id]?.name || "",
+      [id]: feedbackBoardMap[id]?.name || "",
     }));
   };
 
-  const onSaveReleaseTag = async () => {
-    if (!selectedReleaseTagId || !tagNames[selectedReleaseTagId]) return;
+  const onSaveFeedbackBoard = async () => {
+    if (!selectedFeedbackBoardId || !boardNames[selectedFeedbackBoardId])
+      return;
 
-    const releaseTag: IReleaseTag = {
-      id: selectedReleaseTagId,
-      name: tagNames[selectedReleaseTagId],
+    const feedbackBoard: IFeedbackBoard = {
+      id: selectedFeedbackBoardId,
+      name: boardNames[selectedFeedbackBoardId],
+      projectsId: loggedInUser?.activeProjectId!,
     };
 
-    await updateReleaseTag(releaseTag, setIsSaving);
-    setSelectedReleaseTagId(null);
+    await updateFeedbackBoard(feedbackBoard, setIsSaving);
+    setSelectedFeedbackBoardId(null);
   };
 
   useEffect(() => {
     if (
-      !selectedReleaseTagId ||
+      !selectedFeedbackBoardId ||
       (prevStates.current?.isLoading && !isLoading)
     ) {
-      setSelectedReleaseTagId(null);
+      setSelectedFeedbackBoardId(null);
       setShowDeleteModal(false);
     }
 
@@ -67,8 +68,10 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
     };
   }, [isLoading]);
 
-  const selectedReleaseTag =
-    selectedReleaseTagId !== null ? releaseTagMap[selectedReleaseTagId] : null;
+  const selectedFeedbackBoard =
+    selectedFeedbackBoardId !== null
+      ? feedbackBoardMap[selectedFeedbackBoardId]
+      : null;
 
   return (
     <div className="h-full relative overflow-y-auto mt-8">
@@ -76,10 +79,11 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr className="text-xs text-gray-700 bg-gray-50">
             <th className="px-6 py-3 w-full" scope="col">
-              {"Tag Name"}
+              Board Name
             </th>
-            <th className="px-6 py-3" scope="col">
-              {"Action"}
+            <th className="px-6 py-3 text-center" scope="col"></th>
+            <th className="px-6 py-3 text-center" scope="col">
+              Action
             </th>
           </tr>
         </thead>
@@ -90,67 +94,74 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
                 className="px-6 py-4 whitespace-nowrap text-center"
                 colSpan={2}
               >
-                {"No tags found."}
+                No categories found.
               </td>
             </tr>
           )}
-          {list.map((releaseTagId) => {
-            const isReleaseEdit = selectedReleaseTagId === releaseTagId;
-            const releaseTag = releaseTagMap[releaseTagId];
-            if (!releaseTag) return null;
+          {list.map((feedbackBoardId) => {
+            const isReleaseEdit = selectedFeedbackBoardId === feedbackBoardId;
+            const feedbackBoard = feedbackBoardMap[feedbackBoardId];
+            if (!feedbackBoard) return null;
             return (
               <tr
-                key={releaseTag.id}
+                key={feedbackBoard.id}
                 className="odd:bg-white even:bg-gray-50 border-b"
               >
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                   {!isReleaseEdit ? (
-                    releaseTag.name
+                    feedbackBoard.name
                   ) : (
                     <Input
-                      placeholder="Enter tag name"
-                      id="editTagName"
-                      value={tagNames[releaseTagId] || ""}
+                      placeholder="Enter board name"
+                      id="editBoardNamew"
+                      value={boardNames[feedbackBoardId] || ""}
                       onChange={(e) =>
-                        setTagNames({
-                          ...tagNames,
-                          [releaseTagId]: e.target.value,
+                        setBoardNames({
+                          ...boardNames,
+                          [feedbackBoardId]: e.target.value,
                         })
                       }
                       disabled={isSaving}
                     />
                   )}
                 </td>
+                <td>
+                  {feedbackBoard.isDefault && !isReleaseEdit && (
+                    <span className="font-medium text-green-600 bg-green-200 px-2 rounded">
+                      Default
+                    </span>
+                  )}
+                </td>
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                   {!isReleaseEdit ? (
-                    <>
+                    <div className="flex gap-2 justify-end">
                       <Link
                         href="#"
                         className="font-medium text-blue-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
-                          handleEdit(releaseTag.id!);
+                          handleEdit(feedbackBoard.id!);
                         }}
                       >
-                        {"Edit"}
+                        Edit
                       </Link>
                       <Link
                         href="#"
                         className="ml-2 font-medium text-red-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
-                          onDelete(releaseTag.id!);
+                          onDelete(feedbackBoard.id!);
                         }}
                       >
-                        {"Delete"}
+                        Delete
                       </Link>
-                    </>
+                    </div>
                   ) : (
                     <Button
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
-                      onClick={onSaveReleaseTag}
+                      onClick={onSaveFeedbackBoard}
                       disabled={isSaving}
-                       id="editSave"
+                      id="saveboard"
                     >
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
@@ -164,15 +175,20 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message={`Are you sure you want to delete the tag "${selectedReleaseTag?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
+        message={`Are you sure you want to delete the board "${selectedFeedbackBoard?.name}"?\n Remember that You can only delete boards that are not in use.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteReleaseTag(selectedReleaseTagId!, setIsLoading)}
-        onClickCancel={() => setShowDeleteModal(false)}
+        onClickOk={() =>
+          deleteFeedbackBoard(selectedFeedbackBoardId!, setIsLoading)
+        }
+        onClickCancel={() => {
+          setShowDeleteModal(false)
+          setSelectedFeedbackBoardId(null)
+        }}
         loading={isLoading}
       />
     </div>
   );
 };
 
-export default ReleaseTagsTable;
+export default ReleaseCategoriesTable;

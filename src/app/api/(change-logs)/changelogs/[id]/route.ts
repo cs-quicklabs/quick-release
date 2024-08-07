@@ -122,7 +122,7 @@ export async function PUT(
     if (!changeLog) {
       throw new ApiError(404, "Change log not found");
     }
-    
+
     const projectId = changeLog?.projectsId;
     await roleChecker(user?.id!, projectId!);
 
@@ -135,7 +135,7 @@ export async function PUT(
       where: {
         cuid: body.projectsId,
       },
-    })
+    });
 
     const releaseTags = await db.releaseTags.findMany({
       where: {
@@ -154,31 +154,45 @@ export async function PUT(
       },
     });
 
-    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
+    if (
+      !isValidArray(
+        body.releaseCategories,
+        releaseCategories.map((category) => category.code)
+      )
+    ) {
       throw new ApiError(400, "Release category is invalid");
     }
 
-    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+    if (
+      !isValidArray(
+        body.releaseTags,
+        releaseTags.map((tag) => tag.code)
+      )
+    ) {
       throw new ApiError(400, "Release tag is invalid");
     }
     const oldImageUrls = extractImageUrls(changeLog?.description!);
     const newImageUrls = extractImageUrls(body.description);
-  
-    const imageUrlsToDelete = oldImageUrls.filter((imageUrl) => !newImageUrls.includes(imageUrl));
-    console.log("imageUrlsToDelete", imageUrlsToDelete)
-    for( const imageUrl of imageUrlsToDelete ) {
+
+    const imageUrlsToDelete = oldImageUrls.filter(
+      (imageUrl) => !newImageUrls.includes(imageUrl)
+    );
+    console.log("imageUrlsToDelete", imageUrlsToDelete);
+    for (const imageUrl of imageUrlsToDelete) {
       await deleteFileFromS3(imageUrl, "ChangeLogs");
     }
 
     const updatedChangeLog = await db.changelogs.update({
-      where: {id: changeLog?.id},
+      where: { id: changeLog?.id },
       data: {
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
         releaseCategories: {
           deleteMany: { logId: changeLog?.id },
-          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+          create: releaseCategories.map((category) => ({
+            releaseCategoryId: category.id,
+          })),
         },
         // releaseTags: body.releaseTags,
         releaseTags: {

@@ -1,7 +1,10 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { getLoggedInUserDetailsRequest, updateLoggedInUserDetailsRequest } from "@/fetchHandlers/user";
+import {
+  getLoggedInUserDetailsRequest,
+  updateLoggedInUserDetailsRequest,
+} from "@/fetchHandlers/user";
 import { requestHandler, showNotification } from "@/Utils";
 import { User } from "@/interfaces";
 import { signOut, useSession } from "next-auth/react";
@@ -14,6 +17,7 @@ type UserContextType = {
   loggedInUser: User | null;
   updateUserDetails: (data: ProfileType) => Promise<void>;
   logout: (setIsLoading: ((loading: boolean) => void) | null) => Promise<void>;
+  getLoggedInUserDetails: () => Promise<void>;
 };
 
 // Create a context to manage user related data and functions
@@ -21,14 +25,15 @@ const UserContext = createContext<UserContextType>({
   isLoading: false,
   loggedInUser: null,
   updateUserDetails: async (data: ProfileType) => {},
-  logout: async (setIsLoading: ((loading: boolean) => void) | null) => { }
+  logout: async (setIsLoading: ((loading: boolean) => void) | null) => {},
+  getLoggedInUserDetails: async () => {},
 });
 
 // Create a hook to access the UserContext
 const useUserContext = () => useContext(UserContext);
 
 // Create a component that provides user related data and functions
-const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
+const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const router = useRouter();
@@ -58,12 +63,14 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
-        if(loggedInUser?.email !== data?.email) {
+        if (loggedInUser?.email !== data?.email) {
           logout(setIsLoading);
-          showNotification("success", "Verification mail sent to new email address.");
-        }
-        else if(loggedInUser?.profilePicture !== data?.profilePicture) {}
-        else showNotification("success", message);
+          showNotification(
+            "success",
+            "Verification mail sent to new email address."
+          );
+        } else if (loggedInUser?.profilePicture !== data?.profilePicture) {
+        } else showNotification("success", message);
         setLoggedInUser(data);
       },
       (errorMsg) => {
@@ -92,14 +99,22 @@ const UserProvider: React.FC<{ children: React.ReactNode; }> = ({
 
   // Provide logged in user-related data and functions through the context
   return (
-    <UserContext.Provider value={{ isLoading, loggedInUser, logout, updateUserDetails }}>
-      {
-        (isLoading && !loggedInUser) || status === "loading" ? (
-          <div className="h-screen">
-            <Loading />
-          </div>
-        ) : children
-      }
+    <UserContext.Provider
+      value={{
+        isLoading,
+        loggedInUser,
+        logout,
+        updateUserDetails,
+        getLoggedInUserDetails,
+      }}
+    >
+      {(isLoading && !loggedInUser) || status === "loading" ? (
+        <div className="h-screen">
+          <Loading />
+        </div>
+      ) : (
+        children
+      )}
     </UserContext.Provider>
   );
 };

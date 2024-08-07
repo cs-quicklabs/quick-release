@@ -43,6 +43,30 @@ export const POST = async (request: Request) => {
         },
       });
 
+      const userRoles = await db.usersRoles.findMany();
+      const roles = [
+        {
+          name: "Super Admin", code: "SUPER_ADMIN",
+        },
+        {
+          name: "Admin", code: "ADMIN",
+        },
+        {
+          name: "Member", code: "MEMBER",
+        },
+      ]
+
+      if(userRoles && userRoles.length === 0){
+        for (const role of roles) {
+          await db.usersRoles.create({
+            data: {
+              name: role.name,
+              code: role.code,
+            },
+          });
+        }
+      }
+
       const releaseTags = [
         { name: 'Web', code: 'web' },
         { name: 'Android', code: 'android' },

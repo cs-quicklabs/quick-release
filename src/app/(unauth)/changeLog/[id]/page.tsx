@@ -256,7 +256,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       </BaseTemplate>
     );
   }
-  
+
   const handleCancelButton = async () => {
     const imageUrls = extractImageUrls(formValues?.description);
     if (params.id === "add" && imageUrls.length > 0) {

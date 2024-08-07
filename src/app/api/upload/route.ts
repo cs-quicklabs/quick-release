@@ -64,8 +64,8 @@ export async function DELETE(req: NextRequest) {
     const filePathUrls = body.filePathUrls;
     const onModal = body.onModal;
 
-    for(const filePathUrl of filePathUrls) {
-      if(!filePathUrl) {
+    for (const filePathUrl of filePathUrls) {
+      if (!filePathUrl) {
         throw new ApiError(400, "File path url is required");
       }
       const res = await deleteFileFromS3(filePathUrl, onModal);

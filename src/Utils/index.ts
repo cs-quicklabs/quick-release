@@ -117,10 +117,10 @@ export function extractImageUrls(htmlString: string): string[] {
   const imgTagRegex = /<img [^>]*src="([^"]+)"[^>]*>/gi;
   const urls: string[] = [];
   let match;
-  
+
   while ((match = imgTagRegex.exec(htmlString)) !== null) {
     urls.push(match[1]);
   }
-  
+
   return urls;
 }

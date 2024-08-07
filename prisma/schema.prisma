@@ -43,6 +43,7 @@ model Users {
   organizationsUsers      OrganizationsUsers[]
   createdLogs             Changelogs[]         @relation("CreatedLogs")
   updatedLogs             Changelogs[]         @relation("UpdatedLogs")
+  feedbackPosts           FeedbackPosts[]
 }
 
 model Organizations {
@@ -70,17 +71,18 @@ model OrganizationsUsers {
 }
 
 model Projects {
-  id              Int             @id @default(autoincrement())
-  cuid            String          @unique @default(cuid())
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id              Int              @id @default(autoincrement())
+  cuid            String           @unique @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
   name            String
   logs            Changelogs[]
-  Users           Users?          @relation(fields: [createdById], references: [id])
+  Users           Users?           @relation(fields: [createdById], references: [id])
   createdById     Int?
-  organizations   Organizations?  @relation(fields: [organizationsId], references: [id])
+  organizations   Organizations?   @relation(fields: [organizationsId], references: [id])
   organizationsId Int?
   projectsUsers   ProjectsUsers[]
+  feedbackBoards  FeedbackBoards[]
 }
 
 model ProjectsUsers {
@@ -157,4 +159,39 @@ model ChangelogReleaseCategories {
   releaseCategoryId Int
 
   @@id([logId, releaseCategoryId])
+}
+
+model FeedbackPosts {
+  id               Int            @id @default(autoincrement())
+  cuid             String         @unique @default(cuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  title            String
+  description      String
+  status           FeedbackStatus
+  releaseETA       DateTime
+  createdBy        Users          @relation(fields: [createdById], references: [id])
+  createdById      Int
+  feedbackBoards   FeedbackBoards @relation(fields: [feedbackBoardsId], references: [id])
+  feedbackBoardsId Int
+}
+
+model FeedbackBoards {
+  id            Int             @id @default(autoincrement())
+  cuid          String          @unique @default(cuid())
+  name          String
+  isDefault     Boolean         @default(false)
+  projects      Projects?       @relation(fields: [projectsId], references: [id])
+  projectsId    Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  feedbackPosts FeedbackPosts[]
+}
+
+enum FeedbackStatus {
+  IN_REVIEW
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
 }
