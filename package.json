@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push && prisma generate && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma db push && prisma generate",
     "prebuild": "ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {
