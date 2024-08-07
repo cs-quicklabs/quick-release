@@ -72,7 +72,7 @@ export const handleTrancate = (text: string, trucateNum: number) => {
 };
 
 export const privacyResponse = (data: any) => {
-  const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = data;
+  const { id, cuid, password, organizationsId, createdById, projectsId, feedbackBoardsId, ...rest } = data;
   return {
     id: cuid,
     ...rest,
@@ -81,7 +81,7 @@ export const privacyResponse = (data: any) => {
 
 export const privacyResponseArray = (data: any) => {
   return data.map((item: any) => {
-    const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = item;
+    const { id, cuid, password, organizationsId, createdById, projectsId, feedbackBoardsId, ...rest } = item;
     return {
       id: cuid,
       ...rest,

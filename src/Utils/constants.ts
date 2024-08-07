@@ -97,4 +97,9 @@ export const ChangeLogIncludeDBQuery = {
   updatedById: false,
 };
 
+export const FeedbackPostIncludeDBQuery = {
+  feedbackBoards: { select: { cuid: true, name: true } },
+  createdById: false,
+};
+
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds
