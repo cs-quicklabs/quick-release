@@ -1,4 +1,3 @@
-// import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import AlertModal from "@/components/AlertModal";
 import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
@@ -9,11 +8,12 @@ import { useFeedbackBoardContext } from "@/app/context/FeedbackContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
 
-const ReleaseCategoriesTable: React.FC<{}> = () => {
+const FeedbackBoardTable: React.FC<{}> = () => {
   const prevStates = useRef({ isLoading: false });
   const [boardNames, setBoardNames] = useState<{ [key: number]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
   const { loggedInUser } = useUserContext();
+  const [showNoActionModal, setShowNoActionModal] = useState(false);
   const {
     map: feedbackBoardMap,
     list,
@@ -25,11 +25,18 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   const [selectedFeedbackBoardId, setSelectedFeedbackBoardId] = useState<
     number | null
   >(null);
+  const [selectedDeletedFeedbackBoardId, setSelectedDeletedFeedbackBoardId] =
+    useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
-    setSelectedFeedbackBoardId(id);
-    setShowDeleteModal(true);
+    setSelectedDeletedFeedbackBoardId(id);
+    const feedbackBoard = feedbackBoardMap[id];
+    if (feedbackBoard?.isDefault) {
+      setShowNoActionModal(true);
+    } else {
+      setShowDeleteModal(true);
+    }
   };
 
   const handleEdit = (id: number) => {
@@ -94,12 +101,12 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                 className="px-6 py-4 whitespace-nowrap text-center"
                 colSpan={2}
               >
-                No categories found.
+                No feedback boards found.
               </td>
             </tr>
           )}
           {list.map((feedbackBoardId) => {
-            const isReleaseEdit = selectedFeedbackBoardId === feedbackBoardId;
+            const isBoardEdit = selectedFeedbackBoardId === feedbackBoardId;
             const feedbackBoard = feedbackBoardMap[feedbackBoardId];
             if (!feedbackBoard) return null;
             return (
@@ -108,12 +115,12 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                 className="odd:bg-white even:bg-gray-50 border-b"
               >
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  {!isReleaseEdit ? (
+                  {!isBoardEdit ? (
                     feedbackBoard.name
                   ) : (
                     <Input
                       placeholder="Enter board name"
-                      id="editBoardNamew"
+                      id="editBoardName"
                       value={boardNames[feedbackBoardId] || ""}
                       onChange={(e) =>
                         setBoardNames({
@@ -126,14 +133,14 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                   )}
                 </td>
                 <td>
-                  {feedbackBoard.isDefault && !isReleaseEdit && (
+                  {feedbackBoard.isDefault && !isBoardEdit && (
                     <span className="font-medium text-green-600 bg-green-200 px-2 rounded">
                       Default
                     </span>
                   )}
                 </td>
                 <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  {!isReleaseEdit ? (
+                  {!isBoardEdit ? (
                     <div className="flex gap-2 justify-end">
                       <Link
                         href="#"
@@ -174,21 +181,43 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
       </table>
       <AlertModal
         show={showDeleteModal}
-        title="Delete change log"
-        message={`Are you sure you want to delete the board "${selectedFeedbackBoard?.name}"?\n Remember that You can only delete boards that are not in use.`}
+        title={`Delete Board “${
+          feedbackBoardMap[selectedDeletedFeedbackBoardId!]?.name
+        }”?`}
+        message={`A board when deleted, will not be visible to public and they can not add feedback in this board.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() =>
-          deleteFeedbackBoard(selectedFeedbackBoardId!, setIsLoading)
+          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, setIsLoading)
         }
         onClickCancel={() => {
-          setShowDeleteModal(false)
-          setSelectedFeedbackBoardId(null)
+          setShowDeleteModal(false);
+          setSelectedFeedbackBoardId(null);
         }}
+        okBtnText="Delete"
+        cancelBtnText="Cancel"
+        loading={isLoading}
+      />
+      <AlertModal
+        show={showNoActionModal}
+        title={`Could not delete board!`}
+        message={`Default boards can not be deleted as they are created when a team is created and a team will always have one default board.`}
+        okBtnClassName="bg-red-600 hover:bg-red-800"
+        spinClassName="!fill-red-600"
+        onClickOk={() => {
+          setShowNoActionModal(false);
+          setSelectedDeletedFeedbackBoardId(null);
+        }}
+        onClickCancel={() => {
+          setShowNoActionModal(false);
+          setSelectedDeletedFeedbackBoardId(null);
+        }}
+        okBtnText="ok"
+        isCancelBtnHidden={true}
         loading={isLoading}
       />
     </div>
   );
 };
 
-export default ReleaseCategoriesTable;
+export default FeedbackBoardTable;
