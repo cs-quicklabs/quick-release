@@ -19,7 +19,14 @@ export type AuthType = {
   email: string;
   password: string;
   confirmPassword?: string;
-}
+};
+
+export type ProfileType = {
+  firstName?: String;
+  lastName?: String;
+  profilePicture?: String | null;
+  email?: String;
+};
 
 export type ChangeLogType = {
   id?: string;
