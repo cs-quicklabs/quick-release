@@ -2,31 +2,31 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
-import Modal from "@/atoms/Modal";
-import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
+import { fileUploadRequest } from "@/fetchHandlers/file";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { toast } from "react-toastify";
 import { z } from "zod";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import AlertModal from "@/components/AlertModal";
+import { fileDeleteRequest } from "@/fetchHandlers/file";
 
 const Profile = () => {
   const router = useRouter();
-  const { loggedInUser } = useUserContext();
-  const [fileName, setFileName] = useState<any>(loggedInUser?.profilePicture);
+  const {
+    loggedInUser,
+    updateUserDetails,
+    isLoading: updateLoading,
+  } = useUserContext();
+  const [profileImgUrl, setProfileImgUrl] = useState<any>(loggedInUser?.profilePicture);
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
-  const [loading, setLoading] = useState({
-    profileLoading: false,
-  });
   const [loader, setLoader] = useState(false);
 
   const { activeProjectId, getActiveProject } = useProjectContext();
@@ -58,7 +58,7 @@ const Profile = () => {
       firstName: loggedInUser?.firstName as string,
       lastName: loggedInUser?.lastName as string,
       email: loggedInUser?.email as string,
-      profilePicture: fileName,
+      profilePicture: profileImgUrl,
     },
   });
 
@@ -77,7 +77,7 @@ const Profile = () => {
   }, [loggedInUser]);
 
   useEffect(() => {
-    if(!activeProjectId) {
+    if (!activeProjectId) {
       getActiveProject(setLoader);
     }
   }, [activeProjectId]);
@@ -86,6 +86,7 @@ const Profile = () => {
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
+
     if (file) {
       await uploadImage.upload(file);
     } else {
@@ -105,7 +106,7 @@ const Profile = () => {
             return reject(errMessage);
           }
 
-          if(file.size > 1024 * 1024 * 3) {
+          if (file.size > 1024 * 1024 * 3) {
             const errMessage = "File size should be less than 3 MB";
             showNotification("error", errMessage);
             return reject(errMessage);
@@ -119,7 +120,11 @@ const Profile = () => {
             async () => await fileUploadRequest(formData),
             setImageUploadLoading,
             (res: any) => {
-              setFileName(res.data.url);
+              setProfileImgUrl(res.data.url);
+              updateUserDetails({
+                ...formValues,
+                profilePicture: res.data.url,
+              });
               showNotification("success", res?.message);
             },
             (errMessage) => {
@@ -129,54 +134,42 @@ const Profile = () => {
           );
         });
       },
+      remove: () => {
+        return new Promise(async (resolve, reject) => {
+          await requestHandler(
+            async () => await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
+            setImageUploadLoading,
+            (res: any) => {
+              setProfileImgUrl("");
+              updateUserDetails({ ...formValues, profilePicture: null });
+              setProfileImgUrl(null);
+              showNotification("success", res?.message);
+            },
+            (errMessage) => {
+              showNotification("error", errMessage);
+              reject(errMessage);
+            }
+          );
+        })
+      },
     }),
     []
   );
-
-  const updateProfile = async (
-    values: z.infer<typeof formSchema>,
-    isEmailUpdate = false
-  ) => {
-    toast.dismiss();
-    try {
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: true,
-      }));
-      await axios.post(`/api/update-profile/${loggedInUser?.id}`, {
-        ...values,
-        profilePicture: fileName,
-      });
-
-      toast.success("Profile Updated Successfully");
-
-      if (isEmailUpdate) {
-        await signOut({ redirect: false });
-        router.push("/");
-        router.refresh();
-      }
-    } catch (err: any) {
-      console.log("error", err);
-
-      toast.error(err.response.data.message);
-    } finally {
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: false,
-      }));
-    }
-  };
 
   const updateProfileDetails = async (
     values: z.infer<typeof formSchema>,
     e: any
   ) => {
     if (loggedInUser?.email === values.email) {
-      updateProfile(values);
-      window.location.reload();
+      updateUserDetails({ ...values, profilePicture: profileImgUrl });
     } else {
       setIsOpen(true);
     }
+  };
+
+  const handleUpdateProfile = async () => {
+    setIsOpen(false);
+    updateUserDetails({ ...formValues, profilePicture: profileImgUrl });
   };
 
   return (
@@ -209,14 +202,14 @@ const Profile = () => {
                 />
               ) : (
                 <>
-                  {fileName ? (
+                  {profileImgUrl ? (
                     <>
                       <div className="flex ">
                         <label htmlFor="fileInput">
                           <Image
                             alt="No Image"
                             className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                            src={fileName}
+                            src={profileImgUrl}
                             height={20}
                             width={20}
                           />
@@ -319,10 +312,10 @@ const Profile = () => {
           </div>{" "}
           <button
             type="submit"
-            disabled={loading.profileLoading}
+            disabled={updateLoading}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            {loading.profileLoading ? (
+            {updateLoading ? (
               <div className="flex items-center justify-center gap-4">
                 <Oval
                   height={25}
@@ -336,34 +329,40 @@ const Profile = () => {
             )}
           </button>
         </form>
-        {isOpen ? (
-          <Modal
-            open={isOpen}
-            setIsOpen={setIsOpen}
-            buttonText="Ok"
-            title="Re-verification Email"
-            onClick={() => {
-              setIsOpen(false);
-              updateProfile(formValues, true);
-            }}
-            loading={loading.profileLoading}
-          >
-            <div>{"Are you sure you want to change your email address?"}</div>
-          </Modal>
-        ) : null}
-        {isOpenImageModal ? (
-          <Modal
-            open={isOpenImageModal}
-            setIsOpen={setIsOpenImageModal}
-            buttonText="OK"
-            title="Remove Profile Picture ?"
-            onClick={() => {
-              setIsOpenImageModal(false);
-              setFileName(null);
-            }}
-            loading={loading.profileLoading}
-          ></Modal>
-        ) : null}
+        <AlertModal
+          show={isOpen}
+          title={`Re-verification Email`}
+          message={"Are you sure you want to change your email address?"}
+          onClickCancel={() => setIsOpen(false)}
+          okBtnClassName={"bg-red-600 hover:bg-red-800"}
+          spinClassName={"!fill-red-600"}
+          onClickOk={() => handleUpdateProfile()}
+          loading={updateLoading}
+        />
+        {/* // <Modal
+          //   open={isOpenImageModal}
+          //   setIsOpen={setIsOpenImageModal}
+          //   buttonText="OK"
+          //   title="Remove Profile Picture ?"
+          //   onClick={() => {
+          //     setIsOpenImageModal(false);
+          //     setProfileImgUrl(null);
+          //   }}
+          //   loading={loading.profileLoading}
+          // ></Modal> */}
+        <AlertModal
+          show={isOpenImageModal}
+          title={`Remove Profile Picture ?`}
+          message={"Are you sure you want to remove your profile picture?"}
+          onClickCancel={() => setIsOpenImageModal(false)}
+          okBtnClassName={"bg-red-600 hover:bg-red-800"}
+          spinClassName={"!fill-red-600"}
+          onClickOk={() => {
+            uploadImage.remove();
+            setIsOpenImageModal(false);
+          }}
+          loading={imageUploadLoading}
+        />
       </div>
     </main>
   );

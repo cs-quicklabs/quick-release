@@ -28,10 +28,6 @@ const registerUserRequest = (data: any) => {
   
   const changePasswordRequest = (data: any, userId: string) => {
     return apiClient.post(`/change-password/${userId}`, data);
-  }
-
-  const getLoggedInUserDetailsRequest = () => {
-    return apiClient.get("/users/current-user");
   };
 
 
@@ -43,5 +39,4 @@ const registerUserRequest = (data: any) => {
     resetPasswordRequest,
     verifyResetTokenRequest,
     changePasswordRequest,
-    getLoggedInUserDetailsRequest
   }

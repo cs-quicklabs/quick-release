@@ -1,5 +1,5 @@
 import { ApiError } from "./ApiError";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const s3Client = new S3Client({
   region: process.env.NEXT_PUBLIC_AWS_S3_REGION!,
@@ -58,5 +58,22 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
   } catch (error) {
     console.log("uploadFileToS3 error:", error);
     throw new ApiError(500, "Something went wrong while uploading file");
+  }
+};
+
+export const deleteFileFromS3 = async (fileUrl: string, onModal: string) => {
+  try {
+    const path = `${onModal}/${fileUrl.split("/").pop()}`;
+    console.log("path", path);
+    const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
+    const deleteCommand = new DeleteObjectCommand({
+      Bucket: bucketName,
+      Key: path,
+    })
+    const result = await s3Client.send(deleteCommand);
+    return result;
+  } catch (error) {
+    console.log("deleteFileFromS3 error:", error);
+    throw new ApiError(500, "Something went wrong while deleting file");
   }
 };
