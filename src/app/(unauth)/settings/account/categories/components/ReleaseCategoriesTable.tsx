@@ -22,10 +22,13 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   const [selectedReleaseCategoryId, setSelectedReleaseCategoryId] = useState<
     number | null
   >(null);
+  const [selectedDeletedReleaseCategoryId, setSelectedDeletedReleaseCategoryId] = useState<
+    number | null
+  >(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
-    setSelectedReleaseCategoryId(id);
+    setSelectedDeletedReleaseCategoryId(id);
     setShowDeleteModal(true);
   };
 
@@ -160,13 +163,13 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message={`Are you sure you want to delete the category "${selectedReleaseCategory?.name}"? This will permanently remove the category and its associations from all past changelogs.`}
+        message={`Are you sure you want to delete the category "${releaseCategoryMap[selectedDeletedReleaseCategoryId!]?.name}"? This will permanently remove the category and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteReleaseCategory(selectedReleaseCategoryId!, setIsLoading)}
+        onClickOk={() => deleteReleaseCategory(selectedDeletedReleaseCategoryId!, setIsLoading)}
         onClickCancel={() => {
           setShowDeleteModal(false)
-          setSelectedReleaseCategoryId(null)
+          setSelectedDeletedReleaseCategoryId(null)
         }}
         loading={isLoading}
       />
