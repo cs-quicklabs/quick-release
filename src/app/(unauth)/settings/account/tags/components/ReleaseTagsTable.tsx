@@ -22,10 +22,13 @@ const ReleaseTagsTable = () => {
   const [selectedReleaseTagId, setSelectedReleaseTagId] = useState<
     number | null
   >(null);
+  const [selectedDeletedReleaseTagId, setSelectedDeletedReleaseTagId] = useState<
+  number | null
+>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
-    setSelectedReleaseTagId(id);
+    setSelectedDeletedReleaseTagId(id);
     setShowDeleteModal(true);
   };
 
@@ -160,13 +163,13 @@ const ReleaseTagsTable = () => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message={`Are you sure you want to delete the tag "${selectedReleaseTag?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
+        message={`Are you sure you want to delete the tag "${releaseTagMap[selectedDeletedReleaseTagId!]?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteReleaseTag(selectedReleaseTagId!, setIsLoading)}
+        onClickOk={() => deleteReleaseTag(selectedDeletedReleaseTagId!, setIsLoading)}
         onClickCancel={() => {
           setShowDeleteModal(false)
-          setSelectedReleaseTagId(null)
+          setSelectedDeletedReleaseTagId(null)
         }}
         loading={isLoading}
       />
