@@ -4,24 +4,24 @@ import { Input } from "@/atoms/input";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import { IReleaseTag } from "@/interfaces";
 
-type AddReleaseTagProps = {
-  selectedReleaseTagId: number | null;
-  setSelectedReleaseTagId: (id: number | null) => void;
-};
-
-const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = null, setSelectedReleaseTagId }) => {
+const AddReleaseTag = () => {
   // const isEditingReleaseTag = selectedReleaseTagId !== null;
 
   const prevState = useRef({ isSaving: false });
 
   const [tagName, setTagName] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
-
-  const { error, map: releaseTagMap, createReleaseTag } = useReleaseTagContext();
+  const [showError, setShowError] = useState("");
+  const { error, createReleaseTag } = useReleaseTagContext();
 
 
   const onSaveReleaseTag = () => {
     if (!tagName) return;
+
+    if(tagName.length > 30) {
+      setShowError("Tag name must be less than 30 characters");
+      return;
+    }
 
     const releaseTag: IReleaseTag = {
       name: tagName,
@@ -31,7 +31,6 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
   };
 
   const resetForm = () => {
-    setSelectedReleaseTagId(null);
     setTagName("");
   };
 
@@ -49,13 +48,6 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
     };
   }, [isSaving]);
 
-  useEffect(() => {
-    if (selectedReleaseTagId !== null) {
-      const releaseTag = releaseTagMap[selectedReleaseTagId];
-      setTagName(releaseTag?.name!);
-    }
-  }, [selectedReleaseTagId]);
-
   return (
     <div className="w-full mt-6">
       <div className="mb-5 mt-6">
@@ -72,6 +64,7 @@ const AddReleaseTag: React.FC<AddReleaseTagProps> = ({ selectedReleaseTagId = nu
           onChange={(e) => setTagName(e.target.value)}
           disabled={isSaving}
         />
+        <span className="text-red-500 text-sm">{showError}</span>
       </div>
 
       <Button
