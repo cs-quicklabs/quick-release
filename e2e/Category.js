@@ -7,7 +7,7 @@ exports.releaseCategory = class releaseCategory {
 
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
-    this.teamSetting = this.page.locator("#team-setting");
+    this.accountSetting = this.page.locator("#account-settings");
     this.categoryLink = this.page.getByRole("link", { name: "Categories" });
     this.categoryNameInput = this.page.locator("#categoryName");
     this.saveButton = this.page.getByText("Save");
@@ -18,14 +18,25 @@ exports.releaseCategory = class releaseCategory {
   }
 
   async navigateToTeamSetting() {
-    await this.userMenu.click();
-    await this.teamSetting.click();
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isUser = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isUser = await this.userMenu.isVisible();
+      if (isUser) {
+        await this.userMenu.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    await this.accountSetting.click()
   }
 
   async navigateToCategories() {
     await this.navigateToTeamSetting();
     await this.categoryLink.click();
-    await this.page.waitForTimeout(5000);
   }
 
   async createCategory() {

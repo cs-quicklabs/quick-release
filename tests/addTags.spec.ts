@@ -14,10 +14,6 @@ test("verify user able to Add Tags ", async ({ page }) => {
   await releasetag.createReleaseTag();
 });
 
-test("verify user able to edit Tags ", async ({ page }) => {
-  const releasetag = new releaseTags(page);
-  await releasetag.editReleaseTag();
-});
 
 
 

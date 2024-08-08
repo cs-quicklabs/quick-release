@@ -7,7 +7,7 @@ exports.releaseTags = class releaseTags {
 
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
-    this.teamSetting = this.page.locator("#team-setting");
+    this.accountSetting = this.page.locator("#account-settings");
     this.tagNameInput = this.page.locator("#tagname");
     this.saveButton = this.page.getByText("Save");
     this.editTagNameInput = this.page.locator("#editTagName");
@@ -17,8 +17,20 @@ exports.releaseTags = class releaseTags {
   }
 
   async navigateToTeamSetting() {
-    await this.userMenu.click();
-    await this.teamSetting.click();
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isUser = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isUser = await this.userMenu.isVisible();
+      if (isUser) {
+        await this.userMenu.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    await this.accountSetting.click()
   }
 
   async createReleaseTag() {

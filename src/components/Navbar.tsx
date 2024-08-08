@@ -352,7 +352,7 @@ export function Navbar() {
                             >
                               <div
                                 className="flex  items-center"
-                                id="profile-settings"
+                                id="account-settings"
                               >
                                 {"Account Settings"}
                               </div>

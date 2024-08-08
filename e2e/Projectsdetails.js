@@ -2,7 +2,7 @@ const { test, expect } = require("@playwright/test");
 exports.createProject = class Project {
   constructor(page) {
     this.page = page;
-    this.projectName = "New";
+    this.projectName = "ABCD";
     this.openUserMenuButton = this.page.locator("#open-user-menu");
     this.addNewProjectButton = this.page.locator("text=Add new project");
     this.projectInput = this.page.locator("#company-website");
