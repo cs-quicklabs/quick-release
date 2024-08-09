@@ -16,7 +16,7 @@ exports.releaseTags = class releaseTags {
     this.deleteLink = this.page.getByRole("link", { name: "Delete" }).first();
   }
 
-  async navigateToTeamSetting() {
+  async navigateToAccountSetting() {
     const maxRetries = 10; 
     const retryInterval = 3000; 
     
@@ -34,7 +34,7 @@ exports.releaseTags = class releaseTags {
   }
 
   async createReleaseTag() {
-    await this.navigateToTeamSetting();
+    await this.navigateToAccountSetting();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     await this.tagNameInput.fill(this.tagname + numeric);
     await this.saveButton.click();
@@ -44,7 +44,7 @@ exports.releaseTags = class releaseTags {
   }
 
   async editReleaseTag() {
-    await this.navigateToTeamSetting();
+    await this.navigateToAccountSetting();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     console.log(numeric);
     await this.tagNameInput.fill(this.tagname + numeric);
@@ -60,7 +60,7 @@ exports.releaseTags = class releaseTags {
   }
 
   async deleteReleaseTag() {
-    await this.navigateToTeamSetting();
+    await this.navigateToAccountSetting();;
     await this.deleteLink.waitFor("visible"); 
     await this.deleteLink.click();
   }

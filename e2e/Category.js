@@ -17,7 +17,7 @@ exports.releaseCategory = class releaseCategory {
     this.deleteLink = this.page.getByRole("link", { name: "Delete" }).first();
   }
 
-  async navigateToTeamSetting() {
+  async navigateToAccountSetting(){
     const maxRetries = 10; 
     const retryInterval = 3000; 
     
@@ -35,11 +35,11 @@ exports.releaseCategory = class releaseCategory {
   }
 
   async navigateToCategories() {
-    await this.navigateToTeamSetting();
     await this.categoryLink.click();
   }
 
   async createCategory() {
+    await this.navigateToAccountSetting();
     await this.navigateToCategories();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     await this.categoryNameInput.fill(this.categoryName + numeric);
@@ -50,6 +50,7 @@ exports.releaseCategory = class releaseCategory {
   }
 
   async editCategory() {
+    await this.navigateToAccountSetting();
     await this.navigateToCategories();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     console.log(numeric);
@@ -68,6 +69,7 @@ exports.releaseCategory = class releaseCategory {
 
  
   async deleteCategory() {
+    await this.navigateToAccountSetting();
     await this.navigateToCategories();
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     console.log(numeric);

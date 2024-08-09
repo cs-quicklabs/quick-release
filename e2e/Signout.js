@@ -9,7 +9,7 @@ exports.Signout = class Signout {
     );
   }
 
-  async navigateToTeamSetting() {
+  async openUserMenu() {
     const maxRetries = 10; 
     const retryInterval = 3000; 
     

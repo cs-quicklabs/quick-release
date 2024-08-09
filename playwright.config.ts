@@ -46,7 +46,7 @@ export default defineConfig({
     {
       name: "sanity",
       testDir: "./tests",
-      testMatch: /.*(Login|Changelogs|Profile|Changepasswords|Category|viewpublic|Signout|addaTags|addprojects)\.spec\.ts$/,
+      testMatch: /.*(Login|Changelogs|Profile|Changepasswords|viewpublic|Signout|addaTags|addprojects|Category)\.spec\.ts$/,
     },
     {
       name: "regression",

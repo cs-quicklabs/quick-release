@@ -3,7 +3,7 @@ exports.createProject = class Project {
   constructor(page) {
     this.page = page;
     this.projectName = "ABCD";
-    this.openUserMenuButton = this.page.locator("#open-user-menu");
+    this.userMenu = this.page.locator("#open-user-menu");
     this.addNewProjectButton = this.page.locator("text=Add new project");
     this.projectInput = this.page.locator("#company-website");
     this.saveButton = this.page.locator("text=Save");
@@ -12,7 +12,19 @@ exports.createProject = class Project {
   }
 
   async openUserMenuAndNavigateToAddProject() {
-    await this.openUserMenuButton.click();
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isUser = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isUser = await this.userMenu.isVisible();
+      if (isUser) {
+        await this.userMenu.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
     await this.addNewProjectButton.click();
   }
 
@@ -38,10 +50,10 @@ exports.createProject = class Project {
     
     try {
       
-      await expect(this.toastMessage).toHaveText("Project name is already taken", { timeout: 3000 });
+      await expect(this.toastMessage).toHaveText("Project name is already taken", { timeout: 5000 });
       
     } catch (error) {
-      await expect(this.toastMessage).toHaveText("Project created successfully", { timeout: 3000 });
+      await expect(this.toastMessage).toHaveText("Project created successfully", { timeout: 5000 });
       
     }
   }
