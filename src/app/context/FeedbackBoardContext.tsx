@@ -180,14 +180,6 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
       }
     );
   };
-  useEffect(() => {
-    if (loggedInUser && router === "/settings/team/boards") {
-      getAllFeedbackBoards(
-        { projectsId: loggedInUser?.activeProjectId },
-        () => {}
-      );
-    }
-  }, [loggedInUser]);
 
   // Provide release tags-related data and functions through the context
   return (

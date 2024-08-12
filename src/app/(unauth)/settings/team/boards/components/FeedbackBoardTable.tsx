@@ -144,6 +144,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                     <div className="flex gap-2 justify-end">
                       <Link
                         href="#"
+                        id="editboard"
                         className="font-medium text-blue-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
@@ -154,6 +155,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                       </Link>
                       <Link
                         href="#"
+                        id="deleteboard"
                         className="ml-2 font-medium text-red-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();

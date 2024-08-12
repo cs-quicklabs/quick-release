@@ -44,24 +44,6 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
     loadMoreFeedbackPosts,
   } = useFeedbackPostContext();
 
-  const activeFeedback = useMemo(() => {
-    if (activeFeedbackPostId && feedbackMap[activeFeedbackPostId]) {
-      return feedbackMap[activeFeedbackPostId];
-    }
-    return null;
-  }, [activeFeedbackPostId, feedbackMap]);
-
-  const fetchAllChangesLogs = useCallback(() => {
-    const query: FilterType = { projectId: activeProjectId! };
-    getAllFeedbackPosts(query);
-  }, [activeProjectId]);
-
-  useEffect(() => {
-    if (activeProjectId && !feedbackList?.length) {
-      fetchAllChangesLogs();
-    }
-  }, [activeProjectId]);
-
   useEffect(() => {
     if (isVisible) {
       loadMoreFeedbackPosts();
