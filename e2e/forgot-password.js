@@ -34,6 +34,9 @@ exports.ForgotPassword = class ForgotPassword {
     return resetLink;
   }
 
+
+
+
   async waitForEmail(email, maxRetries = 10, retryDelay = 5000) {
     let emailMessage;
     for (let i = 0; i < maxRetries; i++) {
@@ -57,7 +60,7 @@ exports.ForgotPassword = class ForgotPassword {
     throw new Error("Failed to retrieve the latest email.");
   }
   
- 
+
 
   async resetPassword(resetLink) {
     await this.page.goto(resetLink);
