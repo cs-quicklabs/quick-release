@@ -70,7 +70,6 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
 export const deleteFileFromS3 = async (fileUrl: string, onModal: string) => {
   try {
     const path = `${onModal}/${fileUrl.split("/").pop()}`;
-    console.log("path", path);
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
     const deleteCommand = new DeleteObjectCommand({
       Bucket: bucketName,

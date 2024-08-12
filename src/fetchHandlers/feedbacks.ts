@@ -1,4 +1,4 @@
-import { ApiFilterQueryType } from "@/types";
+import { ApiFilterQueryType, FeedbackPostType } from "@/types";
 import { IFeedbackBoard } from "@/interfaces";
 import { apiClient } from ".";
 
@@ -8,7 +8,6 @@ const createFeedbackBoardRequest = (data: IFeedbackBoard) => {
 };
 
 const getAllFeedbackBoardsRequest = (params: ApiFilterQueryType) => {
-  console.log(params)
   return apiClient.get("/feedbacks/boards", { params });
 };
 const updateFeedbackBoardRequest = (data: IFeedbackBoard) => {
@@ -16,7 +15,21 @@ const updateFeedbackBoardRequest = (data: IFeedbackBoard) => {
 };
 
 const deleteFeedbackBoardRequest = (data: IFeedbackBoard) => {
-  return apiClient.delete(`/feedbacks/boards/${data.id}`, { params : { projectsId : data.projectsId } });
+  return apiClient.delete(`/feedbacks/boards/${data.id}`, {
+    params: { projectsId: data.projectsId },
+  });
+};
+
+const createFeedbackPostRequest = (data: FeedbackPostType) => {
+  return apiClient.post("/feedbacks/posts", data);
+};
+
+const getAllFeedbackPostsRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get("/feedbacks/posts", { params });
+};
+
+const getOneFeedbackPostRequest = (id: string, params: ApiFilterQueryType) => {
+  return apiClient.get(`/feedbacks/posts/${id}`, { params });
 };
 
 export {
@@ -24,4 +37,7 @@ export {
   getAllFeedbackBoardsRequest,
   updateFeedbackBoardRequest,
   deleteFeedbackBoardRequest,
+  createFeedbackPostRequest,
+  getAllFeedbackPostsRequest,
+  getOneFeedbackPostRequest,
 };
