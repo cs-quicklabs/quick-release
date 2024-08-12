@@ -68,7 +68,18 @@ export function Navbar() {
     if (activeProjectId) {
       nav.push({
         name: projectMap[activeProjectId]?.name as string,
+        href: `/allLogs`,
+        current: false,
+      });
+      nav.push({
+        name: "Changelog",
         href: "/allLogs",
+        current: false,
+      });
+
+      nav.push({
+        name: "Feedback",
+        href: "/allPosts",
         current: false,
       });
     }

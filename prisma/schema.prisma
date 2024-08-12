@@ -169,11 +169,12 @@ model FeedbackPosts {
   title            String
   description      String
   status           FeedbackStatus
-  releaseETA       DateTime
-  createdBy        Users          @relation(fields: [createdById], references: [id])
-  createdById      Int
-  feedbackBoards   FeedbackBoards @relation(fields: [feedbackBoardsId], references: [id])
-  feedbackBoardsId Int
+  releaseETA       DateTime?
+  createdBy        Users?          @relation(fields: [createdById], references: [id])
+  createdById      Int?
+  deletedAt        DateTime?
+  feedbackBoards   FeedbackBoards? @relation(fields: [feedbackBoardsId], references: [id])
+  feedbackBoardsId Int?
 }
 
 model FeedbackBoards {

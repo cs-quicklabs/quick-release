@@ -27,20 +27,23 @@ type FeedbackBoardMapType = {
 const FeedbackBoardContext = createContext({
   error: "",
   map: {} as FeedbackBoardMapType,
-  list: [] as number[],
+  list: [] as string[],
   metaData: {} as { [key: string]: any },
   createFeedbackBoard: async (
     data: IFeedbackBoard,
     setIsLoading: (loading: boolean) => void,
     isNotify = true
   ) => {},
-  getAllFeedbackBoards: async (setIsLoading: (loading: boolean) => void) => {},
+  getAllFeedbackBoards: async (
+    query: { [key: string]: any },
+    setIsLoading: (loading: boolean) => void
+  ) => {},
   updateFeedbackBoard: async (
     data: IFeedbackBoard,
     setIsLoading: (loading: boolean) => void
   ) => {},
   deleteFeedbackBoard: async (
-    id: number,
+    id: string,
     setIsLoading: (loading: boolean) => void
   ) => {},
 });
@@ -56,12 +59,10 @@ type ProviderProps = {
 const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
   const router = usePathname();
   const [map, setMap] = useState<FeedbackBoardMapType>({});
-  const [list, setList] = useState<number[]>([]);
+  const [list, setList] = useState<string[]>([]);
   const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
   const [error, setError] = useState("");
-  const { activeProjectId } = useProjectContext();
   const { loggedInUser } = useUserContext();
-
   // Function to handle create release tag
   const createFeedbackBoard = async (
     data: IFeedbackBoard,
@@ -91,14 +92,11 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
   };
   // Function to handle get all release tags
   const getAllFeedbackBoards = async (
+    query: { [key: string]: any },
     setIsLoading: (loading: boolean) => void
   ) => {
-    console.log("get all release tags", activeProjectId);
     await requestHandler(
-      async () =>
-        await getAllFeedbackBoardsRequest({
-          projectsId: loggedInUser?.activeProjectId!,
-        }),
+      async () => await getAllFeedbackBoardsRequest(query),
       setIsLoading,
       (res: any) => {
         const { data } = res;
@@ -114,10 +112,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
           },
           {}
         );
-        const feedbackBoardIds = feedbackBoards
-          .map((feedbackBoard) => feedbackBoard?.id!)
-          .filter((id) => id);
-
+        const feedbackBoardIds = Object.keys(feedbackBoardMap);
         setMap(feedbackBoardMap);
         setList(feedbackBoardIds);
         setMetaData(metaData);
@@ -157,7 +152,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
 
   // Function to handle delete release tag
   const deleteFeedbackBoard = async (
-    id: number,
+    id: string,
     setIsLoading: (loading: boolean) => void
   ) => {
     setError("");
@@ -185,12 +180,6 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
       }
     );
   };
-
-  useEffect(() => {
-    if (loggedInUser && router === "/settings/team/boards") {
-      getAllFeedbackBoards(() => {});
-    }
-  }, [loggedInUser]);
 
   // Provide release tags-related data and functions through the context
   return (
