@@ -15,6 +15,21 @@ export type FormChangeLogPost = {
   scheduledTime?: Date;
 };
 
+export type FeedbackPostForm = {
+  feedbackBoard: {
+    value: string;
+    label: string;
+  };
+  title: string;
+  description: string;
+  status: {
+    value: string;
+    label: string;
+  };
+  boardId?: string;
+  releaseETA?: Date;
+};
+
 export type AuthType = {
   email: string;
   password: string;
@@ -52,7 +67,44 @@ export type ChangeLogType = {
   archivedAt?: Date;
 };
 
+export type FeedbackPostType = {
+  id?: string;
+  title: string;
+  description: string;
+  projects?: Project;
+  projectsId?: String;
+  releaseETA?: Date;
+  status: string;
+  feedbackBoards?: FeedbackBoardType;
+  boardId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  createdBy?: User;
+};
+
+export type FeedbackBoardType = {
+  id?: string;
+  cuid?: string;
+  name: string;
+  label: string;
+  value: string;
+  projects?: Project;
+  projectsId?: String;
+};
+
 export type ChangeLogsStatusType = {
+  [key: string]: {
+    id: string;
+    title: string;
+    textColor: string;
+    bgColor: string;
+    bulletColor: string;
+  };
+};
+
+FeedbackStatusType;
+export type FeedbackStatusType = {
   [key: string]: {
     id: string;
     title: string;

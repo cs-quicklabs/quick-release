@@ -13,7 +13,8 @@ import { ProjectProvider } from "./context/ProjectContext";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { ReleaseTagProvider } from "./context/ReleaseTagContext";
 import { ReleaseCategoryProvider } from "./context/ReleaseCategoryContext";
-import { FeedbackBoardProvider } from "./context/FeedbackContext";
+import { FeedbackBoardProvider } from "./context/FeedbackBoardContext";
+import { FeedbackPostProvider } from "./context/FeedbackPostContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,21 +40,23 @@ export default async function RootLayout({
         <AuthProvider>
           <Provider>
             <UserProvider>
-              <FeedbackBoardProvider>
-                <ReleaseCategoryProvider>
-                  <ReleaseTagProvider>
-                    <ProjectProvider>
-                      <ChangeLogProvider>
-                        <div className="bg-gray-50 h-screen">{children}</div>
-                        <ToastContainer
-                          pauseOnHover={false}
-                          pauseOnFocusLoss={false}
-                        />
-                      </ChangeLogProvider>
-                    </ProjectProvider>
-                  </ReleaseTagProvider>
-                </ReleaseCategoryProvider>
-              </FeedbackBoardProvider>
+              <FeedbackPostProvider>
+                <FeedbackBoardProvider>
+                  <ReleaseCategoryProvider>
+                    <ReleaseTagProvider>
+                      <ProjectProvider>
+                        <ChangeLogProvider>
+                          <div className="bg-gray-50 h-screen">{children}</div>
+                          <ToastContainer
+                            pauseOnHover={false}
+                            pauseOnFocusLoss={false}
+                          />
+                        </ChangeLogProvider>
+                      </ProjectProvider>
+                    </ReleaseTagProvider>
+                  </ReleaseCategoryProvider>
+                </FeedbackBoardProvider>
+              </FeedbackPostProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>

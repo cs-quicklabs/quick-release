@@ -31,8 +31,8 @@ export async function POST(req: NextRequest) {
           some: {
             cuid: body.boardId,
           },
-        }
-      }
+        },
+      },
     });
 
     if (!project) {
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
         description: body.description,
         status: body.status,
         feedbackBoardsId: feedbackBoard?.id,
-        createdById: user?.id,
+        createdById: user?.id!,
       },
     });
 
@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
 
-    const projectId = searchParams.get("projectsId");
+    const projectId = searchParams.get("projectId");
     if (!projectId) {
       throw new ApiError(400, "Missing project Id");
     }
@@ -122,7 +122,6 @@ export async function GET(req: NextRequest) {
     if (status) {
       query.status = status;
     }
-    console.log(query);
     const feedbackPosts = privacyResponseArray(
       await db.feedbackPosts.findMany({
         where: query,

@@ -1,4 +1,4 @@
-import { useFeedbackBoardContext } from "@/app/context/FeedbackContext";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
