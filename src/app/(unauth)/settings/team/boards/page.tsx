@@ -4,18 +4,24 @@ import AddFeedbackBoard from "./components/AddFeedbackBoard";
 import FeedbackBoardTable from "./components/FeedbackBoardTable";
 import { useUserContext } from "@/app/context/UserContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
+import ScreenLoader from "@/atoms/ScreenLoader";
 
 const BoardsPage = () => {
-  const { getLoggedInUserDetails } = useUserContext();
   const [loader, setLoader] = useState(false);
   const { activeProjectId, getActiveProject } = useProjectContext();
+  const { getAllFeedbackBoards } = useFeedbackBoardContext();
 
   useEffect(() => {
-    getLoggedInUserDetails();
-  }, []);
+    if (!activeProjectId) {
+      getActiveProject(setLoader);
+    }
+  }, [activeProjectId]);
 
   useEffect(() => {
-    getActiveProject(setLoader);
+    if (activeProjectId) {
+      getAllFeedbackBoards({ projectsId: activeProjectId }, setLoader);
+    }
   }, [activeProjectId]);
   return (
     <main className="h-full overflow-y-auto max-w-3xl pb-12 px-4 lg:col-span-7 no-scrollbar">

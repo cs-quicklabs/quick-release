@@ -16,7 +16,7 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
 
   if (!feedback) return null;
 
-  const { createdBy, status, releaseETA, feedbackBoards } = feedback;
+  const { createdBy, status, releaseETA, feedbackBoards, createdAt } = feedback;
   const fullName = `${createdBy?.firstName || ""} ${
     createdBy?.lastName || ""
   }`.trim();
@@ -53,8 +53,8 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
 
               <span>
                 {` on ${
-                  releaseETA
-                    ? moment(releaseETA).format("MMMM DD, yyyy")
+                  createdAt
+                    ? moment(createdAt).format("MMMM DD, yyyy")
                     : "N/A"
                 }`}
               </span>

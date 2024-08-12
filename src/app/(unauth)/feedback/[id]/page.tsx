@@ -77,21 +77,25 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   const { activeProjectId, getActiveProject } = useProjectContext();
 
   const fetchActiveProject = useCallback(async () => {
-    await getActiveProject(setLoader);
+    if(!activeProjectId){
+      await getActiveProject(setLoader);
+    }
   }, [activeProjectId]);
 
   const fetchAllFeedbackBoards = useCallback(async () => {
-    const query = { projectsId: activeProjectId };
-    await getAllFeedbackBoards(query, setLoader);
-  }, [params.id]);
+    if(activeProjectId){
+      const query = { projectsId: activeProjectId };
+      await getAllFeedbackBoards(query, setLoader);
+    }
+  }, [params.id, activeProjectId]);
 
   useEffect(() => {
     fetchActiveProject();
-  }, []);
+  }, [activeProjectId]);
 
   useEffect(() => {
     fetchAllFeedbackBoards();
-  }, [params.id]);
+  }, [params.id, activeProjectId]);
 
   const feedbackpost = useMemo(() => {
     return feedbackPostMap[params.id] || null;

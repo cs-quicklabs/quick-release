@@ -28,13 +28,6 @@ export default function AllPosts() {
   } = useFeedbackPostContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
-  const fetchAllFeedbackPosts = useCallback(() => {
-    if (activeProjectId) {
-      const query = { projectId: activeProjectId! };
-      getAllFeedbackPosts(query);
-    }
-  }, [activeProjectId]);
-
   useEffect(() => {
     if (!activeProjectId) {
       getActiveProject(setLoading);
@@ -42,13 +35,16 @@ export default function AllPosts() {
   }, [activeProjectId]);
 
   useEffect(() => {
-    fetchAllFeedbackPosts();
-  }, []);
+    if (activeProjectId) {
+      const query = { projectId: activeProjectId! };
+      getAllFeedbackPosts(query);
+    }
+  }, [activeProjectId]);
 
   // show loading if fetching current active project or feedbacks
   if (
     (!activeProjectId && loading) ||
-    (!metaData?.hasProjectFeedbacks && isFetchingFeedbacks) ||
+    (!metaData?.total && isFetchingFeedbacks) ||
     setActiveProjectLoading
   ) {
     return <ScreenLoader />;
@@ -78,7 +74,7 @@ export default function AllPosts() {
 
   if (
     (!activeProjectId && !loading) ||
-    // (!metaData?.hasProjectFeedbacks && !isFetchingFeedbacks) ||
+    (metaData.total === 0 && !isFetchingFeedbacks) ||
     (!feedbacks && !activeFeedbackPostId && !isFetchingFeedbacks)
   ) {
     return renderEmptyPage();
