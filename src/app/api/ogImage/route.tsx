@@ -35,7 +35,7 @@ export async function GET(req: Request) {
               height={60}
               alt="Logo"
             />
-            <h1 style={{ fontSize: "4rem", color: "#333" }}>
+            <h1 style={{ fontSize: "3.5rem", color: "#333" }}>
               {WEB_DETAILS.name}
             </h1>
           </div>
@@ -57,7 +57,7 @@ export async function GET(req: Request) {
     // Generate an image using ImageResponse
     return new ImageResponse(<ImageContent />, {
       width: 1200,
-      height: 630,
+      height: title ? 580 : 400,
     });
   } catch (error) {
     console.error(error);
