@@ -13,15 +13,16 @@ test.beforeEach(
   }
 );
 
-test("verify user able to Add Category ", async ({ page }) => {
+test("verify user able to Add and edit Category ", async ({ page }) => {
   const releasecategories = new releaseCategory(page);
   await releasecategories.createCategory();
 });
-
-test("verify user able to Edit Category", async ({ page }) => {
-  const editcategory = new releaseCategory(page);
-  await editcategory.editCategory();
+test("verify user able to edit Category ", async ({ page }) => {
+  const releasecategories = new releaseCategory(page);
+  await releasecategories.editCategory();
 });
+
+
 test("verify user able to Delete category", async ({ page }) => {
   const deletecategory = new releaseCategory(page);
   await deletecategory.deleteCategory();

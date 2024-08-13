@@ -4,28 +4,24 @@ import { Input } from "@/atoms/input";
 import { IReleaseCategory } from "@/interfaces";
 import React, { useEffect, useRef, useState } from "react";
 
-type AddReleaseCategoryProps = {
-  selectedReleaseCategoryId: number | null;
-  setSelectedReleaseCategoryId: (id: number | null) => void;
-};
-
-const AddReleaseCategory: React.FC<AddReleaseCategoryProps> = ({
-  selectedReleaseCategoryId = null,
-  setSelectedReleaseCategoryId,
-}) => {
+const AddReleaseCategory = () => {
   const prevState = useRef({ isSaving: false });
 
   const [categoryName, setCategoryName] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
+  const [showError, setShowError] = useState("");
 
   const {
     error,
-    map: releaseCategoryMap,
     createReleaseCategory,
   } = useReleaseCategoryContext();
 
   const onSaveReleaseCategory = () => {
     if (!categoryName) return;
+    if(categoryName.length > 30) {
+      setShowError("Category name must be less than 30 characters");
+      return;
+    }
 
     const releaseCategory: IReleaseCategory = {
       name: categoryName,
@@ -35,7 +31,6 @@ const AddReleaseCategory: React.FC<AddReleaseCategoryProps> = ({
   };
 
   const resetForm = () => {
-    setSelectedReleaseCategoryId(null);
     setCategoryName("");
   };
 
@@ -51,13 +46,6 @@ const AddReleaseCategory: React.FC<AddReleaseCategoryProps> = ({
     };
   }, [isSaving]);
 
-  useEffect(() => {
-    if (selectedReleaseCategoryId !== null) {
-      const releaseCategory = releaseCategoryMap[selectedReleaseCategoryId];
-      setCategoryName(releaseCategory?.name!);
-    }
-  }, [selectedReleaseCategoryId]);
-
   return (
     <div className="w-full mt-6">
       <div className="mb-5 mt-6">
@@ -72,6 +60,8 @@ const AddReleaseCategory: React.FC<AddReleaseCategoryProps> = ({
           onChange={(e) => setCategoryName(e.target.value)}
           disabled={isSaving}
         />
+
+        <span className="text-red-500 text-sm">{showError}</span>
       </div>
 
       <Button

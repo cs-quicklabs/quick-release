@@ -6,11 +6,7 @@ import { IReleaseTag } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
-type ReleaseTagsTableProps = {
-  onEdit: (id: number) => void;
-};
-
-const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
+const ReleaseTagsTable = () => {
   const prevStates = useRef({ isLoading: false });
   const [tagNames, setTagNames] = useState<{ [key: number]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
@@ -26,10 +22,13 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
   const [selectedReleaseTagId, setSelectedReleaseTagId] = useState<
     number | null
   >(null);
+  const [selectedDeletedReleaseTagId, setSelectedDeletedReleaseTagId] = useState<
+  number | null
+>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const onDelete = (id: number) => {
-    setSelectedReleaseTagId(id);
+    setSelectedDeletedReleaseTagId(id);
     setShowDeleteModal(true);
   };
 
@@ -164,11 +163,14 @@ const ReleaseTagsTable: React.FC<ReleaseTagsTableProps> = ({ onEdit }) => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message={`Are you sure you want to delete the tag "${selectedReleaseTag?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
+        message={`Are you sure you want to delete the tag "${releaseTagMap[selectedDeletedReleaseTagId!]?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteReleaseTag(selectedReleaseTagId!, setIsLoading)}
-        onClickCancel={() => setShowDeleteModal(false)}
+        onClickOk={() => deleteReleaseTag(selectedDeletedReleaseTagId!, setIsLoading)}
+        onClickCancel={() => {
+          setShowDeleteModal(false)
+          setSelectedDeletedReleaseTagId(null)
+        }}
         loading={isLoading}
       />
     </div>

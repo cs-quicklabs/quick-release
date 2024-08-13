@@ -2,7 +2,7 @@ const { test, expect } = require("@playwright/test");
 exports.changePassword = class changePassword {
   constructor(page) {
     this.page = page;
-    this.userMenuButton = this.page.locator("#open-user-menu");
+    this.userMenu = this.page.locator("#open-user-menu");
     this.profileSettingsButton = this.page.locator("#profile-settings");
     this.changePasswordButton = this.page.getByText("Change Password");
     this.oldPasswordInput = this.page.locator("input[name='oldPassword']");
@@ -16,12 +16,21 @@ exports.changePassword = class changePassword {
     );
   }
 
-  async openUserMenu() {
-    await this.userMenuButton.click();
-  }
-
   async navigateToProfileSettings() {
-    await this.profileSettingsButton.click();
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isUser = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isUser = await this.userMenu.isVisible();
+      if (isUser) {
+        await this.userMenu.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    await this.profileSettingsButton.click()
   }
 
   async waitForProfileSettings() {
@@ -53,9 +62,7 @@ exports.changePassword = class changePassword {
   }
 
   async changePassword(oldPassword, newPassword) {
-    await this.openUserMenu();
     await this.navigateToProfileSettings();
-    await this.waitForProfileSettings();
     await this.verifyProfileSettingsPage();
     await this.clickChangePassword();
     await this.fillOldPassword(oldPassword);

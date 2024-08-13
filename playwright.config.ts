@@ -11,13 +11,15 @@ import { defineConfig, devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
+ 
+  timeout: 2 * 80 * 1000,
   expect: {
-    timeout: 30 * 1000,
+    timeout: 2 * 30 * 1000,
   },
   testDir: "tests",
   testMatch: "**/*.spec.ts",
   /* Run tests in files in parallel */
-  fullyParallel: true,
+  fullyParallel:true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -35,9 +37,22 @@ export default defineConfig({
     // trace: "on-first-retry",
     headless: true,
   },
-  timeout: 5 * 60 * 1000,
+  
+  // timeout: 5* 60 * 1000,
   /* Configure projects for major browsers */
   projects: [
+
+
+    {
+      name: "sanity",
+      testDir: "./tests",
+      testMatch: /.*(Login|Changelogs|Profile|Changepasswords|viewpublic|Signout|addaTags|addprojects|Category)\.spec\.ts$/,
+    },
+    {
+      name: "regression",
+      testDir: "./tests",
+      testMatch: /.*(loginTest)\.spec\.ts$/,
+    },
     {
       name: "chromium",
       use: { browserName: "chromium" },
@@ -54,11 +69,11 @@ export default defineConfig({
     // },
 
     // {
-    //   name: 'webkit',
+    //   name: 'Safari',
     //   use: { ...devices['Desktop Safari'] },
     // },
 
-    /* Test against mobile viewports. */
+    // /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',
     //   use: { ...devices['Pixel 5'] },

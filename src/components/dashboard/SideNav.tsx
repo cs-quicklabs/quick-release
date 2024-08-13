@@ -115,12 +115,12 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
             </span>
 
             <div className="relative inline-block text-left">
-              <Menu as="div" className="relative inline-block text-left" >
+              <Menu as="div" className="relative inline-block text-left">
                 <div>
                   <Menu.Button className={classNames(
                     "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
                     filterStatus ? `${filterStatus.textColor} ${filterStatus.bgColor} hover:${filterStatus.bgColor}` : "bg-white hover:bg-gray-50 text-gray-400 border-gray-300",
-                  )}>
+                  ) } id="filter-status">
                     <FunnelIcon
                       className={classNames(
                         "h-3 w-3",
