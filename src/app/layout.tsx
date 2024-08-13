@@ -27,6 +27,19 @@ export const metadata: Metadata = {
       url: WEB_DETAILS.favicon,
     },
   ],
+  openGraph: {
+    title: WEB_DETAILS.name,
+    description: WEB_DETAILS.description,
+    url: process.env.BASEURL,
+    siteName: WEB_DETAILS.name,
+    images: [
+      {
+        url: `${process.env.BASEURL}/api/ogImage`,
+        width: 1200,
+        height: 630,
+      },
+    ]
+  },
 };
 
 export default async function RootLayout({
