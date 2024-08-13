@@ -138,6 +138,7 @@ const SideNav: React.FC<SideNavProps> = ({
                         ? `${filterStatus.textColor} ${filterStatus.bgColor} hover:${filterStatus.bgColor}`
                         : "bg-white hover:bg-gray-50 text-gray-400 border-gray-300"
                     )}
+                    id="filter-status"
                   >
                     <FunnelIcon
                       className={classNames(

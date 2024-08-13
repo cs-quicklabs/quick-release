@@ -6,7 +6,7 @@ import { test, expect } from "@playwright/test";
 test.beforeEach(
   " Verify user able Log in with valid credential",
   async ({ page }) => {
-    const login = new LoginPage(page); // 30 seconds
+    const login = new LoginPage(page); 
     await page.goto("/");
     await login.login(validCredentials.mail, validCredentials.password);
   }
