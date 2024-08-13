@@ -121,3 +121,18 @@ body {
 .content-container .ql-editor {
   padding: 0;
 }
+
+.ql-container > .ql-editor{
+  font-size: 14px !important;
+}
+.ql-container > .ql-editor{
+  min-height: 30rem !important;
+}
+
+.ql-editor li {
+  padding: 0.3rem 0 !important;
+}
+
+.ql-editor p {
+  padding: 0.3rem 0 !important;
+}
