@@ -18,11 +18,12 @@ exports.Profiles = class Profiles {
       isUser = await this.userMenu.isVisible();
       if (isUser) {
         await this.userMenu.click()
+        await this.profileSettingsButton.click()
         break;
       }
       await new Promise(resolve => setTimeout(resolve, retryInterval)); 
     }
-    await this.profileSettingsButton.click()
+    
     await expect(
       this.page.locator("text=Change your personal profile settings")
     ).toBeVisible({timeout:50000});
