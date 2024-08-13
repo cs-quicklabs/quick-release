@@ -13,7 +13,8 @@ import { ProjectProvider } from "./context/ProjectContext";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { ReleaseTagProvider } from "./context/ReleaseTagContext";
 import { ReleaseCategoryProvider } from "./context/ReleaseCategoryContext";
-import { FeedbackBoardProvider } from "./context/FeedbackContext";
+import { FeedbackBoardProvider } from "./context/FeedbackBoardContext";
+import { FeedbackPostProvider } from "./context/FeedbackPostContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,19 @@ export const metadata: Metadata = {
       url: WEB_DETAILS.favicon,
     },
   ],
+  openGraph: {
+    title: WEB_DETAILS.name,
+    description: WEB_DETAILS.description,
+    url: process.env.BASEURL,
+    siteName: WEB_DETAILS.name,
+    images: [
+      {
+        url: `${process.env.BASEURL}/api/ogImage`,
+        width: 1200,
+        height: 630,
+      },
+    ]
+  },
 };
 
 export default async function RootLayout({
@@ -39,21 +53,23 @@ export default async function RootLayout({
         <AuthProvider>
           <Provider>
             <UserProvider>
-              <FeedbackBoardProvider>
-                <ReleaseCategoryProvider>
-                  <ReleaseTagProvider>
-                    <ProjectProvider>
-                      <ChangeLogProvider>
-                        <div className="bg-gray-50 h-screen">{children}</div>
-                        <ToastContainer
-                          pauseOnHover={false}
-                          pauseOnFocusLoss={false}
-                        />
-                      </ChangeLogProvider>
-                    </ProjectProvider>
-                  </ReleaseTagProvider>
-                </ReleaseCategoryProvider>
-              </FeedbackBoardProvider>
+              <FeedbackPostProvider>
+                <FeedbackBoardProvider>
+                  <ReleaseCategoryProvider>
+                    <ReleaseTagProvider>
+                      <ProjectProvider>
+                        <ChangeLogProvider>
+                          <div className="bg-gray-50 h-screen">{children}</div>
+                          <ToastContainer
+                            pauseOnHover={false}
+                            pauseOnFocusLoss={false}
+                          />
+                        </ChangeLogProvider>
+                      </ProjectProvider>
+                    </ReleaseTagProvider>
+                  </ReleaseCategoryProvider>
+                </FeedbackBoardProvider>
+              </FeedbackPostProvider>
             </UserProvider>
           </Provider>
         </AuthProvider>

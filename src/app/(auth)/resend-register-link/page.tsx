@@ -41,9 +41,7 @@ const ResendRegisterLink = () => {
       toast.success("Reset Link Sent Successfully");
       setLoader(false);
     } catch (e: any) {
-      console.log(e, "er");
       toast.error("Email not registered");
-
       setLoader(false);
     }
   };

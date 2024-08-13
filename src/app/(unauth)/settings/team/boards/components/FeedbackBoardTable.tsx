@@ -4,13 +4,13 @@ import { Input } from "@/atoms/input";
 import { IFeedbackBoard } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { useFeedbackBoardContext } from "@/app/context/FeedbackContext";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
 
 const FeedbackBoardTable: React.FC<{}> = () => {
   const prevStates = useRef({ isLoading: false });
-  const [boardNames, setBoardNames] = useState<{ [key: number]: string }>({});
+  const [boardNames, setBoardNames] = useState<{ [key: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
   const { loggedInUser } = useUserContext();
   const [showNoActionModal, setShowNoActionModal] = useState(false);
@@ -23,13 +23,13 @@ const FeedbackBoardTable: React.FC<{}> = () => {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedFeedbackBoardId, setSelectedFeedbackBoardId] = useState<
-    number | null
+    string | null
   >(null);
   const [selectedDeletedFeedbackBoardId, setSelectedDeletedFeedbackBoardId] =
-    useState<number | null>(null);
+    useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const onDelete = (id: number) => {
+  const onDelete = (id: string) => {
     setSelectedDeletedFeedbackBoardId(id);
     const feedbackBoard = feedbackBoardMap[id];
     if (feedbackBoard?.isDefault) {
@@ -39,7 +39,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
     }
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {
     setSelectedFeedbackBoardId(id);
     setBoardNames((prev) => ({
       ...prev,
@@ -144,6 +144,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                     <div className="flex gap-2 justify-end">
                       <Link
                         href="#"
+                        id="editboard"
                         className="font-medium text-blue-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();
@@ -154,6 +155,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                       </Link>
                       <Link
                         href="#"
+                        id="deleteboard"
                         className="ml-2 font-medium text-red-600 hover:underline"
                         onClick={(e) => {
                           e.preventDefault();

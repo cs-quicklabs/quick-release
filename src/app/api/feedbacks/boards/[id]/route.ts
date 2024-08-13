@@ -2,6 +2,7 @@ import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
+import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -55,16 +56,7 @@ export async function PUT(
       throw new ApiError(404, "Project not found");
     }
 
-    const projectUser = await db.projectsUsers.findFirst({
-      where: {
-        projectsId: project?.id,
-        usersId: user?.id,
-      },
-    });
-
-    if (!projectUser) {
-      throw new ApiError(404, "Unauthorized request");
-    }
+    await roleChecker(user?.id!, project?.id!);
     const feedbackBoard = await db.feedbackBoards.findFirst({
       where: {
         cuid,
@@ -74,6 +66,16 @@ export async function PUT(
 
     if (!feedbackBoard) {
       throw new ApiError(404, "Feedback board not found");
+    }
+
+    const existingBoard = await db.feedbackBoards.findFirst({
+      where: {
+        name,
+        projectsId: project?.id,
+      },
+    });
+    if (existingBoard) {
+      throw new ApiError(400, "Feedback board with this name already exists");
     }
 
     const updatedFeedbackBoard = await db.feedbackBoards.update({
@@ -139,16 +141,7 @@ export async function DELETE(
       throw new ApiError(404, "Project not found");
     }
 
-    const projectUser = await db.projectsUsers.findFirst({
-      where: {
-        projectsId: project?.id,
-        usersId: user?.id,
-      },
-    });
-
-    if (!projectUser) {
-      throw new ApiError(404, "Unauthorized request");
-    }
+    await roleChecker(user?.id!, project?.id!);
 
     if (!project?.id) {
       throw new ApiError(404, "project not found");

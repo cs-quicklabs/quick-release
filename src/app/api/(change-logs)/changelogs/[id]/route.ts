@@ -177,7 +177,6 @@ export async function PUT(
     const imageUrlsToDelete = oldImageUrls.filter(
       (imageUrl) => !newImageUrls.includes(imageUrl)
     );
-    console.log("imageUrlsToDelete", imageUrlsToDelete);
     for (const imageUrl of imageUrlsToDelete) {
       await deleteFileFromS3(imageUrl, "ChangeLogs");
     }

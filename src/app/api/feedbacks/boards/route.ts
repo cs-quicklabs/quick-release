@@ -2,6 +2,7 @@ import { privacyResponse, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
+import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
@@ -43,15 +44,16 @@ export async function POST(req: NextRequest) {
     if (!project) {
       throw new ApiError(404, "Project not found");
     }
-    const projectUser = await db.projectsUsers.findFirst({
+    await roleChecker(user?.id!, project?.id!);
+    
+    const existingBoard = await db.feedbackBoards.findFirst({
       where: {
+        name,
         projectsId: project?.id,
-        usersId: user?.id,
       },
     });
-
-    if (!projectUser) {
-      throw new ApiError(404, "Unauthorized request");
+    if (existingBoard) {
+      throw new ApiError(400, "Feedback board already exists");
     }
     const newFeedbackBoard = await db.feedbackBoards.create({
       data: {
@@ -110,16 +112,7 @@ export async function GET(req: NextRequest) {
       throw new ApiError(404, "Project not found");
     }
 
-    const projectUser = await db.projectsUsers.findFirst({
-      where: {
-        projectsId: project?.id,
-        usersId: user?.id,
-      },
-    });
-
-    if (!projectUser) {
-      throw new ApiError(404, "Unauthorized request");
-    }
+    await roleChecker(user?.id!, project?.id!);
 
     const feedbackBoards = privacyResponseArray(
       await db.feedbackBoards.findMany({
