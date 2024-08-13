@@ -68,6 +68,16 @@ export async function PUT(
       throw new ApiError(404, "Feedback board not found");
     }
 
+    const existingBoard = await db.feedbackBoards.findFirst({
+      where: {
+        name,
+        projectsId: project?.id,
+      },
+    });
+    if (existingBoard) {
+      throw new ApiError(400, "Feedback board with this name already exists");
+    }
+
     const updatedFeedbackBoard = await db.feedbackBoards.update({
       where: { cuid },
       data: {
