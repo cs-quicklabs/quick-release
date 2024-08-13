@@ -151,9 +151,10 @@ const ContentContainer = () => {
     () => [
       {
         name: "Edit",
-      id:"edit-changelog",
+        id: "edit-changelog",
         onClick: () => {
-          router.push(`/changeLog/${activeChangeLogId}`)
+          sessionStorage.setItem("activeChangeLogId", activeChangeLogId!);
+          router.push(`/changeLog/${activeChangeLogId}`);
         },
       },
       {
@@ -162,7 +163,7 @@ const ContentContainer = () => {
       },
       {
         name: "Delete",
-      id:"delete-changelog",
+        id: "delete-changelog",
         onClick: () => setShowDeleteModal(true),
       },
     ],

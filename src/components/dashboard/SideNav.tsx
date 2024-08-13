@@ -1,4 +1,11 @@
-import React, { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import ChangeLogCardItem from "./ChangeLogCardItem";
@@ -22,7 +29,10 @@ type SideNavProps = {
   setShowSideNav: (show: boolean) => void;
 };
 
-const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }) => {
+const SideNav: React.FC<SideNavProps> = ({
+  showSideNav = false,
+  setShowSideNav,
+}) => {
   const loadMoreRef = useRef(null);
   const isVisible = useOnScreen(loadMoreRef);
 
@@ -36,7 +46,7 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     metaData: changeLogMetaData,
     list: changeLogsList,
     getAllChangeLogs,
-    loadMoreChangeLogs
+    loadMoreChangeLogs,
   } = useChangeLogContext();
 
   const activeChangeLog = useMemo(() => {
@@ -49,6 +59,7 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
   const fetchAllChangesLogs = useCallback(() => {
     const query: FilterType = { projectId: activeProjectId! };
     setFilter(query);
+    sessionStorage.removeItem("activeChangeLogId");
     getAllChangeLogs(query);
   }, [activeProjectId]);
 
@@ -69,12 +80,12 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
     if (status === "archived") {
       newFilter.isArchived = true;
       newFilter.status = null;
-    }
-     else {
+    } else {
       newFilter.status = status;
       newFilter.isArchived = null;
     }
     setFilter(newFilter);
+    sessionStorage.removeItem("activeChangeLogId");
     getAllChangeLogs(newFilter);
   };
 
@@ -110,31 +121,37 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
       <div className="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
         <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
-            <span className="w-full py-1 text-sm font-medium" data-svelte-h="svelte-19a70nh">
+            <span
+              className="w-full py-1 text-sm font-medium"
+              data-svelte-h="svelte-19a70nh"
+            >
               Change Logs
             </span>
 
             <div className="relative inline-block text-left">
-              <Menu as="div" className="relative inline-block text-left" >
+              <Menu as="div" className="relative inline-block text-left">
                 <div>
-                  <Menu.Button className={classNames(
-                    "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
-                    filterStatus ? `${filterStatus.textColor} ${filterStatus.bgColor} hover:${filterStatus.bgColor}` : "bg-white hover:bg-gray-50 text-gray-400 border-gray-300",
-                  )}>
+                  <Menu.Button
+                    className={classNames(
+                      "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                      filterStatus
+                        ? `${filterStatus.textColor} ${filterStatus.bgColor} hover:${filterStatus.bgColor}`
+                        : "bg-white hover:bg-gray-50 text-gray-400 border-gray-300"
+                    )}
+                  >
                     <FunnelIcon
                       className={classNames(
                         "h-3 w-3",
-                        filterStatus ? `${filterStatus.textColor}` : "text-gray-400",
+                        filterStatus
+                          ? `${filterStatus.textColor}`
+                          : "text-gray-400"
                       )}
                       aria-hidden={true}
                     />
 
-                    {
-                      filterStatus &&
-                      <span className="ml-2">
-                        {filterStatus.title}
-                      </span>
-                    }
+                    {filterStatus && (
+                      <span className="ml-2">{filterStatus.title}</span>
+                    )}
                   </Menu.Button>
                 </div>
 
@@ -157,8 +174,8 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
                       </p>
                     </div>
 
-                    {
-                      Object.values(ChangeLogsStatus).map(({ id, title, bulletColor }) => (
+                    {Object.values(ChangeLogsStatus).map(
+                      ({ id, title, bulletColor }) => (
                         <Menu.Item key={id}>
                           {() => (
                             <Link
@@ -175,8 +192,8 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
                             </Link>
                           )}
                         </Menu.Item>
-                      ))
-                    }
+                      )
+                    )}
 
                     <div
                       className="px-4 py-2 border-t border-gray-100 hover:bg-gray-50"
@@ -205,38 +222,32 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
             className="divide-y divide-gray-200 border-b border-gray-200"
             role="list"
           >
-            {
-              !isFetchingChangeLogs && !changeLogsList?.length && (
-                <li
-                  key="empty-list-item"
-                  className="relative py-10 px-6 bg-white"
-                >
-                  <div className="flex flex-col items-center justify-center text-center text-gray-400">
-                    <InboxIcon className="h-10 w-10" />
+            {!isFetchingChangeLogs && !changeLogsList?.length && (
+              <li
+                key="empty-list-item"
+                className="relative py-10 px-6 bg-white"
+              >
+                <div className="flex flex-col items-center justify-center text-center text-gray-400">
+                  <InboxIcon className="h-10 w-10" />
 
-                    <span>No Change Logs Found</span>
-                  </div>
-                </li>
-              )
-            }
+                  <span>No Change Logs Found</span>
+                </div>
+              </li>
+            )}
 
-            {
-              changeLogsList?.map((id) => (
-                <ChangeLogCardItem
-                  key={id}
-                  id={id}
-                />
-              ))
-            }
+            {changeLogsList?.map((id) => (
+              <ChangeLogCardItem key={id} id={id} />
+            ))}
 
             <li
               ref={loadMoreRef}
               key={"loadMore"}
               className={classNames(
                 "relative py-4 px-6 bg-white",
-                !isFetchingChangeLogs && changeLogMetaData?.hasNextPage ? "visible:" : "hidden"
+                !isFetchingChangeLogs && changeLogMetaData?.hasNextPage
+                  ? "visible:"
+                  : "hidden"
               )}
-
             >
               <Button
                 ref={loadMoreRef}
@@ -248,10 +259,7 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
             </li>
 
             {isFetchingChangeLogs && (
-              <li
-                key={"loading"}
-                className="relative py-5 bg-white"
-              >
+              <li key={"loading"} className="relative py-5 bg-white">
                 <div className="flex items-center justify-center">
                   <Spin className="h-5 w-5 mr-2" />
 
@@ -259,8 +267,6 @@ const SideNav: React.FC<SideNavProps> = ({ showSideNav = false, setShowSideNav }
                 </div>
               </li>
             )}
-
-
           </ul>
         </nav>
       </div>
