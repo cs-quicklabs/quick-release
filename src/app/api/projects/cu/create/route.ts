@@ -41,7 +41,7 @@ export async function POST(request: NextRequest, response: Response) {
       throw new ApiError(400, "Project name is required");
     }
     const existingProject = await db.projects.findFirst({
-      where: { name: body.projects, organizationsId: organizations?.id },
+      where: { name: body.projects },
     });
     if (existingProject) {
       throw new ApiError(400, "Project name is already taken");
