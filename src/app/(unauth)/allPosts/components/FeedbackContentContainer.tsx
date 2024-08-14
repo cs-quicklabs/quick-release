@@ -14,7 +14,7 @@ import { classNames } from "@/lib/utils";
 import { EllipsisVerticalIcon, InboxIcon } from "@heroicons/react/20/solid";
 import moment from "moment";
 import React, { useEffect, useRef, useState } from "react";
-import { CalendarDateRangeIcon } from "@heroicons/react/24/outline";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -97,7 +97,7 @@ const FeedbackContentContainer = () => {
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500 flex items-center">
-                {`Created by ${fullName} on ${createdAt} | ETA: `}{ETA ? ETA : <CalendarDateRangeIcon className="h-5 w-5 text-gray-400 cursor-pointer" />}
+                {`Created by ${fullName} on ${createdAt} | ETA: `}{ETA ? ETA : <CalendarDaysIcon className="h-5 w-5 text-gray-400 cursor-pointer" />}
               </p>
             </div>
 
