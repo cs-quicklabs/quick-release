@@ -56,7 +56,7 @@ export async function GET(req: Request) {
 
     // Generate an image using ImageResponse
     return new ImageResponse(<ImageContent />, {
-      width: 1200,
+      width: title ? 1160 : 800,
       height: title ? 580 : 400,
     });
   } catch (error) {
