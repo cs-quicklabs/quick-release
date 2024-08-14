@@ -71,11 +71,6 @@ export function Navbar() {
         href: `/allLogs`,
         current: false,
       });
-      nav.push({
-        name: "Changelog",
-        href: "/allLogs",
-        current: false,
-      });
 
       nav.push({
         name: "Feedback",
