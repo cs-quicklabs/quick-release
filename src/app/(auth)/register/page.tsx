@@ -33,6 +33,9 @@ const Register = () => {
 
       lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
         message: "Last Name can be maximum 50 characters",
+      })
+      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+        message: "Last name can only contain letters",
       }),
       email: z
         .string()

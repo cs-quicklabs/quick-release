@@ -16,12 +16,12 @@ const AddFeedbackBoard = () => {
   const { error, createFeedbackBoard } = useFeedbackBoardContext();
 
   const onSaveFeedbackBoard = () => {
-    if (!boardName) return;
-
-    if(boardName.length > 30) {
-      setShowError("Board name must be less than 30 characters");
+    if (!boardName) {
+      setShowError("Board name is required");
       return;
     }
+
+    setShowError("");
 
     const feedbackBoard: IFeedbackBoard = {
       name: boardName,
@@ -57,17 +57,22 @@ const AddFeedbackBoard = () => {
           placeholder="Board name"
           id="boardName"
           value={boardName}
-          onChange={(e) => setBoardName(e.target.value)}
+          onChange={(e) => {
+            if (!e.target.value) setShowError("Board name is required");
+            else if(e.target.value.length > 30) setShowError("Board name must be less than 30 characters");
+            else setShowError("");
+            setBoardName(e.target.value);
+          }}
           disabled={isSaving}
         />
 
-        <span className="text-red-500 text-sm">{showError}</span>
+        <span className="text-red-500 text-xs font-medium">{showError}</span>
       </div>
 
       <Button
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
         onClick={onSaveFeedbackBoard}
-        disabled={isSaving}
+        disabled={isSaving || showError !== ""}
       >
         {isSaving ? "Saving..." : "Save"}
       </Button>

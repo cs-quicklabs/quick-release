@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (name.length > 30) {
-      throw new ApiError(400, "Board name is too long");
+      throw new ApiError(400, "Board name must be less than 30 characters");
     }
 
     if (!body.projectsId) {

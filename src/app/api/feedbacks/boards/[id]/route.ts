@@ -43,6 +43,10 @@ export async function PUT(
       throw new ApiError(400, "Board name is required");
     }
 
+    if(name.length > 30) {
+      throw new ApiError(400, "Board name must be less than 30 characters");
+    }
+
     if (!body.projectsId) {
       throw new ApiError(400, "projects Id is required");
     }
