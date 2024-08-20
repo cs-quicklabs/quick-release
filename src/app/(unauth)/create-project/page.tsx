@@ -12,6 +12,7 @@ import { z } from "zod";
 import { useUserContext } from "@/app/context/UserContext";
 import { requestHandler, showNotification } from "@/Utils";
 import { createProjectRequest, setActiveProjectRequest } from "@/fetchHandlers/project";
+import { Button } from "@/atoms/button";
 
 const Project = () => {
   const router = useRouter();
@@ -22,6 +23,7 @@ const Project = () => {
       .trim()
       .min(1, { message: "Required" })
       .min(3, { message: "Minimun 3 characters required" })
+      .max(30, { message: "Maximum 30 characters allowed" })
       .toLowerCase()
       .refine((value) => /^[a-zA-Z0-9\-.]+$/.test(value), {
         message:
@@ -77,9 +79,9 @@ const Project = () => {
                   />
                 </div>
               </div>{" "}
-              <button
+              <Button
                 type="submit"
-                disabled={loader}
+                disabled={loader || errors.projects ? true : false}
                 className="mt-3 inline-flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
               >
                 {loader ? (
@@ -94,7 +96,7 @@ const Project = () => {
                 ) : (
                   "Save"
                 )}{" "}
-              </button>
+              </Button>
             </form>{" "}
             <p className="mt-2 text-sm text-red-600" id="email-error">
               {errors.projects?.message}

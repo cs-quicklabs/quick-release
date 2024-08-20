@@ -40,6 +40,11 @@ export async function POST(request: NextRequest, response: Response) {
     if(!body.projects) {
       throw new ApiError(400, "Project name is required");
     }
+    
+    if(body.projects.length > 30) {
+      throw new ApiError(400, "Project name must be less than 30 characters");
+    }
+    
     const existingProject = await db.projects.findFirst({
       where: { name: body.projects },
     });

@@ -23,6 +23,10 @@ export async function POST(req: NextRequest) {
       throw new ApiError(400, "Category name is required");
     }
 
+    if (name.length > 30) {
+      throw new ApiError(400, "Category name must be less than 30 characters");
+    }
+
     if(!body.organizationsId) {
       throw new ApiError(400, "organizations Id is required");
     }
