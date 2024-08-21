@@ -13,15 +13,14 @@ export async function GET(req: Request, res: Response) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     })
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const query: { [key: string]: any } = { createdById: user?.id };
 
     const projects = await db.projects.findMany({ 

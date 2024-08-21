@@ -12,15 +12,14 @@ export async function POST(request: NextRequest, response: Response) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     })
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const body = await request.json();
     if(!body.organizationsId) {
       throw new ApiError(400, "organizations Id is required");

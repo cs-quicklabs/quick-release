@@ -110,11 +110,10 @@ export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions);
     // @ts-ignore
     const userId = session?.user?.id;
-    const user = await db.users.findUnique({ where: { cuid: userId } });
-
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
+    const user = await db.users.findUnique({ where: { cuid: userId } });
 
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null };
