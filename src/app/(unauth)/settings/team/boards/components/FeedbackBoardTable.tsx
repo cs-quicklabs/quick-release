@@ -201,7 +201,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() =>
-          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, setIsLoading)
+          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, activeProjectId!, setIsLoading)
         }
         onClickCancel={() => {
           setShowDeleteModal(false);

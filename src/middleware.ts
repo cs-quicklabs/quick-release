@@ -43,11 +43,12 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/allLogs",
+    "/feedback/:path*",
+    "/allPosts",
     "/",
     "/register",
-    "/changeLog/add",
+    "/changeLog/:path*",
     "/settings/:path*",
     "/create-project",
-    "/changeLog/:path*",
   ],
 };

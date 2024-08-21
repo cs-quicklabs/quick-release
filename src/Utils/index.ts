@@ -3,6 +3,7 @@ import { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
 export const showNotification = (type: TypeOptions, message: string) => {
+  toast.dismiss();
   setTimeout(() => {
     toast(message, {
       type,

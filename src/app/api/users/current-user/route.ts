@@ -15,15 +15,14 @@ export async function GET(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     });
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const loggedInUser = privacyResponse(
       await db.users.findFirst({
         where: {
@@ -96,15 +95,14 @@ export async function PATCH(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     });
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const body = await req.json();
 
     if (
