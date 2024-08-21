@@ -148,7 +148,7 @@ export async function PATCH(req: NextRequest) {
           },
         });
 
-        sendVerificationEmail(
+        await sendVerificationEmail(
           body.email,
           registerVerificationToken,
           body.firstName || user?.firstName
