@@ -74,6 +74,7 @@ export async function PUT(
 
     const existingBoard = await db.feedbackBoards.findFirst({
       where: {
+        id: { not: feedbackBoard.id },
         name,
         projectsId: project?.id,
       },

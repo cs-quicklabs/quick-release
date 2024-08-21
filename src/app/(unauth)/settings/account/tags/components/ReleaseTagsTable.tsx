@@ -35,11 +35,13 @@ const ReleaseTagsTable = () => {
   }, [list]);
 
   const onDelete = (id: number) => {
+    setShowError("");
     setSelectedDeletedReleaseTagId(id);
     setShowDeleteModal(true);
   };
 
   const handleEdit = (id: number) => {
+    setShowError("");
     setSelectedReleaseTagId(id);
     setTagNames((prev) => ({
       ...prev,

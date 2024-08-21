@@ -6,7 +6,7 @@ import ProfileSVG from "@/assets/icons/ProfileSVG";
 import { SwatchIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useEffect } from "react";
 
 type SettingsNavProps = {
   isProfileSettings: boolean;
@@ -17,6 +17,10 @@ const SettingsNav = (
   { isProfileSettings, isAccountSettings }: SettingsNavProps
 ) => {
   const pathname = usePathname();
+  useEffect(() => {
+    // Scroll to the top of the page when the pathname changes
+    window.scrollTo(0, 0);
+  }, [pathname]);
   const navLinks = isProfileSettings ? [
     {
       href: "/settings/profile/general",

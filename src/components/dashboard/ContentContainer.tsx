@@ -357,7 +357,10 @@ const ContentContainer = () => {
         }
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteOneChangeLog(activeChangeLogId!, setIsLoading)}
+        onClickOk={() => {
+          sessionStorage.removeItem("activeChangeLogId");
+          deleteOneChangeLog(activeChangeLogId!, setIsLoading)
+        }}
         onClickCancel={() => setShowDeleteModal(false)}
         loading={isLoading}
       />

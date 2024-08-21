@@ -97,7 +97,7 @@ const FeedbackContentContainer = () => {
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500 flex items-center">
-                {`Created by ${fullName} on ${createdAt} | ETA: `}{ETA ? ETA : <CalendarDaysIcon className="h-5 w-5 text-gray-400 cursor-pointer" />}
+                {`Created by ${fullName} on ${createdAt}`}
               </p>
             </div>
 

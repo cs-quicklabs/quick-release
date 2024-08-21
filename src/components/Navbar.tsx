@@ -289,7 +289,7 @@ export function Navbar() {
                             />
                           </div>
                         ) : (
-                          <div className="max-h-96 flex flex-col overflow-hidden">
+                          <div className="max-h-64 flex flex-col overflow-hidden">
                             <div className="max-h-full overflow-y-auto">
                               {projects.map((item: any) => {
                                 return (
