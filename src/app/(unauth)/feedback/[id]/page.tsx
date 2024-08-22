@@ -138,12 +138,21 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     defaultValues: {
       title: "",
       description: "",
-      status: { value: FeedbackStatus[0].id, label: FeedbackStatus[0].title },
-      feedbackBoard: { value: "", label: "" },
+      status: { value: FeedbackStatus["IN_REVIEW"].id, label: FeedbackStatus["IN_REVIEW"].title },
+      feedbackBoard: { value: defaultFeedbackBoard?.value, label: defaultFeedbackBoard?.label },
     },
   });
 
   const formValues = form.getValues();
+
+  useEffect(() => {
+    if (!formValues.feedbackBoard.value) {
+      form.reset({
+        ...formValues,
+        feedbackBoard: { value: defaultFeedbackBoard?.value, label: defaultFeedbackBoard?.label },
+      });
+    }
+  }, [formValues]);
 
   const removeFiles = (filePathUrls: string[]) => {
     return new Promise(async (resolve, reject) => {
