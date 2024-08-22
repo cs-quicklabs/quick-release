@@ -26,11 +26,12 @@ exports.releaseTags = class releaseTags {
       isUser = await this.userMenu.isVisible();
       if (isUser) {
         await this.userMenu.click()
+        await this.accountSetting.click()
         break;
       }
       await new Promise(resolve => setTimeout(resolve, retryInterval)); 
     }
-    await this.accountSetting.click()
+    
   }
 
   async createReleaseTag() {
@@ -63,5 +64,9 @@ exports.releaseTags = class releaseTags {
     await this.navigateToAccountSetting();;
     await this.deleteLink.waitFor("visible"); 
     await this.deleteLink.click();
+  }
+  async createReleaseTagEmptyValue() {
+    await this.navigateToAccountSetting();
+    await this.saveButton.click();
   }
 };

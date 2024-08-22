@@ -21,3 +21,8 @@ test("verify user able to Delete Tags", async ({ page }) => {
   const deletereleasetag = new releaseTags(page);
   await deletereleasetag.deleteReleaseTag();
 });
+
+test("verify user should not able to add Tags with emptyvalue", async ({ page }) => {
+  const addTagsOnlySpaces = new releaseTags(page);
+  await addTagsOnlySpaces.createReleaseTagEmptyValue();
+});

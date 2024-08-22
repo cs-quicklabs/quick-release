@@ -1,4 +1,5 @@
 const { test, expect } = require("@playwright/test");
+const { TIMEOUT } = require("dns/promises");
 exports.feedback = class Feedback{
   constructor(page) {
     this.page = page;
@@ -11,7 +12,7 @@ exports.feedback = class Feedback{
     this.heading= this.page.getByRole('heading', { name: 'Feedback Boards' })
     this.boardName=this.page.locator("#boardName")
     this.saveButton = this.page.getByText("Save");
-    this.editlink= this.page.getByRole('link', { name: 'Edit' }).nth(1).click()
+    this.editLink= this.page.getByRole("link", { name: "Edit" }).nth(1);
     this.editfeedbackNameInput=this.page.locator("#editBoardName")
     this.editSaveButton=this.page.locator("#saveboard")
 
@@ -38,6 +39,7 @@ async verifiedHeading()
     const headingText = await this.heading.textContent();
     await expect(headingText).toContain("Feedback Boards");
   }
+
   async addFeedback()
   {
     await this.verifiedHeading()
@@ -50,21 +52,24 @@ async verifiedHeading()
       );
 
   }
+
   async editFeedback()
   {
-    await this.verifiedHeading()
-    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
-    
-    await this.boardName.fill(this.feedbackname+numeric)
-    await this.saveButton.click()
-    await expect(this.toastMessage).toHaveText(
-        "Feedback board created successfully"
-      )
-    await this.editlink.click();
+    await this.verifiedHeading();
+  const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+  
+  await this.boardName.fill(this.feedbackname + numeric);
+  await this.saveButton.click();
+  await expect(this.toastMessage).toHaveText(
+    "Feedback board created successfully"
+  );
+
+    await this.editLink.isVisible({ timeout: 5000 });
+    await this.editLink.click();
     await this.editfeedbackNameInput.click();
     await this.editfeedbackNameInput.press("Backspace");
     await this.editfeedbackNameInput.fill(this.tagname + numeric);
     await this.editSaveButton.click();
+  } 
 
-  }
 }
