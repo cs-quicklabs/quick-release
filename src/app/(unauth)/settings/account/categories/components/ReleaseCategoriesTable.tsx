@@ -39,11 +39,13 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   }, [list]);
 
   const onDelete = (id: number) => {
+    setShowError("");
     setSelectedDeletedReleaseCategoryId(id);
     setShowDeleteModal(true);
   };
 
   const handleEdit = (id: number) => {
+    setShowError("");
     setSelectedReleaseCategoryId(id);
     setCategoryNames((prev) => ({
       ...prev,

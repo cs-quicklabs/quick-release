@@ -21,6 +21,7 @@ export default function AllLogs() {
 
   useEffect(() => {
     if (!activeProjectId) {
+      sessionStorage.removeItem("activeChangeLogId");
       getActiveProject(setLoading);
     }
   }, [activeProjectId]);

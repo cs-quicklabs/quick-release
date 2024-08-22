@@ -37,6 +37,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
   }, [list]);
 
   const onDelete = (id: string) => {
+    setShowErrorMessage("");
     setSelectedDeletedFeedbackBoardId(id);
     const feedbackBoard = feedbackBoardMap[id];
     if (feedbackBoard?.isDefault) {
@@ -47,6 +48,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
   };
 
   const handleEdit = (id: string) => {
+    setShowErrorMessage("");
     setSelectedFeedbackBoardId(id);
     setBoardNames((prev) => ({
       ...prev,
