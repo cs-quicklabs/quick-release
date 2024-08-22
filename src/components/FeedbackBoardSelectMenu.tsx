@@ -5,6 +5,8 @@ import { classNames } from "@/lib/utils";
 import { IFeedbackBoard, FeedbackBoardsOption } from "@/interfaces";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import { requestHandler, showNotification } from "@/Utils";
+import { createFeedbackBoardRequest } from "@/fetchHandlers/feedbacks";
 
 const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
   const {
@@ -30,41 +32,40 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
       name: boardName,
       projectsId: activeProjectId!,
     };
-    await createFeedbackBoard(newFeedbackBoard, setIsLoading, false);
-    // if feedback board created successfully
-    const newFeedbackBoardId = feedbackBoardIds.find((id) => feedbackBoardMap[id]?.name === boardName);
-    
-    if(!newFeedbackBoardId){
-      return;
-    }
+    await requestHandler(
+      () => createFeedbackBoardRequest(newFeedbackBoard),
+      setIsLoading,
+      (res) => {
+        const { data } = res;
+        const newFeedbackBoardOption: FeedbackBoardsOption = {
+          value: data.id,
+          label: data.name,
+        };
 
-
-    const newFeedbackBoardOption: FeedbackBoardsOption = {
-      value: feedbackBoardIds[feedbackBoardIds.length - 1]!,
-      label: newFeedbackBoard.name!,
-    };
-
-    const actionMeta: ActionMeta<{ value: string; label: string }> = {
-      action: "select-option",
-      option: newFeedbackBoardOption,
-    };
-    props.onChange?.(newFeedbackBoardOption, actionMeta);
+        const actionMeta: ActionMeta<{ value: string; label: string }> = {
+          action: "select-option",
+          option: newFeedbackBoardOption,
+        };
+        console.log("actionMeta", actionMeta);
+        props.onChange?.(newFeedbackBoardOption, actionMeta);
+      },
+      (error) => showNotification("error", error)
+    );
+  
   };
 
   return (
     <CreatableSelect
       {...props}
-      className={classNames("release-tag-select-menu", props.className || "")}
+      className={classNames("feedback-board-select-menu", props.className || "")}
       classNamePrefix={classNames(
-        "release-tag-select-menu-prefix",
+        "feedback-board-select-menu-prefix",
         props.classNamePrefix || ""
       )}
       options={feedbackBoardsOptions}
-      value={props.value}
       isLoading={isLoading || props.isLoading}
       isDisabled={isLoading || props.isDisabled}
       onCreateOption={onCreate}
-      onChange={props.onChange}
     />
   );
 };

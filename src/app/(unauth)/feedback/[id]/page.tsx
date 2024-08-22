@@ -101,6 +101,19 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     return feedbackPostMap[params.id] || null;
   }, [feedbackPostMap[params.id]]);
 
+  const defaultFeedbackBoard = useMemo(() => {
+    if (feedbackBoardList && feedbackBoardList.length > 0) {
+      const boardId = feedbackBoardList.find(
+        boardId => feedbackBoardMap[boardId]?.isDefault === true
+      )
+      return {
+        value: boardId,
+        label: feedbackBoardMap[boardId!]?.name,
+      };
+    }
+    return null;
+  }, [feedbackBoardList, feedbackBoardMap]);
+
   const formSchema = z.object({
     title: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Title can not be more than 50 characters",
@@ -125,7 +138,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     defaultValues: {
       title: "",
       description: "",
-      status: { value: "", label: "" },
+      status: { value: FeedbackStatus[0].id, label: FeedbackStatus[0].title },
       feedbackBoard: { value: "", label: "" },
     },
   });
@@ -205,26 +218,6 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  useEffect(() => {
-    const setDefaultValues = () => {
-      // find default feedback board
-      const defaultFeedbackBoard = feedbackBoardList.find(
-        (feedbackBoard) =>
-          feedbackBoardMap[feedbackBoard]?.isDefault === true
-      )
-      form.reset({
-        title: "",
-        description: "",
-        status: FeedbackStatusOptions[0],
-        feedbackBoard: {
-          value: defaultFeedbackBoard,
-          label: feedbackBoardMap[defaultFeedbackBoard!]?.name,
-        },
-      });
-    };
-    setDefaultValues();
-  }, [feedbackBoardList, feedbackBoardMap]);
-
   const FeedbackStatusOptions = Object.keys(FeedbackStatus).map((key) => {
     return {
       value: FeedbackStatus[key].id,
@@ -243,7 +236,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-5xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-5xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -292,12 +285,14 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
                               field: { onChange, onBlur, value, name },
                             }) => (
                               <FeedbackBoardselectMenu
-                                className="basic-single"
+                                className="basic-single max-w-[32rem]"
                                 classNamePrefix="select"
                                 name={name}
                                 onBlur={onBlur}
                                 onChange={onChange}
-                                value={value}
+                                value={
+                                  value.value ? value : defaultFeedbackBoard
+                                }
                               />
                             )}
                           />
@@ -320,7 +315,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
                               field: { onChange, onBlur, value, name },
                             }) => (
                               <Select
-                                className="basic-single"
+                                className="basic-single max-w-[32rem]"
                                 classNamePrefix="select"
                                 name={name}
                                 onBlur={onBlur}

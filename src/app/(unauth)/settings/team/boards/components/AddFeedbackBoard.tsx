@@ -16,7 +16,7 @@ const AddFeedbackBoard = () => {
   const { error, createFeedbackBoard } = useFeedbackBoardContext();
 
   const onSaveFeedbackBoard = () => {
-    if (!boardName) {
+    if (!boardName.trim()) {
       setShowError("Board name is required");
       return;
     }

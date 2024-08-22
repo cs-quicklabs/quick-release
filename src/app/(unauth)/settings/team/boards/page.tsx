@@ -2,10 +2,8 @@
 import React, { useEffect, useState } from "react";
 import AddFeedbackBoard from "./components/AddFeedbackBoard";
 import FeedbackBoardTable from "./components/FeedbackBoardTable";
-import { useUserContext } from "@/app/context/UserContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
-import ScreenLoader from "@/atoms/ScreenLoader";
 
 const BoardsPage = () => {
   const [loader, setLoader] = useState(false);
