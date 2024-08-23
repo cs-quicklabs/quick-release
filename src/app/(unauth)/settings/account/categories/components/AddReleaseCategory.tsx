@@ -14,7 +14,7 @@ const AddReleaseCategory = () => {
   const { error, createReleaseCategory } = useReleaseCategoryContext();
 
   const onSaveReleaseCategory = () => {
-    if (!categoryName) {
+    if (!categoryName.trim()) {
       setShowError("Category name is required");
       return;
     }

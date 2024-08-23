@@ -5,8 +5,6 @@ import { IFeedbackBoard } from "@/interfaces";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
-import { useUserContext } from "@/app/context/UserContext";
-import { showNotification } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 
 const FeedbackBoardTable: React.FC<{}> = () => {

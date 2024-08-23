@@ -3,10 +3,9 @@
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
 import Loader from "../atoms/Loader";
-import { handleTrancate, requestHandler, showNotification } from "@/Utils";
+import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
-import { setActiveProjectRequest } from "@/fetchHandlers/project";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -15,7 +14,6 @@ import {
   PlusCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import axios from "axios";
 import { Tooltip } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
