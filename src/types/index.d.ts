@@ -131,3 +131,8 @@ export type ApiFilterQueryType = {
   organizationsId?: String;
   projectsId?: String;
 };
+
+export type FilterType = {
+  projectId?: string;
+  [key: string]: any;
+};

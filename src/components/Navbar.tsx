@@ -17,7 +17,7 @@ import {
 import { Tooltip } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as React from "react";
@@ -31,7 +31,10 @@ function classNames(...classes: any) {
 
 export function Navbar() {
   const router = useRouter();
-  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || null
+  );
   const [open, setOpen] = useState(false);
   const [isLogOut, setIsLogOut] = useState(false);
   const { loggedInUser, logout } = useUserContext();
@@ -47,6 +50,13 @@ export function Navbar() {
     activeProjectLoading: false as any,
     activeUserLoading: true,
   });
+
+  const onSearch = (event: any) => {
+    // Set the search query when Enter key is pressed
+    if (event.key === "Enter") {
+      router.push(`/allPosts?search=${event.target?.value}`)
+    }
+  };
 
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
@@ -164,7 +174,7 @@ export function Navbar() {
                 <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
                   <div className="w-full max-w-lg lg:max-w-xs">
                     <label htmlFor="search" className="sr-only">
-                      Search
+                      Search by feedbacks
                     </label>{" "}
                     <div className="relative">
                       <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
@@ -176,8 +186,11 @@ export function Navbar() {
                       <input
                         id="search"
                         name="search"
+                        onKeyDown={onSearch}
+                        value={searchQuery || ""}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         className=" hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
-                        placeholder="Search"
+                        placeholder="Search feedbacks"
                         type="search"
                       />
                     </div>

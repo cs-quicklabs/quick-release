@@ -13,8 +13,9 @@ import {
 import { classNames } from "@/lib/utils";
 import { EllipsisVerticalIcon, InboxIcon } from "@heroicons/react/20/solid";
 import moment from "moment";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
+import { useSearchParams } from "next/navigation";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -23,17 +24,26 @@ type PrevStateType = {
 
 const FeedbackContentContainer = () => {
   const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const search = useMemo(() => searchParams.get("search"), [searchParams]);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const prevStates = useRef<PrevStateType>({
     isLoading: false,
     activeFeedbackPostId: null,
   });
 
-  const { activeFeedbackPostId, map: feedbackMap, isLoading } = useFeedbackPostContext();
+  const {
+    activeFeedbackPostId,
+    map: feedbackMap,
+    isLoading,
+  } = useFeedbackPostContext();
   const feedback = feedbackMap[activeFeedbackPostId!];
 
   useEffect(() => {
-    if(!activeFeedbackPostId || (prevStates.current?.isLoading && !isLoading)) {
+    if (
+      !activeFeedbackPostId ||
+      (prevStates.current?.isLoading && !isLoading)
+    ) {
       setLoading(false);
     }
 
@@ -59,10 +69,14 @@ const FeedbackContentContainer = () => {
           <InboxIcon className="mx-auto h-12 w-12 text-gray-400" />
 
           <h3 className="mt-2 text-sm font-semibold text-gray-900">
-            No Item Selected
+            {search
+              ? "No results found"
+              : "No Item Selected"}
           </h3>
           <p className="mt-1 text-sm text-gray-500">
-            Please select an item from the left list to view details here.
+            {search
+              ? "Sorry, no results match your search criteria. Please adjust your search keyword and try again."
+              : "Please select an item from the left list to view details here."}
           </p>
         </div>
       </section>
@@ -78,7 +92,9 @@ const FeedbackContentContainer = () => {
   const createdAt = feedback.createdAt
     ? moment(feedback.createdAt).format("MMMM DD, YYYY")
     : "";
-  const ETA = releaseETA ? moment(releaseETA).format("MMMM DD, YYYY") : undefined;
+  const ETA = releaseETA
+    ? moment(releaseETA).format("MMMM DD, YYYY")
+    : undefined;
 
   return (
     <section

@@ -96,7 +96,7 @@ export async function GET(req: NextRequest) {
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
 
-    const projectId = searchParams.get("projectId");
+    const projectId = searchParams.get("projectsId");
     if (!projectId) {
       throw new ApiError(400, "Missing project Id");
     }
@@ -118,10 +118,45 @@ export async function GET(req: NextRequest) {
       };
     }
 
-    const status = searchParams.get("status");
-    if (status) {
-      query.status = status;
+    const boardIds = searchParams.get("feedbackBoards")?.split(",");
+
+    if (boardIds) {
+      const feedbackBoards = await db.feedbackBoards.findMany({
+        where: {
+          cuid: {
+            in: boardIds,
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+      query.feedbackBoardsId = {
+        in: feedbackBoards.map((board) => board.id),
+      };
     }
+
+    const search = searchParams.get("search");
+    // case insensitive
+    if (search) {
+      query.OR = [
+        {
+          title: {
+            contains: search,
+            mode: "insensitive",
+          },
+        },
+      ];
+    }
+
+    const status = searchParams.get("feedbackStatus")?.split(",");
+
+    if (status) {
+      query.status = {
+        in: status,
+      };
+    }
+
     const feedbackPosts = privacyResponseArray(
       await db.feedbackPosts.findMany({
         where: query,

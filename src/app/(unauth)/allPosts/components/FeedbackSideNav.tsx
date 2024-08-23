@@ -15,40 +15,75 @@ import { useOnScreen } from "@/hooks/useOnScreen";
 import { classNames } from "@/lib/utils";
 import FeedbackCardItem from "./FeedbackCardItem";
 import { Button } from "@/atoms/button";
-
-type FilterType = {
-  projectId?: string;
-  [key: string]: any;
-};
+import { FeedbackStatus } from "@/Utils/constants";
+import Link from "next/link";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
+import { Checkbox } from "flowbite-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type SideNavProps = {
   showSideNav: boolean;
   setShowSideNav: (show: boolean) => void;
+  fetchAllFeedbackPosts: (boards: string | null, status: string | null, search: string | null) => void;
+  search?: string | null;
 };
 
 const FeedbackSideNav: React.FC<SideNavProps> = ({
   showSideNav = false,
   setShowSideNav,
+  fetchAllFeedbackPosts,
+  search,
 }) => {
   const loadMoreRef = useRef(null);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const isVisible = useOnScreen(loadMoreRef);
-
+  const [selectedBoards, setSelectedBoards] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const { activeProjectId } = useProjectContext();
+  const { map: feedbackBoardsMap } = useFeedbackBoardContext();
   const {
-    activeFeedbackPostId,
-    map: feedbackMap,
     isLoading: isFetchingFeedback,
     metaData: feedbackMetaData,
     list: feedbackList,
-    getAllFeedbackPosts,
     loadMoreFeedbackPosts,
   } = useFeedbackPostContext();
+
+  const onSelectBoards = (value: string) => {
+    let boards = [...selectedBoards];
+    if (boards.includes(value)) {
+      boards = boards.filter((item) => item !== value);
+    } else {
+      boards.push(value);
+    }
+    console.log(boards, "boards");
+    setSelectedBoards(boards);
+    fetchAllFeedbackPosts(boards.toString(), selectedStatus.toString(), search!);
+  };
+
+  const onSelectStatus = (value: string) => {
+    let status = [...selectedStatus];
+    if (status.includes(value)) {
+      status = status.filter((item) => item !== value);
+    } else {
+      status.push(value);
+    }
+    setSelectedStatus(status);
+    fetchAllFeedbackPosts(selectedBoards.toString(), status.toString(), search!);
+  };
 
   useEffect(() => {
     if (isVisible) {
       loadMoreFeedbackPosts();
     }
   }, [isVisible]);
+
+  const onClearFilter = () => {
+    setSelectedBoards([]);
+    setSelectedStatus([]);
+    fetchAllFeedbackPosts(null, null, search!);
+  };
 
   return (
     <aside
@@ -73,19 +108,105 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
             <div className="relative inline-block text-left">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
-                  <Menu.Button className={classNames(
-                    "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
-                    "bg-white hover:bg-gray-50 text-gray-400 border-gray-300",
-                  )}>
-                  <FunnelIcon
+                  <Menu.Button
                     className={classNames(
-                      "h-3 w-3"
-                      // filterStatus ? `${filterStatus.textColor}` : "text-gray-400",
+                      "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                      "bg-white hover:bg-gray-50 text-gray-400 border-gray-300"
                     )}
-                    aria-hidden={true}
-                  />
+                    id="filter-feedback"
+                  >
+                    <FunnelIcon
+                      className={classNames("h-3 w-3", "text-gray-400")}
+                      aria-hidden={true}
+                    />
                   </Menu.Button>
                 </div>
+
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div
+                      className="px-4 py-2 border-b border-gray-100"
+                      role="none"
+                    >
+                      <p className="text-sm" role="none">
+                        Boards
+                      </p>
+                    </div>
+
+                    {Object.values(feedbackBoardsMap).map((feedbackBoards) => (
+                      <Menu.Item key={feedbackBoards?.id}>
+                        {() => (
+                          <div className="text-gray-700 flex justify-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2">
+                            <Checkbox
+                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                              name={feedbackBoards?.id}
+                              checked={selectedBoards.includes(
+                                feedbackBoards?.id!
+                              )}
+                              onChange={() =>
+                                onSelectBoards(feedbackBoards?.id!)
+                              }
+                              readOnly
+                            />
+                            <span>{feedbackBoards?.name}</span>
+                          </div>
+                        )}
+                      </Menu.Item>
+                    ))}
+                    <div
+                      className="px-4 py-2 border-b border-gray-100"
+                      role="none"
+                    >
+                      <p className="text-sm" role="none">
+                        Status
+                      </p>
+                    </div>
+
+                    {Object.values(FeedbackStatus).map(
+                      ({ id, title, bulletColor }) => (
+                        <Menu.Item key={id}>
+                          {() => (
+                            <div className="text-gray-700 flex justify-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2">
+                              <Checkbox
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                                name={id}
+                                checked={selectedStatus.includes(id)}
+                                onChange={() => onSelectStatus(id)}
+                                readOnly
+                              />
+                              <span
+                                className={`h-2 w-2 rounded-full ${bulletColor}`}
+                                aria-hidden={true}
+                              />
+
+                              <span>{title}</span>
+                            </div>
+                          )}
+                        </Menu.Item>
+                      )
+                    )}
+
+                    <div
+                      className="px-4 py-2 border-t border-gray-100 hover:bg-gray-50"
+                      role="none"
+                    >
+                      <Menu.Button
+                        className="text-gray-700 block w-full py-1 text-left text-sm"
+                        onClick={onClearFilter}
+                      >
+                        Clear Filter
+                      </Menu.Button>
+                    </div>
+                  </Menu.Items>
+                </Transition>
               </Menu>
             </div>
           </div>

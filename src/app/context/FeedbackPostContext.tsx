@@ -90,7 +90,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [map, setMap] = useState<FeedbackPostMapType>({});
-  const [list, setList] = useState<string[]>([]);
+  const [list, setList] = useState<string[] | null>(null);
   const [boards, setBoards] = useState<BoardMapType>({});
   const [activeBoardKey, setActiveBoardsKey] = useState<string>("");
   const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
@@ -123,7 +123,9 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
           ...prevMap,
           [feedbackpostId]: data,
         }));
-        setList((prevList) => [feedbackpostId, ...prevList]);
+        setList((prevList) =>
+          prevList ? [feedbackpostId, ...prevList] : [feedbackpostId]
+        );
         setMetaData((prevMetaData) => ({
           ...prevMetaData,
           total: (prevMetaData?.total || 0) + 1,
@@ -144,8 +146,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   ) => {
     setError("");
     await requestHandler(
-      async () =>
-        await getOneFeedbackPostRequest(id, { projectsId }),
+      async () => await getOneFeedbackPostRequest(id, { projectsId }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -206,7 +207,9 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     } else {
       setMap((prevMap) => Object.assign({}, prevMap, feedbackPostMap));
       setList((prevList) => {
-        const newList = new Set<string>([...prevList, ...feedbackPostIds]);
+        const newList = new Set<string>(
+          prevList ? [...prevList, ...feedbackPostIds] : feedbackPostIds
+        );
         return Array.from(newList);
       });
     }
@@ -238,7 +241,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!activeFeedbackPostId && list.length > 0) {
+    if (!activeFeedbackPostId && list && list.length > 0) {
       setActiveFeedbackPostId(list[0]);
     }
   }, [activeFeedbackPostId]);
