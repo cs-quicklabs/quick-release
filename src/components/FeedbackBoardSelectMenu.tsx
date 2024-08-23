@@ -12,7 +12,8 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
   const {
     map: feedbackBoardMap,
     list: feedbackBoardIds,
-    createFeedbackBoard,
+    setList,
+    setMap,
   } = useFeedbackBoardContext();
   const { activeProjectId } = useProjectContext();
 
@@ -37,6 +38,10 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
       setIsLoading,
       (res) => {
         const { data } = res;
+        const feedbackBoardId: string = data.id!;
+        setMap({ ...feedbackBoardMap, [feedbackBoardId]: data });
+        const newFeedbackBoardIds = [...feedbackBoardIds, feedbackBoardId];
+        setList(newFeedbackBoardIds);
         const newFeedbackBoardOption: FeedbackBoardsOption = {
           value: data.id,
           label: data.name,
@@ -57,7 +62,10 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
   return (
     <CreatableSelect
       {...props}
-      className={classNames("feedback-board-select-menu", props.className || "")}
+      className={classNames(
+        "feedback-board-select-menu",
+        props.className || ""
+      )}
       classNamePrefix={classNames(
         "feedback-board-select-menu-prefix",
         props.classNamePrefix || ""

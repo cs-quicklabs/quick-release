@@ -25,6 +25,8 @@ const FeedbackBoardContext = createContext({
   error: "",
   map: {} as FeedbackBoardMapType,
   list: [] as string[],
+  setList: (list: string[]) => {},
+  setMap: (map: FeedbackBoardMapType) => {},
   metaData: {} as { [key: string]: any },
   createFeedbackBoard: async (
     data: IFeedbackBoard,
@@ -185,6 +187,8 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
         error,
         map,
         list,
+        setList,
+        setMap,
         metaData,
         createFeedbackBoard,
         getAllFeedbackBoards,
