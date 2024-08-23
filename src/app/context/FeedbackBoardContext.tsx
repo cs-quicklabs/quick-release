@@ -15,8 +15,6 @@ import {
   getAllFeedbackBoardsRequest,
   updateFeedbackBoardRequest,
 } from "../../fetchHandlers/feedbacks";
-import { useProjectContext } from "./ProjectContext";
-import { usePathname } from "next/navigation";
 
 type FeedbackBoardMapType = {
   [key: string]: IFeedbackBoard | null;

@@ -32,7 +32,7 @@ export async function GET(
     }
     const user = await db.users.findUnique({ where: { cuid: userId } });
     const { id } = params;
-    const projectsId = req.nextUrl.searchParams.get("projectId");
+    const projectsId = req.nextUrl.searchParams.get("projectsId");
     const project = await db.projects.findUnique({
       where: {
         cuid: projectsId!,

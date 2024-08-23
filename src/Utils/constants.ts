@@ -26,9 +26,9 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   IN_REVIEW: {
     id: "IN_REVIEW",
     title: "In-Review",
-    textColor: "text-orange-800",
-    bgColor: "bg-orange-100",
-    bulletColor: "bg-orange-400",
+    textColor: "text-gray-800",
+    bgColor: "bg-gray-100",
+    bulletColor: "bg-gray-400",
   },
   PLANNED: {
     id: "PLANNED",
@@ -40,9 +40,9 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   IN_PROGRESS: {
     id: "IN_PROGRESS",
     title: "In-Progress",
-    textColor: "text-yellow-800",
-    bgColor: "bg-yellow-100",
-    bulletColor: "bg-yellow-400",
+    textColor: "text-blue-800",
+    bgColor: "bg-blue-100",
+    bulletColor: "bg-blue-400",
   },
   COMPLETED: {
     id: "COMPLETED",
