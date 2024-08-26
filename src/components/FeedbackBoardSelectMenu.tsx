@@ -31,6 +31,13 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
       projectsId: activeProjectId!,
     };
     await createFeedbackBoard(newFeedbackBoard, setIsLoading, false);
+    // if feedback board created successfully
+    const newFeedbackBoardId = feedbackBoardIds.find((id) => feedbackBoardMap[id]?.name === boardName);
+    
+    if(!newFeedbackBoardId){
+      return;
+    }
+
 
     const newFeedbackBoardOption: FeedbackBoardsOption = {
       value: feedbackBoardIds[feedbackBoardIds.length - 1]!,

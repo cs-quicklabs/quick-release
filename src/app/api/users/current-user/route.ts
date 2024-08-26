@@ -15,15 +15,14 @@ export async function GET(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     });
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const loggedInUser = privacyResponse(
       await db.users.findFirst({
         where: {
@@ -96,68 +95,69 @@ export async function PATCH(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     });
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const body = await req.json();
 
     if (
       !body.email &&
       !body.firstName &&
       !body.lastName &&
-      !body.profilePicture
+      !body.profilePicture && body.profilePicture !== null
     ) {
       throw new ApiError(400, "Missing fields");
     }
 
-    const existingUserEmail = await db.users.findFirst({
-      where: {
-        email: body.email,
-      },
-    });
-
-    if (existingUserEmail && existingUserEmail?.id !== user?.id) {
-      throw new ApiError(400, "Email already exists");
-    }
-
-    if (body.email !== user?.email) {
-      const verificationToken = crypto.randomBytes(20).toString("hex");
-      const registerVerificationToken = crypto
-        .createHash("sha256")
-        .update(verificationToken)
-        .digest("hex");
-
-      const verificationTokenExpires = (Date.now() + 3600000).toString();
-      await db.users.update({
+    if (body.email) {
+      const existingUserEmail = await db.users.findFirst({
         where: {
-          id: user?.id,
-        },
-        data: {
           email: body.email,
-          firstName: body.firstName,
-          lastName: body.lastName,
-          profilePicture: body.profilePicture,
-          isVerified: false,
-          verificationToken: registerVerificationToken,
-          verificationTokenExpiry: verificationTokenExpires,
         },
       });
 
-      sendVerificationEmail(
-        body.email,
-        registerVerificationToken,
-        body.firstName || user?.firstName
-      );
+      if (existingUserEmail && existingUserEmail?.id !== user?.id) {
+        throw new ApiError(400, "Email already exists");
+      }
 
-      NextResponse.json(
-        new ApiResponse(200, null, "Verification email sent successfully")
-      );
+      if (body.email !== user?.email) {
+        const verificationToken = crypto.randomBytes(20).toString("hex");
+        const registerVerificationToken = crypto
+          .createHash("sha256")
+          .update(verificationToken)
+          .digest("hex");
+
+        const verificationTokenExpires = (Date.now() + 3600000).toString();
+        await db.users.update({
+          where: {
+            id: user?.id,
+          },
+          data: {
+            email: body.email,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            profilePicture: body.profilePicture,
+            isVerified: false,
+            verificationToken: registerVerificationToken,
+            verificationTokenExpiry: verificationTokenExpires,
+          },
+        });
+
+        await sendVerificationEmail(
+          body.email,
+          registerVerificationToken,
+          body.firstName || user?.firstName
+        );
+
+        NextResponse.json(
+          new ApiResponse(200, null, "Verification email sent successfully")
+        );
+      }
     }
 
     const updatedUser = await db.users.update({

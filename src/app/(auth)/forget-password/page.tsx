@@ -2,6 +2,7 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { WEB_DETAILS } from "@/Utils/constants";
+import { Button } from "@/atoms/button";
 import { forgetPasswordRequest } from "@/fetchHandlers/authentication";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -95,11 +96,11 @@ const ForgotPassword = () => {
                 </p>
               )}
             </div>{" "}
-            <button
+            <Button
               type="submit"
-              disabled={loader}
+              disabled={loader || errors.email ? true : false}
               className={
-                `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
+                `w-full mt-4 text-white bg-blue-600 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
               }>
               {loader ? (
                 <div className="flex items-center justify-center gap-4">
@@ -113,7 +114,7 @@ const ForgotPassword = () => {
               ) : (
                 "Request Password Reset Instructions"
               )}{" "}
-            </button>
+            </Button>
             <p className="text-sm font-light text-gray-500 dark:text-gray-400">
               {"Login to your account "}
               <Link

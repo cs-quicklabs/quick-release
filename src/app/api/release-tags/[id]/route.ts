@@ -32,6 +32,10 @@ export async function PUT(
       throw new ApiError(400, "Tag name is required");
     }
 
+    if (name.length > 30) {
+      throw new ApiError(400, "Tag name must be less than 30 characters");
+    }
+
     if(!body.organizationsId) {
       throw new ApiError(400, "organizations Id is required");
     }

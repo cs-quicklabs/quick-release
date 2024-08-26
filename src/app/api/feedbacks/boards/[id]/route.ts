@@ -43,6 +43,10 @@ export async function PUT(
       throw new ApiError(400, "Board name is required");
     }
 
+    if(name.length > 30) {
+      throw new ApiError(400, "Board name must be less than 30 characters");
+    }
+
     if (!body.projectsId) {
       throw new ApiError(400, "projects Id is required");
     }
@@ -66,6 +70,17 @@ export async function PUT(
 
     if (!feedbackBoard) {
       throw new ApiError(404, "Feedback board not found");
+    }
+
+    const existingBoard = await db.feedbackBoards.findFirst({
+      where: {
+        id: { not: feedbackBoard.id },
+        name,
+        projectsId: project?.id,
+      },
+    });
+    if (existingBoard) {
+      throw new ApiError(400, "Feedback board with this name already exists");
     }
 
     const updatedFeedbackBoard = await db.feedbackBoards.update({

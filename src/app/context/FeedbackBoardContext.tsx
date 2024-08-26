@@ -8,7 +8,6 @@ import React, {
   useState,
 } from "react";
 import { requestHandler, showNotification } from "@/Utils";
-import { useUserContext } from "./UserContext";
 import { IFeedbackBoard } from "@/interfaces";
 import {
   createFeedbackBoardRequest,
@@ -44,6 +43,7 @@ const FeedbackBoardContext = createContext({
   ) => {},
   deleteFeedbackBoard: async (
     id: string,
+    projectsId: string,
     setIsLoading: (loading: boolean) => void
   ) => {},
 });
@@ -57,12 +57,10 @@ type ProviderProps = {
 
 // Create a component that provides change log related data and functions
 const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
-  const router = usePathname();
   const [map, setMap] = useState<FeedbackBoardMapType>({});
   const [list, setList] = useState<string[]>([]);
   const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
   const [error, setError] = useState("");
-  const { loggedInUser } = useUserContext();
   // Function to handle create release tag
   const createFeedbackBoard = async (
     data: IFeedbackBoard,
@@ -153,6 +151,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
   // Function to handle delete release tag
   const deleteFeedbackBoard = async (
     id: string,
+    projectsId: string,
     setIsLoading: (loading: boolean) => void
   ) => {
     setError("");
@@ -160,7 +159,7 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
       async () =>
         await deleteFeedbackBoardRequest({
           id,
-          projectsId: loggedInUser?.activeProjectId!,
+          projectsId,
         }),
       setIsLoading,
       (res: any) => {

@@ -4,12 +4,14 @@ import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
 import { IReleaseTag } from "@/interfaces";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { showNotification } from "@/Utils";
 
 const ReleaseTagsTable = () => {
   const prevStates = useRef({ isLoading: false });
   const [tagNames, setTagNames] = useState<{ [key: number]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
+  const [showError, setShowError] = useState("");
 
   const {
     map: releaseTagMap,
@@ -27,12 +29,19 @@ const ReleaseTagsTable = () => {
 >(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const tagList = useMemo(() => {
+    setSelectedReleaseTagId(null);
+    return list
+  }, [list]);
+
   const onDelete = (id: number) => {
+    setShowError("");
     setSelectedDeletedReleaseTagId(id);
     setShowDeleteModal(true);
   };
 
   const handleEdit = (id: number) => {
+    setShowError("");
     setSelectedReleaseTagId(id);
     setTagNames((prev) => ({
       ...prev,
@@ -83,7 +92,7 @@ const ReleaseTagsTable = () => {
           </tr>
         </thead>
         <tbody>
-          {!list.length && (
+          {!tagList.length && (
             <tr className="text-sm text-gray-500 bg-white">
               <td
                 className="px-6 py-4 whitespace-nowrap text-center"
@@ -93,7 +102,7 @@ const ReleaseTagsTable = () => {
               </td>
             </tr>
           )}
-          {list.map((releaseTagId) => {
+          {tagList.map((releaseTagId) => {
             const isReleaseEdit = selectedReleaseTagId === releaseTagId;
             const releaseTag = releaseTagMap[releaseTagId];
             if (!releaseTag) return null;
@@ -106,21 +115,27 @@ const ReleaseTagsTable = () => {
                   {!isReleaseEdit ? (
                     releaseTag.name
                   ) : (
+                    <>
                     <Input
                       placeholder="Enter tag name"
                       id="editTagName"
                       value={tagNames[releaseTagId] || ""}
-                      onChange={(e) =>
+                      onChange={(e) => {
+                        if (!e.target.value) setShowError("Tag name is required");
+                        else if(e.target.value.length > 30) setShowError("Tag name must be less than 30 characters");
+                        else setShowError("");
                         setTagNames({
                           ...tagNames,
                           [releaseTagId]: e.target.value,
                         })
-                      }
+                      }}
                       disabled={isSaving}
                     />
+                    <span className="text-red-500 text-xs font-medium">{showError}</span>
+                    </>
                   )}
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-start">
                   {!isReleaseEdit ? (
                     <>
                       <Link
@@ -148,7 +163,7 @@ const ReleaseTagsTable = () => {
                     <Button
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveReleaseTag}
-                      disabled={isSaving}
+                      disabled={isSaving || showError !== ""} 
                        id="editSave"
                     >
                       {isSaving ? "Saving..." : "Save"}

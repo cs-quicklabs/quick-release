@@ -14,6 +14,7 @@ exports.releaseTags = class releaseTags {
     this.editSaveButton = this.page.locator("#editSave");
     this.editLink = this.page.getByRole("link", { name: "Edit" }).first();
     this.deleteLink = this.page.getByRole("link", { name: "Delete" }).first();
+    this.error= this.page.locator("#tagerror")
   }
 
   async navigateToAccountSetting() {
@@ -68,5 +69,6 @@ exports.releaseTags = class releaseTags {
   async createReleaseTagEmptyValue() {
     await this.navigateToAccountSetting();
     await this.saveButton.click();
+    await expect(this.error).toHaveText("Tag name is required")
   }
 };

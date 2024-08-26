@@ -7,7 +7,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { z } from "zod";
@@ -16,6 +16,8 @@ import { WEB_DETAILS } from "@/Utils/constants";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import AlertModal from "@/components/AlertModal";
 import { fileDeleteRequest } from "@/fetchHandlers/file";
+import { Button } from "@/atoms/button";
+import { ProfileType } from "@/types";
 
 const Profile = () => {
   const router = useRouter();
@@ -34,12 +36,26 @@ const Profile = () => {
   const { activeProjectId, getActiveProject } = useProjectContext();
   const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
-    firstName: z.string().trim().min(1, { message: "Required" }).max(50, {
-      message: "Fisrt Name can be maximum 50 characters",
-    }),
-    lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
-      message: "Last Name can be maximum 50 characters",
-    }),
+    firstName: z
+      .string()
+      .trim()
+      .min(1, { message: "Required" })
+      .max(50, {
+        message: "Fisrt Name can be maximum 50 characters",
+      })
+      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+        message: "First name can only contain letters",
+      }),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, { message: "Required" })
+      .max(50, {
+        message: "Last Name can be maximum 50 characters",
+      })
+      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+        message: "Last name can only contain letters",
+      }),
     email: z
       .string()
       .trim()
@@ -54,13 +70,14 @@ const Profile = () => {
     formState: { errors },
     getValues,
     reset,
+    watch,
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: loggedInUser?.firstName as string,
       lastName: loggedInUser?.lastName as string,
       email: loggedInUser?.email as string,
-      profilePicture: profileImgUrl,
+      profilePicture: loggedInUser?.profilePicture,
     },
   });
 
@@ -71,6 +88,7 @@ const Profile = () => {
           firstName: loggedInUser.firstName as string,
           lastName: loggedInUser.lastName as string,
           email: loggedInUser.email as string,
+          profilePicture: loggedInUser.profilePicture,
         });
       }
     };
@@ -84,7 +102,15 @@ const Profile = () => {
     }
   }, [activeProjectId]);
 
-  const formValues = getValues();
+  const formValues = watch();
+
+  const hasChanged = useMemo(() => {
+    return (
+      formValues.firstName !== loggedInUser?.firstName ||
+      formValues.lastName !== loggedInUser?.lastName ||
+      formValues.email !== loggedInUser?.email
+    );
+  }, [formValues, loggedInUser]);
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
@@ -122,31 +148,14 @@ const Profile = () => {
             async () => await fileUploadRequest(formData),
             setImageUploadLoading,
             (res: any) => {
-              setProfileImgUrl(res.data.url);
               updateUserDetails({
-                ...formValues,
                 profilePicture: res.data.url,
               });
-              showNotification("success", res?.message);
-            },
-            (errMessage) => {
-              showNotification("error", errMessage);
-              reject(errMessage);
-            }
-          );
-        });
-      },
-      remove: () => {
-        return new Promise(async (resolve, reject) => {
-          await requestHandler(
-            async () =>
-              await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
-            setImageUploadLoading,
-            (res: any) => {
-              setProfileImgUrl("");
-              updateUserDetails({ ...formValues, profilePicture: null });
-              setProfileImgUrl(null);
-              showNotification("success", res?.message);
+              setProfileImgUrl(res.data.url);
+              showNotification(
+                "success",
+                "Profile picture uploaded successfully"
+              );
             },
             (errMessage) => {
               showNotification("error", errMessage);
@@ -159,12 +168,31 @@ const Profile = () => {
     []
   );
 
+  const deleteProfilePicture = async (profileImgUrl: string) => {
+    return new Promise(async (resolve, reject) => {
+      await requestHandler(
+        async () => await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
+        setImageUploadLoading,
+        (res: any) => {
+          setProfileImgUrl("");
+          updateUserDetails({ profilePicture: null });
+          setProfileImgUrl(null);
+          showNotification("success", "Profile picture remove successfully");
+        },
+        (errMessage) => {
+          showNotification("error", errMessage);
+          reject(errMessage);
+        }
+      );
+    });
+  };
+
   const updateProfileDetails = async (
     values: z.infer<typeof formSchema>,
     e: any
   ) => {
     if (loggedInUser?.email === values.email) {
-      updateUserDetails({ ...values, profilePicture: profileImgUrl });
+      updateUserDetails(values as ProfileType);
     } else {
       setIsOpen(true);
     }
@@ -172,7 +200,7 @@ const Profile = () => {
 
   const handleUpdateProfile = async () => {
     setIsOpen(false);
-    updateUserDetails({ ...formValues, profilePicture: profileImgUrl });
+    updateUserDetails(formValues as ProfileType);
   };
 
   return (
@@ -313,9 +341,9 @@ const Profile = () => {
               </span>
             )}
           </div>{" "}
-          <button
+          <Button
             type="submit"
-            disabled={updateLoading}
+            disabled={updateLoading || !hasChanged}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             {updateLoading ? (
@@ -330,7 +358,7 @@ const Profile = () => {
             ) : (
               "Save"
             )}
-          </button>
+          </Button>
         </form>
         <AlertModal
           show={isOpen}
@@ -361,7 +389,7 @@ const Profile = () => {
           okBtnClassName={"bg-red-600 hover:bg-red-800"}
           spinClassName={"!fill-red-600"}
           onClickOk={() => {
-            uploadImage.remove();
+            deleteProfilePicture(profileImgUrl);
             setIsOpenImageModal(false);
           }}
           loading={imageUploadLoading}

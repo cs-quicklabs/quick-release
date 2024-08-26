@@ -9,13 +9,24 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
   await login.login(validCredentials.mail, validCredentials.password);
 });
 
-test("verify user able to Add Tags ", async ({ page }) => {
+test("verify user able to Add Feedback board ", async ({ page }) => {
   const feedbacks = new feedback(page);
   await feedbacks.navigateToTeamSetting();
   await feedbacks.addFeedback()
 });
-test("verify user able to edit Tags ", async ({ page }) => {
+test("verify user able to edit Feedback board ", async ({ page }) => {
     const feedbacks = new feedback(page);
     await feedbacks.navigateToTeamSetting();
     await feedbacks.editFeedback()
+  });
+  test("verify user should not  able to empty Feedback board", async ({ page }) => {
+    const feedbacks = new feedback(page);
+    await feedbacks.navigateToTeamSetting();
+    await feedbacks.emptyFeedback()
+  });
+
+  test("verify user should not  able to add empty Feedback board in edit field ", async ({ page }) => {
+    const feedbacks = new feedback(page);
+    await feedbacks.navigateToTeamSetting();
+    await feedbacks.editFeedBackWithEmptyValue()
   });

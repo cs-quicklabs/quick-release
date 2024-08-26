@@ -207,13 +207,18 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     const setDefaultValues = () => {
+      // find default feedback board
+      const defaultFeedbackBoard = feedbackBoardList.find(
+        (feedbackBoard) =>
+          feedbackBoardMap[feedbackBoard]?.isDefault === true
+      )
       form.reset({
         title: "",
         description: "",
         status: FeedbackStatusOptions[0],
         feedbackBoard: {
-          value: feedbackBoardList[0],
-          label: feedbackBoardMap[feedbackBoardList[0]]?.name,
+          value: defaultFeedbackBoard,
+          label: feedbackBoardMap[defaultFeedbackBoard!]?.name,
         },
       });
     };

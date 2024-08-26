@@ -1,6 +1,13 @@
 "use client";
 
-import React, { ReactNode, createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { ChangeLogType } from "@/types";
 import { requestHandler, showNotification } from "@/Utils";
 import {
@@ -29,16 +36,42 @@ type ChangeLogContextType = {
   metaData: {
     [key: string]: any;
   };
-  createChangeLog: (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => Promise<void>;
-  getAllChangeLogs: (query: {} | undefined, page?: 1, limit?: number) => Promise<void>;
-  getChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
-  updateChangeLog: (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => Promise<void>;
+  createChangeLog: (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
+  getAllChangeLogs: (
+    query: {} | undefined,
+    page?: 1,
+    limit?: number
+  ) => Promise<void>;
+  getChangeLog: (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
+  updateChangeLog: (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
   loadMoreChangeLogs: () => Promise<void>;
-  toggleArchiveOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
-  publishNowOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
-  deleteOneChangeLog: (id: string, setIsLoading: (loading: boolean) => void) => Promise<void>;
+  toggleArchiveOneChangeLog: (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
+  publishNowOneChangeLog: (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
+  deleteOneChangeLog: (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
   setActiveChangeLogId: (id: string) => void;
-  getAllPublicChangeLogs: (query: {}, page?: 1, limit?: number) => Promise<void>;
+  getAllPublicChangeLogs: (
+    query: {},
+    page?: 1,
+    limit?: number
+  ) => Promise<void>;
   loadMorePublicChangeLogs: () => Promise<void>;
 };
 
@@ -49,18 +82,36 @@ const ChangeLogContext = createContext<ChangeLogContextType>({
   isLoading: false,
   map: {} as ChangeLogMapType,
   list: [] as string[],
-  metaData: {} as { [key: string]: any; },
-  createChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
-  getAllPublicChangeLogs: async (query = {}, page = 1, limit = 10) => { },
-  loadMorePublicChangeLogs: async () => { },
-  getAllChangeLogs: async (query = {}, page = 1, limit = 20) => { },
-  getChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
-  updateChangeLog: async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => { },
-  loadMoreChangeLogs: async () => { },
-  publishNowOneChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
-  toggleArchiveOneChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
-  deleteOneChangeLog: async (id: string, setIsLoading: (loading: boolean) => void) => { },
-  setActiveChangeLogId: (id: string) => { }
+  metaData: {} as { [key: string]: any },
+  createChangeLog: async (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  getAllPublicChangeLogs: async (query = {}, page = 1, limit = 10) => {},
+  loadMorePublicChangeLogs: async () => {},
+  getAllChangeLogs: async (query = {}, page = 1, limit = 20) => {},
+  getChangeLog: async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  updateChangeLog: async (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  loadMoreChangeLogs: async () => {},
+  publishNowOneChangeLog: async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  toggleArchiveOneChangeLog: async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  deleteOneChangeLog: async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  setActiveChangeLogId: (id: string) => {},
 });
 
 // Create a hook to access the ChangeLogContext
@@ -72,8 +123,8 @@ type ProviderProps = {
 
 type BoardMapType = {
   [key: string]: {
-    list?: string[],
-    metaData?: { [key: string]: any; };
+    list?: string[];
+    metaData?: { [key: string]: any };
   };
 };
 
@@ -85,31 +136,43 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   const [list, setList] = useState<string[]>([]);
   const [boards, setBoards] = useState<BoardMapType>({});
   const [activeBoardKey, setActiveBoardsKey] = useState<string>("");
-  const [metaData, setMetaData] = useState<{ [key: string]: any; }>({});
-  const [activeChangeLogId, setActiveChangeLogId] = useState<string | null>(null);
+  const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
+  const [activeChangeLogId, setActiveChangeLogId] = useState<string | null>(
+    sessionStorage.getItem("activeChangeLogId") || null
+  );
 
   const { activeProjectId } = useProjectContext();
   const { loggedInUser } = useUserContext();
 
-  const defaultBoardKey = useMemo(() => JSON.stringify({ projectId: activeProjectId }), [activeProjectId]);
+  const defaultBoardKey = useMemo(
+    () => JSON.stringify({ projectId: activeProjectId }),
+    [activeProjectId]
+  );
 
   // Function to handle create change log
-  const createChangeLog = async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => {
+  const createChangeLog = async (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
-      async () => await createChangeLogRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
+      async () =>
+        await createChangeLogRequest({
+          ...data,
+          organizationsId: loggedInUser?.orgs[0]?.id,
+        }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
         const changelogId = data.id!;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changelogId]: data,
         }));
-        setList(prevList => [changelogId, ...prevList]);
-        setMetaData(prevMetaData => ({
+        setList((prevList) => [changelogId, ...prevList]);
+        setMetaData((prevMetaData) => ({
           ...prevMetaData,
-          total: (prevMetaData?.total || 0) + 1
+          total: (prevMetaData?.total || 0) + 1,
         }));
         showNotification("success", message);
       },
@@ -120,7 +183,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  const getChangeLog = async (id: string, setIsLoading: (loading: boolean) => void) => {
+  const getChangeLog = async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     setError("");
     await requestHandler(
       async () => await getOneChangeLogRequest(id),
@@ -129,7 +195,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         const { data, message } = res;
         const changelogId = data.id!;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changelogId]: data,
         }));
@@ -142,15 +208,22 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  const updateChangeLog = async (data: ChangeLogType, setIsLoading: (loading: boolean) => void) => {
+  const updateChangeLog = async (
+    data: ChangeLogType,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
-      async () => await updateOneChangeLogRequest({ ...data, organizationsId: loggedInUser?.orgs[0]?.id }),
+      async () =>
+        await updateOneChangeLogRequest({
+          ...data,
+          organizationsId: loggedInUser?.orgs[0]?.id,
+        }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
         const changelogId = data.id!;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changelogId]: data,
         }));
@@ -170,7 +243,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         const board = prevBoards[activeBoardKey] ?? {};
 
         return Object.assign({}, prevBoards, {
-          [activeBoardKey]: Object.assign({}, board, { list, metaData })
+          [activeBoardKey]: Object.assign({}, board, { list, metaData }),
         });
       });
 
@@ -184,17 +257,29 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   // Function to handle get all change logs success response
   const onSuccessGetAllChangeLogs = (res: any, query: {}, page: number) => {
     const { data } = res;
-    const { changeLogs = [], ...metaDataDetails } = data as { changeLogs: ChangeLogType[], [key: string]: any; };
-    const changeLogMap = changeLogs.reduce((map: ChangeLogMapType, changelog: ChangeLogType) => {
-      map[changelog?.id!] = changelog;
-      return map;
-    }, {});
-    const changeLogIds = changeLogs.map((changeLog) => changeLog?.id).filter(id => id) as string[];
+    const { changeLogs = [], ...metaDataDetails } = data as {
+      changeLogs: ChangeLogType[];
+      [key: string]: any;
+    };
+    const changeLogMap = changeLogs.reduce(
+      (map: ChangeLogMapType, changelog: ChangeLogType) => {
+        map[changelog?.id!] = changelog;
+        return map;
+      },
+      {}
+    );
+    const changeLogIds = changeLogs
+      .map((changeLog) => changeLog?.id)
+      .filter((id) => id) as string[];
 
     if (page <= 1) {
       setMap(changeLogMap);
       setList(changeLogIds);
-      setActiveChangeLogId(changeLogIds[0] ?? null);
+      setActiveChangeLogId(
+        sessionStorage.getItem("activeChangeLogId")
+          ? sessionStorage.getItem("activeChangeLogId")
+          : changeLogIds[0] ?? null
+      );
     } else {
       setMap((prevMap) => Object.assign({}, prevMap, changeLogMap));
       setList((prevList) => {
@@ -214,7 +299,8 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     await requestHandler(
       async () => await getAllChangeLogsRequest({ ...query, page, limit }),
       setIsLoading,
-      (res: { [key: string]: any; }) => onSuccessGetAllChangeLogs(res, query, page),
+      (res: { [key: string]: any }) =>
+        onSuccessGetAllChangeLogs(res, query, page),
       (errMessage) => {
         showNotification("error", errMessage);
       }
@@ -235,9 +321,11 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
 
     changeBoard(nextBoardKey);
     await requestHandler(
-      async () => await getAllPublicChangeLogsRequest({ ...query, page, limit }),
+      async () =>
+        await getAllPublicChangeLogsRequest({ ...query, page, limit }),
       setIsLoading,
-      (res: { [key: string]: any; }) => onSuccessGetAllChangeLogs(res, query, page),
+      (res: { [key: string]: any }) =>
+        onSuccessGetAllChangeLogs(res, query, page),
       (errMessage) => {
         // showNotification("error", errMessage);
         console.log("error", errMessage);
@@ -253,7 +341,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   // Function to handle publish now change log
-  const publishNowOneChangeLog = async (id: string, setIsLoading: (loading: boolean) => void) => {
+  const publishNowOneChangeLog = async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
       async () => await publishOneChangeLogRequest(id),
       setIsLoading,
@@ -261,7 +352,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         const { data, message } = res;
         const changelogId = data.id!;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changelogId]: data,
         }));
@@ -275,7 +366,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   // Function to handle toggle archive change log
-  const toggleArchiveOneChangeLog = async (id: string, setIsLoading: (loading: boolean) => void) => {
+  const toggleArchiveOneChangeLog = async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
       async () => await toggleArchiveOneChangeLogRequest(id),
       setIsLoading,
@@ -283,12 +377,13 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         const { data, message } = res;
         const changeLogId = data.id;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changeLogId]: data,
         }));
         showNotification("success", message);
-        if(metaData?.prevQuery?.isArchived || metaData?.prevQuery?.status) getAllChangeLogs(metaData?.prevQuery!);
+        if (metaData?.prevQuery?.isArchived || metaData?.prevQuery?.status)
+          getAllChangeLogs(metaData?.prevQuery!);
       },
       (errMessage) => {
         showNotification("error", errMessage);
@@ -297,7 +392,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   };
 
   // Function to handle delete change log
-  const deleteOneChangeLog = async (id: string, setIsLoading: (loading: boolean) => void) => {
+  const deleteOneChangeLog = async (
+    id: string,
+    setIsLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
       async () => await deleteOneChangeLogRequest(id!),
       setIsLoading,
@@ -305,18 +403,18 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         const { message } = res;
         const changeLogId = id;
 
-        setMap(prevMap => ({
+        setMap((prevMap) => ({
           ...prevMap,
           [changeLogId]: null,
         }));
-        setList(prevList => prevList.filter(id => id !== changeLogId));
-        setMetaData(prevMetaData => ({
+        setList((prevList) => prevList.filter((id) => id !== changeLogId));
+        setMetaData((prevMetaData) => ({
           ...prevMetaData,
           prevQuery: {
             ...prevMetaData.prevQuery,
-            deletedAt: new Date().toISOString()
+            deletedAt: new Date().toISOString(),
           },
-          total: (prevMetaData?.total || 1) - 1
+          total: (prevMetaData?.total || 1) - 1,
         }));
         setActiveChangeLogId(null);
         showNotification("success", message);
@@ -342,27 +440,32 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
 
   // Provide change logs-related data and functions through the context
   return (
-    <ChangeLogContext.Provider value={{
-      activeChangeLogId,
-      error,
-      isLoading,
-      map,
-      list,
-      metaData: Object.assign({}, metaData, {
-        hasProjectChangeLogs: defaultBoardKey === activeBoardKey ? list?.length : !!boards[defaultBoardKey]?.list?.length
-      }),
-      createChangeLog,
-      getAllPublicChangeLogs,
-      loadMorePublicChangeLogs,
-      getAllChangeLogs,
-      getChangeLog,
-      updateChangeLog,
-      loadMoreChangeLogs,
-      publishNowOneChangeLog,
-      toggleArchiveOneChangeLog,
-      deleteOneChangeLog,
-      setActiveChangeLogId
-    }}>
+    <ChangeLogContext.Provider
+      value={{
+        activeChangeLogId,
+        error,
+        isLoading,
+        map,
+        list,
+        metaData: Object.assign({}, metaData, {
+          hasProjectChangeLogs:
+            defaultBoardKey === activeBoardKey
+              ? list?.length
+              : !!boards[defaultBoardKey]?.list?.length,
+        }),
+        createChangeLog,
+        getAllPublicChangeLogs,
+        loadMorePublicChangeLogs,
+        getAllChangeLogs,
+        getChangeLog,
+        updateChangeLog,
+        loadMoreChangeLogs,
+        publishNowOneChangeLog,
+        toggleArchiveOneChangeLog,
+        deleteOneChangeLog,
+        setActiveChangeLogId,
+      }}
+    >
       {children}
     </ChangeLogContext.Provider>
   );

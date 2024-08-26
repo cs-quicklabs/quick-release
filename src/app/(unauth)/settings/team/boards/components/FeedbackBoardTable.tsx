@@ -3,17 +3,19 @@ import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
 import { IFeedbackBoard } from "@/interfaces";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
-import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
+import { showNotification } from "@/Utils";
+import { useProjectContext } from "@/app/context/ProjectContext";
 
 const FeedbackBoardTable: React.FC<{}> = () => {
   const prevStates = useRef({ isLoading: false });
   const [boardNames, setBoardNames] = useState<{ [key: string]: string }>({});
   const [isSaving, setIsSaving] = useState(false);
-  const { loggedInUser } = useUserContext();
+  const { activeProjectId } = useProjectContext();
   const [showNoActionModal, setShowNoActionModal] = useState(false);
+  const [showErrorMessage, setShowErrorMessage] = useState("");
   const {
     map: feedbackBoardMap,
     list,
@@ -29,7 +31,13 @@ const FeedbackBoardTable: React.FC<{}> = () => {
     useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const boardList = useMemo(() => {
+    setSelectedFeedbackBoardId(null);
+    return list
+  }, [list]);
+
   const onDelete = (id: string) => {
+    setShowErrorMessage("");
     setSelectedDeletedFeedbackBoardId(id);
     const feedbackBoard = feedbackBoardMap[id];
     if (feedbackBoard?.isDefault) {
@@ -40,6 +48,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
   };
 
   const handleEdit = (id: string) => {
+    setShowErrorMessage("");
     setSelectedFeedbackBoardId(id);
     setBoardNames((prev) => ({
       ...prev,
@@ -48,13 +57,14 @@ const FeedbackBoardTable: React.FC<{}> = () => {
   };
 
   const onSaveFeedbackBoard = async () => {
-    if (!selectedFeedbackBoardId || !boardNames[selectedFeedbackBoardId])
+    if (!selectedFeedbackBoardId || !boardNames[selectedFeedbackBoardId]) {
       return;
+    }
 
     const feedbackBoard: IFeedbackBoard = {
       id: selectedFeedbackBoardId,
       name: boardNames[selectedFeedbackBoardId],
-      projectsId: loggedInUser?.activeProjectId!,
+      projectsId: activeProjectId!,
     };
 
     await updateFeedbackBoard(feedbackBoard, setIsSaving);
@@ -75,11 +85,6 @@ const FeedbackBoardTable: React.FC<{}> = () => {
     };
   }, [isLoading]);
 
-  const selectedFeedbackBoard =
-    selectedFeedbackBoardId !== null
-      ? feedbackBoardMap[selectedFeedbackBoardId]
-      : null;
-
   return (
     <div className="h-full relative overflow-y-auto mt-8">
       <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -95,7 +100,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
           </tr>
         </thead>
         <tbody>
-          {!list.length && (
+          {!boardList.length && (
             <tr className="text-sm text-gray-500 bg-white">
               <td
                 className="px-6 py-4 whitespace-nowrap text-center"
@@ -105,7 +110,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
               </td>
             </tr>
           )}
-          {list.map((feedbackBoardId) => {
+          {boardList.map((feedbackBoardId) => {
             const isBoardEdit = selectedFeedbackBoardId === feedbackBoardId;
             const feedbackBoard = feedbackBoardMap[feedbackBoardId];
             if (!feedbackBoard) return null;
@@ -118,18 +123,26 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                   {!isBoardEdit ? (
                     feedbackBoard.name
                   ) : (
-                    <Input
-                      placeholder="Enter board name"
-                      id="editBoardName"
-                      value={boardNames[feedbackBoardId] || ""}
-                      onChange={(e) =>
-                        setBoardNames({
-                          ...boardNames,
-                          [feedbackBoardId]: e.target.value,
-                        })
-                      }
-                      disabled={isSaving}
-                    />
+                    <>
+                      <Input
+                        placeholder="Enter board name"
+                        id="editBoardName"
+                        value={boardNames[feedbackBoardId] || ""}
+                        onChange={(e) => {
+                          if (!e.target.value) setShowErrorMessage("Board name is required");
+                          else if(e.target.value.length > 30) setShowErrorMessage("Board name must be less than 30 characters");
+                          else setShowErrorMessage("");
+                          setBoardNames({
+                            ...boardNames,
+                            [feedbackBoardId]: e.target.value,
+                          })
+                        }}
+                        disabled={isSaving}
+                      />
+                      <span id="editErrorBoard" className="text-xs font-medium text-red-500">
+                        {showErrorMessage}
+                      </span>
+                    </>
                   )}
                 </td>
                 <td>
@@ -139,7 +152,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                     </span>
                   )}
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-start">
                   {!isBoardEdit ? (
                     <div className="flex gap-2 justify-end">
                       <Link
@@ -169,7 +182,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                     <Button
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveFeedbackBoard}
-                      disabled={isSaving}
+                      disabled={isSaving || showErrorMessage !== ""}
                       id="saveboard"
                     >
                       {isSaving ? "Saving..." : "Save"}
@@ -190,7 +203,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() =>
-          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, setIsLoading)
+          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, activeProjectId!, setIsLoading)
         }
         onClickCancel={() => {
           setShowDeleteModal(false);

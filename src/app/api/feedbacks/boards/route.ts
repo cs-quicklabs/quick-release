@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (name.length > 30) {
-      throw new ApiError(400, "Board name is too long");
+      throw new ApiError(400, "Board name must be less than 30 characters");
     }
 
     if (!body.projectsId) {
@@ -45,6 +45,16 @@ export async function POST(req: NextRequest) {
       throw new ApiError(404, "Project not found");
     }
     await roleChecker(user?.id!, project?.id!);
+    
+    const existingBoard = await db.feedbackBoards.findFirst({
+      where: {
+        name,
+        projectsId: project?.id,
+      },
+    });
+    if (existingBoard) {
+      throw new ApiError(400, "Feedback board already exists");
+    }
     const newFeedbackBoard = await db.feedbackBoards.create({
       data: {
         name,

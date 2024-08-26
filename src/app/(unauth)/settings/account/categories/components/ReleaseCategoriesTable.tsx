@@ -4,12 +4,17 @@ import { Button } from "@/atoms/button";
 import { Input } from "@/atoms/input";
 import { IReleaseCategory } from "@/interfaces";
 import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { showNotification } from "@/Utils";
 
 const ReleaseCategoriesTable: React.FC<{}> = () => {
   const prevStates = useRef({ isLoading: false });
-  const [categoryNames, setCategoryNames] = useState<{ [key: number]: string }>({});
+  const [categoryNames, setCategoryNames] = useState<{ [key: number]: string }>(
+    {}
+  );
   const [isSaving, setIsSaving] = useState(false);
+
+  const [showError, setShowError] = useState("");
 
   const {
     map: releaseCategoryMap,
@@ -22,17 +27,25 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   const [selectedReleaseCategoryId, setSelectedReleaseCategoryId] = useState<
     number | null
   >(null);
-  const [selectedDeletedReleaseCategoryId, setSelectedDeletedReleaseCategoryId] = useState<
-    number | null
-  >(null);
+  const [
+    selectedDeletedReleaseCategoryId,
+    setSelectedDeletedReleaseCategoryId,
+  ] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const categoryList = useMemo(() => {
+    setSelectedReleaseCategoryId(null);
+    return list;
+  }, [list]);
+
   const onDelete = (id: number) => {
+    setShowError("");
     setSelectedDeletedReleaseCategoryId(id);
     setShowDeleteModal(true);
   };
 
   const handleEdit = (id: number) => {
+    setShowError("");
     setSelectedReleaseCategoryId(id);
     setCategoryNames((prev) => ({
       ...prev,
@@ -41,7 +54,12 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   };
 
   const onSaveReleaseCategory = async () => {
-    if (!selectedReleaseCategoryId || !categoryNames[selectedReleaseCategoryId]) return;
+    if (
+      !selectedReleaseCategoryId ||
+      !categoryNames[selectedReleaseCategoryId]
+    ) {
+      return;
+    }
 
     const releaseCategory: IReleaseCategory = {
       id: selectedReleaseCategoryId,
@@ -67,7 +85,9 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
   }, [isLoading]);
 
   const selectedReleaseCategory =
-    selectedReleaseCategoryId !== null ? releaseCategoryMap[selectedReleaseCategoryId] : null;
+    selectedReleaseCategoryId !== null
+      ? releaseCategoryMap[selectedReleaseCategoryId]
+      : null;
 
   return (
     <div className="h-full relative overflow-y-auto mt-8">
@@ -83,7 +103,7 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
           </tr>
         </thead>
         <tbody>
-          {!list.length && (
+          {!categoryList.length && (
             <tr className="text-sm text-gray-500 bg-white">
               <td
                 className="px-6 py-4 whitespace-nowrap text-center"
@@ -93,8 +113,9 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
               </td>
             </tr>
           )}
-          {list.map((releaseCategoryId) => {
-            const isReleaseEdit = selectedReleaseCategoryId === releaseCategoryId;
+          {categoryList.map((releaseCategoryId) => {
+            const isReleaseEdit =
+              selectedReleaseCategoryId === releaseCategoryId;
             const releaseCategory = releaseCategoryMap[releaseCategoryId];
             if (!releaseCategory) return null;
             return (
@@ -106,21 +127,33 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                   {!isReleaseEdit ? (
                     releaseCategory.name
                   ) : (
-                    <Input
-                      placeholder="Enter category name"
-                      id="editCategoryName"
-                      value={categoryNames[releaseCategoryId] || ""}
-                      onChange={(e) =>
-                        setCategoryNames({
-                          ...categoryNames,
-                          [releaseCategoryId]: e.target.value,
-                        })
-                      }
-                      disabled={isSaving}
-                    />
+                    <>
+                      <Input
+                        placeholder="Enter category name"
+                        id="editCategoryName"
+                        value={categoryNames[releaseCategoryId] || ""}
+                        onChange={(e) => {
+                          if (!e.target.value)
+                            setShowError("Category name is required");
+                          else if (e.target.value.length > 30)
+                            setShowError(
+                              "Category name must be less than 30 characters"
+                            );
+                          else setShowError("");
+                          setCategoryNames({
+                            ...categoryNames,
+                            [releaseCategoryId]: e.target.value,
+                          });
+                        }}
+                        disabled={isSaving}
+                      />
+                      <span className="text-red-500 text-xs font-medium">
+                        {showError}
+                      </span>
+                    </>
                   )}
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap flex items-start">
                   {!isReleaseEdit ? (
                     <>
                       <Link
@@ -148,8 +181,8 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                     <Button
                       className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveReleaseCategory}
-                      disabled={isSaving}
-                       id="savecategory"
+                      disabled={isSaving || showError !== ""}
+                      id="savecategory"
                     >
                       {isSaving ? "Saving..." : "Save"}
                     </Button>
@@ -163,13 +196,17 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
       <AlertModal
         show={showDeleteModal}
         title="Delete change log"
-        message={`Are you sure you want to delete the category "${releaseCategoryMap[selectedDeletedReleaseCategoryId!]?.name}"? This will permanently remove the category and its associations from all past changelogs.`}
+        message={`Are you sure you want to delete the category "${
+          releaseCategoryMap[selectedDeletedReleaseCategoryId!]?.name
+        }"? This will permanently remove the category and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
-        onClickOk={() => deleteReleaseCategory(selectedDeletedReleaseCategoryId!, setIsLoading)}
+        onClickOk={() =>
+          deleteReleaseCategory(selectedDeletedReleaseCategoryId!, setIsLoading)
+        }
         onClickCancel={() => {
-          setShowDeleteModal(false)
-          setSelectedDeletedReleaseCategoryId(null)
+          setShowDeleteModal(false);
+          setSelectedDeletedReleaseCategoryId(null);
         }}
         loading={isLoading}
       />

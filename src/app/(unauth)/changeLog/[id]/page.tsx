@@ -184,6 +184,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       return;
     }
 
+    sessionStorage.removeItem("activeChangeLogId");
     createChangeLog(changelogPost, setIsSaving);
   };
 

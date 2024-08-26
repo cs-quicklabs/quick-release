@@ -42,6 +42,7 @@ type FeedbackPostContextType = {
   ) => Promise<void>;
   getFeedbackPost: (
     id: string,
+    projectsId: string,
     setIsLoading: (loading: boolean) => void
   ) => Promise<void>;
   loadMoreFeedbackPosts: () => Promise<void>;
@@ -63,6 +64,7 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
   getAllFeedbackPosts: async (query = {}, page = 1, limit = 20) => {},
   getFeedbackPost: async (
     id: string,
+    projectsId: string,
     setIsLoading: (loading: boolean) => void
   ) => {},
   loadMoreFeedbackPosts: async () => {},
@@ -137,12 +139,13 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
 
   const getFeedbackPost = async (
     id: string,
+    projectsId: string,
     setIsLoading: (loading: boolean) => void
   ) => {
     setError("");
     await requestHandler(
       async () =>
-        await getOneFeedbackPostRequest(id, loggedInUser?.activeProjectId!),
+        await getOneFeedbackPostRequest(id, { projectsId }),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;

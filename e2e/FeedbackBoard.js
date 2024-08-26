@@ -15,6 +15,8 @@ exports.feedback = class Feedback{
     this.editLink= this.page.getByRole("link", { name: "Edit" }).nth(1);
     this.editfeedbackNameInput=this.page.locator("#editBoardName")
     this.editSaveButton=this.page.locator("#saveboard")
+    this.errorboard = this.page.locator("#errorBoard")
+    this.editError= this.page.locator("#editErrorBoard")
 
   }
   async navigateToTeamSetting() {
@@ -24,14 +26,14 @@ exports.feedback = class Feedback{
     let isUser = false;
     
     for (let i = 0; i < maxRetries; i++) {
-      isUser = await this.userMenu.isVisible();
+      isUser = await this.userMenu.isVisible({timeout:5000});
       if (isUser) {
         await this.userMenu.click()
+        await this.teamSetting.click()
         break;
       }
       await new Promise(resolve => setTimeout(resolve, retryInterval)); 
     }
-    await this.teamSetting.click()
   }
 
 async verifiedHeading()
@@ -71,5 +73,25 @@ async verifiedHeading()
     await this.editfeedbackNameInput.fill(this.tagname + numeric);
     await this.editSaveButton.click();
   } 
+  async emptyFeedback()
+  {
+    await this.verifiedHeading()
+    await this.saveButton.click()
+    await expect(this.errorboard).toHaveText(
+        "Board name is required"
+      );
+
+  }
+
+  async editFeedBackWithEmptyValue()
+  {
+    await this.verifiedHeading();
+    await this.editLink.isVisible({ timeout: 5000 });
+    await this.editLink.click();
+    await this.editfeedbackNameInput.fill('');
+    await expect(this.editError).toHaveText(
+      "Board name is required"
+    );
+  }
 
 }
