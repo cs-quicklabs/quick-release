@@ -81,6 +81,7 @@ export default function FeedbackForm({
                   control={form.control}
                   render={({ field: { onChange, onBlur, value, name } }) => (
                     <FeedbackBoardselectMenu
+                      id="feedbackBoard-select"
                       className="basic-single max-w-[32rem]"
                       classNamePrefix="select"
                       name={name}
@@ -107,6 +108,7 @@ export default function FeedbackForm({
                   control={form.control}
                   render={({ field: { onChange, onBlur, value, name } }) => (
                     <Select
+                      id="feedback-status-select"
                       className="basic-single max-w-[32rem]"
                       classNamePrefix="select"
                       name={name}
@@ -163,6 +165,7 @@ export default function FeedbackForm({
                         field: { onChange, onBlur, value, name },
                       }) => (
                         <Select
+                          id="visibility-status-select"
                           className="basic-single max-w-[32rem]"
                           classNamePrefix="select"
                           name={name}
@@ -186,6 +189,7 @@ export default function FeedbackForm({
                   <FormLabel>{"ETA"}</FormLabel>
                   <FormControl>
                     <DatePicker
+                      id="release-eta"
                       className="justify-start bg-white border border-gray-300"
                       {...field}
                       onChange={(selectedDate) =>
@@ -213,6 +217,7 @@ export default function FeedbackForm({
                         field: { onChange, onBlur, value, name },
                       }) => (
                         <ReleaseTagSelectMenu
+                          id="release-tags-select"
                           className="basic-multi-select max-w-5xl"
                           classNamePrefix="select"
                           isMulti

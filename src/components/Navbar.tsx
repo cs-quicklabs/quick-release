@@ -32,6 +32,7 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
   );
@@ -54,7 +55,7 @@ export function Navbar() {
   const onSearch = (event: any) => {
     // Set the search query when Enter key is pressed
     if (event.key === "Enter") {
-      router.push(`/allPosts?search=${event.target?.value}`)
+      router.push(`/allPosts?search=${event.target?.value}`);
     }
   };
 
@@ -67,6 +68,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [
       {
+        id: "home",
         name: "Quick Release",
         href: "/allLogs",
         current: true,
@@ -75,12 +77,14 @@ export function Navbar() {
 
     if (activeProjectId) {
       nav.push({
+        id: "changelog",
         name: projectMap[activeProjectId]?.name as string,
         href: `/allLogs`,
         current: false,
       });
 
       nav.push({
+        id: "feedback",
         name: "Feedback",
         href: "/allPosts",
         current: false,
@@ -155,10 +159,14 @@ export function Navbar() {
                             <Link
                               key={item.name}
                               href={item.href}
+                              id={item.id}
                               className={classNames(
                                 item.current
                                   ? "text-white text-base"
                                   : "text-gray-300 hover:text-white hover:bg-gray-700",
+                                item.href === pathname &&
+                                  !item.current &&
+                                  "text-white bg-gray-700",
                                 "rounded-md px-3 py-2 text-sm font-medium"
                               )}
                               aria-current={item.current ? "page" : undefined}

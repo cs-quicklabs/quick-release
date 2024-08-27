@@ -4,6 +4,7 @@ import { FolderPlusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { Button } from "@/atoms/button";
 
 type EmptyPagePropsType = {
+  id?: string;
   title?: string;
   description?: string;
   btnText?: string;
@@ -11,10 +12,11 @@ type EmptyPagePropsType = {
 };
 
 const EmptyPage: React.FC<EmptyPagePropsType> = ({
+  id = "",
   title = "",
   description = "",
   btnText = "",
-  navigateTo = "#"
+  navigateTo = "#",
 }) => {
   return (
     <main className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16">
@@ -26,8 +28,12 @@ const EmptyPage: React.FC<EmptyPagePropsType> = ({
 
         <div className="mt-6">
           <Link href={navigateTo}>
-            <Button className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              <PlusIcon className="w-5 h-10 font-black cursor-pointer" /> {btnText}
+            <Button
+              id={id}
+              className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <PlusIcon className="w-5 h-10 font-black cursor-pointer" />{" "}
+              {btnText}
             </Button>
           </Link>
         </div>

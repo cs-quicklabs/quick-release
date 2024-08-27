@@ -40,7 +40,7 @@ export default function AllPosts() {
   const fetchAllFeedbackPosts = (
     boards: string | null,
     status: string | null,
-    search: string | null,
+    search: string | null
   ) => {
     const query: FilterType = { projectsId: activeProjectId! };
 
@@ -75,12 +75,14 @@ export default function AllPosts() {
   const renderEmptyPage = () => {
     const emptyProps = activeProjectId
       ? {
+          id: "no-feedback",
           title: "No Feedback added.",
           description: "Get started by creating your first feedback post.",
           btnText: "New Feedback",
           navigateTo: "/feedback/add",
         }
       : {
+          id: "no-project",
           title: "No Project added.",
           description: "Get started by creating your first project.",
           btnText: "New Project",
@@ -136,7 +138,7 @@ export default function AllPosts() {
           <div className="mt-4 flex md:mt-0 md:ml-4">
             <Link href="/feedback/add">
               <button
-                id="add-new"
+                id="add-feedback"
                 type="button"
                 className="ml-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >

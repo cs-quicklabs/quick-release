@@ -307,6 +307,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
               </CardContent>
               <CardFooter className="justify-end px-0">
                 <Button
+                  id="cancel-btn"
                   className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
                   type="button"
                   onClick={handleCancelButton}
@@ -314,6 +315,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
                   {"Cancel"}
                 </Button>
                 <Button
+                  id="submit-btn"
                   type="submit"
                   className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white"
                   disabled={isSaving}
