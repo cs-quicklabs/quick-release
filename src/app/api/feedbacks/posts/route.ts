@@ -5,6 +5,7 @@ import { asyncHandler } from "@/Utils/asyncHandler";
 import { FeedbackPostIncludeDBQuery } from "@/Utils/constants";
 import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
+import { computeFeedback } from "@/lib/feedback";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,7 +21,12 @@ export async function POST(req: NextRequest) {
     const user = await db.users.findUnique({ where: { cuid: userId } });
     const body = await req.json();
 
-    if (!body.title || !body.description || !body.status || !body.boardId) {
+    if (
+      !body.title ||
+      !body.description ||
+      !body.status ||
+      !body.feedbackBoardsId
+    ) {
       throw new ApiError(400, "Missing fields");
     }
 
@@ -29,7 +35,7 @@ export async function POST(req: NextRequest) {
         cuid: body.projectsId,
         feedbackBoards: {
           some: {
-            cuid: body.boardId,
+            cuid: body.feedbackBoardsId,
           },
         },
       },
@@ -43,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     const feedbackBoard = await db.feedbackBoards.findUnique({
       where: {
-        cuid: body.boardId,
+        cuid: body.feedbackBoardsId,
       },
       select: {
         id: true,
@@ -65,14 +71,14 @@ export async function POST(req: NextRequest) {
     });
 
     if (!newFeedbackPost) {
-      throw new ApiError(500, "Something went wrong while creating change log");
+      throw new ApiError(500, "Something went wrong while creating feedback");
     }
 
     return NextResponse.json(
       new ApiResponse(
         200,
-        privacyResponse(newFeedbackPost),
-        "Feedback post created successfully"
+        computeFeedback(privacyResponse(newFeedbackPost), user?.id),
+        "Feedback created successfully"
       )
     );
   });
@@ -156,6 +162,7 @@ export async function GET(req: NextRequest) {
         in: status,
       };
     }
+    console.log(query);
 
     const feedbackPosts = privacyResponseArray(
       await db.feedbackPosts.findMany({
@@ -177,14 +184,16 @@ export async function GET(req: NextRequest) {
       new ApiResponse(
         200,
         {
-          feedbackPosts,
+          feedbackPosts: feedbackPosts.map((feedback: any) =>
+            computeFeedback(feedback, user?.id)
+          ),
           page,
           limit,
           total: totalFeedbackPosts,
           hasNextPage,
           nextPage,
         },
-        "Feedback posts fetched successfully"
+        "All Feedbacks fetched successfully"
       )
     );
   });

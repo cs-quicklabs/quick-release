@@ -31,7 +31,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
 
   const boardList = useMemo(() => {
     setSelectedFeedbackBoardId(null);
-    return list
+    return list;
   }, [list]);
 
   const onDelete = (id: string) => {
@@ -127,13 +127,17 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                         id="editBoardName"
                         value={boardNames[feedbackBoardId] || ""}
                         onChange={(e) => {
-                          if (!e.target.value) setShowErrorMessage("Board name is required");
-                          else if(e.target.value.length > 30) setShowErrorMessage("Board name must be less than 30 characters");
+                          if (!e.target.value)
+                            setShowErrorMessage("Board name is required");
+                          else if (e.target.value.length > 30)
+                            setShowErrorMessage(
+                              "Board name must be less than 30 characters"
+                            );
                           else setShowErrorMessage("");
                           setBoardNames({
                             ...boardNames,
                             [feedbackBoardId]: e.target.value,
-                          })
+                          });
                         }}
                         disabled={isSaving}
                       />
@@ -201,7 +205,11 @@ const FeedbackBoardTable: React.FC<{}> = () => {
         okBtnClassName="bg-red-600 hover:bg-red-800"
         spinClassName="!fill-red-600"
         onClickOk={() =>
-          deleteFeedbackBoard(selectedDeletedFeedbackBoardId!, activeProjectId!, setIsLoading)
+          deleteFeedbackBoard(
+            selectedDeletedFeedbackBoardId!,
+            activeProjectId!,
+            setIsLoading
+          )
         }
         onClickCancel={() => {
           setShowDeleteModal(false);
@@ -225,7 +233,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
           setShowNoActionModal(false);
           setSelectedDeletedFeedbackBoardId(null);
         }}
-        okBtnText="ok"
+        okBtnText="Ok"
         isCancelBtnHidden={true}
         loading={isLoading}
       />

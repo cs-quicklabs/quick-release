@@ -1,4 +1,4 @@
-import { IReleaseCategory } from "@/interfaces";
+import { IReleaseCategory, DropDownOptionType } from "@/interfaces";
 
 export type FormInputPost = {
   title: string;
@@ -10,24 +10,20 @@ export type FormChangeLogPost = {
   title: string;
   description: string;
   releaseVersion: string;
-  releaseCategories: readonly IReleaseCategoriesOption[];
-  releaseTags: readonly ReleaseTagsOption[];
+  releaseCategories: readonly DropDownOptionType[];
+  releaseTags: readonly DropDownOptionType[];
   scheduledTime?: Date;
 };
 
 export type FeedbackPostForm = {
-  feedbackBoard: {
-    value: string;
-    label: string;
-  };
+  feedbackBoard: readonly DropDownOptionType;
   title: string;
   description: string;
-  status: {
-    value: string;
-    label: string;
-  };
-  boardId?: string;
+  status: readonly DropDownOptionType;
+  feedbackboardsId?: string;
   releaseETA?: Date;
+  releaseTags?: readonly DropDownOptionType[];
+  visibilityStatus?: readonly DropDownOptionType;
 };
 
 export type AuthType = {
@@ -76,11 +72,15 @@ export type FeedbackPostType = {
   releaseETA?: Date;
   status: string;
   feedbackBoards?: FeedbackBoardType;
-  boardId?: string;
+  feedbackBoardsId?: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
   createdBy?: User;
+  releaseTags?: IReleaseTag[];
+  visibilityStatus?: string;
+  upvotedCount?: number;
+  isUpvoted?: boolean;
 };
 
 export type FeedbackBoardType = {

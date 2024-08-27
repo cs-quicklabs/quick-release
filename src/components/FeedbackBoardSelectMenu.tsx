@@ -2,7 +2,7 @@ import { Props, ActionMeta } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { classNames } from "@/lib/utils";
-import { IFeedbackBoard, FeedbackBoardsOption } from "@/interfaces";
+import { IFeedbackBoard, DropDownOptionType } from "@/interfaces";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { requestHandler, showNotification } from "@/Utils";
@@ -19,7 +19,7 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const feedbackBoardsOptions: readonly FeedbackBoardsOption[] = useMemo(
+  const feedbackBoardsOptions: readonly DropDownOptionType[] = useMemo(
     () =>
       feedbackBoardIds.map((id) => ({
         value: id!,
@@ -42,7 +42,7 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
         setMap({ ...feedbackBoardMap, [feedbackBoardId]: data });
         const newFeedbackBoardIds = [...feedbackBoardIds, feedbackBoardId];
         setList(newFeedbackBoardIds);
-        const newFeedbackBoardOption: FeedbackBoardsOption = {
+        const newFeedbackBoardOption: DropDownOptionType = {
           value: data.id,
           label: data.name,
         };

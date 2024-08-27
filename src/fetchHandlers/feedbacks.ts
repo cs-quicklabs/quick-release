@@ -32,6 +32,20 @@ const getOneFeedbackPostRequest = (id: string, params: ApiFilterQueryType) => {
   return apiClient.get(`/feedbacks/posts/${id}`, { params });
 };
 
+const updateFeedbackPostRequest = (data: FeedbackPostType) => {
+  return apiClient.put(`/feedbacks/posts/${data.id}`, data);
+};
+
+const deleteFeedbackPostRequest = (id: string, projectsId: string) => {
+  return apiClient.delete(`/feedbacks/posts/${id}`, {
+    params: { projectsId },
+  });
+};
+
+const upvoteFeedbackRequest = (id: string, projectsId: string) => {
+  return apiClient.post(`/feedbacks/posts/${id}/upvote`, { projectsId });
+};
+
 export {
   createFeedbackBoardRequest,
   getAllFeedbackBoardsRequest,
@@ -40,4 +54,7 @@ export {
   createFeedbackPostRequest,
   getAllFeedbackPostsRequest,
   getOneFeedbackPostRequest,
+  updateFeedbackPostRequest,
+  deleteFeedbackPostRequest,
+  upvoteFeedbackRequest,
 };

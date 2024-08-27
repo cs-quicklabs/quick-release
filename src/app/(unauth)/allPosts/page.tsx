@@ -53,6 +53,7 @@ export default function AllPosts() {
   useEffect(() => {
     if (!activeProjectId) {
       getActiveProject(setActiveProjectLoading);
+      sessionStorage.removeItem("activeFeedbackPostId");
     }
   }, [activeProjectId]);
 
