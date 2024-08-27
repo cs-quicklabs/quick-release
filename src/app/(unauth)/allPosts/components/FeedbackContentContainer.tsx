@@ -63,11 +63,11 @@ const FeedbackContentContainer = () => {
           router.push(`/feedback/${activeFeedbackPostId}`);
         },
       },
-      {
-        name: "Delete",
-        id: "delete-changelog",
-        onClick: () => setShowDeleteModal(true),
-      },
+      // {
+      //   name: "Delete",
+      //   id: "delete-changelog",
+      //   onClick: () => setShowDeleteModal(true),
+      // },
     ],
     [feedback]
   );
