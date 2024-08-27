@@ -1,19 +1,4 @@
-export interface IReleaseCategoriesOption {
-  value: string;
-  label: string;
-}
-
-export interface FeedbackBoardsOption {
-  value: string;
-  label: string;
-}
-
-export interface ReleaseTagsOption {
-  readonly value: string;
-  readonly label: string;
-}
-
-export interface ReleaseCategoriesOption {
+export interface DropDownOptionType {
   readonly value: string;
   readonly label: string;
 }

@@ -8,12 +8,15 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { FeedbackPostType } from "@/types";
+import { ApiFilterQueryType, FeedbackPostType } from "@/types";
 import { requestHandler, showNotification } from "@/Utils";
 import {
   createFeedbackPostRequest,
+  deleteFeedbackPostRequest,
   getAllFeedbackPostsRequest,
   getOneFeedbackPostRequest,
+  updateFeedbackPostRequest,
+  upvoteFeedbackRequest,
 } from "@/fetchHandlers/feedbacks";
 import { useProjectContext } from "./ProjectContext";
 import { useUserContext } from "./UserContext";
@@ -40,13 +43,15 @@ type FeedbackPostContextType = {
     page?: 1,
     limit?: number
   ) => Promise<void>;
-  getFeedbackPost: (
-    id: string,
-    projectsId: string,
-    setIsLoading: (loading: boolean) => void
-  ) => Promise<void>;
+  getFeedbackPost: (id: string, query: {} | undefined) => Promise<void>;
   loadMoreFeedbackPosts: () => Promise<void>;
   setActiveFeedbackPostId: (id: string) => void;
+  updateFeedbackPost: (
+    data: FeedbackPostType,
+    setIsLoading: (loading: boolean) => void
+  ) => Promise<void>;
+  deleteFeedbackPost: (id: string, projectsId: string) => Promise<void>;
+  upvoteFeedbackPost: (id: string, projectsId: string) => Promise<void>;
 };
 
 // Create a context to manage change logs-related data and functions
@@ -62,13 +67,15 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
     setIsLoading: (loading: boolean) => void
   ) => {},
   getAllFeedbackPosts: async (query = {}, page = 1, limit = 20) => {},
-  getFeedbackPost: async (
-    id: string,
-    projectsId: string,
-    setIsLoading: (loading: boolean) => void
-  ) => {},
+  getFeedbackPost: async (id: string, query: {} | undefined) => {},
   loadMoreFeedbackPosts: async () => {},
   setActiveFeedbackPostId: (id: string) => {},
+  updateFeedbackPost: async (
+    data: FeedbackPostType,
+    setIsLoading: (loading: boolean) => void
+  ) => {},
+  deleteFeedbackPost: async (id: string, projectsId: string) => {},
+  upvoteFeedbackPost: async (id: string, projectsId: string) => {},
 });
 
 // Create a hook to access the FeedbackPostContext
@@ -96,7 +103,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   const [metaData, setMetaData] = useState<{ [key: string]: any }>({});
   const [activeFeedbackPostId, setActiveFeedbackPostId] = useState<
     string | null
-  >(null);
+  >(sessionStorage.getItem("activeFeedbackPostId") || null);
 
   const { activeProjectId } = useProjectContext();
   const { loggedInUser } = useUserContext();
@@ -130,6 +137,8 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
           ...prevMetaData,
           total: (prevMetaData?.total || 0) + 1,
         }));
+
+        sessionStorage.removeItem("activeFeedbackPostId");
         showNotification("success", message);
       },
       (errMessage) => {
@@ -141,12 +150,11 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
 
   const getFeedbackPost = async (
     id: string,
-    projectsId: string,
-    setIsLoading: (loading: boolean) => void
+    query: { [key: string]: any } = {}
   ) => {
     setError("");
     await requestHandler(
-      async () => await getOneFeedbackPostRequest(id, { projectsId }),
+      async () => await getOneFeedbackPostRequest(id, query),
       setIsLoading,
       (res: any) => {
         const { data, message } = res;
@@ -203,7 +211,11 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     if (page <= 1) {
       setMap(feedbackPostMap);
       setList(feedbackPostIds);
-      setActiveFeedbackPostId(feedbackPostIds[0] ?? null);
+      setActiveFeedbackPostId(
+        sessionStorage.getItem("activeFeedbackPostId")
+          ? sessionStorage.getItem("activeFeedbackPostId")
+          : feedbackPostIds[0] ?? null
+      );
     } else {
       setMap((prevMap) => Object.assign({}, prevMap, feedbackPostMap));
       setList((prevList) => {
@@ -227,6 +239,79 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
       setIsLoading,
       (res: { [key: string]: any }) =>
         onSuccessGetAllFeedbackPosts(res, query, page),
+      (errMessage) => {
+        showNotification("error", errMessage);
+      }
+    );
+  };
+
+  const updateFeedbackPost = async (
+    data: FeedbackPostType,
+    setIsLoading: (loading: boolean) => void
+  ) => {
+    await requestHandler(
+      async () => await updateFeedbackPostRequest(data),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        const feedbackId = data.id!;
+
+        setMap((prevMap) => ({
+          ...prevMap,
+          [feedbackId]: data,
+        }));
+        showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+        setError(errMessage);
+      }
+    );
+  };
+
+  const deleteFeedbackPost = async (id: string, projectsId: string) => {
+    await requestHandler(
+      async () => await deleteFeedbackPostRequest(id, projectsId),
+      setIsLoading,
+      (res: any) => {
+        const { message } = res;
+        const feedbackId = id;
+
+        setMap((prevMap) => ({
+          ...prevMap,
+          [feedbackId]: null,
+        }));
+        setList((prevList) => prevList!.filter((id) => id !== feedbackId));
+        setMetaData((prevMetaData) => ({
+          ...prevMetaData,
+          prevQuery: {
+            ...prevMetaData.prevQuery,
+            deletedAt: new Date().toISOString(),
+          },
+          total: (prevMetaData?.total || 1) - 1,
+        }));
+        sessionStorage.removeItem("activeFeedbackPostId");
+        setActiveFeedbackPostId(null);
+        showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+      }
+    );
+  };
+
+  const upvoteFeedbackPost = async (id: string, projectsId: string) => {
+    await requestHandler(
+      async () => await upvoteFeedbackRequest(id, projectsId),
+      setIsLoading,
+      (res: any) => {
+        const { data } = res;
+        const feedbackId = id;
+        setMap((prevMap) => ({
+          ...prevMap,
+          [feedbackId]: data,
+        }));
+      },
       (errMessage) => {
         showNotification("error", errMessage);
       }
@@ -266,6 +351,9 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
         getFeedbackPost,
         loadMoreFeedbackPosts,
         setActiveFeedbackPostId,
+        updateFeedbackPost,
+        deleteFeedbackPost,
+        upvoteFeedbackPost,
       }}
     >
       {children}

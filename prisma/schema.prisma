@@ -22,28 +22,29 @@ model UsersRoles {
 }
 
 model Users {
-  id                      Int                  @id @default(autoincrement())
-  cuid                    String               @unique @default(cuid())
-  createdAt               DateTime             @default(now())
-  updatedAt               DateTime             @updatedAt
+  id                      Int                       @id @default(autoincrement())
+  cuid                    String                    @unique @default(cuid())
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
   firstName               String
   lastName                String
   profilePicture          String?
-  email                   String               @unique
+  email                   String                    @unique
   password                String
-  resetToken              String?              @unique
+  resetToken              String?                   @unique
   resetTokenExpiry        String?
-  isActive                Boolean              @default(true)
-  isVerified              Boolean              @default(false)
-  verificationToken       String?              @unique
+  isActive                Boolean                   @default(true)
+  isVerified              Boolean                   @default(false)
+  verificationToken       String?                   @unique
   verificationTokenExpiry String?
   projectsUsers           ProjectsUsers[]
   organizations           Organizations[]
   projects                Projects[]
   organizationsUsers      OrganizationsUsers[]
-  createdLogs             Changelogs[]         @relation("CreatedLogs")
-  updatedLogs             Changelogs[]         @relation("UpdatedLogs")
+  createdLogs             Changelogs[]              @relation("CreatedLogs")
+  updatedLogs             Changelogs[]              @relation("UpdatedLogs")
   feedbackPosts           FeedbackPosts[]
+  upvotedFeedbacksByUsers UpvotedFeedbacksByUsers[]
 }
 
 model Organizations {
@@ -120,15 +121,16 @@ model Changelogs {
 }
 
 model ReleaseTags {
-  id              Int                    @id @default(autoincrement())
-  cuid            String                 @unique @default(cuid())
+  id              Int                      @id @default(autoincrement())
+  cuid            String                   @unique @default(cuid())
   name            String
   code            String
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  organizations   Organizations?         @relation(fields: [organizationsId], references: [id])
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+  organizations   Organizations?           @relation(fields: [organizationsId], references: [id])
   organizationsId Int
   logs            ChangelogReleaseTags[]
+  feedbackPosts   ReleaseTagsOnFeedbacks[]
 }
 
 model ChangelogReleaseTags {
@@ -162,19 +164,22 @@ model ChangelogReleaseCategories {
 }
 
 model FeedbackPosts {
-  id               Int            @id @default(autoincrement())
-  cuid             String         @unique @default(cuid())
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  title            String
-  description      String
-  status           FeedbackStatus
-  releaseETA       DateTime?
-  createdBy        Users?          @relation(fields: [createdById], references: [id])
-  createdById      Int?
-  deletedAt        DateTime?
-  feedbackBoards   FeedbackBoards? @relation(fields: [feedbackBoardsId], references: [id])
-  feedbackBoardsId Int?
+  id                      Int                       @id @default(autoincrement())
+  cuid                    String                    @unique @default(cuid())
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  title                   String
+  description             String
+  status                  FeedbackStatus
+  releaseETA              DateTime?
+  createdBy               Users?                    @relation(fields: [createdById], references: [id])
+  createdById             Int?
+  deletedAt               DateTime?
+  feedbackBoards          FeedbackBoards?           @relation(fields: [feedbackBoardsId], references: [id])
+  feedbackBoardsId        Int?
+  visibilityStatus        String                    @default("private")
+  releaseTags             ReleaseTagsOnFeedbacks[]
+  upvotedFeedbacksByUsers UpvotedFeedbacksByUsers[]
 }
 
 model FeedbackBoards {
@@ -187,6 +192,24 @@ model FeedbackBoards {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   feedbackPosts FeedbackPosts[]
+}
+
+model ReleaseTagsOnFeedbacks {
+  feedback     FeedbackPosts @relation(fields: [feedbackId], references: [id])
+  feedbackId   Int
+  releaseTag   ReleaseTags   @relation(fields: [releaseTagId], references: [id])
+  releaseTagId Int
+
+  @@id([feedbackId, releaseTagId])
+}
+
+model UpvotedFeedbacksByUsers {
+  feedback   FeedbackPosts @relation(fields: [feedbackId], references: [id])
+  feedbackId Int
+  Users      Users         @relation(fields: [usersId], references: [id])
+  usersId    Int
+
+  @@id([feedbackId, usersId])
 }
 
 enum FeedbackStatus {

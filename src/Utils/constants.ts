@@ -60,6 +60,23 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   },
 });
 
+export const FeedbackVisibilityStatus = Object.freeze<FeedbackStatusType>({
+  private: {
+    id: "private",
+    title: "Private",
+    textColor: "text-orange-800",
+    bgColor: "bg-orange-100",
+    bulletColor: "bg-orange-400",
+  },
+  public: {
+    id: "public",
+    title: "Public",
+    textColor: "text-green-800",
+    bgColor: "bg-green-100",
+    bulletColor: "bg-green-400",
+  },
+});
+
 export const ChangeLogsStatus = Object.freeze<ChangeLogsStatusType>({
   published: {
     id: "published",
@@ -139,6 +156,17 @@ export const FeedbackPostIncludeDBQuery = {
   feedbackBoards: { select: { cuid: true, name: true } },
   createdBy: { select: SelectUserDetailsFromDB },
   createdById: false,
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  upvotedFeedbacksByUsers: true,
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds
