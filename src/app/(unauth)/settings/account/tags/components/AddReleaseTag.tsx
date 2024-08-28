@@ -16,7 +16,7 @@ const AddReleaseTag = () => {
 
 
   const onSaveReleaseTag = () => {
-    if (!tagName) {
+    if (!tagName.trim()) {
       setShowError("Tag name is required");
       return;
     }

@@ -15,8 +15,6 @@ import {
   getAllFeedbackBoardsRequest,
   updateFeedbackBoardRequest,
 } from "../../fetchHandlers/feedbacks";
-import { useProjectContext } from "./ProjectContext";
-import { usePathname } from "next/navigation";
 
 type FeedbackBoardMapType = {
   [key: string]: IFeedbackBoard | null;
@@ -27,6 +25,8 @@ const FeedbackBoardContext = createContext({
   error: "",
   map: {} as FeedbackBoardMapType,
   list: [] as string[],
+  setList: (list: string[]) => {},
+  setMap: (map: FeedbackBoardMapType) => {},
   metaData: {} as { [key: string]: any },
   createFeedbackBoard: async (
     data: IFeedbackBoard,
@@ -187,6 +187,8 @@ const FeedbackBoardProvider: React.FC<ProviderProps> = ({ children }) => {
         error,
         map,
         list,
+        setList,
+        setMap,
         metaData,
         createFeedbackBoard,
         getAllFeedbackBoards,

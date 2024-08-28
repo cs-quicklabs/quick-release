@@ -178,7 +178,7 @@ export async function DELETE(
     if (feedbackBoard?.feedbackPosts.length > 0) {
       throw new ApiError(
         400,
-        "Cannot delete feedback board with feedback posts"
+        "Unable to delete as some feedbacks are associated with this board"
       );
     }
 

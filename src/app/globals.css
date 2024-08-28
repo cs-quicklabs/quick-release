@@ -15,6 +15,11 @@
   }
 }
 
+*:focus {
+  outline: none; /* Remove default outline */
+}
+
+
 /* @layer base {
   :root {
     --background: 0 0% 100%;

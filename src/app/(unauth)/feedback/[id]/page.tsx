@@ -17,19 +17,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/atoms/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/atoms/form";
-import { Input } from "@/atoms/input";
+import { Form } from "@/atoms/form";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { FeedbackPostForm, FeedbackPostType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -41,14 +32,11 @@ import React, {
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
 import { fileDeleteRequest } from "@/fetchHandlers/file";
-import { FeedbackStatus } from "@/Utils/constants";
+import { FeedbackStatus, FeedbackVisibilityStatus } from "@/Utils/constants";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
-import Select from "react-select";
-import FeedbackBoardselectMenu from "@/components/FeedbackBoardSelectMenu";
-
-const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
-  ssr: true,
-});
+import moment from "moment";
+import { DropDownOptionType, IReleaseTag } from "@/interfaces";
+import FeedbackForm from "./components/FeedbackForm";
 
 const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   const prevProps = useRef({
@@ -65,27 +53,31 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   const {
     error,
     createFeedbackPost,
+    updateFeedbackPost,
+    getFeedbackPost,
+    isLoading: fetchFeedbackPostLoading,
     map: feedbackPostMap,
   } = useFeedbackPostContext();
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [loader, setLoader] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fetchFeedbackPostLoading, setFetchFeedbackPostLoading] =
-    useState(false);
   const { activeProjectId, getActiveProject } = useProjectContext();
-
   const fetchActiveProject = useCallback(async () => {
-    if(!activeProjectId){
+    if (!activeProjectId) {
       await getActiveProject(setLoader);
     }
   }, [activeProjectId]);
 
   const fetchAllFeedbackBoards = useCallback(async () => {
-    if(activeProjectId){
+    if (activeProjectId) {
       const query = { projectsId: activeProjectId };
       await getAllFeedbackBoards(query, setLoader);
+    }
+  }, [params.id, activeProjectId]);
+
+  const fetchFeedbackPost = useCallback(async () => {
+    if (activeProjectId && params.id !== "add") {
+      const query = { projectsId: activeProjectId };
+      await getFeedbackPost(params.id, query);
     }
   }, [params.id, activeProjectId]);
 
@@ -95,11 +87,25 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
 
   useEffect(() => {
     fetchAllFeedbackBoards();
+    fetchFeedbackPost();
   }, [params.id, activeProjectId]);
 
   const feedbackpost = useMemo(() => {
     return feedbackPostMap[params.id] || null;
   }, [feedbackPostMap[params.id]]);
+
+  const defaultFeedbackBoard = useMemo(() => {
+    if (feedbackBoardList && feedbackBoardList.length > 0) {
+      const boardId = feedbackBoardList.find(
+        (boardId) => feedbackBoardMap[boardId]?.isDefault === true
+      );
+      return {
+        value: boardId,
+        label: feedbackBoardMap[boardId!]?.name,
+      };
+    }
+    return null;
+  }, [feedbackBoardList, feedbackBoardMap]);
 
   const formSchema = z.object({
     title: z.string().trim().min(1, { message: "Required" }).max(50, {
@@ -118,6 +124,21 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
       value: z.string().trim().min(1, { message: "Required" }),
       label: z.string().trim().min(1, { message: "Required" }),
     }),
+    visibilityStatus: z
+      .object({
+        value: z.string().trim().min(1, { message: "Required" }),
+        label: z.string().trim().min(1, { message: "Required" }),
+      })
+      .optional(),
+    releaseETA: z.date().optional(),
+    releaseTags: z
+      .array(
+        z.object({
+          value: z.string(),
+          label: z.string(),
+        })
+      )
+      .optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -125,12 +146,54 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     defaultValues: {
       title: "",
       description: "",
-      status: { value: "", label: "" },
-      feedbackBoard: { value: "", label: "" },
+      status: {
+        value: FeedbackStatus["IN_REVIEW"].id,
+        label: FeedbackStatus["IN_REVIEW"].title,
+      },
+      feedbackBoard: {
+        value: defaultFeedbackBoard?.value,
+        label: defaultFeedbackBoard?.label,
+      },
     },
   });
 
   const formValues = form.getValues();
+
+  useEffect(() => {
+    const setDefaultValues = () => {
+      if (feedbackpost) {
+        const selectedReleaseTags = feedbackpost.releaseTags as IReleaseTag[];
+
+        form.reset({
+          title: feedbackpost.title,
+          description: feedbackpost.description,
+          status: {
+            value: FeedbackStatus[feedbackpost.status].id,
+            label: FeedbackStatus[feedbackpost.status].title,
+          },
+          feedbackBoard: {
+            value: feedbackpost.feedbackBoards?.cuid,
+            label: feedbackpost.feedbackBoards?.name,
+          },
+          releaseTags: selectedReleaseTags
+            ? selectedReleaseTags.map((tag) => ({
+                value: tag.code,
+                label: tag.name,
+              }))
+            : [],
+          releaseETA: feedbackpost.releaseETA
+            ? moment(feedbackpost.releaseETA).toDate()
+            : undefined,
+          visibilityStatus: {
+            value: FeedbackVisibilityStatus[feedbackpost.visibilityStatus!].id,
+            label:
+              FeedbackVisibilityStatus[feedbackpost.visibilityStatus!].title,
+          },
+        });
+      }
+    };
+    setDefaultValues();
+  }, [feedbackpost]);
 
   const removeFiles = (filePathUrls: string[]) => {
     return new Promise(async (resolve, reject) => {
@@ -148,16 +211,26 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   };
 
   const handleCreatePost: SubmitHandler<FeedbackPostForm> = async (data) => {
-    const feedbackpostPost: FeedbackPostType = {
+    const feedbackPostData: FeedbackPostType = {
       title: data.title,
       description: data.description,
-      status: FeedbackStatus[data.status.value]?.id,
-      boardId: data.feedbackBoard.value!,
+      status: FeedbackStatus[data.status.value!].id,
+      feedbackBoardsId: data.feedbackBoard.value!,
       projectsId: activeProjectId!,
     };
 
-    createFeedbackPost(feedbackpostPost, setIsSaving);
+    if (params.id !== "add") {
+      feedbackPostData.releaseETA = data.releaseETA;
+      feedbackPostData.releaseTags = data.releaseTags?.map((tag) => tag.value);
+      feedbackPostData.visibilityStatus =
+        FeedbackVisibilityStatus[data.visibilityStatus?.value!]?.id;
+      feedbackPostData.id = params.id;
 
+      updateFeedbackPost(feedbackPostData, setIsSaving);
+      return;
+    }
+
+    createFeedbackPost(feedbackPostData, setIsSaving);
   };
 
   useEffect(() => {
@@ -167,7 +240,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
       }
     }
 
-    if (prevProps?.current?.loading && !loading) {
+    if (prevProps?.current?.loading && !fetchFeedbackPostLoading) {
       if (error) {
         router.replace("/allPosts");
       }
@@ -176,61 +249,27 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     return () => {
       prevProps.current = {
         isSaving,
-        loading,
+        loading: fetchFeedbackPostLoading,
       };
     };
-  }, [isSaving, loading]);
+  }, [isSaving, fetchFeedbackPostLoading]);
 
   if (
     !feedbackpost &&
-    loading &&
     params.id !== "add" &&
     fetchFeedbackPostLoading &&
-    !isLoading &&
     loader
   ) {
     return <ScreenLoader />;
   }
 
-  if (
-    !feedbackpost &&
-    params.id !== "add" &&
-    !fetchFeedbackPostLoading &&
-    !isLoading
-  ) {
+  if (!feedbackpost && params.id !== "add" && !fetchFeedbackPostLoading) {
     return (
       <BaseTemplate>
         <NotFound />
       </BaseTemplate>
     );
   }
-
-  useEffect(() => {
-    const setDefaultValues = () => {
-      // find default feedback board
-      const defaultFeedbackBoard = feedbackBoardList.find(
-        (feedbackBoard) =>
-          feedbackBoardMap[feedbackBoard]?.isDefault === true
-      )
-      form.reset({
-        title: "",
-        description: "",
-        status: FeedbackStatusOptions[0],
-        feedbackBoard: {
-          value: defaultFeedbackBoard,
-          label: feedbackBoardMap[defaultFeedbackBoard!]?.name,
-        },
-      });
-    };
-    setDefaultValues();
-  }, [feedbackBoardList, feedbackBoardMap]);
-
-  const FeedbackStatusOptions = Object.keys(FeedbackStatus).map((key) => {
-    return {
-      value: FeedbackStatus[key].id,
-      label: FeedbackStatus[key].title,
-    };
-  });
 
   const handleCancelButton = async () => {
     const imageUrls = extractImageUrls(formValues?.description);
@@ -243,7 +282,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-5xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-5xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -258,112 +297,17 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
               </CardHeader>
 
               <CardContent className="grid gap-4 px-0">
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{"Title"}</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter feedback post title"
-                            {...field}
-                            id="title"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex justify-between gap-12">
-                  <FormField
-                    control={form.control}
-                    name="feedbackBoard"
-                    render={({ field }) => (
-                      <FormItem className="w-1/2">
-                        <FormLabel>{"Feedback Board"}</FormLabel>
-                        <FormControl>
-                          <Controller
-                            name="feedbackBoard"
-                            control={form.control}
-                            render={({
-                              field: { onChange, onBlur, value, name },
-                            }) => (
-                              <FeedbackBoardselectMenu
-                                className="basic-single"
-                                classNamePrefix="select"
-                                name={name}
-                                onBlur={onBlur}
-                                onChange={onChange}
-                                value={value}
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem className="w-1/2">
-                        <FormLabel>{"Status"}</FormLabel>
-                        <FormControl>
-                          <Controller
-                            name="status"
-                            control={form.control}
-                            render={({
-                              field: { onChange, onBlur, value, name },
-                            }) => (
-                              <Select
-                                className="basic-single"
-                                classNamePrefix="select"
-                                name={name}
-                                onBlur={onBlur}
-                                onChange={onChange}
-                                value={
-                                  value.label !== ""
-                                    ? value
-                                    : FeedbackStatusOptions[0]
-                                }
-                                options={FeedbackStatusOptions}
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field: { value, onChange } }) => (
-                      <FormItem>
-                        <FormLabel>{"Description"}</FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter feedback post description"
-                            id="description"
-                            value={value}
-                            onChange={onChange}
-                            onModal="Feedbacks"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FeedbackForm
+                  form={form}
+                  defaultFeedbackBoardOption={
+                    defaultFeedbackBoard as DropDownOptionType
+                  }
+                  id={params.id}
+                />
               </CardContent>
               <CardFooter className="justify-end px-0">
                 <Button
+                  id="cancel-btn"
                   className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
                   type="button"
                   onClick={handleCancelButton}
@@ -371,11 +315,12 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
                   {"Cancel"}
                 </Button>
                 <Button
+                  id="submit-btn"
                   type="submit"
                   className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-500 text-white"
-                  disabled={isSaving || isUploading}  
+                  disabled={isSaving}
                 >
-                  {isSaving || isUploading ? "Submitting..." : "Submit Feedback"}
+                  {isSaving ? "Submitting..." : "Submit Feedback"}
                 </Button>
               </CardFooter>
             </form>

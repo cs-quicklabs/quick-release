@@ -3,10 +3,9 @@
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
 import Loader from "../atoms/Loader";
-import { handleTrancate, requestHandler, showNotification } from "@/Utils";
+import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
-import { setActiveProjectRequest } from "@/fetchHandlers/project";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -15,11 +14,10 @@ import {
   PlusCircleIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import axios from "axios";
 import { Tooltip } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as React from "react";
@@ -33,7 +31,11 @@ function classNames(...classes: any) {
 
 export function Navbar() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const pathname = usePathname();
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") || null
+  );
   const [open, setOpen] = useState(false);
   const [isLogOut, setIsLogOut] = useState(false);
   const { loggedInUser, logout } = useUserContext();
@@ -50,6 +52,13 @@ export function Navbar() {
     activeUserLoading: true,
   });
 
+  const onSearch = (event: any) => {
+    // Set the search query when Enter key is pressed
+    if (event.key === "Enter") {
+      router.push(`/allPosts?search=${event.target?.value}`);
+    }
+  };
+
   const projects = projectList.map((projectId) => projectMap[projectId]);
 
   const activeProject = async (projectId: string) => {
@@ -59,6 +68,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [
       {
+        id: "home",
         name: "Quick Release",
         href: "/allLogs",
         current: true,
@@ -67,12 +77,14 @@ export function Navbar() {
 
     if (activeProjectId) {
       nav.push({
+        id: "changelog",
         name: projectMap[activeProjectId]?.name as string,
         href: `/allLogs`,
         current: false,
       });
 
       nav.push({
+        id: "feedback",
         name: "Feedback",
         href: "/allPosts",
         current: false,
@@ -147,10 +159,14 @@ export function Navbar() {
                             <Link
                               key={item.name}
                               href={item.href}
+                              id={item.id}
                               className={classNames(
                                 item.current
                                   ? "text-white text-base"
                                   : "text-gray-300 hover:text-white hover:bg-gray-700",
+                                item.href === pathname &&
+                                  !item.current &&
+                                  "text-white bg-gray-700",
                                 "rounded-md px-3 py-2 text-sm font-medium"
                               )}
                               aria-current={item.current ? "page" : undefined}
@@ -166,7 +182,7 @@ export function Navbar() {
                 <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
                   <div className="w-full max-w-lg lg:max-w-xs">
                     <label htmlFor="search" className="sr-only">
-                      Search
+                      Search by feedbacks
                     </label>{" "}
                     <div className="relative">
                       <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
@@ -178,8 +194,11 @@ export function Navbar() {
                       <input
                         id="search"
                         name="search"
+                        onKeyDown={onSearch}
+                        value={searchQuery || ""}
+                        onChange={(e) => setSearchQuery(e.target.value)}
                         className=" hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
-                        placeholder="Search"
+                        placeholder="Search feedbacks"
                         type="search"
                       />
                     </div>

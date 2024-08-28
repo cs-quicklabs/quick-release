@@ -26,9 +26,9 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   IN_REVIEW: {
     id: "IN_REVIEW",
     title: "In-Review",
-    textColor: "text-orange-800",
-    bgColor: "bg-orange-100",
-    bulletColor: "bg-orange-400",
+    textColor: "text-gray-800",
+    bgColor: "bg-gray-100",
+    bulletColor: "bg-gray-400",
   },
   PLANNED: {
     id: "PLANNED",
@@ -40,9 +40,9 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   IN_PROGRESS: {
     id: "IN_PROGRESS",
     title: "In-Progress",
-    textColor: "text-yellow-800",
-    bgColor: "bg-yellow-100",
-    bulletColor: "bg-yellow-400",
+    textColor: "text-blue-800",
+    bgColor: "bg-blue-100",
+    bulletColor: "bg-blue-400",
   },
   COMPLETED: {
     id: "COMPLETED",
@@ -57,6 +57,23 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
     textColor: "text-red-800",
     bgColor: "bg-red-100",
     bulletColor: "bg-red-400",
+  },
+});
+
+export const FeedbackVisibilityStatus = Object.freeze<FeedbackStatusType>({
+  private: {
+    id: "private",
+    title: "Private",
+    textColor: "text-orange-800",
+    bgColor: "bg-orange-100",
+    bulletColor: "bg-orange-400",
+  },
+  public: {
+    id: "public",
+    title: "Public",
+    textColor: "text-green-800",
+    bgColor: "bg-green-100",
+    bulletColor: "bg-green-400",
   },
 });
 
@@ -139,6 +156,17 @@ export const FeedbackPostIncludeDBQuery = {
   feedbackBoards: { select: { cuid: true, name: true } },
   createdBy: { select: SelectUserDetailsFromDB },
   createdById: false,
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  upvotedFeedbacksByUsers: true,
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

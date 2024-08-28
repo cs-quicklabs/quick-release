@@ -1,4 +1,4 @@
-import { isValidArray, privacyResponseArray } from "@/Utils";
+import { isValidArray, privacyResponse, privacyResponseArray } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -30,15 +30,15 @@ export async function POST(req: NextRequest) {
       where: {
         cuid: body.projectsId,
       },
-    })
+    });
 
     await roleChecker(user?.id!, project?.id!);
 
     const orgs = await db.organizations.findUnique({
       where: {
         cuid: body?.organizationsId,
-      }
-    })
+      },
+    });
 
     const releaseTags = await db.releaseTags.findMany({
       where: {
@@ -56,13 +56,23 @@ export async function POST(req: NextRequest) {
           in: body.releaseCategories,
         },
       },
-    }); 
+    });
 
-    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
+    if (
+      !isValidArray(
+        body.releaseCategories,
+        releaseCategories.map((category) => category.code)
+      )
+    ) {
       throw new ApiError(400, "Release category is invalid");
     }
 
-    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+    if (
+      !isValidArray(
+        body.releaseTags,
+        releaseTags.map((tag) => tag.code)
+      )
+    ) {
       throw new ApiError(400, "Release tag is invalid");
     }
 
@@ -76,7 +86,9 @@ export async function POST(req: NextRequest) {
         description: body.description,
         releaseVersion: body.releaseVersion,
         releaseCategories: {
-          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+          create: releaseCategories.map((category) => ({
+            releaseCategoryId: category.id,
+          })),
         },
         projectsId: project.id,
         // releaseTags: body.releaseTags,
@@ -98,7 +110,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       new ApiResponse(
         200,
-        computeChangeLog(newChangeLog),
+        computeChangeLog(privacyResponse(newChangeLog)),
         "Create changelog successfully"
       )
     );
@@ -135,7 +147,6 @@ export async function GET(req: NextRequest) {
       await roleChecker(user?.id!, project?.id!);
       query.projectsId = project.id;
     }
-    
 
     const status = searchParams.get("status");
     if (status) {
@@ -168,7 +179,9 @@ export async function GET(req: NextRequest) {
       new ApiResponse(
         200,
         {
-          changeLogs: changeLogs.map((changeLog: any) => computeChangeLog(changeLog)),
+          changeLogs: changeLogs.map((changeLog: any) =>
+            computeChangeLog(changeLog)
+          ),
           page,
           limit,
           total: totalChangeLogs,
@@ -180,4 +193,3 @@ export async function GET(req: NextRequest) {
     );
   });
 }
-

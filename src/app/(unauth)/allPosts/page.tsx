@@ -2,7 +2,7 @@
 
 import BaseTemplate from "@/templates/BaseTemplate";
 import Link from "next/link";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
 import EmptyPage from "@/components/dashboard/EmptyPage";
@@ -11,14 +11,22 @@ import { Bars3Icon } from "@heroicons/react/20/solid";
 import ScreenLoader from "@/atoms/ScreenLoader";
 import FeedbackSideNav from "./components/FeedbackSideNav";
 import FeedbackContentContainer from "./components/FeedbackContentContainer";
+import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
+import { useSearchParams } from "next/navigation";
+import { FilterType } from "@/types";
 
 export default function AllPosts() {
-  const [loading, setLoading] = useState(false);
-  const {
-    activeProjectId,
-    getActiveProject,
-    isLoading: setActiveProjectLoading,
-  } = useProjectContext();
+  const [activeProjectLoading, setActiveProjectLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const search = useMemo(() => {
+    const data = searchParams.get("search");
+    if (data && data !== "") {
+      return searchParams.get("search");
+    }
+    return null;
+  }, [searchParams]);
+  const [loader, setLoader] = useState(false);
+  const { activeProjectId, getActiveProject } = useProjectContext();
   const {
     isLoading: isFetchingFeedbacks,
     metaData,
@@ -26,26 +34,40 @@ export default function AllPosts() {
     list: feedbacks,
     getAllFeedbackPosts,
   } = useFeedbackPostContext();
+  const { getAllFeedbackBoards } = useFeedbackBoardContext();
   const [showSideNav, setShowSideNav] = useState(false);
+
+  const fetchAllFeedbackPosts = (
+    boards: string | null,
+    status: string | null,
+    search: string | null
+  ) => {
+    const query: FilterType = { projectsId: activeProjectId! };
+
+    if (boards) query.feedbackBoards = boards;
+    if (status) query.feedbackStatus = status;
+    if (search) query.search = search;
+    getAllFeedbackPosts(query);
+  };
 
   useEffect(() => {
     if (!activeProjectId) {
-      getActiveProject(setLoading);
+      getActiveProject(setActiveProjectLoading);
+      sessionStorage.removeItem("activeFeedbackPostId");
     }
   }, [activeProjectId]);
 
   useEffect(() => {
     if (activeProjectId) {
-      const query = { projectId: activeProjectId! };
-      getAllFeedbackPosts(query);
+      const query: FilterType = { projectsId: activeProjectId! };
+      getAllFeedbackBoards(query, setLoader);
+      fetchAllFeedbackPosts(null, null, search);
     }
-  }, [activeProjectId]);
+  }, [activeProjectId, search]);
 
-  // show loading if fetching current active project or feedbacks
   if (
-    (!activeProjectId && loading) ||
-    (!metaData?.total && isFetchingFeedbacks) ||
-    setActiveProjectLoading
+    (!activeProjectId && activeProjectLoading) ||
+    (!feedbacks && isFetchingFeedbacks)
   ) {
     return <ScreenLoader />;
   }
@@ -53,12 +75,14 @@ export default function AllPosts() {
   const renderEmptyPage = () => {
     const emptyProps = activeProjectId
       ? {
+          id: "no-feedback",
           title: "No Feedback added.",
           description: "Get started by creating your first feedback post.",
           btnText: "New Feedback",
           navigateTo: "/feedback/add",
         }
       : {
+          id: "no-project",
           title: "No Project added.",
           description: "Get started by creating your first project.",
           btnText: "New Project",
@@ -73,9 +97,14 @@ export default function AllPosts() {
   };
 
   if (
-    (!activeProjectId && !loading) ||
-    (metaData.total === 0 && !isFetchingFeedbacks) ||
-    (!feedbacks && !activeFeedbackPostId && !isFetchingFeedbacks)
+    (!activeProjectId && !activeProjectLoading) ||
+    (metaData?.total === 0 &&
+      !metaData?.prevQuery?.feedbackStatus &&
+      !metaData?.prevQuery?.search &&
+      !metaData?.prevQuery?.feedbackBoards &&
+      !isFetchingFeedbacks &&
+      feedbacks?.length === 0 &&
+      !activeFeedbackPostId)
   ) {
     return renderEmptyPage();
   }
@@ -109,7 +138,7 @@ export default function AllPosts() {
           <div className="mt-4 flex md:mt-0 md:ml-4">
             <Link href="/feedback/add">
               <button
-                id="add-new"
+                id="add-feedback"
                 type="button"
                 className="ml-3 inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
@@ -124,6 +153,8 @@ export default function AllPosts() {
             <FeedbackSideNav
               showSideNav={showSideNav}
               setShowSideNav={setShowSideNav}
+              fetchAllFeedbackPosts={fetchAllFeedbackPosts}
+              search={search}
             />
 
             <FeedbackContentContainer />
