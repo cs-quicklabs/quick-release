@@ -12,7 +12,8 @@ export const getOneProject = async (
             releaseTags: true,
             releaseCategories: true,
           },
-        }
+        },
+        feedbackBoards: true,
       },
     });
 

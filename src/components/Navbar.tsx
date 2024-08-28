@@ -204,210 +204,172 @@ export function Navbar() {
                     </div>
                   </div>
                 </div>
-                <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
-                  <button
-                    type="button"
-                    className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
-                  >
-                    <span className="sr-only">{"View notifications"}</span>{" "}
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-                  <Menu as="div" className="relative ml-3">
-                    <div>
-                      <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                        <span className="absolute -inset-0.5" />
-                        <span className="sr-only" id="Open-main-menu">
-                          {"Open main menu"}
-                        </span>
-                        {open ? (
-                          <XMarkIcon
-                            className="block h-6 w-6"
-                            aria-hidden="true"
-                          />
-                        ) : (
-                          <Bars3Icon
-                            className="block h-6 w-6"
-                            aria-hidden="true"
-                          />
-                        )}
-                      </Disclosure.Button>
-                      <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                        <span className="absolute -inset-1.5" />
-                        <span className="sr-only" id="open-user-menu">
-                          {"Open user menu"}
-                        </span>
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          src={
-                            (loggedInUser?.profilePicture as string)
-                              ? (loggedInUser?.profilePicture as string)
-                              : WEB_DETAILS?.avtar
-                          }
-                          alt={fullName}
-                          width={32}
-                          height={32}
-                        />
-                      </Menu.Button>
-                    </div>
-                    <Transition
-                      as={Fragment}
-                      enter="transition ease-out duration-100"
-                      enterFrom="transform opacity-0 scale-95"
-                      enterTo="transform opacity-100 scale-100"
-                      leave="transition ease-in duration-75"
-                      leaveFrom="transform opacity-100 scale-100"
-                      leaveTo="transform opacity-0 scale-95"
+                {loggedInUser && (
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
+                    <button
+                      type="button"
+                      className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white">
-                              <div className="flex justify-center items-center">
-                                <div className="flex flex-col">
-                                  {fullName.length > 18 ? (
-                                    <Tooltip
-                                      placement="left"
-                                      content={fullName}
-                                    >
-                                      <p>{handleTrancate(fullName, 18)}</p>
-                                    </Tooltip>
-                                  ) : (
-                                    <p>{fullName}</p>
-                                  )}
-                                  {email.length > 18 ? (
-                                    <Tooltip placement="left" content={email}>
-                                      <p className="font-medium">
-                                        {handleTrancate(email, 18)}
-                                      </p>
-                                    </Tooltip>
-                                  ) : (
-                                    <p className="font-medium">{email}</p>
-                                  )}
+                      <span className="sr-only">{"View notifications"}</span>{" "}
+                      <BellIcon className="h-6 w-6" aria-hidden="true" />
+                    </button>
+                    <Menu as="div" className="relative ml-3">
+                      <div>
+                        <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                          <span className="absolute -inset-0.5" />
+                          <span className="sr-only" id="Open-main-menu">
+                            {"Open main menu"}
+                          </span>
+                          {open ? (
+                            <XMarkIcon
+                              className="block h-6 w-6"
+                              aria-hidden="true"
+                            />
+                          ) : (
+                            <Bars3Icon
+                              className="block h-6 w-6"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </Disclosure.Button>
+                        <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                          <span className="absolute -inset-1.5" />
+                          <span className="sr-only" id="open-user-menu">
+                            {"Open user menu"}
+                          </span>
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src={
+                              (loggedInUser?.profilePicture as string)
+                                ? (loggedInUser?.profilePicture as string)
+                                : WEB_DETAILS?.avtar
+                            }
+                            alt={fullName}
+                            width={32}
+                            height={32}
+                          />
+                        </Menu.Button>
+                      </div>
+                      <Transition
+                        as={Fragment}
+                        enter="transition ease-out duration-100"
+                        enterFrom="transform opacity-0 scale-95"
+                        enterTo="transform opacity-100 scale-100"
+                        leave="transition ease-in duration-75"
+                        leaveFrom="transform opacity-100 scale-100"
+                        leaveTo="transform opacity-0 scale-95"
+                      >
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white">
+                                <div className="flex justify-center items-center">
+                                  <div className="flex flex-col">
+                                    {fullName.length > 18 ? (
+                                      <Tooltip
+                                        placement="left"
+                                        content={fullName}
+                                      >
+                                        <p>{handleTrancate(fullName, 18)}</p>
+                                      </Tooltip>
+                                    ) : (
+                                      <p>{fullName}</p>
+                                    )}
+                                    {email.length > 18 ? (
+                                      <Tooltip placement="left" content={email}>
+                                        <p className="font-medium">
+                                          {handleTrancate(email, 18)}
+                                        </p>
+                                      </Tooltip>
+                                    ) : (
+                                      <p className="font-medium">{email}</p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          <Link
-                            href="/create-project"
-                            className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
-                          >
-                            <PlusCircleIcon className="h-5 w-5 mr-2" />
-                            {"Add new project"}
-                          </Link>
-                        </Menu.Item>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            <Link
+                              href="/create-project"
+                              className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
+                            >
+                              <PlusCircleIcon className="h-5 w-5 mr-2" />
+                              {"Add new project"}
+                            </Link>
+                          </Menu.Item>
 
-                        {loading.projectLoading ? (
-                          <div className="flex items-center justify-center py-2">
-                            <Oval
-                              height={25}
-                              width={25}
-                              color="black"
-                              secondaryColor="white"
-                            />
-                          </div>
-                        ) : (
-                          <div className="max-h-64 flex flex-col overflow-hidden">
-                            <div className="max-h-full overflow-y-auto">
-                              {projects.map((item: any) => {
-                                return (
-                                  <Menu.Item
-                                    key={item.id}
-                                    as="div"
-                                    onClick={() => {
-                                      activeProject(item.id);
-                                      router.push("/");
-                                    }}
-                                    className="hover:bg-gray-100  cursor-pointer pl-4"
-                                  >
-                                    <div
-                                      className={`text-sm ${
-                                        item.id === activeProjectId
-                                          ? "flex items-center"
-                                          : "flex items-center"
-                                      }`}
+                          {loading.projectLoading ? (
+                            <div className="flex items-center justify-center py-2">
+                              <Oval
+                                height={25}
+                                width={25}
+                                color="black"
+                                secondaryColor="white"
+                              />
+                            </div>
+                          ) : (
+                            <div className="max-h-64 flex flex-col overflow-hidden">
+                              <div className="max-h-full overflow-y-auto">
+                                {projects.map((item: any) => {
+                                  return (
+                                    <Menu.Item
+                                      key={item.id}
+                                      as="div"
+                                      onClick={() => {
+                                        activeProject(item.id);
+                                        router.push("/");
+                                      }}
+                                      className="hover:bg-gray-100  cursor-pointer pl-4"
                                     >
-                                      <div className="flex py-2 w-fit">
-                                        {item.name.length > 20 ? (
-                                          <Tooltip
-                                            placement="left"
-                                            content={item.name}
-                                          >
-                                            {handleTrancate(item.name, 20)}
-                                          </Tooltip>
-                                        ) : (
-                                          <p>{item.name}</p>
+                                      <div
+                                        className={`text-sm ${
+                                          item.id === activeProjectId
+                                            ? "flex items-center"
+                                            : "flex items-center"
+                                        }`}
+                                      >
+                                        <div className="flex py-2 w-fit">
+                                          {item.name.length > 20 ? (
+                                            <Tooltip
+                                              placement="left"
+                                              content={item.name}
+                                            >
+                                              {handleTrancate(item.name, 20)}
+                                            </Tooltip>
+                                          ) : (
+                                            <p>{item.name}</p>
+                                          )}
+                                        </div>
+
+                                        {item.id === activeProjectId ? (
+                                          <div className="ml-1">
+                                            <CheckCircleIcon className="w-5 h-5" />
+                                          </div>
+                                        ) : null}
+                                        {loading.activeProjectLoading[
+                                          item.id
+                                        ] && (
+                                          <div className="flex items-center justify-center py-2">
+                                            <Oval
+                                              height={25}
+                                              width={25}
+                                              color="black"
+                                              secondaryColor="white"
+                                            />
+                                          </div>
                                         )}
                                       </div>
-
-                                      {item.id === activeProjectId ? (
-                                        <div className="ml-1">
-                                          <CheckCircleIcon className="w-5 h-5" />
-                                        </div>
-                                      ) : null}
-                                      {loading.activeProjectLoading[
-                                        item.id
-                                      ] && (
-                                        <div className="flex items-center justify-center py-2">
-                                          <Oval
-                                            height={25}
-                                            width={25}
-                                            color="black"
-                                            secondaryColor="white"
-                                          />
-                                        </div>
-                                      )}
-                                    </div>
-                                  </Menu.Item>
-                                );
-                              })}
+                                    </Menu.Item>
+                                  );
+                                })}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="/settings/account/tags"
-                              // onClick={handleLogout}
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
-                              )}
-                            >
-                              <div
-                                className="flex  items-center"
-                                id="account-settings"
-                              >
-                                {"Account Settings"}
-                              </div>
-                            </Link>
                           )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="/settings/profile/general"
-                              // onClick={handleLogout}
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
-                              )}
-                            >
-                              <div
-                                className="flex  items-center"
-                                id="profile-settings"
-                              >
-                                {"Profile Settings"}
-                              </div>
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        {projectList.length > 0 && (
                           <Menu.Item>
                             {({ active }) => (
                               <Link
-                                href="/settings/team/boards"
+                                href="/settings/account/tags"
                                 // onClick={handleLogout}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
@@ -416,42 +378,82 @@ export function Navbar() {
                               >
                                 <div
                                   className="flex  items-center"
-                                  id="team-setting"
+                                  id="account-settings"
                                 >
-                                  {"Team Settings"}
+                                  {"Account Settings"}
                                 </div>
                               </Link>
                             )}
                           </Menu.Item>
-                        )}
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              onClick={() => setOpen(true)}
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
-                              )}
-                            >
-                              {isLogOut ? (
-                                <div className="flex  items-center gap-4">
-                                  <span className="text-sm font-[490] text-black">
-                                    {"Logout"}
-                                  </span>
-                                  <Loader width="w-6" color="border-black" />
+                          <Menu.Item>
+                            {({ active }) => (
+                              <Link
+                                href="/settings/profile/general"
+                                // onClick={handleLogout}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                                )}
+                              >
+                                <div
+                                  className="flex  items-center"
+                                  id="profile-settings"
+                                >
+                                  {"Profile Settings"}
                                 </div>
-                              ) : (
-                                <div className="flex  items-center font-[490] text-black text-sm">
-                                  <span>{"Logout"}</span>
-                                </div>
+                              </Link>
+                            )}
+                          </Menu.Item>
+                          {projectList.length > 0 && (
+                            <Menu.Item>
+                              {({ active }) => (
+                                <Link
+                                  href="/settings/team/boards"
+                                  // onClick={handleLogout}
+                                  className={classNames(
+                                    active ? "bg-gray-100" : "",
+                                    "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                                  )}
+                                >
+                                  <div
+                                    className="flex  items-center"
+                                    id="team-setting"
+                                  >
+                                    {"Team Settings"}
+                                  </div>
+                                </Link>
                               )}
-                            </a>
+                            </Menu.Item>
                           )}
-                        </Menu.Item>
-                      </Menu.Items>
-                    </Transition>
-                  </Menu>
-                </div>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <a
+                                onClick={() => setOpen(true)}
+                                className={classNames(
+                                  active ? "bg-gray-100" : "",
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                )}
+                              >
+                                {isLogOut ? (
+                                  <div className="flex  items-center gap-4">
+                                    <span className="text-sm font-[490] text-black">
+                                      {"Logout"}
+                                    </span>
+                                    <Loader width="w-6" color="border-black" />
+                                  </div>
+                                ) : (
+                                  <div className="flex  items-center font-[490] text-black text-sm">
+                                    <span>{"Logout"}</span>
+                                  </div>
+                                )}
+                              </a>
+                            )}
+                          </Menu.Item>
+                        </Menu.Items>
+                      </Transition>
+                    </Menu>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -9,9 +9,11 @@ export const computeFeedback = (feedback: any, userId?: number) => {
 
   if (upvotedFeedbacksByUsers) {
     upvotedCount = upvotedFeedbacksByUsers.length;
-    isUpvoted = upvotedFeedbacksByUsers.some(
-      (user: any) => user.usersId === userId
-    );
+    if(userId) {
+      isUpvoted = upvotedFeedbacksByUsers.some(
+        (user: any) => user.usersId === userId
+      );
+    }
   }
   return Object.assign({}, rest, {
     releaseTags,
