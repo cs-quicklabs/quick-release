@@ -1,5 +1,5 @@
 import { LoginPage } from "../e2e/Login";
-import { feedback } from "../e2e/addFeedback";
+import { feedback } from "../e2e/FeedbackBoard";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
