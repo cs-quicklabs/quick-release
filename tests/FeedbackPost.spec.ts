@@ -10,15 +10,28 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await page.waitForURL('http://localhost:3000/allLogs')
   });
 
-//   test("verify user able to Navigate to Feedback Post page", async ({ page }) => {
-//     const feedBackPosts = new feedbackPost(page);
-//     await feedBackPosts.navigateToFeedBack();
-//     await page.waitForURL('http://localhost:3000/allPosts')
+  test("verify user able to Navigate to Feedback Post page", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await page.waitForURL('http://localhost:3000/allPosts')
    
-//   });
+  });
   test("verify user able to add Posts", async ({ page }) => {
     const feedBackPosts = new feedbackPost(page);
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
+    await feedBackPosts.fillTitle()
+    await feedBackPosts.selectStatus('Planned')
+    await feedBackPosts.fillDescription()
+    await feedBackPosts.submitFeedBack()
+   
+  });
+
+  test("verify title field should not accept pnly spaces", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await feedBackPosts.addPosts();
+    await feedBackPosts.fillTitleWithOnlySpaces()
+  
    
   });
