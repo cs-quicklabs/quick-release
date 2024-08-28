@@ -162,7 +162,6 @@ export async function GET(req: NextRequest) {
         in: status,
       };
     }
-    console.log(query);
 
     const feedbackPosts = privacyResponseArray(
       await db.feedbackPosts.findMany({

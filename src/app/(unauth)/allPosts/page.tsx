@@ -53,13 +53,13 @@ export default function AllPosts() {
   useEffect(() => {
     if (!activeProjectId) {
       getActiveProject(setActiveProjectLoading);
-      sessionStorage.removeItem("activeFeedbackPostId");
     }
   }, [activeProjectId]);
 
   useEffect(() => {
     if (activeProjectId) {
       const query: FilterType = { projectsId: activeProjectId! };
+      sessionStorage.removeItem("activeFeedbackPostId");
       getAllFeedbackBoards(query, setLoader);
       fetchAllFeedbackPosts(null, null, search);
     }
