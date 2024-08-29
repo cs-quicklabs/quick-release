@@ -1,6 +1,7 @@
 export default function StatisticIcon() {
   return (
     <svg
+    className="h-5 w-5"
       width="20"
       height="18"
       viewBox="0 0 20 18"

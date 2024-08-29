@@ -38,6 +38,13 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
     }
     return feedbackBoards.find((board) => board.isDefault)?.name || null;
   }, [searchParams]);
+  const sort = useMemo(() => {
+    const data = searchParams.get("sort");
+    if (data && data !== "") {
+      return decodeURIComponent(searchParams.get("sort") as string);
+    }
+    return null;
+  }, [searchParams]);
   const {
     feedbackSideNav,
     setFeedbackSideNav,
@@ -46,18 +53,20 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
 
   const fetchAllFeedbackPosts = (
     board: string | null,
-    search: string | null
+    search: string | null,
+    sort: string | null
   ) => {
     const query: FilterType = { projectName: projectName! };
 
     if (board) query.board = board;
     if (search) query.search = search;
+    if(sort && sort !== "top") query.sort = sort
     getAllPublicFeedbackPosts(query);
   };
   console.log(board);
-  const updateQueryParams = (board: string | null, search: string | null) => {
+  const updateQueryParams = (board: string | null, search: string | null, sort: string | null) => {
     if (!board && !search) {
-      fetchAllFeedbackPosts(null, null);
+      fetchAllFeedbackPosts(null, null, null);
       return router.push(pathname);
     }
 
@@ -71,19 +80,19 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
       queryParams += `search=${search}`;
     }
 
-    fetchAllFeedbackPosts(board, search);
+    fetchAllFeedbackPosts(board, search, sort);
     router.push(`${pathname}?${queryParams}`);
   };
   const onSelectBoard = (boardName: string) => {
     if (boardName) {
-      fetchAllFeedbackPosts(boardName, search);
-      updateQueryParams(boardName, search);
+      fetchAllFeedbackPosts(boardName, search, sort);
+      updateQueryParams(boardName, search, sort);
     }
   };
 
   useEffect(() => {
-    fetchAllFeedbackPosts(board, search);
-  }, [projectName, board, search]);
+    fetchAllFeedbackPosts(board, search, sort);
+  }, [projectName, board, search, sort]);
 
   return (
     <aside
@@ -95,7 +104,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
       )}
       onClick={() => setFeedbackSideNav(false)}
     >
-      <div className="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
+      <div className="relative flex h-full sm:w-96 flex-col border-r border-gray-200 bg-gray-100">
         <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
             <span

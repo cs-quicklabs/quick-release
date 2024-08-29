@@ -30,7 +30,7 @@ const FeedbackCardItem: React.FC<{ feedback?: FeedbackPostType }> = ({
   return (
     <li
       className={classNames(
-        "py-5 px-6 border border-gray-200 rounded hover:bg-gray-50 bg-white"
+        "py-5 px-6 border border-gray-200 rounded hover:bg-gray-50 bg-white mx-4 sm:mx-0"
       )}
     >
       <div className="flex justify-between space-x-3">

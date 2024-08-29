@@ -116,7 +116,7 @@ export function Navbar() {
       <Disclosure as="nav" className="bg-gray-800">
         {({ open }: any) => (
           <>
-            <div className="px-2 sm:px-6 lg:px-8">
+            <div className="px-4 sm:px-6 lg:px-8">
               <div className="relative flex items-center justify-around">
                 <div className="flex items-center lg:hidden py-4">
                   {/* Mobile menu button*/}

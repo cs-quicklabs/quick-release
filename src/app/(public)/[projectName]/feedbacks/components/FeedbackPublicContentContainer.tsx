@@ -39,6 +39,13 @@ export default function FeedbackPublicSideNav({
     }
     return null;
   }, [searchParams]);
+  const sort = useMemo(() => {
+    const data = searchParams.get("sort");
+    if (data && data !== "") {
+      return searchParams.get("sort");
+    }
+    return null;
+  }, [searchParams]);
   const [searchQuery, setSearchQuery] = useState(search || "");
 
   const {
@@ -49,7 +56,11 @@ export default function FeedbackPublicSideNav({
     metaData: feedbackMetaData,
   } = useFeedbackPostContext();
 
-  const updateQueryParams = (board: string | null, search: string | null) => {
+  const updateQueryParams = (
+    board: string | null,
+    search: string | null,
+    sort: string | null
+  ) => {
     let queryParams = "";
     if (board) {
       queryParams += `board=${board}`;
@@ -60,13 +71,28 @@ export default function FeedbackPublicSideNav({
       queryParams += `search=${search}`;
     }
 
+    if (sort) {
+      if (queryParams) queryParams += "&";
+      queryParams += `sort=${sort}`;
+    }
+
     router.push(`${pathname}?${queryParams}`);
   };
+
+  const sortedFeedbackPostList = useMemo(() => {
+    if (sort === "top") {
+      return feedbackPostList?.sort(
+        (a, b) =>
+          feedbackPostMap[b]?.upvotedCount! - feedbackPostMap[a]?.upvotedCount!
+      );
+    }
+    return feedbackPostList;
+  }, [feedbackPostList, feedbackPostMap, searchParams]);
 
   const onSearch = (event: any) => {
     // Set the search query when Enter key is pressed
     if (event.key === "Enter") {
-      updateQueryParams(board, event.target?.value);
+      updateQueryParams(board, event.target?.value, null);
     }
   };
 
@@ -95,21 +121,31 @@ export default function FeedbackPublicSideNav({
             </div>
           </div>
         </div>
-        <div className="flex justify-between items-center gap-2 px-8 py-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center gap-2 px-4 md:px-8 py-4">
           <div className="flex items-center gap-4">
-            <Button className="bg-white border border-gray-300 text-gray-700">
+            <Button
+              className={`bg-white border border-gray-300 text-gray-700 flex gap-2 focus:bg-gray-200 ${
+                sort === "top" ? "bg-gray-200" : ""
+              }`}
+              onClick={() => updateQueryParams(board, search, "top")}
+            >
               <StatisticIcon />
-              <span className="ml-2">Top</span>
+              <span className="text-xs">Top</span>
             </Button>
-            <Button className="bg-white border border-gray-300 text-gray-700">
+            <Button
+              className={`bg-white border border-gray-300 text-gray-700 flex gap-2 ${
+                sort === "desc" ? "bg-gray-200" : ""
+              }`}
+              onClick={() => updateQueryParams(board, search, "desc")}
+            >
               <CalenderIcon />
-              <span className="ml-2">New</span>
+              <span className="text-xs">New</span>
             </Button>
           </div>
           <div>
             <div className="w-full">
               <div className="relative">
-                <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <MagnifyingGlassIcon
                     className="h-5 w-5 text-gray-400"
                     aria-hidden="true"
@@ -121,7 +157,7 @@ export default function FeedbackPublicSideNav({
                   onKeyDown={onSearch}
                   value={searchQuery || ""}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border border-gray-300 rounded-md py-2 pl-10 pr-3 leading-5 text-gray-600 placeholder-gray-400 sm:text-sm w-[25rem]"
+                  className="border border-gray-300 rounded-md py-2 pl-10 pr-3 w-full md:w-[25rem] leading-5 text-gray-600 placeholder-gray-400 sm:text-sm"
                   placeholder="Search feedbacks"
                   type="search"
                 />
@@ -129,25 +165,23 @@ export default function FeedbackPublicSideNav({
             </div>
           </div>
         </div>
-
         <ul
           role="list"
           className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 sm:px-6 lg:px-8 overflow-y-auto"
           data-svelte-h="svelte-1g1nf9v"
         >
-          {feedbackPostList && feedbackPostList.length > 0 ? (
-            feedbackPostList.map((feedbackPost) => (
-              <FeedbackCardItem feedback={feedbackPostMap[feedbackPost]!} />
-            ))
-          ) : (
-            <div className="text-center">
-              <InboxIcon className="mx-auto h-12 w-12 text-gray-400" />
+          {!isFetchingFeedback && !sortedFeedbackPostList?.length && (
+            <li key="empty-list-item" className="relative py-10 px-6 bg-white">
+              <div className="flex flex-col items-center justify-center text-center text-gray-400">
+                <InboxIcon className="h-10 w-10" />
 
-              <h3 className="mt-2 text-sm font-semibold mt-2 text-gray-900">
-                {"No feedback found"}
-              </h3>
-            </div>
+                <span>No Feedbacks Found</span>
+              </div>
+            </li>
           )}
+          {sortedFeedbackPostList?.map((feedbackPost) => (
+            <FeedbackCardItem feedback={feedbackPostMap[feedbackPost]!} />
+          ))}
           <li
             ref={loadMoreRef}
             key={"loadMore"}
@@ -166,7 +200,6 @@ export default function FeedbackPublicSideNav({
               {"Load More"}
             </Button>
           </li>
-
           {isFetchingFeedback && (
             <li key={"loading"} className="relative py-5 bg-white">
               <div className="flex items-center justify-center">

@@ -13,7 +13,7 @@ export default function FeedbackHeader() {
       >
         <div className="min-w-0 flex-1">
           <div className="flex items-center">
-            <div className="xl:hidden mr-1">
+            <div className=" mr-1 hidden sm:block xl:hidden">
               <Button
                 className="rounded-full text-gray-400 hover:text-gray-600"
                 variant="default"
