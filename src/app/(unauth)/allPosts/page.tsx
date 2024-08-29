@@ -37,6 +37,12 @@ export default function AllPosts() {
   const { getAllFeedbackBoards } = useFeedbackBoardContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
+  useEffect(() => {
+    if (!activeProjectId) {
+      getActiveProject(setActiveProjectLoading);
+    }
+  }, [activeProjectId]);
+
   const fetchAllFeedbackPosts = (
     boards: string | null,
     status: string | null,
@@ -51,15 +57,9 @@ export default function AllPosts() {
   };
 
   useEffect(() => {
-    if (!activeProjectId) {
-      getActiveProject(setActiveProjectLoading);
-      sessionStorage.removeItem("activeFeedbackPostId");
-    }
-  }, [activeProjectId]);
-
-  useEffect(() => {
     if (activeProjectId) {
       const query: FilterType = { projectsId: activeProjectId! };
+      sessionStorage.removeItem("activeFeedbackPostId");
       getAllFeedbackBoards(query, setLoader);
       fetchAllFeedbackPosts(null, null, search);
     }

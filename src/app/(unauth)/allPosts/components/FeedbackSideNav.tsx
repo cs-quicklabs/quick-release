@@ -35,13 +35,9 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
   search,
 }) => {
   const loadMoreRef = useRef(null);
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const isVisible = useOnScreen(loadMoreRef);
   const [selectedBoards, setSelectedBoards] = useState<string[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
-  const { activeProjectId } = useProjectContext();
   const { map: feedbackBoardsMap } = useFeedbackBoardContext();
   const {
     isLoading: isFetchingFeedback,
@@ -131,7 +127,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-60 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div
                       className="px-4 py-2 border-b border-gray-100"
                       role="none"
@@ -141,6 +137,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                       </p>
                     </div>
 
+                    <div className="max-h-64 overflow-y-auto">
                     {Object.values(feedbackBoardsMap).map((feedbackBoards) => (
                       <Menu.Item key={feedbackBoards?.id}>
                         {() => (
@@ -161,6 +158,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                         )}
                       </Menu.Item>
                     ))}
+                    </div>
                     <div
                       className="px-4 py-2 border-b border-gray-100"
                       role="none"
