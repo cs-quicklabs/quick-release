@@ -137,7 +137,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                       </p>
                     </div>
 
-                    <div className="max-h-64 overflow-y-auto">
+                    <div className="max-h-40 overflow-y-auto">
                     {Object.values(feedbackBoardsMap).map((feedbackBoards) => (
                       <Menu.Item key={feedbackBoards?.id}>
                         {() => (
