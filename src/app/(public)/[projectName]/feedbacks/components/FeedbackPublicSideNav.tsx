@@ -60,7 +60,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
 
     if (board) query.board = board;
     if (search) query.search = search;
-    if(sort && sort !== "top") query.sort = sort
+    if(sort && sort !== "top") query.sort = "desc";
     getAllPublicFeedbackPosts(query);
   };
   console.log(board);

@@ -134,9 +134,9 @@ export default function FeedbackPublicSideNav({
             </Button>
             <Button
               className={`bg-white border border-gray-300 text-gray-700 flex gap-2 ${
-                sort === "desc" ? "bg-gray-200" : ""
+                sort === "new" ? "bg-gray-200" : ""
               }`}
-              onClick={() => updateQueryParams(board, search, "desc")}
+              onClick={() => updateQueryParams(board, search, "new")}
             >
               <CalenderIcon />
               <span className="text-xs">New</span>

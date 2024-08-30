@@ -71,7 +71,7 @@ export async function GET(
         skip: start,
         take: limit,
         orderBy: { 
-          createdAt: sort === "asc" ? "asc" : "desc"
+          createdAt: sort === "desc" ? "desc" : "asc"
         }
       })
     );
