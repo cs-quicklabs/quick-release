@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const NavPublic = () => {
+const NavPublic = (
+  {projectName}: {projectName?: string}
+) => {
   return (
     <header>
       <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:divide-y lg:divide-gray-200 lg:px-8">
@@ -22,6 +24,13 @@ const NavPublic = () => {
                   {WEB_DETAILS.name}
                 </h1>
               </div>
+            </Link>
+          </div>
+          <div className="flex items-center">
+            <Link href={`/${projectName}/feedbacks`}>
+              <span className="text-gray-600 ml-2 font-extrabold font-mono py-2">
+                {"Feedbacks"}
+              </span>
             </Link>
           </div>
         </div>

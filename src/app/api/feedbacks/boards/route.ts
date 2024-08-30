@@ -126,7 +126,10 @@ export async function GET(req: NextRequest) {
           isDefault: true,
           createdAt: true,
           updatedAt: true,
-        }
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
       })
     );
 

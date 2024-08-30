@@ -18,6 +18,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IReleaseTag } from "@/interfaces";
 import AlertModal from "@/components/AlertModal";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import Link from "next/link";
+import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -43,7 +45,7 @@ const FeedbackContentContainer = () => {
     deleteFeedbackPost,
     upvoteFeedbackPost,
   } = useFeedbackPostContext();
-  const { activeProjectId } = useProjectContext();
+  const { activeProjectId, map: projectMap } = useProjectContext();
   const feedback = feedbackMap[activeFeedbackPostId!];
 
   const releaseTags = feedback?.releaseTags
@@ -126,6 +128,8 @@ const FeedbackContentContainer = () => {
   const ETA = releaseETA ? moment(releaseETA).format("DD/MM/YYYY") : undefined;
   const visibilityStatus = FeedbackVisibilityStatus[feedback.visibilityStatus!];
 
+  const publicLink = `${projectMap[activeProjectId!]?.name}/feedbacks`;
+
   return (
     <section
       className="flex h-full min-w-0 flex-1 flex-col overflow-hidden xl:order-last"
@@ -148,6 +152,9 @@ const FeedbackContentContainer = () => {
                 >
                   {visibilityStatus?.title}
                 </span>
+                <Link href={publicLink}>
+                  <ArrowUpRightIcon className="w-4 h-4 ml-2" />
+                </Link>
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500 flex items-center">

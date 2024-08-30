@@ -46,6 +46,12 @@ const upvoteFeedbackRequest = (id: string, projectsId: string) => {
   return apiClient.post(`/feedbacks/posts/${id}/upvote`, { projectsId });
 };
 
+const getAllPublicFeedbacksRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get(`public/projects/${params.projectName}/feedbacks`, {
+    params,
+  });
+};
+
 export {
   createFeedbackBoardRequest,
   getAllFeedbackBoardsRequest,
@@ -57,4 +63,5 @@ export {
   updateFeedbackPostRequest,
   deleteFeedbackPostRequest,
   upvoteFeedbackRequest,
+  getAllPublicFeedbacksRequest,
 };

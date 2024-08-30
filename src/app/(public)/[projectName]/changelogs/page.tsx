@@ -1,3 +1,4 @@
+import NavPublic from "@/components/NavPublic";
 import ChangeLogsListContainer from "./components/ChangeLogsListContainer";
 import SideNav from "./components/SideNav";
 import { getOneProject } from "@/lib/project";
@@ -34,31 +35,36 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
   );
 
   return (
-    <div className="mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8">
-      <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
-        <div className="lg:hidden lg:col-span-3 fixed top-12 bg-gray-50 z-10 w-full">
-          <SideNav
-            releaseTags={releaseTags}
-            releaseCategories={releaseCategories}
-          />
-        </div>
-        <div className="hidden lg:block lg:col-span-3">
-          <SideNav
-            releaseTags={releaseTags}
-            releaseCategories={releaseCategories}
-          />
-        </div>
-        <div
-          className={`${
-            releaseCategories?.length && releaseTags?.length
-              ? "mt-[16rem] lg:col-span-9"
-              : "lg:col-span-12"
-          } lg:mt-0`}
-        >
-          <ChangeLogsListContainer />
+    <>
+      <div className={`sticky top-0 bg-gray-50 z-10`}>
+        <NavPublic projectName={projectName} />
+      </div>
+      <div className="mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
+          <div className="lg:hidden lg:col-span-3 fixed top-12 bg-gray-50 z-10 w-full">
+            <SideNav
+              releaseTags={releaseTags}
+              releaseCategories={releaseCategories}
+            />
+          </div>
+          <div className="hidden lg:block lg:col-span-3">
+            <SideNav
+              releaseTags={releaseTags}
+              releaseCategories={releaseCategories}
+            />
+          </div>
+          <div
+            className={`${
+              releaseCategories?.length && releaseTags?.length
+                ? "mt-[16rem] lg:col-span-9"
+                : "lg:col-span-12"
+            } lg:mt-0`}
+          >
+            <ChangeLogsListContainer />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

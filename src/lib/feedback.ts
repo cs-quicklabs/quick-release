@@ -9,7 +9,7 @@ export const computeFeedback = (feedback: any, userId?: number) => {
 
   if (upvotedFeedbacksByUsers) {
     upvotedCount = upvotedFeedbacksByUsers.length;
-    if (userId) {
+    if(userId) {
       isUpvoted = upvotedFeedbacksByUsers.some(
         (user: any) => user.usersId === userId
       );
