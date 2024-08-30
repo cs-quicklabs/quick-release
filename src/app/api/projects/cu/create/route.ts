@@ -67,14 +67,6 @@ export async function POST(request: NextRequest, response: Response) {
         roleId: role?.id,
       }
     });
-
-    await db.feedbackBoards.create({
-      data: {
-        name: "Feature Requests",
-        projectsId: project.id,
-        isDefault: true,
-      }
-    })
     return NextResponse.json(
       new ApiResponse(200, privacyResponse(project), "Project created successfully")
     );

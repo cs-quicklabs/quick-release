@@ -1,12 +1,9 @@
 "use client";
 
+import { checkRichTextEditorIsEmpty } from "@/Utils";
 import {
-  checkRichTextEditorIsEmpty,
-  extractImageUrls,
-  requestHandler,
-  showNotification,
-} from "@/Utils";
-import { ChangeLogsReleaseActions } from "@/Utils/constants";
+  ChangeLogsReleaseActions,
+} from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import NotFound from "@/app/not-found";
@@ -33,7 +30,10 @@ import {
   FormMessage,
 } from "@/atoms/form";
 import { Input } from "@/atoms/input";
-import { IReleaseCategory, IReleaseTag } from "@/interfaces";
+import {
+  IReleaseCategory,
+  IReleaseTag,
+} from "@/interfaces";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { ChangeLogType, FormChangeLogPost } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,7 +49,6 @@ import React, {
 } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
-import { fileDeleteRequest } from "@/fetchHandlers/file";
 
 const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
   ssr: true,
@@ -98,6 +97,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     return changeLogMap[params.id] || null;
   }, [changeLogMap[params.id]]);
 
+
   const formSchema = z.object({
     title: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Title can not be more than 50 characters",
@@ -107,7 +107,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       .trim()
       .min(1, { message: "Required" })
       .refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-    releaseVersion: z.string().trim().min(1, { message: "Required" }).max(20, {
+    releaseVersion: z.string().trim().min(1, { message: "Required" }).max(20,{
       message: "Release Version can not be more than 20 characters",
     }),
     releaseCategories: z.array(
@@ -144,23 +144,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       scheduledTime: moment().toDate(),
     },
   });
-
-  const formValues = form.getValues();
-
-  const removeFiles = (filePathUrls: string[]) => {
-    return new Promise(async (resolve, reject) => {
-      await requestHandler(
-        async () => await fileDeleteRequest(filePathUrls, "ChangeLogs"),
-        null,
-        (res: any) => {
-          resolve(filePathUrls);
-        },
-        (errMessage) => {
-          reject(errMessage);
-        }
-      );
-    });
-  };
 
   const handleCreatePost: SubmitHandler<FormChangeLogPost> = (data) => {
     const changelogPost: ChangeLogType = {
@@ -234,36 +217,19 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     };
   }, [isSaving, loading]);
 
-  if (
-    !changelog &&
-    loading &&
-    params.id !== "add" &&
-    fetchChangeLogLoading &&
-    !isLoading
-  ) {
-    return <ScreenLoader />;
+  if (!changelog && loading && params.id !== "add" && fetchChangeLogLoading && !isLoading) {
+    return (
+      <ScreenLoader />
+    );
   }
 
-  if (
-    !changelog &&
-    params.id !== "add" &&
-    !fetchChangeLogLoading &&
-    !isLoading
-  ) {
+  if(!changelog && params.id !== "add" && !fetchChangeLogLoading && !isLoading) {
     return (
       <BaseTemplate>
         <NotFound />
       </BaseTemplate>
-    );
+    )
   }
-
-  const handleCancelButton = async () => {
-    const imageUrls = extractImageUrls(formValues?.description);
-    if (params.id === "add" && imageUrls.length > 0) {
-      await removeFiles(imageUrls);
-    }
-    router.replace("/allLogs");
-  };
 
   return (
     <BaseTemplate>
@@ -453,7 +419,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                 <Button
                   className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
                   type="button"
-                  onClick={handleCancelButton}
+                  onClick={router.back}
                 >
                   {"Cancel"}
                 </Button>
@@ -479,3 +445,4 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 };
 
 export default AddChangeLog;
+                                                                                                                                                        

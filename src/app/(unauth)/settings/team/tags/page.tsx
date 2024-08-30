@@ -16,14 +16,15 @@ const TagsPage = () => {
       <h1 className="text-lg font-semibold">{"Tags"}</h1>
 
       <p className="text-gray-500 text-sm">
-        {
-          "Tags can be assigned to changelogs or posts to define the categories they belong to."
-        }
+        {"Tags can be assigned to changelogs or posts to define the categories they belong to."}
       </p>
 
-      <AddReleaseTag />
+      <AddReleaseTag
+        selectedReleaseTagId={selectedReleaseTagId}
+        setSelectedReleaseTagId={setSelectedReleaseTagId}
+      />
 
-      <ReleaseTagsTable />
+      <ReleaseTagsTable onEdit={setSelectedReleaseTagId} />
     </main>
   );
 };

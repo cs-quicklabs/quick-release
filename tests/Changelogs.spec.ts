@@ -8,11 +8,9 @@ test.beforeEach(
   async ({ page }) => {
     const login = new LoginPage(page);
     await page.goto("/");
-    await page.waitForLoadState('load')
     await login.login(validCredentials.mail, validCredentials.password);
   }
 );
-
 
 test(" Verify admin should able to publish change log ", async ({ page }) => {
   const changelog = new Changelog(page);
@@ -24,18 +22,7 @@ test("Verify user able to cancel change log", async ({ page }) => {
   await changelog.cancelChangelog();
 });
 
-test(" Verify admin should able to edit and Save log draft ", async ({ page }) => {
+test(" Verify admin should able to Save log draft ", async ({ page }) => {
   const changelog = new Changelog(page);
   await changelog.saveChangelog();
 });
-
-test(" Verify user able to Delete changelog", async ({ page }) => {
-  const changelog = new Changelog(page);
-  await changelog.deleteChangelog();
-});
-test(" Verify user able to edit changelog", async ({ page }) => {
-  const changelog = new Changelog(page);
-  await changelog.editChangelog();
-});
-
-

@@ -191,9 +191,7 @@ export function Navbar() {
                     <div>
                       <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                         <span className="absolute -inset-0.5" />
-                        <span className="sr-only" id="Open-main-menu">
-                          {"Open main menu"}
-                        </span>
+                        <span className="sr-only" id="Open-main-menu">{"Open main menu"}</span>
                         {open ? (
                           <XMarkIcon
                             className="block h-6 w-6"
@@ -208,9 +206,7 @@ export function Navbar() {
                       </Disclosure.Button>
                       <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
-                        <span className="sr-only" id="open-user-menu">
-                          {"Open user menu"}
-                        </span>
+                        <span className="sr-only" id="open-user-menu">{"Open user menu"}</span>
                         <img
                           className="h-8 w-8 rounded-full"
                           src={
@@ -297,11 +293,10 @@ export function Navbar() {
                                     className="hover:bg-gray-100  cursor-pointer pl-4"
                                   >
                                     <div
-                                      className={`text-sm ${
-                                        item.id === activeProjectId
-                                          ? "flex items-center"
-                                          : "flex items-center"
-                                      }`}
+                                      className={`text-sm ${item.id === activeProjectId
+                                        ? "flex items-center"
+                                        : "flex items-center"
+                                        }`}
                                     >
                                       <div className="flex py-2 w-fit">
                                         {item.name.length > 20 ? (
@@ -321,9 +316,7 @@ export function Navbar() {
                                           <CheckCircleIcon className="w-5 h-5" />
                                         </div>
                                       ) : null}
-                                      {loading.activeProjectLoading[
-                                        item.id
-                                      ] && (
+                                      {loading.activeProjectLoading[item.id] && (
                                         <div className="flex items-center justify-center py-2">
                                           <Oval
                                             height={25}
@@ -340,25 +333,7 @@ export function Navbar() {
                             </div>
                           </div>
                         )}
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              href="/settings/account/tags"
-                              // onClick={handleLogout}
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
-                              )}
-                            >
-                              <div
-                                className="flex  items-center"
-                                id="account-settings"
-                              >
-                                {"Account Settings"}
-                              </div>
-                            </Link>
-                          )}
-                        </Menu.Item>
+
                         <Menu.Item>
                           {({ active }) => (
                             <Link
@@ -368,37 +343,31 @@ export function Navbar() {
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
                               )}
+
                             >
-                              <div
-                                className="flex  items-center"
-                                id="profile-settings"
-                              >
+                              <div className="flex  items-center" id="profile-settings">
                                 {"Profile Settings"}
                               </div>
                             </Link>
                           )}
                         </Menu.Item>
-                        {projectList.length > 0 && (
-                          <Menu.Item>
-                            {({ active }) => (
-                              <Link
-                                href="/settings/team/boards"
-                                // onClick={handleLogout}
-                                className={classNames(
-                                  active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
-                                )}
-                              >
-                                <div
-                                  className="flex  items-center"
-                                  id="team-setting"
-                                >
-                                  {"Team Settings"}
-                                </div>
-                              </Link>
-                            )}
-                          </Menu.Item>
-                        )}
+                        <Menu.Item>
+                          {({ active }) => (
+                            <Link
+                              href="/settings/team/tags"
+                              // onClick={handleLogout}
+                              className={classNames(
+                                active ? "bg-gray-100" : "",
+                                "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                              )
+                              }
+                            >
+                              <div className="flex  items-center" id="team-setting">
+                                {"Team Settings"}
+                              </div>
+                            </Link>
+                          )}
+                        </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
                             <a
@@ -492,29 +461,16 @@ export function Navbar() {
               </div>
               <div className="px-2 py-3">
                 <Link
-                  href="/settings/account/tags"
-                  // onClick={handleLogout}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <div className="flex items-center">
-                    <Link href="/settings/team/boards">
-                      {"Account Settings"}
-                    </Link>
-                  </div>
-                </Link>
-                <Link
                   href="/settings/profile/general"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <div className="flex items-center">
-                    <Link href="/settings/profile/general">
-                      {"Profile Settings"}
-                    </Link>
+                    <Link href="/settings/profile/general">{"Profile Settings"}</Link>
                   </div>
                 </Link>
                 <Link
-                  href="/settings/team/boards"
+                  href="/settings/team/tags"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
@@ -525,7 +481,7 @@ export function Navbar() {
                 <a
                   onClick={() => setOpen(true)}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
+                  >
                   <span>Logout</span>
                 </a>
               </div>
