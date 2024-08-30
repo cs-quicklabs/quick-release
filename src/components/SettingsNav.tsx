@@ -1,5 +1,4 @@
 "use client";
-import BoardIcon from "@/assets/icons/BoardIcon";
 import ChangePasswordSVG from "@/assets/icons/ChangePasswordSVG";
 import LockIcon from "@/assets/icons/LockIcon";
 import ProfileSVG from "@/assets/icons/ProfileSVG";
@@ -8,13 +7,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-type SettingsNavProps = {
-  isProfileSettings: boolean;
-  isAccountSettings: boolean;
-}
-
 const SettingsNav = (
-  { isProfileSettings, isAccountSettings }: SettingsNavProps
+  {isProfileSettings = true}: {isProfileSettings?: boolean}
 ) => {
   const pathname = usePathname();
   const navLinks = isProfileSettings ? [
@@ -34,22 +28,16 @@ const SettingsNav = (
     //   icon: <EmailPrefrencesSVG />,
     // },
 
-  ] : isAccountSettings ? [
+  ] : [
     {
-      href: "/settings/account/tags",
+      href: "/settings/team/tags",
       text: "Tags",
       icon: <LockIcon />,
     },
     {
-      href: "/settings/account/categories",
+      href: "/settings/team/categories",
       text: "Categories",
       icon: <SwatchIcon className="w-6 h-6" />,
-    },
-  ] : [
-    {
-      href: "/settings/team/boards",
-      text: "Feedback Boards",
-      icon: <BoardIcon />,
     },
   ];
   return (

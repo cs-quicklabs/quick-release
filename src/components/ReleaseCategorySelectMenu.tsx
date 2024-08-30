@@ -15,6 +15,7 @@ const ReleaseCategorySelectMenu: React.FC<Props> = (props) => {
   const releaseCategoriesOptions: readonly ReleaseCategoriesOption[] = releaseCategoryIds.map(id => ({
     value: releaseCategoryMap[id]?.code!,
     label: releaseCategoryMap[id]?.name!,
+    bgColor: releaseCategoryMap[id]?.bgColor,
   }));
 
   const onCreate = (tagName: string) => {

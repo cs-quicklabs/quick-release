@@ -7,7 +7,7 @@ export const showNotification = (type: TypeOptions, message: string) => {
     toast(message, {
       type,
       closeOnClick: true,
-    });
+    })
   }, 500);
 };
 
@@ -72,19 +72,7 @@ export const handleTrancate = (text: string, trucateNum: number) => {
 };
 
 export const privacyResponse = (data: any) => {
-  const {
-    id,
-    cuid,
-    password,
-    organizationsId,
-    createdById,
-    projectsId,
-    resetToken,
-    resetTokenExpiry,
-    verificationToken,
-    verificationTokenExpiry,
-    ...rest
-  } = data;
+  const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = data;
   return {
     id: cuid,
     ...rest,
@@ -93,34 +81,10 @@ export const privacyResponse = (data: any) => {
 
 export const privacyResponseArray = (data: any) => {
   return data.map((item: any) => {
-    const {
-      id,
-      cuid,
-      password,
-      organizationsId,
-      createdById,
-      projectsId,
-      resetToken,
-      resetTokenExpiry,
-      verificationToken,
-      verificationTokenExpiry,
-      ...rest
-    } = item;
+    const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = item;
     return {
       id: cuid,
       ...rest,
     };
   });
 };
-
-export function extractImageUrls(htmlString: string): string[] {
-  const imgTagRegex = /<img [^>]*src="([^"]+)"[^>]*>/gi;
-  const urls: string[] = [];
-  let match;
-
-  while ((match = imgTagRegex.exec(htmlString)) !== null) {
-    urls.push(match[1]);
-  }
-
-  return urls;
-}
