@@ -159,6 +159,9 @@ export async function DELETE(
       },
       select: {
         feedbackPosts: {
+          where: {
+            deletedAt: null,
+          },
           select: {
             id: true,
           },
