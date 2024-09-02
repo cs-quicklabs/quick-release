@@ -54,7 +54,7 @@ type FeedbackPostContextType = {
     setIsLoading: (loading: boolean) => void
   ) => Promise<void>;
   deleteFeedbackPost: (id: string, projectsId: string) => Promise<void>;
-  upvoteFeedbackPost: (id: string, projectsId: string) => Promise<void>;
+  upvoteFeedbackPost: (id: string, projectsId: string, setLoading: (loading: boolean) => void) => Promise<void>;
   getAllPublicFeedbackPosts: (
     query?: ApiFilterQueryType,
     page?: number,
@@ -88,7 +88,7 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
     setIsLoading: (loading: boolean) => void
   ) => {},
   deleteFeedbackPost: async (id: string, projectsId: string) => {},
-  upvoteFeedbackPost: async (id: string, projectsId: string) => {},
+  upvoteFeedbackPost: async (id: string, projectsId: string, setLoading: (loading: boolean) => void) => {},
 });
 
 // Create a hook to access the FeedbackPostContext
@@ -120,7 +120,6 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   >(sessionStorage.getItem("activeFeedbackPostId") || null);
 
   const { activeProjectId } = useProjectContext();
-  const { loggedInUser } = useUserContext();
 
   const defaultBoardKey = useMemo(
     () => JSON.stringify({ projectId: activeProjectId }),
@@ -348,10 +347,10 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  const upvoteFeedbackPost = async (id: string, projectsId: string) => {
+  const upvoteFeedbackPost = async (id: string, projectsId: string, setLoading: (loading: boolean) => void) => {
     await requestHandler(
       async () => await upvoteFeedbackRequest(id, projectsId),
-      setIsLoading,
+      setLoading,
       (res: any) => {
         const { data } = res;
         const feedbackId = id;
