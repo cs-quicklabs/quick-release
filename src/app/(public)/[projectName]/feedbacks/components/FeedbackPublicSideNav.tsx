@@ -21,7 +21,12 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
   const router = useRouter();
   const { projectName } = useParams();
 
-  const pathname = usePathname();
+  const pathname = useMemo(() => {
+    if (usePathname().split("/").pop() !== "feedbacks") {
+      return usePathname().split("/").slice(0, -1).join("/");
+    }
+    return usePathname();
+  }, [usePathname()]);
   const searchParams = useSearchParams();
   const search = useMemo(() => {
     const data = searchParams.get("search");
@@ -45,11 +50,8 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
     }
     return null;
   }, [searchParams]);
-  const {
-    feedbackSideNav,
-    setFeedbackSideNav,
-    getAllPublicFeedbackPosts,
-  } = useFeedbackPostContext();
+  const { feedbackSideNav, setFeedbackSideNav, getAllPublicFeedbackPosts } =
+    useFeedbackPostContext();
 
   const fetchAllFeedbackPosts = (
     board: string | null,
@@ -60,11 +62,15 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
 
     if (board) query.board = board;
     if (search) query.search = search;
-    if(sort && sort !== "top") query.sort = "desc";
+    if (sort && sort !== "top") query.sort = "desc";
     getAllPublicFeedbackPosts(query);
   };
-  console.log(board);
-  const updateQueryParams = (board: string | null, search: string | null, sort: string | null) => {
+
+  const updateQueryParams = (
+    board: string | null,
+    search: string | null,
+    sort: string | null
+  ) => {
     if (!board && !search) {
       fetchAllFeedbackPosts(null, null, null);
       return router.push(pathname);

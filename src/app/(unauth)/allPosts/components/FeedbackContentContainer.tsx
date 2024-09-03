@@ -117,8 +117,15 @@ const FeedbackContentContainer = () => {
       </section>
     );
   }
-  const { title, description, status, feedbackBoards, releaseETA, createdBy } =
-    feedback;
+  const {
+    id,
+    title,
+    description,
+    status,
+    feedbackBoards,
+    releaseETA,
+    createdBy,
+  } = feedback;
 
   const fullName = `${createdBy?.firstName || ""} ${
     createdBy?.lastName || ""
@@ -130,7 +137,7 @@ const FeedbackContentContainer = () => {
   const ETA = releaseETA ? moment(releaseETA).format("DD/MM/YYYY") : undefined;
   const visibilityStatus = FeedbackVisibilityStatus[feedback.visibilityStatus!];
 
-  const publicLink = `${projectMap[activeProjectId!]?.name}/feedbacks`;
+  const publicLink = `${projectMap[activeProjectId!]?.name}/feedbacks/${id}`;
 
   return (
     <section

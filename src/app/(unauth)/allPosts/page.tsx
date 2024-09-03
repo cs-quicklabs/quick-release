@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
-import EmptyPage from "@/components/dashboard/EmptyPage";
+import EmptyPage from "@/components/EmptyPage";
 import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import ScreenLoader from "@/atoms/ScreenLoader";
@@ -39,6 +39,7 @@ export default function AllPosts() {
 
   useEffect(() => {
     if (!activeProjectId) {
+      sessionStorage.removeItem("activeFeedbackPostId");
       getActiveProject(setActiveProjectLoading);
     }
   }, [activeProjectId]);
@@ -59,7 +60,6 @@ export default function AllPosts() {
   useEffect(() => {
     if (activeProjectId) {
       const query: FilterType = { projectsId: activeProjectId! };
-      sessionStorage.removeItem("activeFeedbackPostId");
       getAllFeedbackBoards(query, setLoader);
       fetchAllFeedbackPosts(null, null, search);
     }
