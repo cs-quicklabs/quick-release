@@ -1,37 +1,63 @@
+"use client";
+import { updateQueryParams } from "@/Utils";
 import { FeedbackStatus, FeedbackVisibilityStatus } from "@/Utils/constants";
-import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
 import { classNames } from "@/lib/utils";
 import { FeedbackPostType } from "@/types";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import moment from "moment";
-import Link from "next/link";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import React, { useMemo } from "react";
 
-const FeedbackCardItem: React.FC<{ feedback?: FeedbackPostType }> = ({
-  feedback,
-}) => {
+const FeedbackCardItem: React.FC<{
+  feedback?: FeedbackPostType;
+  projectName?: string;
+}> = ({ feedback }) => {
   if (!feedback) return null;
 
-  const {
-    createdBy,
-    status,
-    releaseETA,
-    feedbackBoards,
-    createdAt,
-    visibilityStatus,
-  } = feedback;
-  const fullName = `${createdBy?.firstName || ""} ${
-    createdBy?.lastName || ""
-  }`.trim();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const { projectName } = params;
+  const board = useMemo(() => {
+    const data = searchParams.get("board");
+    if (data && data !== "") {
+      return searchParams.get("board");
+    }
+    return null;
+  }, [searchParams]);
+
+  const search = useMemo(() => {
+    const data = searchParams.get("search");
+    if (data && data !== "") {
+      return searchParams.get("search");
+    }
+    return null;
+  }, [searchParams]);
+
+  const sort = useMemo(() => {
+    const data = searchParams.get("sort");
+    if (data && data !== "") {
+      return searchParams.get("sort");
+    }
+    return null;
+  }, [searchParams]);
+
+  const { status } = feedback;
   const feedbacktatus = FeedbackStatus[status];
   const description = feedback.description.replace(/(<([^>]+)>)/gi, "");
-  const feedbackVisibilityStatus = FeedbackVisibilityStatus[visibilityStatus!];
+
+  const router = useRouter();
+  const publicLink = useMemo(() => {
+    const queryParams = updateQueryParams(board, search, sort);
+    return queryParams
+      ? `/${projectName}/feedbacks/${feedback.id}?${queryParams}`
+      : `/${projectName}/feedbacks/${feedback.id}`;
+  }, [projectName, feedback?.id]);
 
   return (
     <li
       className={classNames(
-        "py-5 px-6 border border-gray-200 rounded hover:bg-gray-50 bg-white mx-4 sm:mx-0"
+        "py-5 px-6 border border-gray-200 rounded hover:bg-gray-50 bg-white mx-4 sm:mx-0 cursor-pointer"
       )}
+      onClick={() => router.replace(publicLink)}
     >
       <div className="flex justify-between space-x-3">
         <div className="min-w-0 flex-1">

@@ -52,11 +52,10 @@ export function Navbar() {
     activeUserLoading: true,
   });
 
-  const onSearch = (event: any) => {
+  const onSearch = (searchInput: string | null) => {
     // Set the search query when Enter key is pressed
-    if (event.key === "Enter") {
-      router.push(`/allPosts?search=${event.target?.value}`);
-    }
+    if (searchInput) router.push(`/allPosts?search=${searchInput}`);
+    else router.push(`/allPosts`);
   };
 
   const projects = projectList.map((projectId) => projectMap[projectId]);
@@ -184,23 +183,44 @@ export function Navbar() {
                     <label htmlFor="search" className="sr-only">
                       Search by feedbacks
                     </label>{" "}
-                    <div className="relative">
-                      <div className="hidden  pointer-events-none absolute inset-y-0 left-0 lg:flex items-center pl-3">
-                        <MagnifyingGlassIcon
-                          className="h-5 w-5 text-gray-400"
-                          aria-hidden="true"
+                    <div>
+                      <div className="relative">
+                        {/* Magnifying Glass Icon */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                          <MagnifyingGlassIcon
+                            className="h-5 w-5 text-gray-400"
+                            aria-hidden="true"
+                          />
+                        </div>
+
+                        {/* Input Field */}
+                        <input
+                          id="search"
+                          name="search"
+                          onKeyDown={(e) =>
+                            e.key === "Enter" && onSearch(searchQuery)
+                          } // Trigger onSearch when Enter is pressed
+                          value={searchQuery || ""}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
+                          placeholder="Search feedbacks"
                         />
-                      </div>{" "}
-                      <input
-                        id="search"
-                        name="search"
-                        onKeyDown={onSearch}
-                        value={searchQuery || ""}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className=" hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
-                        placeholder="Search feedbacks"
-                        type="search"
-                      />
+
+                        {/* Clear Button */}
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSearchQuery(""); // Clear the input field
+                              onSearch(""); // Call the onSearch function
+                            }}
+                            className="absolute inset-y-0 right-0 flex items-center pr-3"
+                            aria-label="Clear search"
+                          >
+                            <XMarkIcon className="h-5 w-5 text-gray-400" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>

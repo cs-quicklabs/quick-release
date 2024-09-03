@@ -36,9 +36,9 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
       <FeedbackHeader />
       <div className="flex flex-1">
         <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
-          <FeedbackPublicSideNav feedbackBoards={feedbackBoards}  />
+          <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
 
-          <FeedbackPublicContentContainer feedbackBoards={feedbackBoards} projectName={projectName} />
+          <FeedbackPublicContentContainer feedbackBoards={feedbackBoards} />
         </div>
       </div>
     </main>

@@ -10,18 +10,19 @@ import CalenderIcon from "@/assets/icons/CalenderIcon";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import Spin from "@/atoms/Spin";
 import { classNames } from "@/lib/utils";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import { updateQueryParams } from "@/Utils";
 
 type FeedbackPublicContentContainerPropsType = {
-  projectName: string;
   feedbackBoards: any[];
 };
 
 export default function FeedbackPublicSideNav({
-  projectName,
   feedbackBoards,
 }: FeedbackPublicContentContainerPropsType) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
+  const feedbackId = pathname.split("/").pop();
   const loadMoreRef = useRef(null);
   const isVisible = useOnScreen(loadMoreRef);
   const router = useRouter();
@@ -56,29 +57,6 @@ export default function FeedbackPublicSideNav({
     metaData: feedbackMetaData,
   } = useFeedbackPostContext();
 
-  const updateQueryParams = (
-    board: string | null,
-    search: string | null,
-    sort: string | null
-  ) => {
-    let queryParams = "";
-    if (board) {
-      queryParams += `board=${board}`;
-    }
-
-    if (search) {
-      if (queryParams) queryParams += "&";
-      queryParams += `search=${search}`;
-    }
-
-    if (sort) {
-      if (queryParams) queryParams += "&";
-      queryParams += `sort=${sort}`;
-    }
-
-    router.push(`${pathname}?${queryParams}`);
-  };
-
   const sortedFeedbackPostList = useMemo(() => {
     if (sort === "top") {
       return feedbackPostList?.sort(
@@ -89,11 +67,9 @@ export default function FeedbackPublicSideNav({
     return feedbackPostList;
   }, [feedbackPostList, feedbackPostMap, searchParams]);
 
-  const onSearch = (event: any) => {
-    // Set the search query when Enter key is pressed
-    if (event.key === "Enter") {
-      updateQueryParams(board, event.target?.value, null);
-    }
+  const onSearch = (searchInput: string) => {
+    const queryParams = updateQueryParams(board, searchInput, null);
+    router.push(`${pathname}?${queryParams}`);
   };
 
   useEffect(() => {
@@ -127,7 +103,11 @@ export default function FeedbackPublicSideNav({
               className={`bg-white border border-gray-300 text-gray-700 flex gap-2 focus:bg-gray-200 ${
                 sort === "top" ? "bg-gray-200" : ""
               }`}
-              onClick={() => updateQueryParams(board, search, "top")}
+              onClick={() =>
+                router.push(
+                  `${pathname}?${updateQueryParams(board, search, "top")}`
+                )
+              }
             >
               <StatisticIcon />
               <span className="text-xs">Top</span>
@@ -136,7 +116,11 @@ export default function FeedbackPublicSideNav({
               className={`bg-white border border-gray-300 text-gray-700 flex gap-2 ${
                 sort === "new" ? "bg-gray-200" : ""
               }`}
-              onClick={() => updateQueryParams(board, search, "new")}
+              onClick={() =>
+                router.push(
+                  `${pathname}?${updateQueryParams(board, search, "new")}`
+                )
+              }
             >
               <CalenderIcon />
               <span className="text-xs">New</span>
@@ -145,22 +129,39 @@ export default function FeedbackPublicSideNav({
           <div>
             <div className="w-full">
               <div className="relative">
+                {/* Magnifying Glass Icon */}
                 <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <MagnifyingGlassIcon
                     className="h-5 w-5 text-gray-400"
                     aria-hidden="true"
                   />
                 </div>
+
+                {/* Input Field */}
                 <input
                   id="search"
                   name="search"
-                  onKeyDown={onSearch}
+                  onKeyDown={(e) => e.key === "Enter" && onSearch(searchQuery)} // Trigger onSearch when Enter is pressed
                   value={searchQuery || ""}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="border border-gray-300 rounded-md py-2 pl-10 pr-3 w-full md:w-[25rem] leading-5 text-gray-600 placeholder-gray-400 sm:text-sm"
                   placeholder="Search feedbacks"
-                  type="search"
                 />
+
+                {/* Clear Button */}
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(""); // Clear the input field
+                      onSearch(""); // Call the onSearch function
+                    }}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3"
+                    aria-label="Clear search"
+                  >
+                    <XMarkIcon className="h-5 w-5 text-gray-400" />
+                  </button>
+                )}
               </div>
             </div>
           </div>

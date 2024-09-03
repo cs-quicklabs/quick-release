@@ -4,11 +4,11 @@
 import BaseTemplate from "@/templates/BaseTemplate";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import SideNav from "@/components/dashboard/SideNav";
+import SideNav from "./components/SideNav";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
-import EmptyPage from "@/components/dashboard/EmptyPage";
-import ContentContainer from "@/components/dashboard/ContentContainer";
+import EmptyPage from "@/components/EmptyPage";
+import ContentContainer from "./components/ContentContainer";
 import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import ScreenLoader from "@/atoms/ScreenLoader";
