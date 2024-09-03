@@ -17,7 +17,7 @@ import {
 import { Tooltip } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as React from "react";
@@ -32,6 +32,8 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const params = useParams()
+  const { projectName } = params
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
@@ -86,6 +88,21 @@ export function Navbar() {
         id: "feedback",
         name: "Feedback",
         href: "/allPosts",
+        current: false,
+      });
+    }
+    else {
+      nav.push({
+        id: "changelog",
+        name: "Changelog",
+        href: `/${projectName}/changelogs`,
+        current: false,
+      });
+
+      nav.push({
+        id: "feedback",
+        name: "Feedback",
+        href: `/${projectName}/feedbacks`,
         current: false,
       });
     }
@@ -178,52 +195,54 @@ export function Navbar() {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
-                  <div className="w-full max-w-lg lg:max-w-xs">
-                    <label htmlFor="search" className="sr-only">
-                      Search by feedbacks
-                    </label>{" "}
-                    <div>
-                      <div className="relative">
-                        {/* Magnifying Glass Icon */}
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                          <MagnifyingGlassIcon
-                            className="h-5 w-5 text-gray-400"
-                            aria-hidden="true"
+                {loggedInUser && (
+                  <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
+                    <div className="w-full max-w-lg lg:max-w-xs">
+                      <label htmlFor="search" className="sr-only">
+                        Search by feedbacks
+                      </label>{" "}
+                      <div>
+                        <div className="relative">
+                          {/* Magnifying Glass Icon */}
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <MagnifyingGlassIcon
+                              className="h-5 w-5 text-gray-400"
+                              aria-hidden="true"
+                            />
+                          </div>
+
+                          {/* Input Field */}
+                          <input
+                            id="search"
+                            name="search"
+                            onKeyDown={(e) =>
+                              e.key === "Enter" && onSearch(searchQuery)
+                            } // Trigger onSearch when Enter is pressed
+                            value={searchQuery || ""}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
+                            placeholder="Search feedbacks"
                           />
+
+                          {/* Clear Button */}
+                          {searchQuery && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSearchQuery(""); // Clear the input field
+                                onSearch(""); // Call the onSearch function
+                              }}
+                              className="absolute inset-y-0 right-0 flex items-center pr-3"
+                              aria-label="Clear search"
+                            >
+                              <XMarkIcon className="h-5 w-5 text-gray-400" />
+                            </button>
+                          )}
                         </div>
-
-                        {/* Input Field */}
-                        <input
-                          id="search"
-                          name="search"
-                          onKeyDown={(e) =>
-                            e.key === "Enter" && onSearch(searchQuery)
-                          } // Trigger onSearch when Enter is pressed
-                          value={searchQuery || ""}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
-                          placeholder="Search feedbacks"
-                        />
-
-                        {/* Clear Button */}
-                        {searchQuery && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setSearchQuery(""); // Clear the input field
-                              onSearch(""); // Call the onSearch function
-                            }}
-                            className="absolute inset-y-0 right-0 flex items-center pr-3"
-                            aria-label="Clear search"
-                          >
-                            <XMarkIcon className="h-5 w-5 text-gray-400" />
-                          </button>
-                        )}
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
                 {loggedInUser && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
                     <button
