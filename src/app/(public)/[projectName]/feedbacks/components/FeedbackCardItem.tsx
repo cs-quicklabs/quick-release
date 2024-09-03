@@ -72,7 +72,7 @@ const FeedbackCardItem: React.FC<{
               {feedbacktatus.title}
             </span>
             <div
-              className={`flex items-center rounded px-1.5 py-0.5 text-sm font-medium border cursor-pointer ${
+              className={`flex items-center gap-1 rounded px-2 py-0.3 text-sm font-medium border cursor-pointer ${
                 feedback.isUpvoted
                   ? "border-green-500 text-green-500 bg-green-50"
                   : "border-gray-300"

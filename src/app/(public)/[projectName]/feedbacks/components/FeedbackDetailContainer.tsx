@@ -6,7 +6,8 @@ import { IReleaseTag } from "@/interfaces";
 import { ArrowBigLeftIcon } from "lucide-react";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { updateQueryParams } from "@/Utils";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/solid";
+import { FeedbackStatus } from "@/Utils/constants";
 
 type FeedbackDetailContainerPropsType = {
   feedbackBoards: any[];
@@ -54,6 +55,8 @@ export default function FeedbackDetailContainer({
       }))
     : [];
 
+  const feedbackStatus = FeedbackStatus[feedbackPost.status];
+
   return (
     <section
       className="flex h-full min-w-0 flex-1 flex-col overflow-hidden xl:order-last"
@@ -84,17 +87,26 @@ export default function FeedbackDetailContainer({
                 className="w-4 h-4 cursor-pointer"
                 onClick={() => router.replace(previousPath)}
               />
-              <h1>{feedbackPost?.title}</h1>
+              <h1 className="text-lg font-medium text-gray-900">{feedbackPost?.title}</h1>
+              <span
+              className={classNames(
+                `inline-flex items-center rounded px-3 py-0.5 text-sm font-medium`,
+                feedbackStatus.bgColor,
+                feedbackStatus.textColor
+              )}
+            >
+              {feedbackStatus.title}
+            </span>
             </div>
             <div>
               <span
-                className={`flex items-center rounded px-2.5 py-0.5 text-sm font-medium border gap-2 cursor-pointer ${
+                className={`flex items-center rounded px-2.5 py-0.5 text-sm font-medium border gap-2 ${
                   feedbackPost.isUpvoted
                     ? "border-green-500 text-green-500 bg-green-50"
                     : "border-gray-300"
                 }`}
               >
-                <ChevronUpIcon className="h-5 w-5" />
+                <ChevronUpIcon className="h-6 w-6" />
                 {feedbackPost?.upvotedCount}
               </span>
             </div>
