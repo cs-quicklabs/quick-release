@@ -11,18 +11,13 @@ const s3Client = new S3Client({
     accessKeyId: process.env.NEXT_PUBLIC_AWS_S3_ACCESS_KEY_ID!,
     secretAccessKey: process.env.NEXT_PUBLIC_AWS_S3_SECRET_ACCESS_KEY_ID!,
   },
-  endpoint:
-    process.env.VERCEL_GIT_COMMIT_REF === "main"
-      ? `https://${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`
-      : undefined,
+  endpoint: `https://${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`,
 });
 
 const buildFilePublishUrl = (path: string) => {
   const region = process.env.NEXT_PUBLIC_AWS_S3_REGION;
   const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
-  return process.env.VERCEL_GIT_COMMIT_REF === "main"
-    ? `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`
-    : `https://s3.${region}.amazonaws.com/${bucketName}/${path}`;
+  return `https://${bucketName}.${region}.digitaloceanspaces.com/${path}`;
 };
 
 export const uploadFileToS3 = async (file: any, onModal: string) => {
@@ -38,21 +33,13 @@ export const uploadFileToS3 = async (file: any, onModal: string) => {
 
     const bucketName = process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME;
 
-    const uploadCommand =
-      process.env.VERCEL_GIT_COMMIT_REF === "main"
-        ? new PutObjectCommand({
-            Bucket: bucketName,
-            Key: fileKey,
-            Body: fileBuffer,
-            ContentType: fileType,
-            ACL: "public-read",
-          })
-        : new PutObjectCommand({
-            Bucket: bucketName,
-            Key: fileKey,
-            Body: fileBuffer,
-            ContentType: fileType,
-          });
+    const uploadCommand = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: fileKey,
+      Body: fileBuffer,
+      ContentType: fileType,
+      ACL: "public-read",
+    });
     const result = await s3Client.send(uploadCommand);
     return {
       name: fileName,

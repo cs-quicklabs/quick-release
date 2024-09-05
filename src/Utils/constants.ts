@@ -40,9 +40,9 @@ export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
   IN_PROGRESS: {
     id: "IN_PROGRESS",
     title: "In-Progress",
-    textColor: "text-blue-800",
-    bgColor: "bg-blue-100",
-    bulletColor: "bg-blue-400",
+    textColor: "text-yellow-800",
+    bgColor: "bg-yellow-100",
+    bulletColor: "bg-yellow-400",
   },
   COMPLETED: {
     id: "COMPLETED",
