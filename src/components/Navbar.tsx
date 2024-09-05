@@ -32,8 +32,8 @@ function classNames(...classes: any) {
 export function Navbar() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = useParams()
-  const { projectName } = params
+  const params = useParams();
+  const { projectName } = params;
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
@@ -76,7 +76,7 @@ export function Navbar() {
       },
     ];
 
-    if (activeProjectId) {
+    if (activeProjectId && loggedInUser) {
       nav.push({
         id: "changelog",
         name: projectMap[activeProjectId]?.name as string,
@@ -90,8 +90,13 @@ export function Navbar() {
         href: "/allPosts",
         current: false,
       });
-    }
-    else {
+      nav.push({
+        id: "roadmap",
+        name: "Roadmap",
+        href: "/roadmap",
+        current: false,
+      });
+    } else if (!loggedInUser) {
       nav.push({
         id: "changelog",
         name: "Changelog",
@@ -133,8 +138,8 @@ export function Navbar() {
         {({ open }: any) => (
           <>
             <div className="px-4 sm:px-6 lg:px-8">
-              <div className="relative flex items-center justify-around">
-                <div className="flex items-center lg:hidden py-4">
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center lg:hidden py-2 sm:py-4">
                   {/* Mobile menu button*/}
 
                   <div className="flex flex-shrink-0 items-center gap-2">
@@ -150,7 +155,7 @@ export function Navbar() {
                     </span>
                   </div>
                 </div>
-                <div className="hidden lg:flex flex-1 items-center justify-center lg:items-stretch lg:justify-start py-2">
+                <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
                   <div className="flex flex-shrink-0 items-center">
                     <Image
                       className="h-8 w-auto"
@@ -161,7 +166,7 @@ export function Navbar() {
                     />
                   </div>
                   <div className="hidden lg:ml-6 lg:block">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
                       {loading.activeProjectLoading ? (
                         <Oval
                           height={20}
@@ -206,7 +211,7 @@ export function Navbar() {
                           {/* Magnifying Glass Icon */}
                           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <MagnifyingGlassIcon
-                              className="h-5 w-5 text-gray-400"
+                              className="h-5 w-5 text-gray-400 hidden lg:block"
                               aria-hidden="true"
                             />
                           </div>
@@ -412,7 +417,7 @@ export function Navbar() {
                                 // onClick={handleLogout}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
                                 )}
                               >
                                 <div
@@ -431,7 +436,7 @@ export function Navbar() {
                                 // onClick={handleLogout}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
                                 )}
                               >
                                 <div
@@ -451,7 +456,7 @@ export function Navbar() {
                                   // onClick={handleLogout}
                                   className={classNames(
                                     active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700 cursor-pointer border border-t-1"
+                                    "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
                                   )}
                                 >
                                   <div
@@ -470,7 +475,7 @@ export function Navbar() {
                                 onClick={() => setOpen(true)}
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                  "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
                                 )}
                               >
                                 {isLogOut ? (
