@@ -25,6 +25,10 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
     if (usePathname().split("/").pop() !== "feedbacks" && usePathname().includes("feedbacks")) {
       return usePathname().split("/").slice(0, -1).join("/");
     }
+
+    if (usePathname().split("/").pop() !== "roadmap" && usePathname().includes("roadmap")) {
+      return usePathname().split("/").slice(0, -1).join("/");
+    }
     return usePathname();
   }, [usePathname()]);
   const searchParams = useSearchParams();
@@ -93,7 +97,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
         <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
             <span
-              className="w-full py-1 text-sm font-medium"
+              className="w-full py-3 text-sm font-medium"
               data-svelte-h="svelte-19a70nh"
             >
               {"Feedback Boards"}

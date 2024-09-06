@@ -28,7 +28,7 @@ export default function RoadmapPublicContentContainer({
       aria-labelledby="message-heading"
     >
       <div className="flex-1 overflow-y-auto pb-10 no-scrollbar">
-        <div className="bg-white py-4 sm:pt-5 sm:pb-6 shadow border-b border-gray-200">
+        <div className="bg-white py-4 shadow border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center gap-2">
