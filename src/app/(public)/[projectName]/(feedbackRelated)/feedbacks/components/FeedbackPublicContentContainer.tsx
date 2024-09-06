@@ -1,6 +1,6 @@
 "use client";
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import FeedbackCardItem from "./FeedbackCardItem";
 import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -12,17 +12,18 @@ import Spin from "@/atoms/Spin";
 import { classNames } from "@/lib/utils";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { updateQueryParams } from "@/Utils";
+import { FilterType } from "@/types";
 
 type FeedbackPublicContentContainerPropsType = {
   feedbackBoards: any[];
 };
 
-export default function FeedbackPublicSideNav({
+export default function FeedbackPublicContentContainer({
   feedbackBoards,
 }: FeedbackPublicContentContainerPropsType) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const feedbackId = pathname.split("/").pop();
+  const {projectName} = useParams();
   const loadMoreRef = useRef(null);
   const isVisible = useOnScreen(loadMoreRef);
   const router = useRouter();
@@ -49,13 +50,28 @@ export default function FeedbackPublicSideNav({
   }, [searchParams]);
   const [searchQuery, setSearchQuery] = useState(search || "");
 
+
   const {
     list: feedbackPostList,
     map: feedbackPostMap,
     loadMorePublicFeedbackPosts,
     isLoading: isFetchingFeedback,
     metaData: feedbackMetaData,
+    getAllPublicFeedbackPosts,
   } = useFeedbackPostContext();
+
+  const fetchAllFeedbackPosts = (
+    board: string | null,
+    search: string | null,
+    sort: string | null
+  ) => {
+    const query: FilterType = { projectName: projectName! };
+
+    if (board) query.board = board;
+    if (search) query.search = search;
+    if (sort && sort !== "top") query.sort = "desc";
+    getAllPublicFeedbackPosts(query);
+  };
 
   const sortedFeedbackPostList = useMemo(() => {
     if (sort === "top") {
@@ -73,6 +89,10 @@ export default function FeedbackPublicSideNav({
   };
 
   useEffect(() => {
+    fetchAllFeedbackPosts(board, search, sort);
+  }, [projectName, board, search, sort]);
+
+  useEffect(() => {
     if (isVisible) {
       loadMorePublicFeedbackPosts();
     }
@@ -84,7 +104,7 @@ export default function FeedbackPublicSideNav({
       aria-labelledby="message-heading"
     >
       <div className="flex-1 overflow-y-auto pb-10 no-scrollbar">
-        <div className="bg-white py-4 sm:pt-5 sm:pb-6 shadow border-b border-gray-200">
+        <div className="bg-white py-4 shadow border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center gap-2">
