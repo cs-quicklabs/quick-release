@@ -5,12 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 import FeedbackCard from "./FeedbackCard";
 import { classNames } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { Draggable } from "@hello-pangea/dnd";
 
 type RoadmapColumnPropsType = {
   status: string;
   projectsId: string;
   feedbackStatusMap: { [key: string]: FeedbackPostType[] };
-  setFeedbackStatusMap: (map: { [key: string]: FeedbackPostType[] }) => void;
+  setFeedbackStatusMap: any;
 };
 
 export default function RoadmapColumn({
@@ -20,7 +21,7 @@ export default function RoadmapColumn({
   setFeedbackStatusMap,
 }: RoadmapColumnPropsType) {
   const { bulletColor, title, bgColor, textColor } = FeedbackStatus[status];
-  const [feedbacks, setFeedbacks] = useState<FeedbackPostType[]>([]);
+  const [feedbackPosts, setFeedbackPosts] = useState<FeedbackPostType[]>([]);
   const router = useRouter();
 
   const fetchFeedbacksByStatus = useCallback(async () => {
@@ -31,13 +32,11 @@ export default function RoadmapColumn({
     };
     const res = await getAllFeedbackPostsRequest(query);
     const data = res.data.data;
-    setFeedbacks(data?.feedbackPosts || []);
-    if (data?.feedbackPosts?.length > 0) {
-      setFeedbackStatusMap({
-        ...feedbackStatusMap,
-        [status]: data?.feedbackPosts || [],
-      });
-    }
+
+    setFeedbackStatusMap((prev: any) => ({
+      ...prev,
+      [status]: data?.feedbackPosts,
+    }));
   }, [projectsId, status]);
 
   useEffect(() => {
@@ -47,7 +46,7 @@ export default function RoadmapColumn({
   }, [status, projectsId]);
 
   return (
-    <section className="w-[33rem] px-4 py-4">
+    <section className="px-4 py-4">
       <div className="">
         <div
           className={`flex items-center justify-between py-2.5 px-4 ${bgColor} rounded-lg`}
@@ -63,7 +62,7 @@ export default function RoadmapColumn({
           </div>
           <div>
             <span className={`text-base font-medium ${textColor}`}>
-              {feedbacks.length}
+              {feedbackStatusMap[status]?.length || 0}
             </span>
           </div>
         </div>
@@ -73,16 +72,31 @@ export default function RoadmapColumn({
         className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 overflow-y-auto no-scrollbar"
         data-svelte-h="svelte-1g1nf9v"
       >
-        {feedbacks.map((feedbackPost: FeedbackPostType, index: number) => (
-          <li
-            className={classNames(
-              "bg-white px-4 py-4 shadow sm:rounded-lg sm:py-5 sm:px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50 cursor-pointer"
-            )}
-            onClick={() => router.push(`/roadmap/feedback/${feedbackPost.id}`)}
-          >
-            <FeedbackCard feedback={feedbackPost} />
-          </li>
-        ))}
+        {feedbackStatusMap[status]?.map(
+          (feedbackPost: FeedbackPostType, index: number) => (
+            <Draggable
+              key={feedbackPost.id}
+              index={index}
+              draggableId={feedbackPost.id!}
+            >
+              {(provided, snapshot) => (
+                <li
+                  className={classNames(
+                    "bg-white px-4 py-4 shadow sm:rounded-lg sm:py-5 sm:px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50 cursor-pointer"
+                  )}
+                  onClick={() =>
+                    router.push(`/roadmap/feedback/${feedbackPost.id}`)
+                  }
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  <FeedbackCard feedback={feedbackPost} />
+                </li>
+              )}
+            </Draggable>
+          )
+        )}
       </ul>
     </section>
   );

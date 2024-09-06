@@ -49,5 +49,7 @@ export const config = {
     "/changeLog/:path*",
     "/settings/:path*",
     "/create-project",
+    "/roadmap",
+    "/roadmap/:path*",
   ],
 };

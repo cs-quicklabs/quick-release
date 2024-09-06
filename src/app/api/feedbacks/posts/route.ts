@@ -168,7 +168,7 @@ export async function GET(req: NextRequest) {
       await db.feedbackPosts.findMany({
         where: query,
         include: FeedbackPostIncludeDBQuery,
-        skip: skipStatus === "true" ? 0 : start,
+        skip: skipStatus === "true" ? undefined : start,
         take: skipStatus === "true" ? undefined : limit,
         orderBy: {
           createdAt: "desc",
@@ -183,23 +183,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       new ApiResponse(
         200,
-        skipStatus === "true"
-          ? {
-              feedbackPosts: feedbackPosts.map((feedback: any) =>
-                computeFeedback(feedback, user?.id)
-              ),
-              total: totalFeedbackPosts,
-            }
-          : {
-              feedbackPosts: feedbackPosts.map((feedback: any) =>
-                computeFeedback(feedback, user?.id)
-              ),
-              page,
-              limit,
-              total: totalFeedbackPosts,
-              hasNextPage,
-              nextPage,
-            },
+        {
+          feedbackPosts: feedbackPosts.map((feedback: any) =>
+            computeFeedback(feedback, user?.id)
+          ),
+          page,
+          limit,
+          total: totalFeedbackPosts,
+          hasNextPage,
+          nextPage,
+        },
         "All Feedbacks fetched successfully"
       )
     );
