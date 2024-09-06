@@ -4,7 +4,9 @@ import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
-export default function FeedbackHeader() {
+export default function FeedbackHeader(
+  {title}: {title: string}
+) {
   const { setFeedbackSideNav } = useFeedbackPostContext();
   return (
     <div
@@ -25,7 +27,7 @@ export default function FeedbackHeader() {
           </div>
 
           <h2 className="text-xl sm:text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
-            {"Feedbacks"}
+            {title}
           </h2>
         </div>
       </div>

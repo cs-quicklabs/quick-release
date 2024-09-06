@@ -42,6 +42,7 @@ export async function GET(
     };
 
     const board = searchParams.get("board") || undefined;
+    const status = searchParams.get("feedbackStatus") || undefined;
     const search = searchParams.get("search") || undefined;
     const sort = searchParams.get("sort") || undefined;
     if (board) {
@@ -51,6 +52,10 @@ export async function GET(
       })
 
       getAllPublishedFeedbackPostsQuery.feedbackBoardsId = feedbackBoardId?.id
+    }
+
+    if (status) {
+      getAllPublishedFeedbackPostsQuery.status = status
     }
 
     if(search) {

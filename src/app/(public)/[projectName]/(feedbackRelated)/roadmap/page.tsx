@@ -4,9 +4,10 @@ import { Bars3Icon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
-import FeedbackPublicSideNav from "./components/FeedbackPublicSideNav";
-import FeedbackPublicContentContainer from "./components/FeedbackPublicContentContainer";
-import FeedbackHeader from "./components/FeedbackHeader";
+import FeedbackHeader from "../components/FeedbackHeader";
+import FeedbackPublicSideNav from "../components/FeedbackPublicSideNav";
+import RoadmapColumn from "./components/RoadmapColumn";
+import RoadmapPublicContentContainer from "./components/RoadmapPublicContentContainer";
 
 type PagePropsType = {
   params: {
@@ -33,12 +34,11 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
 
   return (
     <main className="flex flex-col">
-      <FeedbackHeader />
+      <FeedbackHeader title="Roadmap" />
       <div className="flex flex-1">
         <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
           <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
-
-          <FeedbackPublicContentContainer feedbackBoards={feedbackBoards} />
+          <RoadmapPublicContentContainer feedbackBoards={feedbackBoards} />
         </div>
       </div>
     </main>

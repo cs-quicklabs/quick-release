@@ -85,7 +85,7 @@ export default function FeedbackDetailContainer({
             <div className="flex items-center gap-2">
               <ArrowLeftIcon
                 className="w-4 h-4 cursor-pointer"
-                onClick={() => router.replace(previousPath)}
+                onClick={() => router.back()}
               />
               <h1 className="text-lg font-medium text-gray-900">{feedbackPost?.title}</h1>
               <span

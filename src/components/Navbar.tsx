@@ -110,6 +110,12 @@ export function Navbar() {
         href: `/${projectName}/feedbacks`,
         current: false,
       });
+      nav.push({
+        id: "roadmap",
+        name: "Roadmap",
+        href: `/${projectName}/roadmap`,
+        current: false,
+      });
     }
 
     return nav;
