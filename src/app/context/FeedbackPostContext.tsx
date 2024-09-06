@@ -8,7 +8,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { ApiFilterQueryType, FeedbackPostType } from "@/types";
+import {
+  ApiFilterQueryType,
+  FeedbackPostType,
+  FeedbackStatusUpdatePayloadType,
+} from "@/types";
 import { requestHandler, showNotification } from "@/Utils";
 import {
   createFeedbackPostRequest,
@@ -17,6 +21,7 @@ import {
   getAllPublicFeedbacksRequest,
   getOneFeedbackPostRequest,
   updateFeedbackPostRequest,
+  updateFeedbackStatusRequest,
   upvoteFeedbackRequest,
 } from "@/fetchHandlers/feedbacks";
 import { useProjectContext } from "./ProjectContext";
@@ -54,13 +59,21 @@ type FeedbackPostContextType = {
     setIsLoading: (loading: boolean) => void
   ) => Promise<void>;
   deleteFeedbackPost: (id: string, projectsId: string) => Promise<void>;
-  upvoteFeedbackPost: (id: string, projectsId: string, setLoading: (loading: boolean) => void) => Promise<void>;
+  upvoteFeedbackPost: (
+    id: string,
+    projectsId: string,
+    setLoading: (loading: boolean) => void
+  ) => Promise<void>;
   getAllPublicFeedbackPosts: (
     query?: ApiFilterQueryType,
     page?: number,
     limit?: number
   ) => Promise<void>;
   loadMorePublicFeedbackPosts: () => Promise<void>;
+  updateFeedbackStatus: (
+    data: FeedbackStatusUpdatePayloadType,
+    setLoading: (loading: boolean) => void
+  ) => Promise<void>;
 };
 
 // Create a context to manage feedback posts-related data and functions
@@ -88,7 +101,15 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
     setIsLoading: (loading: boolean) => void
   ) => {},
   deleteFeedbackPost: async (id: string, projectsId: string) => {},
-  upvoteFeedbackPost: async (id: string, projectsId: string, setLoading: (loading: boolean) => void) => {},
+  upvoteFeedbackPost: async (
+    id: string,
+    projectsId: string,
+    setLoading: (loading: boolean) => void
+  ) => {},
+  updateFeedbackStatus: async (
+    data: FeedbackStatusUpdatePayloadType,
+    setLoading: (loading: boolean) => void
+  ) => {},
 });
 
 // Create a hook to access the FeedbackPostContext
@@ -258,22 +279,25 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-    // Function to handle load more feedback post details
-    const loadMoreFeedbackPosts = async () => {
-      const { nextPage, hasNextPage = false, prevQuery } = metaData;
-      if (isLoading && !hasNextPage) return;
-      await getAllFeedbackPosts(prevQuery, nextPage);
-    };
+  // Function to handle load more feedback post details
+  const loadMoreFeedbackPosts = async () => {
+    const { nextPage, hasNextPage = false, prevQuery } = metaData;
+    if (isLoading && !hasNextPage) return;
+    await getAllFeedbackPosts(prevQuery, nextPage);
+  };
 
   // Function to handle get all feedback post details
-  const getAllPublicFeedbackPosts = async (query = {}, page = 1, limit = 10) => {
+  const getAllPublicFeedbackPosts = async (
+    query = {},
+    page = 1,
+    limit = 10
+  ) => {
     const nextBoardKey = JSON.stringify(query);
     if (nextBoardKey === activeBoardKey && isLoading) return;
 
     changeBoard(nextBoardKey);
     await requestHandler(
-      async () =>
-        await getAllPublicFeedbacksRequest({ ...query, page, limit }),
+      async () => await getAllPublicFeedbacksRequest({ ...query, page, limit }),
       setIsLoading,
       (res: { [key: string]: any }) =>
         onSuccessGetAllFeedbackPosts(res, query, page),
@@ -291,7 +315,6 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     await getAllPublicFeedbackPosts(prevQuery, nextPage);
   };
 
-
   const updateFeedbackPost = async (
     data: FeedbackPostType,
     setIsLoading: (loading: boolean) => void
@@ -308,6 +331,29 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
           [feedbackId]: data,
         }));
         showNotification("success", message);
+      },
+      (errMessage) => {
+        showNotification("error", errMessage);
+        setError(errMessage);
+      }
+    );
+  };
+
+  const updateFeedbackStatus = async (
+    data: FeedbackStatusUpdatePayloadType,
+    setIsLoading: (loading: boolean) => void
+  ) => {
+    await requestHandler(
+      async () => await updateFeedbackStatusRequest(data),
+      setIsLoading,
+      (res: any) => {
+        const { data, message } = res;
+        const feedbackId = data.id!;
+
+        setMap((prevMap) => ({
+          ...prevMap,
+          [feedbackId]: data,
+        }));
       },
       (errMessage) => {
         showNotification("error", errMessage);
@@ -347,7 +393,11 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     );
   };
 
-  const upvoteFeedbackPost = async (id: string, projectsId: string, setLoading: (loading: boolean) => void) => {
+  const upvoteFeedbackPost = async (
+    id: string,
+    projectsId: string,
+    setLoading: (loading: boolean) => void
+  ) => {
     await requestHandler(
       async () => await upvoteFeedbackRequest(id, projectsId),
       setLoading,
@@ -398,6 +448,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
         upvoteFeedbackPost,
         getAllPublicFeedbackPosts,
         loadMorePublicFeedbackPosts,
+        updateFeedbackStatus,
       }}
     >
       {children}

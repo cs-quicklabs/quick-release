@@ -242,3 +242,70 @@ export async function PUT(req: NextRequest) {
     );
   });
 }
+
+export async function PATCH(req: NextRequest) {
+  return asyncHandler(async () => {
+    const session = await getServerSession(authOptions);
+    // @ts-ignore
+    const userId = session?.user?.id!;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+    const user = await db.users.findUnique({ where: { cuid: userId } });
+    const body = await req.json();
+
+    if (!body.status || !body.projectsId || !body.id) {
+      throw new ApiError(400, "Missing fields");
+    }
+
+    const feedbackPost = await db.feedbackPosts.findUnique({
+      where: {
+        cuid: body.id,
+      },
+    });
+
+    if (!feedbackPost) {
+      throw new ApiError(404, "Feedback not found");
+    }
+
+    const project = await db.projects.findUnique({
+      where: {
+        cuid: body.projectsId,
+        feedbackBoards: {
+          some: {
+            id: feedbackPost?.feedbackBoardsId!,
+          },
+        },
+      },
+    });
+
+    if (!project) {
+      throw new ApiError(404, "Either project or feedback board not exist");
+    }
+
+    await roleChecker(user?.id!, project?.id!);
+
+    const updateFeedbackPost = await db.feedbackPosts.update({
+      where: {
+        cuid: body.id,
+      },
+      data: {
+        status: body.status,
+        updatedAt: new Date(),
+      },
+      include: FeedbackPostIncludeDBQuery,
+    });
+
+    if (!updateFeedbackPost) {
+      throw new ApiError(500, "Something went wrong while creating feedback");
+    }
+
+    return NextResponse.json(
+      new ApiResponse(
+        200,
+        computeFeedback(privacyResponse(updateFeedbackPost), user?.id),
+        "Feedback updated successfully"
+      )
+    );
+  });
+}

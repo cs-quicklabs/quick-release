@@ -84,6 +84,12 @@ export type FeedbackPostType = {
   projectName?: string;
 };
 
+export type FeedbackStatusUpdatePayloadType = {
+  id: string;
+  status: string;
+  projectsId: string;
+};
+
 export type FeedbackBoardType = {
   id?: string;
   cuid?: string;

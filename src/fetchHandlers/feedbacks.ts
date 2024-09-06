@@ -1,4 +1,8 @@
-import { ApiFilterQueryType, FeedbackPostType } from "@/types";
+import {
+  ApiFilterQueryType,
+  FeedbackPostType,
+  FeedbackStatusUpdatePayloadType,
+} from "@/types";
 import { IFeedbackBoard } from "@/interfaces";
 import { apiClient } from ".";
 
@@ -52,6 +56,10 @@ const getAllPublicFeedbacksRequest = (params: ApiFilterQueryType) => {
   });
 };
 
+const updateFeedbackStatusRequest = (data: FeedbackStatusUpdatePayloadType) => {
+  return apiClient.patch(`/feedbacks/posts/${data.id}`, data);
+};
+
 export {
   createFeedbackBoardRequest,
   getAllFeedbackBoardsRequest,
@@ -64,4 +72,5 @@ export {
   deleteFeedbackPostRequest,
   upvoteFeedbackRequest,
   getAllPublicFeedbacksRequest,
+  updateFeedbackStatusRequest,
 };
