@@ -56,6 +56,7 @@ export function Navbar() {
 
   const onSearch = (searchInput: string | null) => {
     // Set the search query when Enter key is pressed
+    sessionStorage.clear();
     if (searchInput) router.push(`/allPosts?search=${searchInput}`);
     else router.push(`/allPosts`);
   };
@@ -67,19 +68,12 @@ export function Navbar() {
   };
 
   const navigation = useMemo(() => {
-    const nav = [
-      {
-        id: "home",
-        name: "Quick Release",
-        href: "/allLogs",
-        current: true,
-      },
-    ];
+    const nav = [];
 
-    if (activeProjectId && loggedInUser) {
+    if (activeProjectId && loggedInUser && pathname !== "/create-project") {
       nav.push({
         id: "changelog",
-        name: projectMap[activeProjectId]?.name as string,
+        name: "Changelog",
         href: `/allLogs`,
         current: false,
       });
@@ -127,6 +121,7 @@ export function Navbar() {
     let email = `${loggedInUser?.email || ""}`.trim();
     return { fullName, email };
   }, [loggedInUser]);
+  console.log(pathname);
 
   return (
     <>
@@ -157,12 +152,14 @@ export function Navbar() {
                       height={40}
                     />
                     <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
-                      {WEB_DETAILS.name}
+                      {pathname === "/create-project" || !activeProjectId
+                        ? WEB_DETAILS.name
+                        : projectMap[activeProjectId]?.name}
                     </span>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
-                  <div className="flex flex-shrink-0 items-center">
+                  <div className="flex flex-shrink-0 items-center gap-2">
                     <Image
                       className="h-8 w-auto"
                       src={WEB_DETAILS.logo}
@@ -170,6 +167,11 @@ export function Navbar() {
                       width={40}
                       height={40}
                     />
+                    <h1 className="lg:ml-4 text-white font-extrabold font-mono py-2">
+                      {pathname === "/create-project" || !activeProjectId
+                        ? WEB_DETAILS.name
+                        : projectMap[activeProjectId]?.name}
+                    </h1>
                   </div>
                   <div className="hidden lg:ml-6 lg:block">
                     <div className="flex items-center space-x-2">
@@ -197,6 +199,7 @@ export function Navbar() {
                                 "rounded-md px-3 py-2 text-sm font-medium"
                               )}
                               aria-current={item.current ? "page" : undefined}
+                              onClick={() => sessionStorage.clear()}
                             >
                               {handleTrancate(item.name, 50)}
                             </Link>
@@ -206,7 +209,7 @@ export function Navbar() {
                     </div>
                   </div>
                 </div>
-                {loggedInUser && (
+                {loggedInUser && pathname !== "/create-project" && (
                   <div className="flex flex-1 justify-center px-2 lg:ml-6 lg:justify-end">
                     <div className="w-full max-w-lg lg:max-w-xs">
                       <label htmlFor="search" className="sr-only">
@@ -256,13 +259,13 @@ export function Navbar() {
                 )}
                 {loggedInUser && (
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
-                    <button
+                    {/* <button
                       type="button"
                       className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                       <span className="sr-only">{"View notifications"}</span>{" "}
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
-                    </button>
+                    </button> */}
                     <Menu as="div" className="relative ml-3">
                       <div>
                         <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">

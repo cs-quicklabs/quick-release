@@ -8,6 +8,7 @@ import FeedbackHeader from "../../components/FeedbackHeader";
 import FeedbackPublicSideNav from "../../components/FeedbackPublicSideNav";
 import { getOneProject } from "@/lib/project";
 import FeedbackDetailContainer from "../../feedbacks/components/FeedbackDetailContainer";
+import { IFeedbackBoard } from "@/interfaces";
 
 type PagePayloadType = {
   params: {
@@ -82,7 +83,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
     return notFound();
   }
 
-  const feedbackBoards = project.feedbackBoards;
+  const feedbackBoards = project.feedbackBoards as unknown as IFeedbackBoard[];
 
   return (
     <main className="flex flex-col">

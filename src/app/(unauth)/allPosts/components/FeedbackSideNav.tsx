@@ -52,13 +52,13 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
   } = useFeedbackPostContext();
 
   const onSelectBoards = (value: string) => {
+    sessionStorage.removeItem("activeFeedbackPostId");
     let boards = [...selectedBoards];
     if (boards.includes(value)) {
       boards = boards.filter((item) => item !== value);
     } else {
       boards.push(value);
     }
-    console.log(boards, "boards");
     setSelectedBoards(boards);
     fetchAllFeedbackPosts(
       boards.toString(),
@@ -68,6 +68,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
   };
 
   const onSelectStatus = (value: string) => {
+    sessionStorage.removeItem("activeFeedbackPostId");
     let status = [...selectedStatus];
     if (status.includes(value)) {
       status = status.filter((item) => item !== value);

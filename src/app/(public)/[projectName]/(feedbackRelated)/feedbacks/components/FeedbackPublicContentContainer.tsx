@@ -3,19 +3,20 @@ import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import FeedbackCardItem from "./FeedbackCardItem";
-import { InboxIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { InboxIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/atoms/button";
 import StatisticIcon from "@/assets/icons/StatisticIcon";
 import CalenderIcon from "@/assets/icons/CalenderIcon";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import Spin from "@/atoms/Spin";
 import { classNames } from "@/lib/utils";
-import { XMarkIcon } from "@heroicons/react/20/solid";
 import { updateQueryParams } from "@/Utils";
 import { FilterType } from "@/types";
+import { IFeedbackBoard } from "@/interfaces";
+import SearchInputBox from "@/components/SearchInputBox";
 
 type FeedbackPublicContentContainerPropsType = {
-  feedbackBoards: any[];
+  feedbackBoards: IFeedbackBoard[];
 };
 
 export default function FeedbackPublicContentContainer({
@@ -48,7 +49,6 @@ export default function FeedbackPublicContentContainer({
     }
     return null;
   }, [searchParams]);
-  const [searchQuery, setSearchQuery] = useState(search || "");
 
 
   const {
@@ -82,11 +82,6 @@ export default function FeedbackPublicContentContainer({
     }
     return feedbackPostList;
   }, [feedbackPostList, feedbackPostMap, searchParams]);
-
-  const onSearch = (searchInput: string) => {
-    const queryParams = updateQueryParams(board, searchInput, null);
-    router.push(`${pathname}?${queryParams}`);
-  };
 
   useEffect(() => {
     fetchAllFeedbackPosts(board, search, sort);
@@ -146,45 +141,8 @@ export default function FeedbackPublicContentContainer({
               <span className="text-xs">New</span>
             </Button>
           </div>
-          <div>
-            <div className="w-full">
-              <div className="relative">
-                {/* Magnifying Glass Icon */}
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <MagnifyingGlassIcon
-                    className="h-5 w-5 text-gray-400"
-                    aria-hidden="true"
-                  />
-                </div>
-
-                {/* Input Field */}
-                <input
-                  id="search"
-                  name="search"
-                  onKeyDown={(e) => e.key === "Enter" && onSearch(searchQuery)} // Trigger onSearch when Enter is pressed
-                  value={searchQuery || ""}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="border border-gray-300 rounded-md py-2 pl-10 pr-3 w-full md:w-[25rem] leading-5 text-gray-600 placeholder-gray-400 sm:text-sm"
-                  placeholder="Search feedbacks"
-                />
-
-                {/* Clear Button */}
-                {searchQuery && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSearchQuery(""); // Clear the input field
-                      onSearch(""); // Call the onSearch function
-                    }}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3"
-                    aria-label="Clear search"
-                  >
-                    <XMarkIcon className="h-5 w-5 text-gray-400" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
+          {/* Search */}
+          <SearchInputBox board={board!} />
         </div>
         <ul
           role="list"

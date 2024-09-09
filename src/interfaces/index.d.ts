@@ -72,6 +72,7 @@ export interface IReleaseCategory {
 
 export interface IFeedbackBoard {
   id?: string;
+  cuid?: string;
   name?: string;
   code?: string;
   isDefault?: boolean;

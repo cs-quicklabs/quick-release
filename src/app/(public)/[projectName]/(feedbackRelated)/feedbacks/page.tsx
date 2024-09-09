@@ -1,12 +1,10 @@
-import { Button } from "@/atoms/button";
 import { getOneProject } from "@/lib/project";
-import { Bars3Icon } from "@heroicons/react/24/solid";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import React from "react";
 import FeedbackPublicSideNav from "../components/FeedbackPublicSideNav";
 import FeedbackPublicContentContainer from "./components/FeedbackPublicContentContainer";
 import FeedbackHeader from "../components/FeedbackHeader";
+import { IFeedbackBoard } from "@/interfaces";
 
 type PagePropsType = {
   params: {
@@ -29,7 +27,7 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
     return notFound();
   }
 
-  const feedbackBoards = project.feedbackBoards;
+  const feedbackBoards = project?.feedbackBoards as unknown as IFeedbackBoard[];
 
   return (
     <main className="flex flex-col">

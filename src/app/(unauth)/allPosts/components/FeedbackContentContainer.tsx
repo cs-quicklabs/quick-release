@@ -161,9 +161,11 @@ const FeedbackContentContainer = () => {
                 >
                   {visibilityStatus?.title}
                 </span>
-                <Link href={publicLink}>
-                  <ArrowUpRightIcon className="w-4 h-4 ml-2" />
-                </Link>
+                {visibilityStatus.id === "public" && (
+                  <Link href={publicLink}>
+                    <ArrowUpRightIcon className="w-4 h-4 ml-2" />
+                  </Link>
+                )}
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500 flex items-center">
