@@ -292,7 +292,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Title"}</FormLabel>
+                        <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -311,7 +311,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>{"Description"}</FormLabel>
+                        <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
@@ -332,7 +332,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Version"}</FormLabel>
+                        <FormLabel>{"Release Version"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"
@@ -351,7 +351,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseCategories"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Categories (Optional)"}</FormLabel>
+                        <FormLabel>{"Release Categories"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseCategories"
@@ -384,7 +384,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseTags"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Tags (Optional)"}</FormLabel>
+                        <FormLabel>{"Release Tags"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseTags"

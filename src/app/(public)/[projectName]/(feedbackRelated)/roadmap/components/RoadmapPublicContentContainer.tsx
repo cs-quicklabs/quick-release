@@ -2,9 +2,10 @@
 import { useParams, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import RoadmapColumn from "./RoadmapColumn";
+import { IFeedbackBoard } from "@/interfaces";
 
 type FeedbackPublicContentContainerPropsType = {
-  feedbackBoards: any[];
+  feedbackBoards: IFeedbackBoard[];
 };
 
 export default function RoadmapPublicContentContainer({

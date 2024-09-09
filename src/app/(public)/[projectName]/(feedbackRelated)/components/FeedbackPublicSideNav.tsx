@@ -1,18 +1,18 @@
 "use client";
 
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
+import { IFeedbackBoard } from "@/interfaces";
 import { classNames } from "@/lib/utils";
-import { FilterType } from "@/types";
 import {
   useParams,
   usePathname,
   useRouter,
   useSearchParams,
 } from "next/navigation";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 type FeedbackPublicSideNavPropsType = {
-  feedbackBoards: any[];
+  feedbackBoards: IFeedbackBoard[];
 };
 
 const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
@@ -22,11 +22,17 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
   const { projectName } = useParams();
 
   const pathname = useMemo(() => {
-    if (usePathname().split("/").pop() !== "feedbacks" && usePathname().includes("feedbacks")) {
+    if (
+      usePathname().split("/").pop() !== "feedbacks" &&
+      usePathname().includes("feedbacks")
+    ) {
       return usePathname().split("/").slice(0, -1).join("/");
     }
 
-    if (usePathname().split("/").pop() !== "roadmap" && usePathname().includes("roadmap")) {
+    if (
+      usePathname().split("/").pop() !== "roadmap" &&
+      usePathname().includes("roadmap")
+    ) {
       return usePathname().split("/").slice(0, -1).join("/");
     }
     return usePathname();
@@ -116,7 +122,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
             {feedbackBoards.map((boardDetails) => (
               <li
                 key={boardDetails.id}
-                onClick={() => onSelectBoard(boardDetails.name)}
+                onClick={() => onSelectBoard(boardDetails.name!)}
                 className={classNames(
                   "relative flex gap-2  px-6 py-5 hover:bg-gray-200 border-b border-gray-200 hover:border-b focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 cursor-pointer",
                   boardDetails.name === board ? "bg-gray-200" : "bg-white"

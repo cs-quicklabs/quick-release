@@ -1,17 +1,16 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 import { classNames } from "@/lib/utils";
-import { IReleaseTag } from "@/interfaces";
-import { ArrowBigLeftIcon } from "lucide-react";
+import { IFeedbackBoard, IReleaseTag } from "@/interfaces";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
-import { updateQueryParams } from "@/Utils";
 import { ChevronUpIcon } from "@heroicons/react/24/solid";
 import { FeedbackStatus } from "@/Utils/constants";
+import { FeedbackPostType } from "@/types";
 
 type FeedbackDetailContainerPropsType = {
-  feedbackBoards: any[];
-  feedbackPost: any;
+  feedbackBoards: IFeedbackBoard[];
+  feedbackPost: FeedbackPostType;
 };
 
 export default function FeedbackDetailContainer({
@@ -19,7 +18,6 @@ export default function FeedbackDetailContainer({
   feedbackPost,
 }: FeedbackDetailContainerPropsType) {
   const searchParams = useSearchParams();
-  const pathName = usePathname();
   const router = useRouter();
   const board = useMemo(() => {
     const data = searchParams.get("board");
@@ -28,25 +26,6 @@ export default function FeedbackDetailContainer({
     }
     return null;
   }, [searchParams]);
-
-  const search = useMemo(() => {
-    const data = searchParams.get("search");
-    if (data && data !== "") {
-      return searchParams.get("search");
-    }
-    return null;
-  }, [searchParams]);
-
-  const previousPath = useMemo(() => {
-    let path = pathName;
-    if (pathName.split("/").pop() !== "feedbacks") {
-      path = pathName.split("/").slice(0, -1).join("/");
-    }
-
-    const queryParams = updateQueryParams(board, search, null);
-
-    return queryParams ? `${path}?${queryParams}` : path;
-  }, [pathName]);
 
   const releaseTags = feedbackPost?.releaseTags
     ? (feedbackPost?.releaseTags as IReleaseTag[]).map((tag) => ({
@@ -87,16 +66,18 @@ export default function FeedbackDetailContainer({
                 className="w-4 h-4 cursor-pointer"
                 onClick={() => router.back()}
               />
-              <h1 className="text-lg font-medium text-gray-900">{feedbackPost?.title}</h1>
+              <h1 className="text-lg font-medium text-gray-900">
+                {feedbackPost?.title}
+              </h1>
               <span
-              className={classNames(
-                `inline-flex items-center rounded px-3 py-0.5 text-sm font-medium`,
-                feedbackStatus.bgColor,
-                feedbackStatus.textColor
-              )}
-            >
-              {feedbackStatus.title}
-            </span>
+                className={classNames(
+                  `inline-flex items-center rounded px-3 py-0.5 text-sm font-medium`,
+                  feedbackStatus.bgColor,
+                  feedbackStatus.textColor
+                )}
+              >
+                {feedbackStatus.title}
+              </span>
             </div>
             <div>
               <span
