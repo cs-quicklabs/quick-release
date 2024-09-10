@@ -40,7 +40,7 @@ export default function FeedbackPublicContentContainer({
     if (data && data !== "") {
       return searchParams.get("board");
     }
-    return null;
+    return feedbackBoards.find((b) => b.isDefault)?.name;
   }, [searchParams]);
   const sort = useMemo(() => {
     const data = searchParams.get("sort");
@@ -84,7 +84,7 @@ export default function FeedbackPublicContentContainer({
   }, [feedbackPostList, feedbackPostMap, searchParams]);
 
   useEffect(() => {
-    fetchAllFeedbackPosts(board, search, sort);
+    fetchAllFeedbackPosts(board!, search, sort);
   }, [projectName, board, search, sort]);
 
   useEffect(() => {
@@ -120,7 +120,7 @@ export default function FeedbackPublicContentContainer({
               }`}
               onClick={() =>
                 router.push(
-                  `${pathname}?${updateQueryParams(board, search, "top")}`
+                  `${pathname}?${updateQueryParams(board!, search, "top")}`
                 )
               }
             >
@@ -133,7 +133,7 @@ export default function FeedbackPublicContentContainer({
               }`}
               onClick={() =>
                 router.push(
-                  `${pathname}?${updateQueryParams(board, search, "new")}`
+                  `${pathname}?${updateQueryParams(board!, search, "new")}`
                 )
               }
             >

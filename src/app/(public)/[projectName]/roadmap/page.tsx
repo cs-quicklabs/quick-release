@@ -1,9 +1,9 @@
 import { getOneProject } from "@/lib/project";
 import { notFound } from "next/navigation";
 import React from "react";
-import FeedbackPublicSideNav from "../components/FeedbackPublicSideNav";
-import FeedbackPublicContentContainer from "./components/FeedbackPublicContentContainer";
-import FeedbackHeader from "../components/FeedbackHeader";
+import FeedbackHeader from "../(common)/FeedbackHeader";
+import FeedbackPublicSideNav from "../(common)/FeedbackPublicSideNav";
+import RoadmapPublicContentContainer from "./components/RoadmapPublicContentContainer";
 import { IFeedbackBoard } from "@/interfaces";
 
 type PagePropsType = {
@@ -27,16 +27,15 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
     return notFound();
   }
 
-  const feedbackBoards = project?.feedbackBoards as unknown as IFeedbackBoard[];
+  const feedbackBoards = project.feedbackBoards as unknown as IFeedbackBoard[];
 
   return (
     <main className="flex flex-col">
-      <FeedbackHeader title="Feedbacks" />
+      <FeedbackHeader title="Roadmap" />
       <div className="flex flex-1">
         <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
           <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
-
-          <FeedbackPublicContentContainer feedbackBoards={feedbackBoards} />
+          <RoadmapPublicContentContainer feedbackBoards={feedbackBoards} />
         </div>
       </div>
     </main>

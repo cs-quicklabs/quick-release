@@ -21,14 +21,13 @@ export default function RoadmapColumn({
   setFeedbackStatusMap,
 }: RoadmapColumnPropsType) {
   const { bulletColor, title, bgColor, textColor } = FeedbackStatus[status];
-  const [feedbackPosts, setFeedbackPosts] = useState<FeedbackPostType[]>([]);
   const router = useRouter();
 
   const fetchFeedbacksByStatus = useCallback(async () => {
     const query: FilterType = {
       projectsId: projectsId,
       feedbackStatus: status,
-      skipStatus: true,
+      skipLimit: true,
     };
     const res = await getAllFeedbackPostsRequest(query);
     const data = res.data.data;

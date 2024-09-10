@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
-    const skipStatus = searchParams.get("skipStatus");
+    const skipLimit = searchParams.get("skipLimit");
 
     const projectId = searchParams.get("projectsId");
     if (!projectId) {
@@ -168,8 +168,8 @@ export async function GET(req: NextRequest) {
       await db.feedbackPosts.findMany({
         where: query,
         include: FeedbackPostIncludeDBQuery,
-        skip: skipStatus === "true" ? undefined : start,
-        take: skipStatus === "true" ? undefined : limit,
+        skip: skipLimit === "true" ? undefined : start,
+        take: skipLimit === "true" ? undefined : limit,
         orderBy: {
           createdAt: "desc",
         },

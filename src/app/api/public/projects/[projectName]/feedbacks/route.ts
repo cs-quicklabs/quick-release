@@ -32,6 +32,7 @@ export async function GET(
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
+    const skipLimit = searchParams.get("skipLimit");
 
     const getAllPublishedFeedbackPostsQuery: { [key: string]: any } = {
       feedbackBoards: {
@@ -73,8 +74,8 @@ export async function GET(
       await db.feedbackPosts.findMany({
         where: getAllPublishedFeedbackPostsQuery,
         include: FeedbackPostIncludeDBQuery,
-        skip: start,
-        take: limit,
+        skip: skipLimit === "true" ? undefined : start,
+        take: skipLimit === "true" ? undefined : limit,
         orderBy: { 
           createdAt: sort === "desc" ? "desc" : "asc"
         }
