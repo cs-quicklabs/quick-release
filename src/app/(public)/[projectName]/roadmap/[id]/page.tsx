@@ -1,13 +1,13 @@
 import React from "react";
 import moment from "moment";
-import { REVALIDATE_API } from "@/Utils/constants";
+import { REVALIDATE_API, WEB_DETAILS } from "@/Utils/constants";
 import { notFound } from "next/navigation";
 import { FeedbackPostType } from "@/types";
 import { Metadata, ResolvingMetadata } from "next";
-import FeedbackHeader from "../../components/FeedbackHeader";
-import FeedbackPublicSideNav from "../../components/FeedbackPublicSideNav";
+import FeedbackHeader from "../../(common)/FeedbackHeader";
+import FeedbackPublicSideNav from "../../(common)/FeedbackPublicSideNav";
 import { getOneProject } from "@/lib/project";
-import FeedbackDetailContainer from "../components/FeedbackDetailContainer";
+import FeedbackDetailContainer from "../../feedbacks/components/FeedbackDetailContainer";
 import { IFeedbackBoard } from "@/interfaces";
 
 type PagePayloadType = {
@@ -87,7 +87,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
 
   return (
     <main className="flex flex-col">
-      <FeedbackHeader title="Feedbacks" />
+      <FeedbackHeader title="Roadmap" />
       <div className="flex flex-1">
         <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
           <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />

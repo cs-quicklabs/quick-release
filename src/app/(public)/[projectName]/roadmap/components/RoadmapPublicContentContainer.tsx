@@ -18,7 +18,7 @@ export default function RoadmapPublicContentContainer({
     if (data && data !== "") {
       return searchParams.get("board");
     }
-    return null;
+    return feedbackBoards.find((b) => b.isDefault)?.name;
   }, [searchParams]);
 
   const feedbackStatus = ["IN_REVIEW", "PLANNED", "IN_PROGRESS"];
@@ -49,7 +49,7 @@ export default function RoadmapPublicContentContainer({
                 key={key}
                 className="w-full border border-gray-200 rounded-lg"
               >
-                <RoadmapColumn status={key} />
+                <RoadmapColumn status={key} board={board!} />
               </div>
             ))}
           </div>

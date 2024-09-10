@@ -121,7 +121,12 @@ export function Navbar() {
     let email = `${loggedInUser?.email || ""}`.trim();
     return { fullName, email };
   }, [loggedInUser]);
-  console.log(pathname);
+
+  const teamName = projectName
+    ? projectName
+    : pathname === "/create-project" || !activeProjectId
+    ? WEB_DETAILS.name
+    : projectMap[activeProjectId]?.name;
 
   return (
     <>
@@ -152,9 +157,7 @@ export function Navbar() {
                       height={40}
                     />
                     <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
-                      {pathname === "/create-project" || !activeProjectId
-                        ? WEB_DETAILS.name
-                        : projectMap[activeProjectId]?.name}
+                      {teamName}
                     </span>
                   </div>
                 </div>
@@ -168,9 +171,7 @@ export function Navbar() {
                       height={40}
                     />
                     <h1 className="lg:ml-4 text-white font-extrabold font-mono py-2">
-                      {pathname === "/create-project" || !activeProjectId
-                        ? WEB_DETAILS.name
-                        : projectMap[activeProjectId]?.name}
+                      {teamName}
                     </h1>
                   </div>
                   <div className="hidden lg:ml-6 lg:block">
@@ -193,7 +194,7 @@ export function Navbar() {
                                 item.current
                                   ? "text-white text-base"
                                   : "text-gray-300 hover:text-white hover:bg-gray-700",
-                                item.href === pathname &&
+                                pathname.includes(item.href) &&
                                   !item.current &&
                                   "text-white bg-gray-700",
                                 "rounded-md px-3 py-2 text-sm font-medium"
