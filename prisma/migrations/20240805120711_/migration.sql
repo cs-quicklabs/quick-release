@@ -85,7 +85,7 @@ BEGIN
     END IF;
 END $$;
 
--- AlterTable Projects (rename column and add unique constraint) if needed
+-- Add 'slug' column if it does not exist
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Projects' AND column_name = 'slug') THEN
@@ -93,19 +93,20 @@ BEGIN
     END IF;
 END $$;
 
+-- Copy data from 'name' to 'slug' for all records
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Projects' AND column_name = 'slug') THEN
-        UPDATE "Projects" SET "slug" = "name";
-    END IF;
+    UPDATE "Projects" SET "slug" = "name" WHERE "slug" IS NULL;
 END $$;
 
+-- Add a unique constraint on the 'slug' column if it doesn't already exist
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'Projects_slug_unique') THEN
         ALTER TABLE "Projects" ADD CONSTRAINT "Projects_slug_unique" UNIQUE ("slug");
     END IF;
 END $$;
+
 -- Add new column 'projectImgUrl' to Projects if not exists
 DO $$
 BEGIN
