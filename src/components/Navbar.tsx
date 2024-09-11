@@ -99,20 +99,20 @@ export function Navbar({
       nav.push({
         id: "changelog",
         name: "Changelog",
-        href: `/${projectName}/changelogs`,
+        href: `/${projectSlug}/changelogs`,
         current: false,
       });
 
       nav.push({
         id: "feedback",
         name: "Feedback",
-        href: `/${projectName}/feedbacks`,
+        href: `/${projectSlug}/feedbacks`,
         current: false,
       });
       nav.push({
         id: "roadmap",
         name: "Roadmap",
-        href: `/${projectName}/roadmap`,
+        href: `/${projectSlug}/roadmap`,
         current: false,
       });
     }
