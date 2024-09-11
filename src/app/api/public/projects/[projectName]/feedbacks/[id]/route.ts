@@ -20,7 +20,7 @@ export async function GET(
     let { projectName, id } = params;
     projectName = projectName.toLowerCase();
 
-    const projectQuery = { name: projectName };
+    const projectQuery = { slug: projectName };
     const project = await db.projects.findFirst({
       where: projectQuery,
       include: { Users: true },

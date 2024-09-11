@@ -1,8 +1,6 @@
 "use client";
-import { useUserContext } from "@/app/context/UserContext";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
@@ -12,52 +10,36 @@ import { WEB_DETAILS } from "@/Utils/constants";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import AlertModal from "@/components/AlertModal";
 import { Button } from "@/atoms/button";
-import { ProfileType } from "@/types";
+import { Tooltip } from "flowbite-react";
+import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
+import Loading from "@/atoms/Loading";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 
-const Profile = () => {
-  const router = useRouter();
-  const {
-    loggedInUser,
-    updateUserDetails,
-    isLoading: updateLoading,
-  } = useUserContext();
-  const [profileImgUrl, setProfileImgUrl] = useState<any>(
-    loggedInUser?.profilePicture
-  );
+const GeneralTeamSettings = () => {
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
+  const [teamLogoUrl, setTeamLogoUrl] = useState<any>(null);
   const [loader, setLoader] = useState(false);
 
-  const { activeProjectId, getActiveProject } = useProjectContext();
-  const [isOpen, setIsOpen] = useState(false);
+  const {
+    activeProjectId,
+    isLoading: updateLoading,
+    getActiveProject,
+    map: projectMap,
+    updateProjectDetails,
+  } = useProjectContext();
+
+  useEffect(() => {
+    if (!activeProjectId) {
+      getActiveProject(setLoader);
+    }
+  }, [activeProjectId]);
+
   const formSchema = z.object({
-    firstName: z
-      .string()
-      .trim()
-      .min(1, { message: "Required" })
-      .max(50, {
-        message: "Fisrt Name can be maximum 50 characters",
-      })
-      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
-        message: "First name can only contain letters",
-      }),
-    lastName: z
-      .string()
-      .trim()
-      .min(1, { message: "Required" })
-      .max(50, {
-        message: "Last Name can be maximum 50 characters",
-      })
-      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
-        message: "Last name can only contain letters",
-      }),
-    email: z
-      .string()
-      .trim()
-      .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
-    profilePicture: z.unknown(),
+    name: z.string().trim().min(1, { message: "Required" }).max(50, {
+      message: "Team name can be maximum 50 characters",
+    }),
+    slug: z.string().optional(),
   });
 
   const {
@@ -70,109 +52,105 @@ const Profile = () => {
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: loggedInUser?.firstName as string,
-      lastName: loggedInUser?.lastName as string,
-      email: loggedInUser?.email as string,
-      profilePicture: loggedInUser?.profilePicture,
+      name: projectMap[activeProjectId!]?.name,
+      slug: projectMap[activeProjectId!]?.slug,
     },
   });
 
   useEffect(() => {
     const setDefaultValues = () => {
-      if (loggedInUser) {
+      if (activeProjectId) {
         reset({
-          firstName: loggedInUser.firstName as string,
-          lastName: loggedInUser.lastName as string,
-          email: loggedInUser.email as string,
-          profilePicture: loggedInUser.profilePicture,
+          name: projectMap[activeProjectId!]?.name,
+          slug: projectMap[activeProjectId!]?.slug,
         });
       }
     };
 
-    setDefaultValues();
-  }, [loggedInUser]);
-
-  useEffect(() => {
-    if (!activeProjectId) {
-      getActiveProject(setLoader);
+    if (activeProjectId) {
+      setTeamLogoUrl(projectMap[activeProjectId!]?.projectImgUrl);
     }
+    setDefaultValues();
   }, [activeProjectId]);
 
   const formValues = watch();
 
   const hasChanged = useMemo(() => {
     return (
-      formValues.firstName !== loggedInUser?.firstName ||
-      formValues.lastName !== loggedInUser?.lastName ||
-      formValues.email !== loggedInUser?.email
+      formValues.name !== projectMap[activeProjectId!]?.name ||
+      projectMap[activeProjectId!]?.projectImgUrl !== teamLogoUrl
     );
-  }, [formValues, loggedInUser]);
+  }, [formValues, projectMap[activeProjectId!]]);
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
 
     if (file) {
-      const url = await uploadFile(
+      const imageUrl = await uploadFile(
         file,
-        "ProfilePictures",
+        "ProjectImgs",
         setImageUploadLoading
       );
-
-      if (url) {
-        updateUserDetails({
-          profilePicture: url,
+      console.log(imageUrl);
+      if (imageUrl && activeProjectId) {
+        updateProjectDetails({
+          id: activeProjectId!,
+          projectImgUrl: imageUrl,
         });
-        setProfileImgUrl(url);
+        setTeamLogoUrl(imageUrl);
       }
     }
   };
 
-  const updateProfileDetails = async (
+  const handleUpdateProject = async (
     values: z.infer<typeof formSchema>,
     e: any
   ) => {
-    if (loggedInUser?.email === values.email) {
-      updateUserDetails(values as ProfileType);
-    } else {
-      setIsOpen(true);
-    }
+    await updateProjectDetails({
+      ...values,
+      id: activeProjectId!,
+    });
   };
 
-  const handleUpdateProfile = async () => {
-    setIsOpen(false);
-    updateUserDetails(formValues as ProfileType);
-  };
-
-  const handleDelete = async () => {
-    deleteFiles([profileImgUrl], "ProfilePictures", setImageUploadLoading);
-    if (!imageUploadLoading) {
-      updateUserDetails({
-        profilePicture: null,
+  const handleDeleteTeamLogo = async () => {
+    deleteFiles([teamLogoUrl], "ProjectImgs", setImageUploadLoading);
+    if (!imageUploadLoading && activeProjectId) {
+      updateProjectDetails({
+        id: activeProjectId!,
+        projectImgUrl: null,
       });
-      setProfileImgUrl(null);
+      setTeamLogoUrl(null);
       setIsOpenImageModal(false);
     }
   };
+
+  if (!activeProjectId && loader) {
+    return (
+      <main className="pb-12 px-4 col-span-12 lg:col-span-7">
+        <Loading />
+      </main>
+    );
+  }
 
   return (
     <main className="pb-12 px-4 col-span-12 lg:col-span-7">
       <div>
         <h1 className="text-lg font-semibold dark:text-white">
-          {"Profile Settings"}
+          {"Team Settings"}
         </h1>{" "}
         <p className="text-gray-500 dark:text-gray-400 text-sm">
-          {"Change your personal profile settings"}
+          {"Change settings of your team."}
         </p>{" "}
         <form
           className="w-full mt-6"
-          onSubmit={handleSubmit(updateProfileDetails)}
+          onSubmit={handleSubmit(handleUpdateProject)}
         >
           <div className="sm:col-span-2">
             <label
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               htmlFor="file_input"
             >
-              {"Upload avatar"}
+              {"Upload Team Logo"}
             </label>{" "}
             <div className="items-center w-full sm:flex">
               {imageUploadLoading ? (
@@ -184,14 +162,14 @@ const Profile = () => {
                 />
               ) : (
                 <>
-                  {profileImgUrl ? (
+                  {teamLogoUrl ? (
                     <>
                       <div className="flex ">
                         <label htmlFor="fileInput">
                           <Image
                             alt="No Image"
                             className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                            src={profileImgUrl}
+                            src={teamLogoUrl}
                             height={20}
                             width={20}
                           />
@@ -216,8 +194,8 @@ const Profile = () => {
                       <label htmlFor="fileInput">
                         <Image
                           alt="No Image"
-                          className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                          src={WEB_DETAILS.avtar}
+                          className="w-20 h-20 mb-4 border border-gray-300 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
+                          src={WEB_DETAILS.logo}
                           height={20}
                           width={20}
                         />
@@ -240,57 +218,48 @@ const Profile = () => {
               htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              {"First Name"}
+              {"Team Name"}
             </label>{" "}
             <input
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="First Name"
-              {...register("firstName")}
+              placeholder="Team Name"
+              {...register("name")}
             />
-            {errors.firstName && (
+            {errors.name && (
               <span className="text-red-600 text-[12px]">
-                {errors.firstName.message}
+                {errors.name.message}
               </span>
             )}
           </div>{" "}
           <div className="mb-5">
             <label
-              htmlFor="email"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              htmlFor="user-permissions"
+              className="inline-flex items-center mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
-              {"Last Name"}
-            </label>{" "}
+              Slug
+              <button
+                type="button"
+                data-tooltip-target="tooltip-dark"
+                data-tooltip-style="dark"
+                className="ml-1"
+              >
+                <Tooltip
+                  content="Slug specifies the unique identifier for your team. It is used to create a unique URL for your team. You can use letters, numbers, and hyphens."
+                  placement="right"
+                >
+                  <QuestionMarkCircleIcon className="w-4 h-4 text-gray-500 hover:text-gray-900" />
+                </Tooltip>
+                <span className="sr-only">Show information</span>
+              </button>{" "}
+            </label>
             <input
               type="text"
-              {...register("lastName")}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Last Name"
+              disabled
+              className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Slug"
+              {...register("slug")}
             />
-            {errors.lastName && (
-              <span className="text-red-600 text-[12px]">
-                {errors.lastName.message}
-              </span>
-            )}
-          </div>{" "}
-          <div className="mb-5">
-            <label
-              htmlFor="password"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
-              {"Email"}
-            </label>{" "}
-            <input
-              type="email"
-              {...register("email")}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="aashish@gmail.com"
-            />
-            {errors.email && (
-              <span className="text-red-600 text-[12px]">
-                {errors.email.message}
-              </span>
-            )}
           </div>{" "}
           <Button
             type="submit"
@@ -312,23 +281,13 @@ const Profile = () => {
           </Button>
         </form>
         <AlertModal
-          show={isOpen}
-          title={`Re-verification Email`}
-          message={"Are you sure you want to change your email address?"}
-          onClickCancel={() => setIsOpen(false)}
-          okBtnClassName={"bg-red-600 hover:bg-red-800"}
-          spinClassName={"!fill-red-600"}
-          onClickOk={() => handleUpdateProfile()}
-          loading={updateLoading}
-        />
-        <AlertModal
           show={isOpenImageModal}
-          title={`Remove Profile Picture ?`}
-          message={"Are you sure you want to remove your profile picture?"}
+          title={`Remove Team logo ?`}
+          message={"Are you sure you want to remove your team logo?"}
           onClickCancel={() => setIsOpenImageModal(false)}
           okBtnClassName={"bg-red-600 hover:bg-red-800"}
           spinClassName={"!fill-red-600"}
-          onClickOk={handleDelete}
+          onClickOk={() => handleDeleteTeamLogo()}
           loading={imageUploadLoading}
         />
       </div>
@@ -336,4 +295,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default GeneralTeamSettings;

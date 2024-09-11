@@ -76,7 +76,9 @@ model Projects {
   cuid            String           @unique @default(cuid())
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  name            String
+  name            String?
+  slug            String           @unique
+  projectImgUrl   String?
   logs            Changelogs[]
   Users           Users?           @relation(fields: [createdById], references: [id])
   createdById     Int?

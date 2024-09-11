@@ -5,6 +5,7 @@ import FeedbackHeader from "../(common)/FeedbackHeader";
 import FeedbackPublicSideNav from "../(common)/FeedbackPublicSideNav";
 import RoadmapPublicContentContainer from "./components/RoadmapPublicContentContainer";
 import { IFeedbackBoard } from "@/interfaces";
+import { Navbar } from "@/components/Navbar";
 
 type PagePropsType = {
   params: {
@@ -30,15 +31,24 @@ const Page: React.FC<PagePropsType> = async ({ params }) => {
   const feedbackBoards = project.feedbackBoards as unknown as IFeedbackBoard[];
 
   return (
-    <main className="flex flex-col">
-      <FeedbackHeader title="Roadmap" />
-      <div className="flex flex-1">
-        <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
-          <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
-          <RoadmapPublicContentContainer feedbackBoards={feedbackBoards} />
-        </div>
+    <div className="contents overflow-hidden">
+      <div className={`sticky top-0 bg-gray-50 z-10`}>
+        <Navbar
+          projectName={project.name!}
+          projectImgUrl={project.projectImgUrl!}
+          projectSlug={project.slug!}
+        />
       </div>
-    </main>
+      <main className="flex flex-col">
+        <FeedbackHeader title="Roadmap" />
+        <div className="flex flex-1">
+          <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
+            <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
+            <RoadmapPublicContentContainer feedbackBoards={feedbackBoards} />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 

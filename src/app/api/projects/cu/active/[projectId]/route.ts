@@ -1,3 +1,4 @@
+import { privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -74,6 +75,9 @@ export async function PATCH(
           roleId: projectUser?.roleId!,
         },
       },
+      select: {
+        projects: true,
+      },
     });
 
     if (!activeProject) {
@@ -81,7 +85,11 @@ export async function PATCH(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, "Project activated successfully")
+      new ApiResponse(
+        200,
+        privacyResponse(activeProject.projects),
+        "Project activated successfully"
+      )
     );
   });
 }
