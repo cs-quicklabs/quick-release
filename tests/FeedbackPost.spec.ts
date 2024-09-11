@@ -32,6 +32,4 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitleWithOnlySpaces()
-  
-   
   });
