@@ -11,13 +11,13 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
 
 test("should update profile", async ({ page }) => {
   const profiles = new Profiles(page);
-  await profiles.updateProfile("John", "Doe");
+  await profiles.updateProfile();
 });
 
 test("should upload profile avatar", async ({ page }) => {
   const profiles = new Profiles(page);
   await profiles.uploadProfileAvatar(
-    "C:/Users/Admin/OneDrive/Pictures/Screenshots/Test.png"
+    "C:/Users/Admin/OneDrive/Pictures/Screenshots/drdoom.jpg"
   );
 });
 

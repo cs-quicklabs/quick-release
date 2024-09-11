@@ -34,14 +34,15 @@ exports.Profiles = class Profiles {
     await expect(this.page.locator("text=Last Name")).toBeVisible();
   }
 
-  async updateProfile(firstName, lastName) {
+  async updateProfile() {
+    const Numeric = await Math.floor(10000 + Math.random() * 90000).toString();
     await this.openUserMenuAndNavigateToSettings();
-    await this.page.locator(this.firstNameInput).click({ clickCount: 3 });
+    await this.page.locator(this.firstNameInput).click();
     await this.page.locator(this.firstNameInput).press("Backspace");
-    await this.page.locator(this.firstNameInput).fill(firstName);
-    await this.page.locator(this.lastNameInput).click({ clickCount: 3 });
+    await this.page.locator(this.firstNameInput).fill("Divanshu"+Numeric);
+    await this.page.locator(this.lastNameInput).click();
     await this.page.locator(this.lastNameInput).press("Backspace");
-    await this.page.locator(this.lastNameInput).fill(lastName);
+    await this.page.locator(this.lastNameInput).fill("Gupta"+Numeric);
     await this.page.locator("text=Save").click();
   }
 

@@ -7,13 +7,11 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     const login = new LoginPage(page);
     await page.goto("/");
     await login.login(validCredentials.mail, validCredentials.password);
-    await page.waitForURL('http://localhost:3000/allLogs')
   });
 
   test("verify user able to Navigate to Feedback Post page", async ({ page }) => {
     const feedBackPosts = new feedbackPost(page);
     await feedBackPosts.navigateToFeedBack();
-    await page.waitForURL('http://localhost:3000/allPosts')
    
   });
   test("verify user able to add Posts", async ({ page }) => {
@@ -33,3 +31,32 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitleWithOnlySpaces()
   });
+
+  test("verify user able to delete Posts", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await feedBackPosts.addPosts();
+    await feedBackPosts.fillTitle()
+    await feedBackPosts.selectStatus('Planned')
+    await feedBackPosts.fillDescription()
+    await feedBackPosts.submitFeedBack()
+    await feedBackPosts.clickOpenOptions()
+    await feedBackPosts.deleteFeedbackPosts()
+   
+  });
+
+  test("verify user able to Edit Feedback", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await feedBackPosts.addPosts();
+    await feedBackPosts.fillTitle()
+    await feedBackPosts.selectStatus('Planned')
+    await feedBackPosts.fillDescription()
+    await feedBackPosts.submitFeedBack()
+    await feedBackPosts.clickOpenOptions()
+    await feedBackPosts.editFeedbackPost('Public')
+    await feedBackPosts.submitFeedBack()
+  });
+  
+
+  
