@@ -1,6 +1,6 @@
 "use client";
 
-import AlertModal from "../AlertModal";
+import AlertModal from "@/components/AlertModal";
 import { ChangeLogsStatus } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import Alert, { AlertPropsType } from "@/atoms/Alert";

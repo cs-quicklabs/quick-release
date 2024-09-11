@@ -12,7 +12,17 @@ export const getOneProject = async (
             releaseTags: true,
             releaseCategories: true,
           },
-        }
+        },
+        feedbackBoards: {
+          orderBy: [
+            {
+              isDefault: "desc",
+            },
+            {
+              createdAt: "asc",
+            },
+          ],
+        },
       },
     });
 
@@ -21,3 +31,4 @@ export const getOneProject = async (
     throw error;
   }
 };
+

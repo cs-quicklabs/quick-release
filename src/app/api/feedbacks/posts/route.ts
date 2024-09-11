@@ -101,6 +101,7 @@ export async function GET(req: NextRequest) {
     const page = Number(searchParams.get("page")) || 1;
     const limit = Number(searchParams.get("limit")) || 10;
     const start = (page - 1) * limit;
+    const skipLimit = searchParams.get("skipLimit");
 
     const projectId = searchParams.get("projectsId");
     if (!projectId) {
@@ -162,14 +163,13 @@ export async function GET(req: NextRequest) {
         in: status,
       };
     }
-    console.log(query);
 
     const feedbackPosts = privacyResponseArray(
       await db.feedbackPosts.findMany({
         where: query,
         include: FeedbackPostIncludeDBQuery,
-        skip: start,
-        take: limit,
+        skip: skipLimit === "true" ? undefined : start,
+        take: skipLimit === "true" ? undefined : limit,
         orderBy: {
           createdAt: "desc",
         },

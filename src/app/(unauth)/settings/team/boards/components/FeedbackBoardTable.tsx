@@ -16,7 +16,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
   const [showErrorMessage, setShowErrorMessage] = useState("");
   const {
     map: feedbackBoardMap,
-    list,
+    list: boardList,
     deleteFeedbackBoard,
     updateFeedbackBoard,
   } = useFeedbackBoardContext();
@@ -29,10 +29,9 @@ const FeedbackBoardTable: React.FC<{}> = () => {
     useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const boardList = useMemo(() => {
+  useEffect(() => {
     setSelectedFeedbackBoardId(null);
-    return list;
-  }, [list]);
+  }, [boardList]);
 
   const onDelete = (id: string) => {
     setShowErrorMessage("");

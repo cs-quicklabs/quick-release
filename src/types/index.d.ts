@@ -81,6 +81,13 @@ export type FeedbackPostType = {
   visibilityStatus?: string;
   upvotedCount?: number;
   isUpvoted?: boolean;
+  projectName?: string;
+};
+
+export type FeedbackStatusUpdatePayloadType = {
+  id: string;
+  status: string;
+  projectsId: string;
 };
 
 export type FeedbackBoardType = {

@@ -36,7 +36,7 @@ npm install
 ```
 // update the env from env.example file
 ```
-3. Make sure your $POSTGRES_PRISMA_URL file is update based on your db server
+3. Make sure your $POSTGRES_PRISMA_URL file is updated based on your db server configrations.
 4. Run the migration command
 - for dev
 ```
@@ -51,6 +51,8 @@ npx prisma migrate deploy
 ```
 npm run dev
 ```
+
+
 
 After above steps open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 

@@ -5,7 +5,7 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
-import EmptyPage from "@/components/dashboard/EmptyPage";
+import EmptyPage from "@/components/EmptyPage";
 import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import ScreenLoader from "@/atoms/ScreenLoader";
@@ -37,6 +37,13 @@ export default function AllPosts() {
   const { getAllFeedbackBoards } = useFeedbackBoardContext();
   const [showSideNav, setShowSideNav] = useState(false);
 
+  useEffect(() => {
+    if (!activeProjectId) {
+      sessionStorage.removeItem("activeFeedbackPostId");
+      getActiveProject(setActiveProjectLoading);
+    }
+  }, [activeProjectId]);
+
   const fetchAllFeedbackPosts = (
     boards: string | null,
     status: string | null,
@@ -49,13 +56,6 @@ export default function AllPosts() {
     if (search) query.search = search;
     getAllFeedbackPosts(query);
   };
-
-  useEffect(() => {
-    if (!activeProjectId) {
-      getActiveProject(setActiveProjectLoading);
-      sessionStorage.removeItem("activeFeedbackPostId");
-    }
-  }, [activeProjectId]);
 
   useEffect(() => {
     if (activeProjectId) {

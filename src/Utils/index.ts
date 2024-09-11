@@ -127,3 +127,26 @@ export function extractImageUrls(htmlString: string): string[] {
 
   return urls;
 }
+
+export const updateQueryParams = (
+  board: string | null,
+  search: string | null,
+  sort: string | null
+) => {
+  let queryParams = "";
+  if (board) {
+    queryParams += `board=${board}`;
+  }
+
+  if (search) {
+    if (queryParams) queryParams += "&";
+    queryParams += `search=${search}`;
+  }
+
+  if (sort) {
+    if (queryParams) queryParams += "&";
+    queryParams += `sort=${sort}`;
+  }
+
+  return queryParams;
+};

@@ -15,7 +15,7 @@ import { FunnelIcon, InboxIcon } from "@heroicons/react/20/solid";
 import Link from "next/link";
 import { ChangeLogsStatus } from "@/Utils/constants";
 import Spin from "@/atoms/Spin";
-import { Button } from "../../atoms/button";
+import { Button } from "@/atoms/button";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import { classNames } from "@/lib/utils";
 

@@ -18,6 +18,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { IReleaseTag } from "@/interfaces";
 import AlertModal from "@/components/AlertModal";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import Link from "next/link";
+import { ArrowUpRightIcon } from "@heroicons/react/24/outline";
+import BeatLoader from "react-spinners/BeatLoader";
 
 type PrevStateType = {
   isLoading: boolean;
@@ -29,6 +32,7 @@ const FeedbackContentContainer = () => {
   const [loading, setLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const searchParams = useSearchParams();
+  const [isUpvoteLoading, setIsUpvoteLoading] = useState(false);
   const search = useMemo(() => searchParams.get("search"), [searchParams]);
   const contentContainerRef = useRef<HTMLDivElement>(null);
   const prevStates = useRef<PrevStateType>({
@@ -43,7 +47,7 @@ const FeedbackContentContainer = () => {
     deleteFeedbackPost,
     upvoteFeedbackPost,
   } = useFeedbackPostContext();
-  const { activeProjectId } = useProjectContext();
+  const { activeProjectId, map: projectMap } = useProjectContext();
   const feedback = feedbackMap[activeFeedbackPostId!];
 
   const releaseTags = feedback?.releaseTags
@@ -63,11 +67,11 @@ const FeedbackContentContainer = () => {
           router.push(`/feedback/${activeFeedbackPostId}`);
         },
       },
-      // {
-      //   name: "Delete",
-      //   id: "delete-changelog",
-      //   onClick: () => setShowDeleteModal(true),
-      // },
+      {
+        name: "Delete",
+        id: "delete-feedback",
+        onClick: () => setShowDeleteModal(true),
+      },
     ],
     [feedback]
   );
@@ -113,8 +117,15 @@ const FeedbackContentContainer = () => {
       </section>
     );
   }
-  const { title, description, status, feedbackBoards, releaseETA, createdBy } =
-    feedback;
+  const {
+    id,
+    title,
+    description,
+    status,
+    feedbackBoards,
+    releaseETA,
+    createdBy,
+  } = feedback;
 
   const fullName = `${createdBy?.firstName || ""} ${
     createdBy?.lastName || ""
@@ -125,6 +136,8 @@ const FeedbackContentContainer = () => {
     : "";
   const ETA = releaseETA ? moment(releaseETA).format("DD/MM/YYYY") : undefined;
   const visibilityStatus = FeedbackVisibilityStatus[feedback.visibilityStatus!];
+
+  const publicLink = `${projectMap[activeProjectId!]?.name}/feedbacks/${id}`;
 
   return (
     <section
@@ -148,6 +161,11 @@ const FeedbackContentContainer = () => {
                 >
                   {visibilityStatus?.title}
                 </span>
+                {visibilityStatus.id === "public" && (
+                  <Link href={publicLink}>
+                    <ArrowUpRightIcon className="w-4 h-4 ml-2" />
+                  </Link>
+                )}
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500 flex items-center">
@@ -172,11 +190,21 @@ const FeedbackContentContainer = () => {
                     : "border-gray-300"
                 }`}
                 onClick={() =>
-                  upvoteFeedbackPost(feedback.id!, activeProjectId!)
+                  upvoteFeedbackPost(
+                    feedback.id!,
+                    activeProjectId!,
+                    setIsUpvoteLoading
+                  )
                 }
               >
-                <ChevronUpIcon className="h-5 w-5" />
-                {feedback?.upvotedCount}
+                {isUpvoteLoading ? (
+                  <BeatLoader size={7} />
+                ) : (
+                  <>
+                    <ChevronUpIcon className="h-5 w-5" />
+                    {feedback?.upvotedCount}
+                  </>
+                )}
               </span>
 
               <div className="relative ml-3 inline-block text-left">
@@ -263,7 +291,7 @@ const FeedbackContentContainer = () => {
       </div>
       <AlertModal
         show={showDeleteModal}
-        title="Delete change log"
+        title="Delete feedback post"
         message={
           visibilityStatus?.id === "public"
             ? "This feedback is in public view. Are you sure you want to delete it?"

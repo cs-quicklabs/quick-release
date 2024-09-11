@@ -236,13 +236,13 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
   useEffect(() => {
     if (prevProps?.current?.isSaving && !isSaving) {
       if (!error) {
-        router.replace("/allPosts");
+        router.back();
       }
     }
 
     if (prevProps?.current?.loading && !fetchFeedbackPostLoading) {
       if (error) {
-        router.replace("/allPosts");
+        router.back();
       }
     }
 
@@ -276,7 +276,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
     if (params.id === "add" && imageUrls.length > 0) {
       await removeFiles(imageUrls);
     }
-    router.replace("/allLogs");
+    router.back();
   };
 
   return (

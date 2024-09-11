@@ -1,3 +1,4 @@
+im
 export interface DropDownOptionType {
   readonly value: string;
   readonly label: string;
@@ -28,6 +29,12 @@ export interface User {
   orgs: organizations[];
   activeProjectId?: String;
 }
+
+export interface organizations {
+  id?: string;
+  cuid?: string;
+  name: string;
+};
 
 export interface IFile {
   encoding: string;
@@ -65,6 +72,7 @@ export interface IReleaseCategory {
 
 export interface IFeedbackBoard {
   id?: string;
+  cuid?: string;
   name?: string;
   code?: string;
   isDefault?: boolean;

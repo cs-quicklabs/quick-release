@@ -55,7 +55,7 @@ export default function FeedbackForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{"Title"}</FormLabel>
+              <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter feedback post title"
@@ -74,7 +74,7 @@ export default function FeedbackForm({
           name="feedbackBoard"
           render={({ field }) => (
             <FormItem className="w-1/2">
-              <FormLabel>{"Feedback Board"}</FormLabel>
+              <FormLabel>{"Feedback Board"}<span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Controller
                   name="feedbackBoard"
@@ -101,7 +101,7 @@ export default function FeedbackForm({
           name="status"
           render={({ field }) => (
             <FormItem className="w-1/2">
-              <FormLabel>{"Status"}</FormLabel>
+              <FormLabel>{"Status"}<span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <Controller
                   name="status"
@@ -133,7 +133,7 @@ export default function FeedbackForm({
           name="description"
           render={({ field: { value, onChange } }) => (
             <FormItem>
-              <FormLabel>{"Description"}</FormLabel>
+              <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
               <FormControl>
                 <RichTextEditor
                   placeholder="Enter feedback post description"
@@ -208,7 +208,7 @@ export default function FeedbackForm({
               name="releaseTags"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{"Release Tags (Optional)"}</FormLabel>
+                  <FormLabel>{"Tags"}</FormLabel>
                   <FormControl>
                     <Controller
                       name="releaseTags"
