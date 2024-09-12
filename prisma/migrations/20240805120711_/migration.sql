@@ -6,6 +6,14 @@ BEGIN
     END IF;
 END $$;
 
+-- Create the enum type VisibilityStatus if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'VisibilityStatus') THEN
+        CREATE TYPE "VisibilityStatus" AS ENUM ('public', 'private');
+    END IF;
+END $$;
+
 -- CreateTable FeedbackPosts if not exists
 DO $$
 BEGIN
@@ -22,11 +30,69 @@ BEGIN
             "createdById" INTEGER,
             "deletedAt" TIMESTAMP(3),
             "feedbackBoardsId" INTEGER,
-            "visibilityStatus" TEXT NOT NULL DEFAULT 'private',
+            "visibilityStatus" "VisibilityStatus" NOT NULL DEFAULT 'private',
             CONSTRAINT "FeedbackPosts_pkey" PRIMARY KEY ("id")
         );
     END IF;
 END $$;
+
+-- Temporarily remove the default value for visibilityStatus if it exists
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus') THEN
+        ALTER TABLE "FeedbackPosts" ALTER COLUMN "visibilityStatus" DROP DEFAULT;
+    END IF;
+END $$;
+
+-- Alter visibilityStatus column to enum type if it exists as text
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus' AND data_type = 'text') THEN
+        ALTER TABLE "FeedbackPosts"
+        ALTER COLUMN "visibilityStatus" TYPE "VisibilityStatus"
+        USING "visibilityStatus"::"VisibilityStatus";  -- Cast existing values to the enum type
+    END IF;
+END $$;
+
+-- Reapply the default value for visibilityStatus
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus') THEN
+        ALTER TABLE "FeedbackPosts" ALTER COLUMN "visibilityStatus" SET DEFAULT 'private'::"VisibilityStatus";
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ReleaseTagsOnFeedbacks') THEN
+        ALTER TABLE "ReleaseTagsOnFeedbacks" RENAME TO "FeedbackPostReleaseTags";
+    END IF;
+END $$;
+
+-- Rename feedbackId to feedbackPostId in FeedbackReleaseTags
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPostReleaseTags' AND column_name = 'feedbackId') THEN
+        ALTER TABLE "FeedbackPostReleaseTags" RENAME COLUMN "feedbackId" TO "feedbackPostId";
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'UpvotedFeedbacksByUsers') THEN
+        ALTER TABLE "UpvotedFeedbacksByUsers" RENAME TO "FeedbackPostVotes";
+    END IF;
+END $$;
+
+-- Rename feedbackId to feedbackPostId in UpvotedFeedbacksByUsers
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPostVotes' AND column_name = 'feedbackId') THEN
+        ALTER TABLE "FeedbackPostVotes" RENAME COLUMN "feedbackId" TO "feedbackPostId";
+        ALTER TABLE "FeedbackPostVotes" RENAME COLUMN "usersId" TO "userId";
+    END IF;
+END $$;
+
 
 -- CreateTable FeedbackBoards if not exists
 DO $$
@@ -48,11 +114,11 @@ END $$;
 -- CreateTable ReleaseTagsOnFeedbacks if not exists
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ReleaseTagsOnFeedbacks') THEN
-        CREATE TABLE "ReleaseTagsOnFeedbacks" (
-            "feedbackId" INTEGER NOT NULL,
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostReleaseTags') THEN
+        CREATE TABLE "FeedbackPostReleaseTags" (
+            "feedbackPostId" INTEGER NOT NULL,
             "releaseTagId" INTEGER NOT NULL,
-            CONSTRAINT "ReleaseTagsOnFeedbacks_pkey" PRIMARY KEY ("feedbackId", "releaseTagId")
+            CONSTRAINT "FeedbackPostReleaseTags_pkey" PRIMARY KEY ("feedbackPostId", "releaseTagId")
         );
     END IF;
 END $$;
@@ -60,11 +126,11 @@ END $$;
 -- CreateTable UpvotedFeedbacksByUsers if not exists
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'UpvotedFeedbacksByUsers') THEN
-        CREATE TABLE "UpvotedFeedbacksByUsers" (
-            "feedbackId" INTEGER NOT NULL,
-            "usersId" INTEGER NOT NULL,
-            CONSTRAINT "UpvotedFeedbacksByUsers_pkey" PRIMARY KEY ("feedbackId", "usersId")
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostVotes') THEN
+        CREATE TABLE "FeedbackPostVotes" (
+            "feedbackPostId" INTEGER NOT NULL,
+            "userId" INTEGER NOT NULL,
+            CONSTRAINT "FeedbackPostReleaseTags_pkey" PRIMARY KEY ("feedbackPostId", "userId")
         );
     END IF;
 END $$;

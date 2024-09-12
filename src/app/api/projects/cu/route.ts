@@ -47,7 +47,7 @@ export async function GET(req: Request, res: Response) {
       new ApiResponse(
         200,
         { projects: sortedProjects, totalProjects },
-        "Projects fetched successfully"
+        "Teams fetched successfully"
       )
     );
   });

@@ -54,7 +54,6 @@ export const deleteFiles = async (
   setIsLoading(true);
   try {
     const response = await fileDeleteRequest(pathUrls, onModal);
-    console.log(response.data);
     return response.data.data;
   } catch (err: any) {
     const errMessage = err?.response?.data?.message || "Something went wrong";

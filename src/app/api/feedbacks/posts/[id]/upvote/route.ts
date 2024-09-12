@@ -52,19 +52,19 @@ export async function POST(
       throw new ApiError(404, "Feedback post not found");
     }
 
-    const upvotedUser = await db.upvotedFeedbacksByUsers.findFirst({
+    const upvotedUser = await db.feedbackPostVotes.findFirst({
       where: {
-        feedbackId: feedbackPost?.id!,
-        usersId: user?.id!,
+        feedbackPostId: feedbackPost?.id!,
+        userId: user?.id!,
       },
     });
 
     if (upvotedUser) {
-      const deleted = await db.upvotedFeedbacksByUsers.delete({
+      const deleted = await db.feedbackPostVotes.delete({
         where: {
-          feedbackId_usersId: {
-            feedbackId: feedbackPost?.id!,
-            usersId: user?.id!,
+          feedbackPostId_userId: {
+            feedbackPostId: feedbackPost?.id!,
+            userId: user?.id!,
           },
         },
       });
@@ -73,10 +73,10 @@ export async function POST(
         throw new ApiError(500, "Failed to upvote");
       }
     } else {
-      const created = await db.upvotedFeedbacksByUsers.create({
+      const created = await db.feedbackPostVotes.create({
         data: {
-          feedbackId: feedbackPost?.id!,
-          usersId: user?.id!,
+          feedbackPostId: feedbackPost?.id!,
+          userId: user?.id!,
         },
       });
 

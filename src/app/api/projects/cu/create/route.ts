@@ -99,7 +99,7 @@ export async function POST(request: NextRequest, response: Response) {
       new ApiResponse(
         200,
         privacyResponse(project),
-        "Project created successfully"
+        "Team created successfully"
       )
     );
   });

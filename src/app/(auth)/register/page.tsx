@@ -31,17 +31,22 @@ const Register = () => {
           message: "First name can only contain letters",
         }),
 
-      lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
-        message: "Last Name can be maximum 50 characters",
-      })
-      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
-        message: "Last name can only contain letters",
-      }),
+      lastName: z
+        .string()
+        .trim()
+        .min(1, { message: "Required" })
+        .max(50, {
+          message: "Last Name can be maximum 50 characters",
+        })
+        .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+          message: "Last name can only contain letters",
+        }),
       email: z
         .string()
         .trim()
         .min(1, { message: "Required" })
-        .email({ message: "Invalid email address" }),
+        .email({ message: "Invalid email address" })
+        .transform((value) => value.toLowerCase()),
       orgName: z.string().trim().min(1, { message: "Required" }),
       terms: z.boolean(),
       password: z
@@ -304,9 +309,10 @@ const Register = () => {
                 <button
                   type="submit"
                   disabled={loader}
-                  className={
-                    `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
-                  }>
+                  className={`w-full mt-4  text-white ${
+                    loader ? "bg-blue-400" : "bg-blue-600"
+                  } focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+                >
                   {loader ? (
                     <div className="flex items-center justify-center gap-4">
                       <Oval

@@ -56,7 +56,8 @@ const Profile = () => {
       .string()
       .trim()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .transform((value) => value.toLowerCase()),
     profilePicture: z.unknown(),
   });
 
@@ -104,7 +105,7 @@ const Profile = () => {
     return (
       formValues.firstName !== loggedInUser?.firstName ||
       formValues.lastName !== loggedInUser?.lastName ||
-      formValues.email !== loggedInUser?.email
+      formValues.email.toLowerCase() !== loggedInUser?.email
     );
   }, [formValues, loggedInUser]);
 

@@ -25,7 +25,7 @@ const Project = () => {
   const [teamLogoUrl, setTeamLogoUrl] = useState<any>(null);
   const formSchema = z.object({
     name: z.string().trim().min(1, { message: "Required" }).max(50, {
-      message: "Team name can be maximum 50 characters",
+      message: "Team name can be maximum 30 characters",
     }),
     slug: z
       .string()
@@ -209,6 +209,11 @@ const Project = () => {
                     placeholder="skia"
                   />
                 </div>
+                {errors.slug && (
+                  <span className="text-red-600 text-[12px]">
+                    {errors.slug.message}
+                  </span>
+                )}
               </div>
               <Button
                 type="submit"

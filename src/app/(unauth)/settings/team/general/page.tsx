@@ -1,7 +1,7 @@
 "use client";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { z } from "zod";
@@ -16,6 +16,7 @@ import Loading from "@/atoms/Loading";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 
 const GeneralTeamSettings = () => {
+  const fileInputRef = useRef(null);
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
   const [teamLogoUrl, setTeamLogoUrl] = useState<any>(null);
@@ -91,7 +92,6 @@ const GeneralTeamSettings = () => {
         "ProjectImgs",
         setImageUploadLoading
       );
-      console.log(imageUrl);
       if (imageUrl && activeProjectId) {
         updateProjectDetails({
           id: activeProjectId!,
@@ -179,7 +179,7 @@ const GeneralTeamSettings = () => {
                           hidden
                           type="file"
                           accept="image/*"
-                          onChange={handleFileChange}
+                          onChange={(e) => handleFileChange(e)}
                         />
                         <XMarkIcon
                           className="ml-[-10px] cursor-pointer"

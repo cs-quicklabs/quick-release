@@ -215,7 +215,7 @@ const ContentContainer = () => {
   const createdAt = changelog.createdAt
     ? moment(changelog.createdAt).format("MMMM DD, YYYY")
     : "";
-  const publicLink = `/${projects?.name}/changelogs/${activeChangeLogId}`;
+  const publicLink = `/${projects?.slug}/changelogs/${activeChangeLogId}`;
 
   return (
     <section
@@ -232,9 +232,11 @@ const ContentContainer = () => {
               <div className="flex items-center">
                 <h1 className="text-lg font-medium text-gray-900">{title}</h1>
 
-                <Link href={publicLink}>
-                  <ArrowUpRightIcon className="w-4 h-4 ml-2" />
-                </Link>
+                {changeLogStatus.id === "published" && (
+                  <Link href={publicLink}>
+                    <ArrowUpRightIcon className="w-4 h-4 ml-2" />
+                  </Link>
+                )}
               </div>
 
               <p className="mt-1 truncate text-sm text-gray-500">
@@ -359,7 +361,7 @@ const ContentContainer = () => {
         spinClassName="!fill-red-600"
         onClickOk={() => {
           sessionStorage.removeItem("activeChangeLogId");
-          deleteOneChangeLog(activeChangeLogId!, setIsLoading)
+          deleteOneChangeLog(activeChangeLogId!, setIsLoading);
         }}
         onClickCancel={() => setShowDeleteModal(false)}
         loading={isLoading}
