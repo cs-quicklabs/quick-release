@@ -203,6 +203,7 @@ const Profile = () => {
                           type="file"
                           accept="image/*"
                           onChange={handleFileChange}
+                          onClick={(e: any) => (e.target.value = "")}
                         />
                         <XMarkIcon
                           className="ml-[-10px] cursor-pointer"
@@ -229,6 +230,7 @@ const Profile = () => {
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
+                        onClick={(e: any) => (e.target.value = "")}
                       />
                     </>
                   )}
