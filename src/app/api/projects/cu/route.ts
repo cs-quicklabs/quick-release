@@ -30,6 +30,8 @@ export async function GET(req: Request, res: Response) {
           name: true,
           createdAt: true,
           updatedAt: true,
+          slug: true,
+          projectImgUrl: true,
         }
        });
     

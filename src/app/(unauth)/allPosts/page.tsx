@@ -86,7 +86,7 @@ export default function AllPosts() {
           title: "No Project added.",
           description: "Get started by creating your first project.",
           btnText: "New Project",
-          navigateTo: "/create-project",
+          navigateTo: "/create-team",
         };
 
     return (

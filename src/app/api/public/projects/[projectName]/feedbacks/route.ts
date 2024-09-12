@@ -19,7 +19,7 @@ export async function GET(
     let { projectName } = params;
     projectName = projectName.toLowerCase();
 
-    const projectQuery = { name: projectName };
+    const projectQuery = { slug: projectName };
     const project = await db.projects.findFirst({
       where: projectQuery,
       include: { Users: true },
@@ -50,24 +50,24 @@ export async function GET(
       const feedbackBoardId = await db.feedbackBoards.findFirst({
         where: { name: board, projectsId: project.id! },
         select: { id: true },
-      })
+      });
 
-      getAllPublishedFeedbackPostsQuery.feedbackBoardsId = feedbackBoardId?.id
+      getAllPublishedFeedbackPostsQuery.feedbackBoardsId = feedbackBoardId?.id;
     }
 
     if (status) {
-      getAllPublishedFeedbackPostsQuery.status = status
+      getAllPublishedFeedbackPostsQuery.status = status;
     }
 
-    if(search) {
+    if (search) {
       getAllPublishedFeedbackPostsQuery.OR = [
         {
           title: {
             contains: search,
             mode: "insensitive",
-          }
-        }
-      ]
+          },
+        },
+      ];
     }
 
     const feedbackPosts = privacyResponseArray(
@@ -76,9 +76,9 @@ export async function GET(
         include: FeedbackPostIncludeDBQuery,
         skip: skipLimit === "true" ? undefined : start,
         take: skipLimit === "true" ? undefined : limit,
-        orderBy: { 
-          createdAt: sort === "desc" ? "desc" : "asc"
-        }
+        orderBy: {
+          createdAt: sort === "desc" ? "desc" : "asc",
+        },
       })
     );
 

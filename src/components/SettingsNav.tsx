@@ -51,9 +51,14 @@ const SettingsNav = (
     },
   ] : [
     {
+      href: "/settings/team/general",
+      text: "General",
+      icon: <ProfileSVG />,
+    },
+    {
       href: "/settings/team/boards",
       text: "Feedback Boards",
-      icon: <BoardIcon />,
+      icon: <LockIcon />,
     },
   ];
   return (

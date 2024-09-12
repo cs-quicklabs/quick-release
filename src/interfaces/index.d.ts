@@ -49,10 +49,12 @@ export interface Project {
   id: String;
   createdAt: DateTime;
   updatedAt: DateTime;
-  name: String;
+  name: string;
+  slug: string;
+  projectImgUrl: string;
   logs: Log[];
   User?: User;
-  adminId?: String;
+  adminId?: string;
   isActive: Boolean;
 }
 

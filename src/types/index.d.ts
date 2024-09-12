@@ -84,6 +84,13 @@ export type FeedbackPostType = {
   projectName?: string;
 };
 
+export type ProjectDetailsType = {
+  id: string;
+  name?: string;
+  slug?: string;
+  projectImgUrl?: string | null;
+}
+
 export type FeedbackStatusUpdatePayloadType = {
   id: string;
   status: string;

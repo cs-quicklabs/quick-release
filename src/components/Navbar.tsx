@@ -9,7 +9,6 @@ import { useUserContext } from "@/app/context/UserContext";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  BellIcon,
   MagnifyingGlassIcon,
   PlusCircleIcon,
   XMarkIcon,
@@ -24,16 +23,22 @@ import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
 import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
+import { classNames } from "@/lib/utils";
 
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
+type NavbarProps = {
+  projectName?: string;
+  projectImgUrl?: string;
+  projectSlug?: string;
+};
 
-export function Navbar() {
+export function Navbar({
+  projectName,
+  projectImgUrl,
+  projectSlug,
+}: NavbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
-  const { projectName } = params;
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
@@ -70,7 +75,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [];
 
-    if (activeProjectId && loggedInUser && pathname !== "/create-project") {
+    if (activeProjectId && loggedInUser && pathname !== "/create-team") {
       nav.push({
         id: "changelog",
         name: "Changelog",
@@ -94,20 +99,20 @@ export function Navbar() {
       nav.push({
         id: "changelog",
         name: "Changelog",
-        href: `/${projectName}/changelogs`,
+        href: `/${projectSlug}/changelogs`,
         current: false,
       });
 
       nav.push({
         id: "feedback",
         name: "Feedback",
-        href: `/${projectName}/feedbacks`,
+        href: `/${projectSlug}/feedbacks`,
         current: false,
       });
       nav.push({
         id: "roadmap",
         name: "Roadmap",
-        href: `/${projectName}/roadmap`,
+        href: `/${projectSlug}/roadmap`,
         current: false,
       });
     }
@@ -124,9 +129,15 @@ export function Navbar() {
 
   const teamName = projectName
     ? projectName
-    : pathname === "/create-project" || !activeProjectId
+    : pathname === "/create-team" || !activeProjectId
     ? WEB_DETAILS.name
     : projectMap[activeProjectId]?.name;
+
+  const logoSrc = projectImgUrl
+    ? projectImgUrl
+    : projectMap[activeProjectId!]?.projectImgUrl && pathname !== "/create-team"
+    ? projectMap[activeProjectId!]?.projectImgUrl
+    : WEB_DETAILS.logo;
 
   return (
     <>
@@ -151,7 +162,7 @@ export function Navbar() {
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <Image
                       className="h-8 w-auto"
-                      src={WEB_DETAILS.logo}
+                      src={logoSrc!}
                       alt="Your Company"
                       width={40}
                       height={40}
@@ -165,7 +176,7 @@ export function Navbar() {
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <Image
                       className="h-8 w-auto"
-                      src={WEB_DETAILS.logo}
+                      src={logoSrc!}
                       alt="Your Company"
                       width={40}
                       height={40}
@@ -345,11 +356,11 @@ export function Navbar() {
                           </Menu.Item>
                           <Menu.Item>
                             <Link
-                              href="/create-project"
+                              href="/create-team"
                               className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                             >
                               <PlusCircleIcon className="h-5 w-5 mr-2" />
-                              {"Add new project"}
+                              {"Add new team"}
                             </Link>
                           </Menu.Item>
 
@@ -462,7 +473,7 @@ export function Navbar() {
                             <Menu.Item>
                               {({ active }) => (
                                 <Link
-                                  href="/settings/team/boards"
+                                  href="/settings/team/general"
                                   // onClick={handleLogout}
                                   className={classNames(
                                     active ? "bg-gray-100" : "",
@@ -578,7 +589,7 @@ export function Navbar() {
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <div className="flex items-center">
-                    <Link href="/settings/team/boards">
+                    <Link href="/settings/account/tags">
                       {"Account Settings"}
                     </Link>
                   </div>
@@ -595,12 +606,12 @@ export function Navbar() {
                   </div>
                 </Link>
                 <Link
-                  href="/settings/team/boards"
+                  href="/settings/team/general"
                   // onClick={handleLogout}
                   className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
                 >
                   <div className="flex items-center">
-                    <Link href="/settings/team/tags">{"Team Settings"}</Link>
+                    <Link href="/settings/team/general">{"Team Settings"}</Link>
                   </div>
                 </Link>
                 <a

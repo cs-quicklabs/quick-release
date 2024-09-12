@@ -27,7 +27,7 @@ export function middleware(request: NextRequest) {
     }
 
     if (path === "/settings/team") {
-      return NextResponse.redirect(new URL("/settings/team/boards", request.url));
+      return NextResponse.redirect(new URL("/settings/team/general", request.url));
     }
 
     if (path === "/" || path === "/register") {
@@ -48,7 +48,7 @@ export const config = {
     "/register",
     "/changeLog/:path*",
     "/settings/:path*",
-    "/create-project",
+    "/create-team",
     "/roadmap",
     "/roadmap/:path*",
   ],
