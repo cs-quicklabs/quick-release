@@ -52,8 +52,6 @@ export default function AllPosts() {
       status: destination.droppableId,
       projectsId: activeProjectId!,
     };
-
-    console.log(feedback);
     updateFeedbackStatus(feedback, setUpdateFeedbackLoading);
     setFeedbackStatusMap(items);
   };

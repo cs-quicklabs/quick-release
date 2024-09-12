@@ -88,7 +88,7 @@ export async function PATCH(
       new ApiResponse(
         200,
         privacyResponse(activeProject.projects),
-        "Project activated successfully"
+        "Team activated successfully"
       )
     );
   });
