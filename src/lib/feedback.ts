@@ -1,5 +1,5 @@
 export const computeFeedback = (feedback: any, userId?: number) => {
-  const { upvotedFeedbacksByUsers, ...rest } = feedback;
+  const { feedbackPostVotes, ...rest } = feedback;
   const releaseTags = feedback.releaseTags
     ? feedback.releaseTags.map((tag: any) => tag.releaseTag)
     : [];
@@ -7,11 +7,11 @@ export const computeFeedback = (feedback: any, userId?: number) => {
   let upvotedCount = 0;
   let isUpvoted = false;
 
-  if (upvotedFeedbacksByUsers) {
-    upvotedCount = upvotedFeedbacksByUsers.length;
-    if(userId) {
-      isUpvoted = upvotedFeedbacksByUsers.some(
-        (user: any) => user.usersId === userId
+  if (feedbackPostVotes) {
+    upvotedCount = feedbackPostVotes.length;
+    if (userId) {
+      isUpvoted = feedbackPostVotes.some(
+        (feedbackPostVote: any) => feedbackPostVote.userId === userId
       );
     }
   }

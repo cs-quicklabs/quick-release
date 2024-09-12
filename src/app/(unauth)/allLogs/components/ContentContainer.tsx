@@ -86,7 +86,7 @@ const ContentContainer = () => {
     const archivedAt = changelog.archivedAt
       ? moment(changelog.archivedAt).format("MMMM DD, YYYY")
       : "";
-    const publicLink = `/${projects?.name}/changelogs/${activeChangeLogId}`;
+    const publicLink = `/${projects?.slug}/changelogs/${activeChangeLogId}`;
     const editChangeLogLink = `/changeLog/${activeChangeLogId}`;
     const changeLogStatus = archivedAt
       ? ChangeLogsStatus.archived

@@ -180,6 +180,9 @@ const GeneralTeamSettings = () => {
                           type="file"
                           accept="image/*"
                           onChange={(e) => handleFileChange(e)}
+                          onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                            (e.target as HTMLInputElement).value = "";
+                          }}
                         />
                         <XMarkIcon
                           className="ml-[-10px] cursor-pointer"
@@ -205,7 +208,10 @@ const GeneralTeamSettings = () => {
                         hidden
                         type="file"
                         accept="image/*"
-                        onChange={handleFileChange}
+                        onChange={(e) => handleFileChange(e)}
+                        onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                          (e.target as HTMLInputElement).value = "";
+                        }}
                       />
                     </>
                   )}
