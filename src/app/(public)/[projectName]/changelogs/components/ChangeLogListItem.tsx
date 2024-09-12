@@ -29,7 +29,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
   // const releaseTags = changeLog.releaseTags.map((id) => ChangeLogsReleaseTags[id!]);
   const releaseTags = (changeLog.releaseTags as IReleaseTag[]).map(tag => ({ value: tag.code, label: tag.name }));
   const scheduledTime = changeLog.scheduledTime ? moment(changeLog.scheduledTime).format("MMMM DD, yyyy") : "-";
-  const publicLink = `/${projects?.name}/changelogs/${id}`;
+  const publicLink = `/${projects?.slug}/changelogs/${id}`;
 
   return (
     <main className="max-w-3xl border-b border-gray-100">
