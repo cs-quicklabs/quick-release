@@ -54,8 +54,8 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
           </div>
           <div
             className={`${
-              releaseCategories?.length && releaseTags?.length
-                ? " lg:col-span-9"
+              releaseCategories?.length || releaseTags?.length
+                ? "mt-[16rem] lg:col-span-9"
                 : "lg:col-span-12"
             } lg:mt-0 ${!loggedInUser && "mt-[16rem]"}`}
           >
