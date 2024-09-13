@@ -174,7 +174,10 @@ export function Navbar({
                     </span>
                   </div>
                   <div>
-                    <Disclosure.Button onClick={() => setShowMenuNav &&  setShowMenuNav(!open)} className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                    <Disclosure.Button
+                      onClick={() => setShowMenuNav && setShowMenuNav(!open)}
+                      className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    >
                       <span className="absolute -inset-0.5" />
                       <span className="sr-only" id="Open-main-menu">
                         {"Open main menu"}
@@ -491,25 +494,102 @@ export function Navbar({
                             )}
                           </Menu.Item>
                           {projectList.length > 0 && (
-                            <Menu.Item>
-                              {({ active }) => (
-                                <Link
-                                  href="/settings/team/general"
-                                  // onClick={handleLogout}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
-                                  )}
-                                >
-                                  <div
-                                    className="flex  items-center"
-                                    id="team-setting"
+                            <>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href="/settings/team/general"
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
+                                    )}
                                   >
-                                    {"Team Settings"}
-                                  </div>
-                                </Link>
-                              )}
-                            </Menu.Item>
+                                    <div
+                                      className="flex  items-center"
+                                      id="team-setting"
+                                    >
+                                      {"Team Settings"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <div
+                                className={
+                                  "block px-4 py-2 text-sm text-gray-500 font-medium border-t"
+                                }
+                              >
+                                <div
+                                  className="flex  items-center"
+                                  id="support-setting"
+                                >
+                                  {"Support"}
+                                </div>
+                              </div>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/changelogs`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-changelog"
+                                    >
+                                      {"Changelogs"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/feedbacks`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-feedbacks"
+                                    >
+                                      {"Feedbacks"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/roadmap`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-roadmap"
+                                    >
+                                      {"Roadmap"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                            </>
                           )}
                           <Menu.Item>
                             {({ active }) => (
@@ -637,6 +717,34 @@ export function Navbar({
                         {"Team Settings"}
                       </Link>
                     </div>
+                  </Link>
+                  <Link
+                    href="#"
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base text-white font-medium bg-gray-700"
+                  >
+                    <div className="flex items-center">{"Support"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/changelogs`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Changelogs"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/feedbacks`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Feedbacks"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/roadmap`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Roadmap"}</div>
                   </Link>
                   <a
                     onClick={() => setOpen(true)}
