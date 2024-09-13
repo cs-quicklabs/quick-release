@@ -53,7 +53,7 @@ export async function generateMetadata(
     feedbackpost.createdBy?.lastName || ""
   }`.trim();
   const date = moment(feedbackpost.createdAt).format("MMMM DD, YYYY");
-  const ogDesc = `Published on ${date} - ${fullName}`;
+  const ogDesc = `Feedback posted on ${date} - ${fullName}`;
 
   return {
     title: feedbackpost.title,

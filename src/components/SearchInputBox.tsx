@@ -1,23 +1,23 @@
 import React, {
   useState,
   useMemo,
-  useRef,
-  useEffect,
-  useCallback,
+  // useRef,
+  // useEffect,
+  // useCallback,
 } from "react";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import {
-  useParams,
+  // useParams,
   usePathname,
   useRouter,
   useSearchParams,
 } from "next/navigation";
 import { requestHandler, updateQueryParams } from "@/Utils";
-import {
-    getAllPublicFeedbacksRequest,
-} from "@/fetchHandlers/feedbacks";
-import { useProjectContext } from "@/app/context/ProjectContext";
-import { FilterType } from "@/types";
+// import {
+//     getAllPublicFeedbacksRequest,
+// } from "@/fetchHandlers/feedbacks";
+// import { useProjectContext } from "@/app/context/ProjectContext";
+// import { FilterType } from "@/types";
 
 export default function FeedbackSearchWithAutocomplete({
   board,
@@ -37,74 +37,75 @@ export default function FeedbackSearchWithAutocomplete({
       return "";
     }, [searchParams])
   );
-  const { projectName } = useParams();
-  const [suggestions, setSuggestions] = useState<string[]>([]); // Suggestions state
-  const [showSuggestions, setShowSuggestions] = useState(false); // Control visibility of suggestions
-  const [loading, setLoading] = useState(false);
+  // const { projectName } = useParams();
+  // const [suggestions, setSuggestions] = useState<string[]>([]); // Suggestions state
+  // const [showSuggestions, setShowSuggestions] = useState(false); // Control visibility of suggestions
+  // const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { activeProjectId } = useProjectContext();
+  // const { activeProjectId } = useProjectContext();
 
   // Debounce function to prevent rapid API calls
-  const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return (...args: any[]) => {
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => func(...args), delay);
-    };
-  };
+  // const debounce = (func: (...args: any[]) => void, delay: number) => {
+  //   let timer: NodeJS.Timeout;
+  //   return (...args: any[]) => {
+  //     if (timer) clearTimeout(timer);
+  //     timer = setTimeout(() => func(...args), delay);
+  //   };
+  // };
 
   // Fetch suggestions from API
-  const fetchSuggestions = useCallback(
-    async (query: string) => {
-      if (!query || query.length < 3) return;
+  // const fetchSuggestions = useCallback(
+  //   async (query: string) => {
+  //     if (!query || query.length < 3) return;
 
-      let params: FilterType = { projectsId: activeProjectId! };
+  //     let params: FilterType = { projectsId: activeProjectId! };
 
-      if (board) params.feedbackBoards = board;
-      if (status) params.feedbackStatus = status;
-      await requestHandler(
-        async () =>
-          await getAllPublicFeedbacksRequest({
-            projectName,
-            search: query,
-            limit: 5,
-          }),
-        setLoading,
-        (res) => {
-          const { data } = res;
-          setSuggestions(
-            data.feedbackPosts.map((feedbackPost: any) => feedbackPost.title)
-          );
-          setShowSuggestions(true);
-        },
-        () => {
-          setSuggestions([]);
-          setShowSuggestions(false);
-        }
-      );
-    },
-    [searchQuery]
-  );
+  //     if (board) params.feedbackBoards = board;
+  //     if (status) params.feedbackStatus = status;
+  //     await requestHandler(
+  //       async () =>
+  //         await getAllPublicFeedbacksRequest({
+  //           projectName,
+  //           search: query,
+  //           limit: 5,
+  //         }),
+  //       setLoading,
+  //       (res) => {
+  //         const { data } = res;
+  //         setSuggestions(
+  //           data.feedbackPosts.map((feedbackPost: any) => feedbackPost.title)
+  //         );
+  //         setShowSuggestions(true);
+  //       },
+  //       () => {
+  //         setSuggestions([]);
+  //         setShowSuggestions(false);
+  //       }
+  //     );
+  //   },
+  //   [searchQuery]
+  // );
 
   // Debounced API call
-  const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 300),
-    []
-  );
+  // const debouncedFetchSuggestions = useCallback(
+  //   debounce(fetchSuggestions, 300),
+  //   []
+  // );
 
-  useEffect(() => {
-    if (searchQuery) {
-      debouncedFetchSuggestions(searchQuery);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
-  }, [searchQuery, debouncedFetchSuggestions]);
+  // useEffect(() => {
+  //   if (searchQuery) {
+  //     debouncedFetchSuggestions(searchQuery);
+  //   } else {
+  //     setSuggestions([]);
+  //     setShowSuggestions(false);
+  //   }
+  // }, [searchQuery, debouncedFetchSuggestions]);
 
   const onSearch = (searchInput: string) => {
     const queryParams = updateQueryParams(board!, searchInput, null);
     router.push(`${pathname}?${queryParams}`);
-    setShowSuggestions(false);
+    setSearchQuery(searchInput);
+    // setShowSuggestions(false);
   };
 
   return (
@@ -134,7 +135,7 @@ export default function FeedbackSearchWithAutocomplete({
             onClick={() => {
               setSearchQuery(""); // Clear input
               onSearch("");
-              setShowSuggestions(false); // Hide suggestions
+              // setShowSuggestions(false); // Hide suggestions
             }}
             className="absolute inset-y-0 right-0 flex items-center pr-3"
           >
@@ -144,7 +145,7 @@ export default function FeedbackSearchWithAutocomplete({
       </div>
 
       {/* Autocomplete Suggestions */}
-      {showSuggestions && suggestions.length > 0 && (
+      {/* {showSuggestions && suggestions.length > 0 && (
         <ul className="absolute z-10 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {loading ? (
             <li className="p-2 text-gray-500">Loading...</li>
@@ -160,7 +161,7 @@ export default function FeedbackSearchWithAutocomplete({
             ))
           )}
         </ul>
-      )}
+      )} */}
     </div>
   );
 }
