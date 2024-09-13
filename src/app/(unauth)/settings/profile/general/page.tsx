@@ -14,6 +14,7 @@ import AlertModal from "@/components/AlertModal";
 import { Button } from "@/atoms/button";
 import { ProfileType } from "@/types";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
+import { showNotification } from "@/Utils";
 
 const Profile = () => {
   const router = useRouter();
@@ -123,6 +124,7 @@ const Profile = () => {
         updateUserDetails({
           profilePicture: url,
         });
+        showNotification("success", "Profile picture updated successfully");
         setProfileImgUrl(url);
       }
     }
@@ -151,6 +153,7 @@ const Profile = () => {
         profilePicture: null,
       });
       setProfileImgUrl(null);
+      showNotification("success", "Profile picture deleted successfully");
       setIsOpenImageModal(false);
     }
   };
