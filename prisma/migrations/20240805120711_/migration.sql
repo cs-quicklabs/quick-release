@@ -14,6 +14,23 @@ BEGIN
     END IF;
 END $$;
 
+-- CreateTable FeedbackBoards if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackBoards') THEN
+        CREATE TABLE "FeedbackBoards" (
+            "id" SERIAL NOT NULL,
+            "cuid" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "isDefault" BOOLEAN NOT NULL DEFAULT false,
+            "projectsId" INTEGER,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            CONSTRAINT "FeedbackBoards_pkey" PRIMARY KEY ("id")
+        );
+    END IF;
+END $$;
+
 -- CreateTable FeedbackPosts if not exists
 DO $$
 BEGIN
@@ -36,82 +53,7 @@ BEGIN
     END IF;
 END $$;
 
--- Temporarily remove the default value for visibilityStatus if it exists
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus') THEN
-        ALTER TABLE "FeedbackPosts" ALTER COLUMN "visibilityStatus" DROP DEFAULT;
-    END IF;
-END $$;
-
--- Alter visibilityStatus column to enum type if it exists as text
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus' AND data_type = 'text') THEN
-        ALTER TABLE "FeedbackPosts"
-        ALTER COLUMN "visibilityStatus" TYPE "VisibilityStatus"
-        USING "visibilityStatus"::"VisibilityStatus";  -- Cast existing values to the enum type
-    END IF;
-END $$;
-
--- Reapply the default value for visibilityStatus
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPosts' AND column_name = 'visibilityStatus') THEN
-        ALTER TABLE "FeedbackPosts" ALTER COLUMN "visibilityStatus" SET DEFAULT 'private'::"VisibilityStatus";
-    END IF;
-END $$;
-
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'ReleaseTagsOnFeedbacks') THEN
-        ALTER TABLE "ReleaseTagsOnFeedbacks" RENAME TO "FeedbackPostReleaseTags";
-    END IF;
-END $$;
-
--- Rename feedbackId to feedbackPostId in FeedbackReleaseTags
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPostReleaseTags' AND column_name = 'feedbackId') THEN
-        ALTER TABLE "FeedbackPostReleaseTags" RENAME COLUMN "feedbackId" TO "feedbackPostId";
-    END IF;
-END $$;
-
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'UpvotedFeedbacksByUsers') THEN
-        ALTER TABLE "UpvotedFeedbacksByUsers" RENAME TO "FeedbackPostVotes";
-    END IF;
-END $$;
-
--- Rename feedbackId to feedbackPostId in UpvotedFeedbacksByUsers
-DO $$
-BEGIN
-    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'FeedbackPostVotes' AND column_name = 'feedbackId') THEN
-        ALTER TABLE "FeedbackPostVotes" RENAME COLUMN "feedbackId" TO "feedbackPostId";
-        ALTER TABLE "FeedbackPostVotes" RENAME COLUMN "usersId" TO "userId";
-    END IF;
-END $$;
-
-
--- CreateTable FeedbackBoards if not exists
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackBoards') THEN
-        CREATE TABLE "FeedbackBoards" (
-            "id" SERIAL NOT NULL,
-            "cuid" TEXT NOT NULL,
-            "name" TEXT NOT NULL,
-            "isDefault" BOOLEAN NOT NULL DEFAULT false,
-            "projectsId" INTEGER,
-            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            "updatedAt" TIMESTAMP(3) NOT NULL,
-            CONSTRAINT "FeedbackBoards_pkey" PRIMARY KEY ("id")
-        );
-    END IF;
-END $$;
-
--- CreateTable ReleaseTagsOnFeedbacks if not exists
+-- CreateTable FeedbackPostReleaseTags if not exists
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostReleaseTags') THEN
@@ -123,14 +65,14 @@ BEGIN
     END IF;
 END $$;
 
--- CreateTable UpvotedFeedbacksByUsers if not exists
+-- CreateTable FeedbackPostVotes if not exists
 DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostVotes') THEN
         CREATE TABLE "FeedbackPostVotes" (
             "feedbackPostId" INTEGER NOT NULL,
             "userId" INTEGER NOT NULL,
-            CONSTRAINT "FeedbackPostReleaseTags_pkey" PRIMARY KEY ("feedbackPostId", "userId")
+            CONSTRAINT "FeedbackPostVotes_pkey" PRIMARY KEY ("feedbackPostId", "userId")
         );
     END IF;
 END $$;
@@ -187,28 +129,47 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPosts_createdById_fkey') THEN
         ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
+END $$;
 
+DO $$
+BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPosts_feedbackBoardsId_fkey') THEN
         ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_feedbackBoardsId_fkey" FOREIGN KEY ("feedbackBoardsId") REFERENCES "FeedbackBoards"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
+END $$;
 
+DO $$
+BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackBoards_projectsId_fkey') THEN
         ALTER TABLE "FeedbackBoards" ADD CONSTRAINT "FeedbackBoards_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
     END IF;
+END $$;
 
-    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'ReleaseTagsOnFeedbacks_feedbackId_fkey') THEN
-        ALTER TABLE "ReleaseTagsOnFeedbacks" ADD CONSTRAINT "ReleaseTagsOnFeedbacks_feedbackId_fkey" FOREIGN KEY ("feedbackId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-    END IF;
-
-    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'ReleaseTagsOnFeedbacks_releaseTagId_fkey') THEN
-        ALTER TABLE "ReleaseTagsOnFeedbacks" ADD CONSTRAINT "ReleaseTagsOnFeedbacks_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTags"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-    END IF;
-
-    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'UpvotedFeedbacksByUsers_feedbackId_fkey') THEN
-        ALTER TABLE "UpvotedFeedbacksByUsers" ADD CONSTRAINT "UpvotedFeedbacksByUsers_feedbackId_fkey" FOREIGN KEY ("feedbackId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-    END IF;
-
-    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'UpvotedFeedbacksByUsers_usersId_fkey') THEN
-        ALTER TABLE "UpvotedFeedbacksByUsers" ADD CONSTRAINT "UpvotedFeedbacksByUsers_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostReleaseTags_feedbackPostId_fkey') THEN
+        ALTER TABLE "FeedbackPostReleaseTags" ADD CONSTRAINT "FeedbackPostReleaseTags_feedbackPostId_fkey" FOREIGN KEY ("feedbackPostId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
     END IF;
 END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostReleaseTags_releaseTagId_fkey') THEN
+        ALTER TABLE "FeedbackPostReleaseTags" ADD CONSTRAINT "FeedbackPostReleaseTags_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTags"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostVotes_feedbackPostId_fkey') THEN
+        ALTER TABLE "FeedbackPostVotes" ADD CONSTRAINT "FeedbackPostVotes_feedbackPostId_fkey" FOREIGN KEY ("feedbackPostId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostVotes_userId_fkey') THEN
+        ALTER TABLE "FeedbackPostVotes" ADD CONSTRAINT "FeedbackPostVotes_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
+
