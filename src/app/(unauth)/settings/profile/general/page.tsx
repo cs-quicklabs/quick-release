@@ -1,48 +1,64 @@
 "use client";
-
-import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
-import Modal from "@/atoms/Modal";
-import { fileUploadRequest } from "@/fetchHandlers/fileUpload";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
-import { toast } from "react-toastify";
 import { z } from "zod";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { useProjectContext } from "@/app/context/ProjectContext";
+import AlertModal from "@/components/AlertModal";
+import { Button } from "@/atoms/button";
+import { ProfileType } from "@/types";
+import { deleteFiles, uploadFile } from "@/fetchHandlers";
+import { showNotification } from "@/Utils";
 
 const Profile = () => {
   const router = useRouter();
-  const { loggedInUser } = useUserContext();
-  const [fileName, setFileName] = useState<any>(loggedInUser?.profilePicture);
+  const {
+    loggedInUser,
+    updateUserDetails,
+    isLoading: updateLoading,
+  } = useUserContext();
+  const [profileImgUrl, setProfileImgUrl] = useState<any>(
+    loggedInUser?.profilePicture
+  );
   const [isOpenImageModal, setIsOpenImageModal] = useState(false);
   const [imageUploadLoading, setImageUploadLoading] = useState(false);
-  const [loading, setLoading] = useState({
-    profileLoading: false,
-  });
   const [loader, setLoader] = useState(false);
 
   const { activeProjectId, getActiveProject } = useProjectContext();
   const [isOpen, setIsOpen] = useState(false);
   const formSchema = z.object({
-    firstName: z.string().trim().min(1, { message: "Required" }).max(50, {
-      message: "Fisrt Name can be maximum 50 characters",
-    }),
-    lastName: z.string().trim().min(1, { message: "Required" }).max(50, {
-      message: "Last Name can be maximum 50 characters",
-    }),
+    firstName: z
+      .string()
+      .trim()
+      .min(1, { message: "Required" })
+      .max(50, {
+        message: "Fisrt Name can be maximum 50 characters",
+      })
+      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+        message: "First name can only contain letters",
+      }),
+    lastName: z
+      .string()
+      .trim()
+      .min(1, { message: "Required" })
+      .max(50, {
+        message: "Last Name can be maximum 50 characters",
+      })
+      .refine((value) => value.length > 0 && /^[a-zA-Z ]+$/.test(value), {
+        message: "Last name can only contain letters",
+      }),
     email: z
       .string()
       .trim()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .transform((value) => value.toLowerCase()),
     profilePicture: z.unknown(),
   });
 
@@ -52,13 +68,14 @@ const Profile = () => {
     formState: { errors },
     getValues,
     reset,
+    watch,
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: loggedInUser?.firstName as string,
       lastName: loggedInUser?.lastName as string,
       email: loggedInUser?.email as string,
-      profilePicture: fileName,
+      profilePicture: loggedInUser?.profilePicture,
     },
   });
 
@@ -69,6 +86,7 @@ const Profile = () => {
           firstName: loggedInUser.firstName as string,
           lastName: loggedInUser.lastName as string,
           email: loggedInUser.email as string,
+          profilePicture: loggedInUser.profilePicture,
         });
       }
     };
@@ -77,93 +95,38 @@ const Profile = () => {
   }, [loggedInUser]);
 
   useEffect(() => {
-    if(!activeProjectId) {
+    if (!activeProjectId) {
       getActiveProject(setLoader);
     }
   }, [activeProjectId]);
 
-  const formValues = getValues();
+  const formValues = watch();
+
+  const hasChanged = useMemo(() => {
+    return (
+      formValues.firstName !== loggedInUser?.firstName ||
+      formValues.lastName !== loggedInUser?.lastName ||
+      formValues.email.toLowerCase() !== loggedInUser?.email
+    );
+  }, [formValues, loggedInUser]);
 
   const handleFileChange = async (event: any) => {
     const file = event.target.files[0];
+
     if (file) {
-      await uploadImage.upload(file);
-    } else {
-      console.error("No file selected.");
-    }
-  };
+      const url = await uploadFile(
+        file,
+        "ProfilePictures",
+        setImageUploadLoading
+      );
 
-  const uploadImage = useMemo(
-    () => ({
-      upload: (file: File) => {
-        return new Promise(async (resolve, reject) => {
-          // check if valid image exists
-          const extension = file.name.toLowerCase().split(".").pop();
-          if (!["png", "jpg", "jpeg"].includes(extension!)) {
-            const errMessage = "Invalid file type";
-            showNotification("error", errMessage);
-            return reject(errMessage);
-          }
-
-          if(file.size > 1024 * 1024 * 3) {
-            const errMessage = "File size should be less than 3 MB";
-            showNotification("error", errMessage);
-            return reject(errMessage);
-          }
-
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("onModal", "ProfilePictures");
-
-          await requestHandler(
-            async () => await fileUploadRequest(formData),
-            setImageUploadLoading,
-            (res: any) => {
-              setFileName(res.data.url);
-              showNotification("success", res?.message);
-            },
-            (errMessage) => {
-              showNotification("error", errMessage);
-              reject(errMessage);
-            }
-          );
+      if (url) {
+        updateUserDetails({
+          profilePicture: url,
         });
-      },
-    }),
-    []
-  );
-
-  const updateProfile = async (
-    values: z.infer<typeof formSchema>,
-    isEmailUpdate = false
-  ) => {
-    toast.dismiss();
-    try {
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: true,
-      }));
-      await axios.post(`/api/update-profile/${loggedInUser?.id}`, {
-        ...values,
-        profilePicture: fileName,
-      });
-
-      toast.success("Profile Updated Successfully");
-
-      if (isEmailUpdate) {
-        await signOut({ redirect: false });
-        router.push("/");
-        router.refresh();
+        showNotification("success", "Profile picture updated successfully");
+        setProfileImgUrl(url);
       }
-    } catch (err: any) {
-      console.log("error", err);
-
-      toast.error(err.response.data.message);
-    } finally {
-      setLoading((prevLoading) => ({
-        ...prevLoading,
-        profileLoading: false,
-      }));
     }
   };
 
@@ -172,10 +135,26 @@ const Profile = () => {
     e: any
   ) => {
     if (loggedInUser?.email === values.email) {
-      updateProfile(values);
-      window.location.reload();
+      updateUserDetails(values as ProfileType);
     } else {
       setIsOpen(true);
+    }
+  };
+
+  const handleUpdateProfile = async () => {
+    setIsOpen(false);
+    updateUserDetails(formValues as ProfileType);
+  };
+
+  const handleDelete = async () => {
+    deleteFiles([profileImgUrl], "ProfilePictures", setImageUploadLoading);
+    if (!imageUploadLoading) {
+      updateUserDetails({
+        profilePicture: null,
+      });
+      setProfileImgUrl(null);
+      showNotification("success", "Profile picture deleted successfully");
+      setIsOpenImageModal(false);
     }
   };
 
@@ -209,14 +188,14 @@ const Profile = () => {
                 />
               ) : (
                 <>
-                  {fileName ? (
+                  {profileImgUrl ? (
                     <>
                       <div className="flex ">
                         <label htmlFor="fileInput">
                           <Image
                             alt="No Image"
                             className="w-20 h-20 mb-4 rounded-full sm:mr-4 sm:mb-0 cursor-pointer"
-                            src={fileName}
+                            src={profileImgUrl}
                             height={20}
                             width={20}
                           />
@@ -227,6 +206,7 @@ const Profile = () => {
                           type="file"
                           accept="image/*"
                           onChange={handleFileChange}
+                          onClick={(e: any) => (e.target.value = "")}
                         />
                         <XMarkIcon
                           className="ml-[-10px] cursor-pointer"
@@ -253,6 +233,7 @@ const Profile = () => {
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
+                        onClick={(e: any) => (e.target.value = "")}
                       />
                     </>
                   )}
@@ -317,12 +298,12 @@ const Profile = () => {
               </span>
             )}
           </div>{" "}
-          <button
+          <Button
             type="submit"
-            disabled={loading.profileLoading}
+            disabled={updateLoading || !hasChanged}
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            {loading.profileLoading ? (
+            {updateLoading ? (
               <div className="flex items-center justify-center gap-4">
                 <Oval
                   height={25}
@@ -334,36 +315,28 @@ const Profile = () => {
             ) : (
               "Save"
             )}
-          </button>
+          </Button>
         </form>
-        {isOpen ? (
-          <Modal
-            open={isOpen}
-            setIsOpen={setIsOpen}
-            buttonText="Ok"
-            title="Re-verification Email"
-            onClick={() => {
-              setIsOpen(false);
-              updateProfile(formValues, true);
-            }}
-            loading={loading.profileLoading}
-          >
-            <div>{"Are you sure you want to change your email address?"}</div>
-          </Modal>
-        ) : null}
-        {isOpenImageModal ? (
-          <Modal
-            open={isOpenImageModal}
-            setIsOpen={setIsOpenImageModal}
-            buttonText="OK"
-            title="Remove Profile Picture ?"
-            onClick={() => {
-              setIsOpenImageModal(false);
-              setFileName(null);
-            }}
-            loading={loading.profileLoading}
-          ></Modal>
-        ) : null}
+        <AlertModal
+          show={isOpen}
+          title={`Re-verification Email`}
+          message={"Are you sure you want to change your email address?"}
+          onClickCancel={() => setIsOpen(false)}
+          okBtnClassName={"bg-red-600 hover:bg-red-800"}
+          spinClassName={"!fill-red-600"}
+          onClickOk={() => handleUpdateProfile()}
+          loading={updateLoading}
+        />
+        <AlertModal
+          show={isOpenImageModal}
+          title={`Remove Profile Picture ?`}
+          message={"Are you sure you want to remove your profile picture?"}
+          onClickCancel={() => setIsOpenImageModal(false)}
+          okBtnClassName={"bg-red-600 hover:bg-red-800"}
+          spinClassName={"!fill-red-600"}
+          onClickOk={handleDelete}
+          loading={imageUploadLoading}
+        />
       </div>
     </main>
   );

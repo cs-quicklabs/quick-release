@@ -4,50 +4,42 @@ const db = new PrismaClient();
 
 async function main() {
   try {
-    // Check if data already exists
-    const changelogReleaseTags = await db.changelogReleaseTags.findMany();
-    if (changelogReleaseTags && changelogReleaseTags.length > 0) {
-      console.log('Data already seeded.');
+    console.log('Seeding database...');
+    const projects = await db.projects.findMany({
+      select: {
+        id: true
+      }
+    });
+
+    const feedbackBoards = await db.feedbackBoards.findMany({
+      where: {
+        projectsId: {
+          in: projects.map(project => project.id)
+        },
+        isDefault: true
+      },
+      select: {
+        projectsId: true
+      }
+    });
+
+    const feedbackBoardArray = feedbackBoards.map(feedbackBoard => feedbackBoard.projectsId);
+
+    if(feedbackBoardArray.length > 0 && feedbackBoardArray.length === projects.length) {
       return;
     }
 
-    // Fetch all logs from the old schema
-    const oldLogs = await db.log.findMany();
+    const filterProjects = projects.filter(project => !feedbackBoardArray.includes(project.id));
 
-    for (const log of oldLogs) {
-      // Insert release tags relationships
-      for (const tagCode of log.releaseTags) {
-        const tag = await db.releaseTags.findFirst({ where: { code: tagCode } });
-        const newLog = await db.changelogs.findUnique({ where: { cuid: log.id } });
-        if (tag && newLog) {
-          await db.changelogReleaseTags.create({
-            data: {
-              logId: newLog.id,
-              releaseTagId: tag.id,
-            },
-          });
-        } else {
-          console.log(`Tag ${tagCode} not found`);
+    for(const project of filterProjects) {
+      await db.feedbackBoards.create({
+        data: {
+          name: 'Feature Requests',
+          projectsId: project.id,
+          isDefault: true
         }
-      }
-
-      // Insert release categories relationships
-      for (const categoryCode of log.releaseCategories) {
-        const category = await db.releaseCategories.findFirst({ where: { code: categoryCode } });
-        const newLog = await db.changelogs.findUnique({ where: { cuid: log.id } });
-        if (category && newLog) {
-          await db.changelogReleaseCategories.create({
-            data: {
-              logId: newLog.id,
-              releaseCategoryId: category.id,
-            },
-          });
-        } else {
-          console.log(`Category ${categoryCode} not found`);
-        }
-      }
+      });
     }
-
     console.log('Seeding complete!');
   } catch (error) {
     console.error('Error:', error);

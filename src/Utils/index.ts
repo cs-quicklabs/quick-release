@@ -1,13 +1,15 @@
+import { fileUploadRequest } from "@/fetchHandlers/file";
 import { db } from "@/lib/db";
 import { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
 export const showNotification = (type: TypeOptions, message: string) => {
+  toast.dismiss();
   setTimeout(() => {
     toast(message, {
       type,
       closeOnClick: true,
-    })
+    });
   }, 500);
 };
 
@@ -72,7 +74,20 @@ export const handleTrancate = (text: string, trucateNum: number) => {
 };
 
 export const privacyResponse = (data: any) => {
-  const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = data;
+  const {
+    id,
+    cuid,
+    password,
+    organizationsId,
+    createdById,
+    projectsId,
+    feedbackBoardsId,
+    resetToken,
+    resetTokenExpiry,
+    verificationToken,
+    verificationTokenExpiry,
+    ...rest
+  } = data;
   return {
     id: cuid,
     ...rest,
@@ -81,10 +96,58 @@ export const privacyResponse = (data: any) => {
 
 export const privacyResponseArray = (data: any) => {
   return data.map((item: any) => {
-    const { id, cuid, password, organizationsId, createdById, projectsId, ...rest } = item;
+    const {
+      id,
+      cuid,
+      password,
+      organizationsId,
+      createdById,
+      projectsId,
+      feedbackBoardsId,
+      resetToken,
+      resetTokenExpiry,
+      verificationToken,
+      verificationTokenExpiry,
+      ...rest
+    } = item;
     return {
       id: cuid,
       ...rest,
     };
   });
+};
+
+export function extractImageUrls(htmlString: string): string[] {
+  const imgTagRegex = /<img [^>]*src="([^"]+)"[^>]*>/gi;
+  const urls: string[] = [];
+  let match;
+
+  while ((match = imgTagRegex.exec(htmlString)) !== null) {
+    urls.push(match[1]);
+  }
+
+  return urls;
+}
+
+export const updateQueryParams = (
+  board: string | null,
+  search: string | null,
+  sort: string | null
+) => {
+  let queryParams = "";
+  if (board) {
+    queryParams += `board=${board}`;
+  }
+
+  if (search) {
+    if (queryParams) queryParams += "&";
+    queryParams += `search=${search}`;
+  }
+
+  if (sort) {
+    if (queryParams) queryParams += "&";
+    queryParams += `sort=${sort}`;
+  }
+
+  return queryParams;
 };

@@ -32,15 +32,19 @@ export async function PUT(
       throw new ApiError(400, "Tag name is required");
     }
 
-    if(!body.organizationsId) {
+    if (name.length > 30) {
+      throw new ApiError(400, "Tag name must be less than 30 characters");
+    }
+
+    if (!body.organizationsId) {
       throw new ApiError(400, "organizations Id is required");
     }
 
     const orgs = await db.organizations.findUnique({
-      where: {  
+      where: {
         cuid: body?.organizationsId,
-      }
-    })
+      },
+    });
     const tagCode = getReleaseKeyCode(name);
     const releaseTag = await db.releaseTags.findFirst({
       where: {
@@ -77,7 +81,11 @@ export async function PUT(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, privacyResponse(updatedReleaseTag), "Update release tag successfully")
+      new ApiResponse(
+        200,
+        privacyResponse(updatedReleaseTag),
+        "Update release tag successfully"
+      )
     );
   });
 }
@@ -108,7 +116,7 @@ export async function DELETE(
         cuid: organizationsId,
       },
     });
-    
+
     if (!orgs) {
       throw new ApiError(404, "Organization not found");
     }
@@ -124,6 +132,10 @@ export async function DELETE(
     }
 
     await db.changelogReleaseTags.deleteMany({
+      where: { releaseTagId: releaseTag?.id },
+    });
+
+    await db.feedbackPostReleaseTags.deleteMany({
       where: { releaseTagId: releaseTag?.id },
     });
 

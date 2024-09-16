@@ -10,7 +10,7 @@ export default async function Layout({
     <BaseTemplate>
       <main className="max-w-7xl mx-auto pb-10 lg:py-12 lg:px-8">
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-5">
-          <SettingsNav isProfileSettings={false} />
+          <SettingsNav isProfileSettings={false} isAccountSettings={false} />
 
           {children}
         </div>

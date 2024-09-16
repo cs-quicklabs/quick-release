@@ -2,7 +2,7 @@ import { Props, ActionMeta } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import React, { useState } from "react";
 import { classNames } from "@/lib/utils";
-import { IReleaseTag, ReleaseTagsOption } from "@/interfaces";
+import { IReleaseTag, DropDownOptionType } from "@/interfaces";
 import { useReleaseTagContext } from "@/app/context/ReleaseTagContext";
 import { getReleaseKeyCode } from "@/Utils";
 
@@ -12,7 +12,7 @@ const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const releaseTagsOptions: readonly ReleaseTagsOption[] = releaseTagIds.map(id => ({
+  const releaseTagsOptions: readonly DropDownOptionType[] = releaseTagIds.map(id => ({
     value: releaseTagMap[id]?.code!,
     label: releaseTagMap[id]?.name!,
   }));
@@ -24,7 +24,7 @@ const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
     };
     createReleaseTag(newReleaseTag, setIsLoading, false);
 
-    const newReleaseTagOption: ReleaseTagsOption = {
+    const newReleaseTagOption: DropDownOptionType = {
       value: newReleaseTag.code!,
       label: newReleaseTag.name!,
     };
@@ -35,7 +35,7 @@ const ReleaseTagSelectMenu: React.FC<Props> = (props) => {
     };
 
     if (props.isMulti) {
-      const newValues = props.value as ReleaseTagsOption[];
+      const newValues = props.value as DropDownOptionType[];
       props.onChange?.([...newValues, newReleaseTagOption], actionMeta);
     } else {
       props.onChange?.(newReleaseTagOption, actionMeta);
