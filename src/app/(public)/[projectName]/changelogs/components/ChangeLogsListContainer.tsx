@@ -27,7 +27,7 @@ const ChangeLogsListContainer = () => {
   }, [isVisible]);
 
   return (
-    <div className="space-y-6 sm:px-6 lg:col-span-9 lg:px-0 p-4 min-h-0 h-full no-scrollbar">
+    <div className="space-y-6 sm:px-6 lg:col-span-9 lg:px-0 p-4 min-h-0 h-full overflow-y-auto no-scrollbar">
       {
         !isFetchingChangeLogs && changeLogMetaData.total === 0 &&
         <main className="mx-auto max-w-2xl px-4 pt-10 pb-12 lg:pb-16 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 lg:static lg:translate-x-0 lg:translate-y-0">

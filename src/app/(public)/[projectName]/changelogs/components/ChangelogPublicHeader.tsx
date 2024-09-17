@@ -24,7 +24,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
   );
   return (
     <>
-      <div className={`sticky top-0 bg-gray-50 z-10`}>
+      <div className={`fixed top-0 w-full bg-gray-50 z-10`}>
         <Navbar
           projectName={project.name!}
           projectImgUrl={project.projectImgUrl!}
@@ -37,7 +37,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
           {!loggedInUser && (
             <div
               className={`lg:hidden lg:col-span-3 fixed bg-gray-50 z-10 w-full ${
-                !showMenuNav ? "top-16" : "top-60"
+                !showMenuNav ? "top-14" : "top-60"
               }`}
             >
               <SideNav
@@ -55,9 +55,9 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
           <div
             className={`${
               releaseCategories?.length || releaseTags?.length
-                ? "mt-[16rem] lg:col-span-9"
+                ? "lg:col-span-9"
                 : "lg:col-span-12"
-            } lg:mt-0 ${!loggedInUser && "mt-[16rem]"}`}
+            } lg:mt-0 ${!loggedInUser && "mt-[20rem]"}`}
           >
             <ChangeLogsListContainer />
           </div>
