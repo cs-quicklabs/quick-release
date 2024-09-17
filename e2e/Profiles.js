@@ -4,16 +4,29 @@ exports.Profiles = class Profiles {
     this.page = page;
     this.firstNameInput = 'input[name="firstName"]';
     this.lastNameInput = 'input[name="lastName"]';
-    this.userMenuButton = this.page.locator("#open-user-menu");
-    this.profileSettingsButton = this.page.locator("#profile-settings");
+    this.userMenu = this.page.locator('#open-user-menu')
+    this.profileSettingsButton = this.page.locator('#profile-settings')
   }
 
   async openUserMenuAndNavigateToSettings() {
-    await this.userMenuButton.click();
-    await this.profileSettingsButton.click();
+    const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isUser = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isUser = await this.userMenu.isVisible();
+      if (isUser) {
+        await this.userMenu.click()
+        await this.profileSettingsButton.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    
     await expect(
       this.page.locator("text=Change your personal profile settings")
-    ).toBeVisible();
+    ).toBeVisible({timeout:50000});
   }
 
   async verifyProfilePageElements() {

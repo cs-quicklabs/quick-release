@@ -13,15 +13,14 @@ export async function GET(req: Request, res: Response) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
     })
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
     const projectUser = await db.projectsUsers.findFirst({
       where: {
         usersId: user?.id,
@@ -39,7 +38,7 @@ export async function GET(req: Request, res: Response) {
     });
 
     return NextResponse.json(
-      new ApiResponse(200, privacyResponse(project), "Active project fetched successfully")
+      new ApiResponse(200, privacyResponse(project), "Active team fetched successfully")
     );
   });
 }

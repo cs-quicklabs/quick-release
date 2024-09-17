@@ -1,8 +1,9 @@
-import { isValidArray, privacyResponse } from "@/Utils";
+import { extractImageUrls, isValidArray, privacyResponse } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
 import { ChangeLogIncludeDBQuery } from "@/Utils/constants";
+import { deleteFileFromS3 } from "@/Utils/s3";
 import roleChecker from "@/app/middleware/roleChecker";
 import { authOptions } from "@/lib/auth";
 import { computeChangeLog } from "@/lib/changeLog";
@@ -111,7 +112,7 @@ export async function PUT(
       throw new ApiError(401, "Unauthorized request");
     }
 
-    const changeLog = await db.changelogs.findFirst({
+    const changeLog = await db.changelogs.findUnique({
       where: {
         cuid: id,
         deletedAt: null,
@@ -134,7 +135,7 @@ export async function PUT(
       where: {
         cuid: body.projectsId,
       },
-    })
+    });
 
     const releaseTags = await db.releaseTags.findMany({
       where: {
@@ -144,7 +145,6 @@ export async function PUT(
         },
       },
     });
-
     const releaseCategories = await db.releaseCategories.findMany({
       where: {
         organizationsId: project?.organizationsId!, // TODO: Check this.
@@ -154,25 +154,44 @@ export async function PUT(
       },
     });
 
-    if (!isValidArray(body.releaseCategories, releaseCategories.map((category) => category.code))) {
+    if (
+      !isValidArray(
+        body.releaseCategories,
+        releaseCategories.map((category) => category.code)
+      )
+    ) {
       throw new ApiError(400, "Release category is invalid");
     }
 
-    if (!isValidArray(body.releaseTags, releaseTags.map((tag) => tag.code))) {
+    if (
+      !isValidArray(
+        body.releaseTags,
+        releaseTags.map((tag) => tag.code)
+      )
+    ) {
       throw new ApiError(400, "Release tag is invalid");
     }
+    const oldImageUrls = extractImageUrls(changeLog?.description!);
+    const newImageUrls = extractImageUrls(body.description);
 
-
+    const imageUrlsToDelete = oldImageUrls.filter(
+      (imageUrl) => !newImageUrls.includes(imageUrl)
+    );
+    for (const imageUrl of imageUrlsToDelete) {
+      await deleteFileFromS3(imageUrl, "ChangeLogs");
+    }
 
     const updatedChangeLog = await db.changelogs.update({
-      where: {id: changeLog?.id},
+      where: { id: changeLog?.id },
       data: {
         title: body.title,
         description: body.description,
         releaseVersion: body.releaseVersion,
         releaseCategories: {
           deleteMany: { logId: changeLog?.id },
-          create: releaseCategories.map((category) => ({ releaseCategoryId: category.id })),
+          create: releaseCategories.map((category) => ({
+            releaseCategoryId: category.id,
+          })),
         },
         // releaseTags: body.releaseTags,
         releaseTags: {

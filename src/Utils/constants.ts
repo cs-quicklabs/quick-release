@@ -1,4 +1,4 @@
-import { ChangeLogsStatusType } from "@/types";
+import { ChangeLogsStatusType, FeedbackStatusType } from "@/types";
 
 export const ChangeLogsReleaseActions = Object.freeze({
   published: {
@@ -19,6 +19,61 @@ export const ChangeLogsReleaseActions = Object.freeze({
     description:
       "Schedule your release to publish automatically on specified date",
     btnText: "Schedule Changelog",
+  },
+});
+
+export const FeedbackStatus = Object.freeze<FeedbackStatusType>({
+  IN_REVIEW: {
+    id: "IN_REVIEW",
+    title: "In-Review",
+    textColor: "text-gray-800",
+    bgColor: "bg-gray-100",
+    bulletColor: "bg-gray-400",
+  },
+  PLANNED: {
+    id: "PLANNED",
+    title: "Planned",
+    textColor: "text-purple-800",
+    bgColor: "bg-purple-100",
+    bulletColor: "bg-purple-400",
+  },
+  IN_PROGRESS: {
+    id: "IN_PROGRESS",
+    title: "In-Progress",
+    textColor: "text-yellow-800",
+    bgColor: "bg-yellow-100",
+    bulletColor: "bg-yellow-400",
+  },
+  COMPLETED: {
+    id: "COMPLETED",
+    title: "Completed",
+    textColor: "text-green-800",
+    bgColor: "bg-green-100",
+    bulletColor: "bg-green-400",
+  },
+  CLOSED: {
+    id: "CLOSED",
+    title: "Closed",
+    textColor: "text-red-800",
+    bgColor: "bg-red-100",
+    bulletColor: "bg-red-400",
+  },
+});
+
+export const FeedbackVisibilityStatus = Object.freeze<FeedbackStatusType>({
+  private: {
+    id: "private",
+    title: "Private",
+    textColor: "text-orange-800",
+    bgColor: "bg-orange-100",
+    bulletColor: "bg-orange-400",
+  },
+  public: {
+    id: "public",
+    title: "Public",
+    textColor: "text-green-800",
+    bgColor: "bg-green-100",
+    bulletColor: "bg-green-400",
   },
 });
 
@@ -70,7 +125,7 @@ export const WEB_DETAILS = {
   avtar: "/userAvatar.png",
 };
 export const ChangeLogIncludeDBQuery = {
-  projects: { select: { cuid: true, name: true } },
+  projects: { select: { cuid: true, name: true, slug: true } },
   createdBy: { select: SelectUserDetailsFromDB },
   updatedBy: { select: SelectUserDetailsFromDB },
   releaseTags: {
@@ -95,6 +150,23 @@ export const ChangeLogIncludeDBQuery = {
   },
   createdById: false,
   updatedById: false,
+};
+
+export const FeedbackPostIncludeDBQuery = {
+  feedbackBoards: { select: { cuid: true, name: true } },
+  createdBy: { select: SelectUserDetailsFromDB },
+  createdById: false,
+  releaseTags: {
+    select: {
+      releaseTag: {
+        select: {
+          code: true,
+          name: true,
+        },
+      },
+    },
+  },
+  feedbackPostVotes: true,
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds
