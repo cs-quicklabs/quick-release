@@ -2,7 +2,7 @@ import { Props, ActionMeta } from "react-select";
 import CreatableSelect from "react-select/creatable";
 import React, { useState } from "react";
 import { classNames } from "@/lib/utils";
-import { IReleaseCategory, ReleaseCategoriesOption } from "@/interfaces";
+import { IReleaseCategory, DropDownOptionType } from "@/interfaces";
 import { useReleaseCategoryContext } from "@/app/context/ReleaseCategoryContext";
 import { getReleaseKeyCode } from "@/Utils";
 
@@ -12,10 +12,9 @@ const ReleaseCategorySelectMenu: React.FC<Props> = (props) => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const releaseCategoriesOptions: readonly ReleaseCategoriesOption[] = releaseCategoryIds.map(id => ({
+  const releaseCategoriesOptions: readonly DropDownOptionType[] = releaseCategoryIds.map(id => ({
     value: releaseCategoryMap[id]?.code!,
     label: releaseCategoryMap[id]?.name!,
-    bgColor: releaseCategoryMap[id]?.bgColor,
   }));
 
   const onCreate = (tagName: string) => {
@@ -25,7 +24,7 @@ const ReleaseCategorySelectMenu: React.FC<Props> = (props) => {
     };
     createReleaseCategory(newReleaseCategory, setIsLoading, false);
 
-    const newReleaseCategoryOption: ReleaseCategoriesOption = {
+    const newReleaseCategoryOption: DropDownOptionType = {
       value: newReleaseCategory.code!,
       label: newReleaseCategory.name!,
     };
@@ -36,7 +35,7 @@ const ReleaseCategorySelectMenu: React.FC<Props> = (props) => {
     };
 
     if (props.isMulti) {
-      const newValues = props.value as ReleaseCategoriesOption[];
+      const newValues = props.value as DropDownOptionType[];
       props.onChange?.([...newValues, newReleaseCategoryOption], actionMeta);
     } else {
       props.onChange?.(newReleaseCategoryOption, actionMeta);

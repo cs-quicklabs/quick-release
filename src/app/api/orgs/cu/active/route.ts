@@ -13,11 +13,10 @@ export async function GET(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
-    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
-
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     const orgs = await db.organizationsUsers.findMany({
       where: {
         usersId: user?.id,

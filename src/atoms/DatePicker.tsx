@@ -7,24 +7,28 @@ import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/atoms/button";
 import { Calendar } from "@/atoms/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/atoms/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/atoms/popover";
 
 export type DatePickerPropsType = {
-  className?: string,
-  placeholder?: string,
+  id?: string;
+  className?: string;
+  placeholder?: string;
   value?: Date;
   onChange?(selectedDate?: Date): void;
 };
 
-const DatePicker: React.FC<DatePickerPropsType> = ({ className, placeholder = "Select date", value, onChange }) => {
+const DatePicker: React.FC<DatePickerPropsType> = ({
+  id,
+  className,
+  placeholder = "Select date",
+  value,
+  onChange,
+}) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
+          id={id}
           variant={"outline"}
           className={cn(
             "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",

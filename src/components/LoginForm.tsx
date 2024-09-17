@@ -32,7 +32,8 @@ export default function LoginForm() {
       .string()
       .trim()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .transform((value) => value.toLowerCase()),
     password: z.string().trim().min(1, { message: "Required" }),
   });
 
@@ -225,6 +226,7 @@ export default function LoginForm() {
                 <Link
                   href="/forget-password"
                   className=" mb-[-10px] text-sm font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                  id="forget-password"
                 >
                   {"Forgot password?"}
                 </Link>
