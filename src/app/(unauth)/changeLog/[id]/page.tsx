@@ -1,9 +1,12 @@
 "use client";
 
-import { checkRichTextEditorIsEmpty } from "@/Utils";
 import {
-  ChangeLogsReleaseActions,
-} from "@/Utils/constants";
+  checkRichTextEditorIsEmpty,
+  extractImageUrls,
+  requestHandler,
+  showNotification,
+} from "@/Utils";
+import { ChangeLogsReleaseActions } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import NotFound from "@/app/not-found";
@@ -30,10 +33,7 @@ import {
   FormMessage,
 } from "@/atoms/form";
 import { Input } from "@/atoms/input";
-import {
-  IReleaseCategory,
-  IReleaseTag,
-} from "@/interfaces";
+import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 import BaseTemplate from "@/templates/BaseTemplate";
 import { ChangeLogType, FormChangeLogPost } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,6 +49,7 @@ import React, {
 } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
+import { fileDeleteRequest } from "@/fetchHandlers/file";
 
 const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
   ssr: true,
@@ -97,7 +98,6 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     return changeLogMap[params.id] || null;
   }, [changeLogMap[params.id]]);
 
-
   const formSchema = z.object({
     title: z.string().trim().min(1, { message: "Required" }).max(50, {
       message: "Title can not be more than 50 characters",
@@ -107,7 +107,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       .trim()
       .min(1, { message: "Required" })
       .refine(checkRichTextEditorIsEmpty, { message: "Required" }),
-    releaseVersion: z.string().trim().min(1, { message: "Required" }).max(20,{
+    releaseVersion: z.string().trim().min(1, { message: "Required" }).max(20, {
       message: "Release Version can not be more than 20 characters",
     }),
     releaseCategories: z.array(
@@ -145,6 +145,23 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     },
   });
 
+  const formValues = form.getValues();
+
+  const removeFiles = (filePathUrls: string[]) => {
+    return new Promise(async (resolve, reject) => {
+      await requestHandler(
+        async () => await fileDeleteRequest(filePathUrls, "ChangeLogs"),
+        null,
+        (res: any) => {
+          resolve(filePathUrls);
+        },
+        (errMessage) => {
+          reject(errMessage);
+        }
+      );
+    });
+  };
+
   const handleCreatePost: SubmitHandler<FormChangeLogPost> = (data) => {
     const changelogPost: ChangeLogType = {
       ...data,
@@ -167,6 +184,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
       return;
     }
 
+    sessionStorage.removeItem("activeChangeLogId");
     createChangeLog(changelogPost, setIsSaving);
   };
 
@@ -217,24 +235,41 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
     };
   }, [isSaving, loading]);
 
-  if (!changelog && loading && params.id !== "add" && fetchChangeLogLoading && !isLoading) {
-    return (
-      <ScreenLoader />
-    );
+  if (
+    !changelog &&
+    loading &&
+    params.id !== "add" &&
+    fetchChangeLogLoading &&
+    !isLoading
+  ) {
+    return <ScreenLoader />;
   }
 
-  if(!changelog && params.id !== "add" && !fetchChangeLogLoading && !isLoading) {
+  if (
+    !changelog &&
+    params.id !== "add" &&
+    !fetchChangeLogLoading &&
+    !isLoading
+  ) {
     return (
       <BaseTemplate>
         <NotFound />
       </BaseTemplate>
-    )
+    );
   }
+
+  const handleCancelButton = async () => {
+    const imageUrls = extractImageUrls(formValues?.description);
+    if (params.id === "add" && imageUrls.length > 0) {
+      await removeFiles(imageUrls);
+    }
+    router.replace("/allLogs");
+  };
 
   return (
     <BaseTemplate>
       <>
-        <div className="mx-auto max-w-5xl px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-5xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(handleCreatePost)}>
               <CardHeader className="space-y-1 px-0">
@@ -257,7 +292,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Title"}</FormLabel>
+                        <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -276,7 +311,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>{"Description"}</FormLabel>
+                        <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
@@ -297,7 +332,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Version"}</FormLabel>
+                        <FormLabel>{"Release Version"}<span className="text-red-600">*</span></FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"
@@ -316,7 +351,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseCategories"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Categories (Optional)"}</FormLabel>
+                        <FormLabel>{"Release Categories"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseCategories"
@@ -325,7 +360,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                               field: { onChange, onBlur, value, name },
                             }) => (
                               <ReleaseCategorySelectMenu
-                                className="basic-multi-select"
+                                className="basic-multi-select max-w-5xl"
                                 classNamePrefix="select"
                                 isMulti
                                 name={name}
@@ -349,7 +384,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseTags"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Tags (Optional)"}</FormLabel>
+                        <FormLabel>{"Release Tags"}</FormLabel>
                         <FormControl>
                           <Controller
                             name="releaseTags"
@@ -358,7 +393,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                               field: { onChange, onBlur, value, name },
                             }) => (
                               <ReleaseTagSelectMenu
-                                className="basic-multi-select"
+                                className="basic-multi-select max-w-5xl"
                                 classNamePrefix="select"
                                 isMulti
                                 name={name}
@@ -419,7 +454,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                 <Button
                   className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
                   type="button"
-                  onClick={router.back}
+                  onClick={handleCancelButton}
                 >
                   {"Cancel"}
                 </Button>
@@ -445,4 +480,3 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
 };
 
 export default AddChangeLog;
-                                                                                                                                                        

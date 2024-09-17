@@ -14,11 +14,10 @@ export async function PATCH(req: NextRequest,
 
     // @ts-ignore
     const userId = session?.user?.id;
-    const user = await db.users.findUnique({ where: { cuid: userId } });
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
-
+    const user = await db.users.findUnique({ where: { cuid: userId } });
     const organization = await db.organizations.findUnique({
       where: {
         cuid: orgsId,

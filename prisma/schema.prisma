@@ -11,70 +11,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-// old schema
-model User {
-  id                      String        @id @default(cuid())
-  createdAt               DateTime      @default(now())
-  updatedAt               DateTime      @updatedAt
-  firstName               String
-  lastName                String
-  profilePicture          String?
-  email                   String        @unique
-  password                String
-  resetToken              String?       @unique
-  resetTokenExpiry        String?
-  isActive                Boolean       @default(true)
-  isVerified              Boolean       @default(false)
-  role                    String        @default("ADMIN")
-  organisationId          String        @unique
-  organisation            Organisation? @relation(fields: [organisationId], references: [id])
-  projects                Project[]
-  verificationToken       String?       @unique
-  verificationTokenExpiry String?
-  createdLogs             Log[]         @relation("CreatedLogs")
-  updatedLogs             Log[]         @relation("UpdatedLogs")
-}
-
-model Organisation {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  admin     User?
-  name      String
-}
-
-model Project {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  name      String
-  logs      Log[]
-  User      User?    @relation(fields: [adminId], references: [id])
-  adminId   String?
-  isActive  Boolean  @default(false)
-}
-
-model Log {
-  id                String    @id @default(cuid())
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  title             String
-  description       String
-  releaseVersion    String
-  releaseCategories String[]
-  releaseTags       String[]
-  project           Project?  @relation(fields: [projectId], references: [id])
-  projectId         String?
-  scheduledTime     DateTime?
-  status            String
-  createdBy         User      @relation("CreatedLogs", fields: [createdById], references: [id])
-  createdById       String
-  updatedBy         User      @relation("UpdatedLogs", fields: [updatedById], references: [id])
-  updatedById       String
-  deletedAt         DateTime?
-  archivedAt        DateTime?
-}
-
 // new schema
 model UsersRoles {
   id            Int             @id @default(autoincrement())
@@ -107,6 +43,8 @@ model Users {
   organizationsUsers      OrganizationsUsers[]
   createdLogs             Changelogs[]         @relation("CreatedLogs")
   updatedLogs             Changelogs[]         @relation("UpdatedLogs")
+  feedbackPosts           FeedbackPosts[]
+  upvotedFeedbacksByUsers FeedbackPostVotes[]
 }
 
 model Organizations {
@@ -134,17 +72,20 @@ model OrganizationsUsers {
 }
 
 model Projects {
-  id              Int             @id @default(autoincrement())
-  cuid            String          @unique @default(cuid())
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  name            String
+  id              Int              @id @default(autoincrement())
+  cuid            String           @unique @default(cuid())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  name            String?
+  slug            String           @unique
+  projectImgUrl   String?
   logs            Changelogs[]
-  Users           Users?          @relation(fields: [createdById], references: [id])
+  Users           Users?           @relation(fields: [createdById], references: [id])
   createdById     Int?
-  organizations   Organizations?  @relation(fields: [organizationsId], references: [id])
+  organizations   Organizations?   @relation(fields: [organizationsId], references: [id])
   organizationsId Int?
   projectsUsers   ProjectsUsers[]
+  feedbackBoards  FeedbackBoards[]
 }
 
 model ProjectsUsers {
@@ -182,15 +123,16 @@ model Changelogs {
 }
 
 model ReleaseTags {
-  id              Int                    @id @default(autoincrement())
-  cuid            String                 @unique @default(cuid())
+  id              Int                       @id @default(autoincrement())
+  cuid            String                    @unique @default(cuid())
   name            String
   code            String
-  createdAt       DateTime               @default(now())
-  updatedAt       DateTime               @updatedAt
-  organizations   Organizations?         @relation(fields: [organizationsId], references: [id])
+  createdAt       DateTime                  @default(now())
+  updatedAt       DateTime                  @updatedAt
+  organizations   Organizations?            @relation(fields: [organizationsId], references: [id])
   organizationsId Int
   logs            ChangelogReleaseTags[]
+  feedbackPosts   FeedbackPostReleaseTags[]
 }
 
 model ChangelogReleaseTags {
@@ -221,4 +163,66 @@ model ChangelogReleaseCategories {
   releaseCategoryId Int
 
   @@id([logId, releaseCategoryId])
+}
+
+model FeedbackPosts {
+  id                Int                       @id @default(autoincrement())
+  cuid              String                    @unique @default(cuid())
+  createdAt         DateTime                  @default(now())
+  updatedAt         DateTime                  @updatedAt
+  title             String
+  description       String
+  status            FeedbackStatus
+  releaseETA        DateTime?
+  createdBy         Users?                    @relation(fields: [createdById], references: [id])
+  createdById       Int?
+  deletedAt         DateTime?
+  feedbackBoards    FeedbackBoards?           @relation(fields: [feedbackBoardsId], references: [id])
+  feedbackBoardsId  Int?
+  visibilityStatus  VisibilityStatus          @default(private)
+  releaseTags       FeedbackPostReleaseTags[]
+  feedbackPostVotes FeedbackPostVotes[]
+}
+
+model FeedbackBoards {
+  id            Int             @id @default(autoincrement())
+  cuid          String          @unique @default(cuid())
+  name          String
+  isDefault     Boolean         @default(false)
+  projects      Projects?       @relation(fields: [projectsId], references: [id])
+  projectsId    Int?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  feedbackPosts FeedbackPosts[]
+}
+
+model FeedbackPostReleaseTags {
+  feedbackPost   FeedbackPosts @relation(fields: [feedbackPostId], references: [id])
+  feedbackPostId Int
+  releaseTag     ReleaseTags   @relation(fields: [releaseTagId], references: [id])
+  releaseTagId   Int
+
+  @@id([feedbackPostId, releaseTagId])
+}
+
+model FeedbackPostVotes {
+  feedbackPost   FeedbackPosts @relation(fields: [feedbackPostId], references: [id])
+  feedbackPostId Int
+  User           Users         @relation(fields: [userId], references: [id])
+  userId         Int
+
+  @@id([feedbackPostId, userId])
+}
+
+enum FeedbackStatus {
+  IN_REVIEW
+  PLANNED
+  IN_PROGRESS
+  COMPLETED
+  CLOSED
+}
+
+enum VisibilityStatus {
+  public
+  private
 }

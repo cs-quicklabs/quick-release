@@ -22,7 +22,7 @@ export async function GET(
   return asyncHandler(async () => {
     const { projectName, id } = params;
 
-    const projectQuery = { name: projectName };
+    const projectQuery = { slug: projectName };
     const project = await db.projects.findFirst({ where: projectQuery });
     if (!project) {
       throw new ApiError(404, "Project not found");
@@ -39,7 +39,7 @@ export async function GET(
         where: changeLogQuery,
         include: ChangeLogIncludeDBQuery,
       })
-    )
+    );
     if (!changeLog) {
       throw new ApiError(404, "Changelog not found");
     }

@@ -6,6 +6,8 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
+import { sendVerificationEmail } from "@/Utils/emailHandler";
 
 export async function GET(req: NextRequest) {
   return asyncHandler(async () => {
@@ -13,15 +15,14 @@ export async function GET(req: NextRequest) {
 
     // @ts-ignore
     const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
     const user = await db.users.findUnique({
       where: {
         cuid: userId,
       },
-    })
-    if (!userId) {
-      throw new ApiError(401, "Unauthorized request");
-    }
-
+    });
     const loggedInUser = privacyResponse(
       await db.users.findFirst({
         where: {
@@ -41,19 +42,33 @@ export async function GET(req: NextRequest) {
     );
 
     const orgs = await db.organizationsUsers.findMany({
-        where: {
-          usersId: user?.id,
-        },
-        select: {
-          organizations: {
-            select: {
-              id: true,
-              cuid: true,
-              name: true,
-            },
+      where: {
+        usersId: user?.id,
+      },
+      select: {
+        organizations: {
+          select: {
+            id: true,
+            cuid: true,
+            name: true,
           },
         },
-      });
+      },
+    });
+
+    const activeProjectId = await db.projectsUsers.findFirst({
+      where: {
+        usersId: user?.id,
+        isActive: true,
+      },
+      select: {
+        projects: {
+          select: {
+            cuid: true,
+          },
+        },
+      },
+    });
 
     return NextResponse.json(
       new ApiResponse(
@@ -64,10 +79,107 @@ export async function GET(req: NextRequest) {
             return {
               id: org.organizations.cuid,
               name: org.organizations.name,
-            }
+            };
           }),
+          activeProjectId: activeProjectId?.projects.cuid,
         },
         "Current user fetched successfully"
+      )
+    );
+  });
+}
+
+export async function PATCH(req: NextRequest) {
+  return asyncHandler(async () => {
+    const session = await getServerSession(authOptions);
+
+    // @ts-ignore
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+    const user = await db.users.findUnique({
+      where: {
+        cuid: userId,
+      },
+    });
+    const body = await req.json();
+
+    if (
+      !body.email &&
+      !body.firstName &&
+      !body.lastName &&
+      !body.profilePicture && body.profilePicture !== null
+    ) {
+      throw new ApiError(400, "Missing fields");
+    }
+
+    if (body.email) {
+      const existingUserEmail = await db.users.findFirst({
+        where: {
+          email: body.email,
+        },
+      });
+
+      if (existingUserEmail && existingUserEmail?.id !== user?.id) {
+        throw new ApiError(400, "Email already exists");
+      }
+
+      if (body.email !== user?.email) {
+        const verificationToken = crypto.randomBytes(20).toString("hex");
+        const registerVerificationToken = crypto
+          .createHash("sha256")
+          .update(verificationToken)
+          .digest("hex");
+
+        const verificationTokenExpires = (Date.now() + 3600000).toString();
+        await db.users.update({
+          where: {
+            id: user?.id,
+          },
+          data: {
+            email: body.email,
+            firstName: body.firstName,
+            lastName: body.lastName,
+            profilePicture: body.profilePicture,
+            isVerified: false,
+            verificationToken: registerVerificationToken,
+            verificationTokenExpiry: verificationTokenExpires,
+          },
+        });
+
+        await sendVerificationEmail(
+          body.email,
+          registerVerificationToken,
+          body.firstName || user?.firstName
+        );
+
+        NextResponse.json(
+          new ApiResponse(200, null, "Verification email sent successfully")
+        );
+      }
+    }
+
+    const updatedUser = await db.users.update({
+      where: {
+        id: user?.id,
+      },
+      data: {
+        firstName: body.firstName,
+        lastName: body.lastName,
+        profilePicture: body.profilePicture,
+      },
+    });
+
+    if (!updatedUser) {
+      throw new ApiError(500, "Something went wrong while updating user");
+    }
+
+    return NextResponse.json(
+      new ApiResponse(
+        200,
+        privacyResponse(updatedUser),
+        "Profile updated successfully"
       )
     );
   });
