@@ -4,8 +4,8 @@ exports.Profiles = class Profiles {
     this.page = page;
     this.firstNameInput = 'input[name="firstName"]';
     this.lastNameInput = 'input[name="lastName"]';
-    this.userMenu = this.page.locator('#open-user-menu')
-    this.profileSettingsButton = this.page.locator('#profile-settings')
+    this.userMenuButton = this.page.locator("#open-user-menu");
+    this.profileSettingsButton = this.page.locator("#profile-settings");
   }
 
   async openUserMenuAndNavigateToSettings() {
@@ -26,7 +26,7 @@ exports.Profiles = class Profiles {
     
     await expect(
       this.page.locator("text=Change your personal profile settings")
-    ).toBeVisible({timeout:50000});
+    ).toBeVisible();
   }
 
   async verifyProfilePageElements() {

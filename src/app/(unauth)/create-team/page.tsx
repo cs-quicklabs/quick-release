@@ -191,8 +191,9 @@ const Project = () => {
                     className="ml-1"
                   >
                     <Tooltip
+                      className="text-xs w-[21.75rem] text-left"
                       content="Slug specifies the unique identifier for your team. It is used to create a unique URL for your team. You can use letters, numbers, and hyphens."
-                      placement="right"
+                      placement="top"
                     >
                       <QuestionMarkCircleIcon className="w-4 h-4 text-gray-500 hover:text-gray-900" />
                     </Tooltip>

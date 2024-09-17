@@ -1,5 +1,3 @@
-import { fileUploadRequest } from "@/fetchHandlers/file";
-import { db } from "@/lib/db";
 import { AxiosResponse } from "axios";
 import { toast, TypeOptions } from "react-toastify";
 
@@ -9,7 +7,7 @@ export const showNotification = (type: TypeOptions, message: string) => {
     toast(message, {
       type,
       closeOnClick: true,
-    });
+    })
   }, 500);
 };
 

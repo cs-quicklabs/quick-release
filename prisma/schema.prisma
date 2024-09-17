@@ -11,6 +11,70 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+// old schema
+model User {
+  id                      String        @id @default(cuid())
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  firstName               String
+  lastName                String
+  profilePicture          String?
+  email                   String        @unique
+  password                String
+  resetToken              String?       @unique
+  resetTokenExpiry        String?
+  isActive                Boolean       @default(true)
+  isVerified              Boolean       @default(false)
+  role                    String        @default("ADMIN")
+  organisationId          String        @unique
+  organisation            Organisation? @relation(fields: [organisationId], references: [id])
+  projects                Project[]
+  verificationToken       String?       @unique
+  verificationTokenExpiry String?
+  createdLogs             Log[]         @relation("CreatedLogs")
+  updatedLogs             Log[]         @relation("UpdatedLogs")
+}
+
+model Organisation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  admin     User?
+  name      String
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  logs      Log[]
+  User      User?    @relation(fields: [adminId], references: [id])
+  adminId   String?
+  isActive  Boolean  @default(false)
+}
+
+model Log {
+  id                String    @id @default(cuid())
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  title             String
+  description       String
+  releaseVersion    String
+  releaseCategories String[]
+  releaseTags       String[]
+  project           Project?  @relation(fields: [projectId], references: [id])
+  projectId         String?
+  scheduledTime     DateTime?
+  status            String
+  createdBy         User      @relation("CreatedLogs", fields: [createdById], references: [id])
+  createdById       String
+  updatedBy         User      @relation("UpdatedLogs", fields: [updatedById], references: [id])
+  updatedById       String
+  deletedAt         DateTime?
+  archivedAt        DateTime?
+}
+
 // new schema
 model UsersRoles {
   id            Int             @id @default(autoincrement())
@@ -44,7 +108,7 @@ model Users {
   createdLogs             Changelogs[]         @relation("CreatedLogs")
   updatedLogs             Changelogs[]         @relation("UpdatedLogs")
   feedbackPosts           FeedbackPosts[]
-  upvotedFeedbacksByUsers FeedbackPostVotes[]
+  feedbackPostVotes       FeedbackPostVotes[]
 }
 
 model Organizations {

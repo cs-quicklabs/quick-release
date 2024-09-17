@@ -1,4 +1,3 @@
-im
 export interface DropDownOptionType {
   readonly value: string;
   readonly label: string;

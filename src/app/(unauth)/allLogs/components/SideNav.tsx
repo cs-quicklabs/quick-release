@@ -129,7 +129,7 @@ const SideNav: React.FC<SideNavProps> = ({
             </span>
 
             <div className="relative inline-block text-left">
-              <Menu as="div" className="relative inline-block text-left">
+              <Menu as="div" className="relative inline-block text-left" >
                 <div>
                   <Menu.Button
                     className={classNames(
