@@ -1,7 +1,7 @@
-import { LoginPage } from "../e2e/Login";
+import { LoginPage } from "../e2e/login";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
-import { feedbackPost } from '../e2e/Feedbackpost';
+import { feedbackPost } from '../e2e/feedbackPost';
 
 test.beforeEach("verify user able to add release tags", async ({ page }) => {
     const login = new LoginPage(page);
@@ -25,11 +25,13 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
    
   });
 
-  test("verify title field should not accept pnly spaces", async ({ page }) => {
+  test("verify title field should not accept only spaces", async ({ page }) => {
     const feedBackPosts = new feedbackPost(page);
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitleWithOnlySpaces()
+    await feedBackPosts.fillDescriptionWithOnlyspaces()
+    await feedBackPosts.submitFeedBack()
   });
 
   test("verify user able to delete Posts", async ({ page }) => {
@@ -50,6 +52,7 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitle()
+    await feedBackPosts.fillDescription()
     await feedBackPosts.selectStatus('Planned')
     await feedBackPosts.fillDescription()
     await feedBackPosts.submitFeedBack()

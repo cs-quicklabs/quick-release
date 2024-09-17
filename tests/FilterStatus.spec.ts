@@ -1,5 +1,5 @@
-import { LoginPage } from "../e2e/Login";
-import { Filterstatus } from "../e2e/filterBYStatus";
+import { LoginPage } from "../e2e/login";
+import { Filterstatus } from "../e2e/filterByStatus";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 

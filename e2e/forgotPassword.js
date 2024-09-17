@@ -1,9 +1,8 @@
+const { test, expect } = require("@playwright/test");
+const MailosaurClient = require("mailosaur");
 
-const { test, expect } = require('@playwright/test');
-const MailosaurClient = require('mailosaur');
-
-const MAILOSAUR_API_KEY = 'YETmlvK1bfDWKM2HKpwdm1e8mFG3no3u';
-const SERVER_ID = 'ef6rs3pi';
+const MAILOSAUR_API_KEY = "YETmlvK1bfDWKM2HKpwdm1e8mFG3no3u";
+const SERVER_ID = "ef6rs3pi";
 const mailosaur = new MailosaurClient("YETmlvK1bfDWKM2HKpwdm1e8mFG3no3u");
 
 exports.ForgotPassword = class ForgotPassword {
@@ -34,19 +33,16 @@ exports.ForgotPassword = class ForgotPassword {
     return resetLink;
   }
 
-
-
-
   async waitForEmail(email, maxRetries = 10, retryDelay = 5000) {
     let emailMessage;
     for (let i = 0; i < maxRetries; i++) {
       try {
         const email = await mailosaur.messages.list(SERVER_ID, {
           sentTo: `soap-steel@ef6rs3pi.mailosaur.net`,
-          sort: 'desc',
+          sort: "desc",
           limit: 1,
         });
-  
+
         if (emails.items.length > 0) {
           emailMessage = emails.items[0];
           return emailMessage;
@@ -56,11 +52,9 @@ exports.ForgotPassword = class ForgotPassword {
         await this.page.waitForTimeout(retryDelay);
       }
     }
-  
+
     throw new Error("Failed to retrieve the latest email.");
   }
-  
-
 
   async resetPassword(resetLink) {
     await this.page.goto(resetLink);
@@ -69,12 +63,6 @@ exports.ForgotPassword = class ForgotPassword {
     await this.page.getByText("Set Password").click();
   }
   async refreshMail() {
-    
     await mailosaur.messages.deleteAll(SERVER_ID);
-    
-    
   }
-  
-}
-
-
+};

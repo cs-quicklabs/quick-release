@@ -44,6 +44,9 @@ exports.feedbackPost = class FeedbackPost{
       async fillTitleWithOnlySpaces() {
         await this.titleInput.fill('    ');
       }
+      async fillDescriptionWithOnlyspaces(){
+        await this.descriptionEditor.fill('  ')
+      }
 
       async fillDescription() {
         await this.descriptionEditor.fill(this.description);
@@ -66,6 +69,7 @@ exports.feedbackPost = class FeedbackPost{
       {
         await this.editFeedback.click()
         await this.fillTitle()
+        await this.selectStatus('In-Review')
         await this.StatusInput.click();
         const publicOption = this.page.locator(`text=${status}`); 
         await publicOption.click(); 

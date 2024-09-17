@@ -1,5 +1,5 @@
-import { LoginPage } from "../e2e/Login";
-import { Profiles } from "../e2e/Profiles";
+import { LoginPage } from "../e2e/login";
+import { Profiles } from "../e2e/profiles";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
