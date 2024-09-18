@@ -158,7 +158,7 @@ export function Navbar({
           <>
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="relative flex items-center justify-between">
-                <div className="flex justify-between w-full items-center lg:hidden py-2 sm:py-4">
+                <div className="flex justify-between w-full items-center lg:hidden py-2 lg:py-4">
                   {/* Mobile menu button*/}
 
                   <div className="flex flex-shrink-0 items-center gap-2">
