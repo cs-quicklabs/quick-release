@@ -32,7 +32,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
           setShowMenuNav={setShowMenuNav}
         />
       </div>
-      <div className="mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8">
+      <div className="mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8 mt-14">
         <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
           {!loggedInUser && (
             <div
@@ -57,7 +57,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
               releaseCategories?.length || releaseTags?.length
                 ? "lg:col-span-9"
                 : "lg:col-span-12"
-            } lg:mt-0 ${!loggedInUser && "mt-[20rem]"}`}
+            } lg:mt-0 ${!loggedInUser && "mt-[18rem]"}`}
           >
             <ChangeLogsListContainer />
           </div>

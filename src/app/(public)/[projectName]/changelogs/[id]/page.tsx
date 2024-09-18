@@ -99,14 +99,14 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
 
   return (
     <div className="contents overflow-hidden">
-      <div className={`sticky top-0 bg-gray-50 z-10`}>
+      <div className={`fixed w-full top-0 bg-gray-50 z-10`}>
         <Navbar
           projectName={project.name!}
           projectImgUrl={project.projectImgUrl!}
           projectSlug={project.slug!}
         />
       </div>
-      <main className="max-w-5xl mx-auto p-4 mt-4">
+      <main className="max-w-5xl mx-auto p-4 mt-14">
         <Link href={`/${projectName}/changelogs`}>
           <button
             className="mb-2 inline-flex items-center gap-x-1.5 shadow-sm px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
