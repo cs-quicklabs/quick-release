@@ -19,6 +19,8 @@ exports.feedbackPost = class FeedbackPost{
       this.openOptionsButton = this.page.locator("#open-options");
       this.StatusInput = this.page.locator('#visibility-status-select > .select__control > .select__value-container > .select__input-container')
       this.publicStatus = this.page.getByRole('option', { name: 'Public' })
+      this.titleError = this.page.locator('#errorTitle')
+      this.descriptionError = this.page.locator('#errorDescription')
 }
 
     async navigateToFeedBack(){
@@ -43,9 +45,15 @@ exports.feedbackPost = class FeedbackPost{
       }
       async fillTitleWithOnlySpaces() {
         await this.titleInput.fill('    ');
+        await this.submitButton.click()
+        await expect(this.titleError).toHaveText('Required')
       }
       async fillDescriptionWithOnlyspaces(){
         await this.descriptionEditor.fill('  ')
+        await this.submitButton.click()
+        await expect(this.descriptionError).toHaveText('Required')
+
+
       }
 
       async fillDescription() {

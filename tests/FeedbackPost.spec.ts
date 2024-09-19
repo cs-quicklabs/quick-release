@@ -30,6 +30,12 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitleWithOnlySpaces()
+    await feedBackPosts.submitFeedBack()
+  });
+  test("verify description field should not accept only spaces", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await feedBackPosts.addPosts();
     await feedBackPosts.fillDescriptionWithOnlyspaces()
     await feedBackPosts.submitFeedBack()
   });

@@ -63,7 +63,7 @@ export default function FeedbackForm({
                   id="title"
                 />
               </FormControl>
-              <FormMessage className="text-red-600" />
+              <FormMessage className="text-red-600" id="errorTitle" />
             </FormItem>
           )}
         />
@@ -143,7 +143,7 @@ export default function FeedbackForm({
                   onModal="Feedbacks"
                 />
               </FormControl>
-              <FormMessage className="text-red-600" />
+              <FormMessage className="text-red-600" id="errorDescription"/>
             </FormItem>
           )}
         />
