@@ -51,7 +51,6 @@ const FeedbackBoardselectMenu: React.FC<Props> = (props) => {
           action: "select-option",
           option: newFeedbackBoardOption,
         };
-        console.log("actionMeta", actionMeta);
         props.onChange?.(newFeedbackBoardOption, actionMeta);
       },
       (error) => showNotification("error", error)

@@ -30,6 +30,8 @@ export async function GET(req: Request, res: Response) {
           name: true,
           createdAt: true,
           updatedAt: true,
+          slug: true,
+          projectImgUrl: true,
         }
        });
     
@@ -45,7 +47,7 @@ export async function GET(req: Request, res: Response) {
       new ApiResponse(
         200,
         { projects: sortedProjects, totalProjects },
-        "Projects fetched successfully"
+        "Teams fetched successfully"
       )
     );
   });

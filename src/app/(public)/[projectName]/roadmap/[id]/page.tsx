@@ -9,6 +9,7 @@ import FeedbackPublicSideNav from "../../(common)/FeedbackPublicSideNav";
 import { getOneProject } from "@/lib/project";
 import FeedbackDetailContainer from "../../feedbacks/components/FeedbackDetailContainer";
 import { IFeedbackBoard } from "@/interfaces";
+import { Navbar } from "@/components/Navbar";
 
 type PagePayloadType = {
   params: {
@@ -52,7 +53,7 @@ export async function generateMetadata(
     feedbackpost.createdBy?.lastName || ""
   }`.trim();
   const date = moment(feedbackpost.createdAt).format("MMMM DD, YYYY");
-  const ogDesc = `Published on ${date} - ${fullName}`;
+  const ogDesc = `Feedback posted on ${date} - ${fullName}`;
 
   return {
     title: feedbackpost.title,
@@ -86,19 +87,28 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
   const feedbackBoards = project.feedbackBoards as unknown as IFeedbackBoard[];
 
   return (
-    <main className="flex flex-col">
-      <FeedbackHeader title="Roadmap" />
-      <div className="flex flex-1">
-        <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
-          <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
-
-          <FeedbackDetailContainer
-            feedbackBoards={feedbackBoards}
-            feedbackPost={feedbackpost}
-          />
-        </div>
+    <div className="contents overflow-hidden">
+      <div className={`sticky top-0 bg-gray-50 z-10`}>
+        <Navbar
+          projectName={project.name!}
+          projectImgUrl={project.projectImgUrl!}
+          projectSlug={project.slug!}
+        />
       </div>
-    </main>
+      <main className="flex flex-col">
+        <FeedbackHeader title="Roadmap" />
+        <div className="flex flex-1">
+          <div className="min-w-0 flex-1 border-t border-gray-200 xl:flex">
+            <FeedbackPublicSideNav feedbackBoards={feedbackBoards} />
+
+            <FeedbackDetailContainer
+              feedbackBoards={feedbackBoards}
+              feedbackPost={feedbackpost}
+            />
+          </div>
+        </div>
+      </main>
+    </div>
   );
 };
 

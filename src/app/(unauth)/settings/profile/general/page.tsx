@@ -1,13 +1,9 @@
 "use client";
-
-import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
-import { fileUploadRequest } from "@/fetchHandlers/file";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Oval } from "react-loader-spinner";
 import { z } from "zod";
@@ -15,9 +11,10 @@ import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import AlertModal from "@/components/AlertModal";
-import { fileDeleteRequest } from "@/fetchHandlers/file";
 import { Button } from "@/atoms/button";
 import { ProfileType } from "@/types";
+import { deleteFiles, uploadFile } from "@/fetchHandlers";
+import { showNotification } from "@/Utils";
 
 const Profile = () => {
   const router = useRouter();
@@ -60,7 +57,8 @@ const Profile = () => {
       .string()
       .trim()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .transform((value) => value.toLowerCase()),
     profilePicture: z.unknown(),
   });
 
@@ -108,7 +106,7 @@ const Profile = () => {
     return (
       formValues.firstName !== loggedInUser?.firstName ||
       formValues.lastName !== loggedInUser?.lastName ||
-      formValues.email !== loggedInUser?.email
+      formValues.email.toLowerCase() !== loggedInUser?.email
     );
   }, [formValues, loggedInUser]);
 
@@ -116,75 +114,20 @@ const Profile = () => {
     const file = event.target.files[0];
 
     if (file) {
-      await uploadImage.upload(file);
-    } else {
-      console.error("No file selected.");
-    }
-  };
-
-  const uploadImage = useMemo(
-    () => ({
-      upload: (file: File) => {
-        return new Promise(async (resolve, reject) => {
-          // check if valid image exists
-          const extension = file.name.toLowerCase().split(".").pop();
-          if (!["png", "jpg", "jpeg"].includes(extension!)) {
-            const errMessage = "Invalid file type";
-            showNotification("error", errMessage);
-            return reject(errMessage);
-          }
-
-          if (file.size > 1024 * 1024 * 3) {
-            const errMessage = "File size should be less than 3 MB";
-            showNotification("error", errMessage);
-            return reject(errMessage);
-          }
-
-          const formData = new FormData();
-          formData.append("file", file);
-          formData.append("onModal", "ProfilePictures");
-
-          await requestHandler(
-            async () => await fileUploadRequest(formData),
-            setImageUploadLoading,
-            (res: any) => {
-              updateUserDetails({
-                profilePicture: res.data.url,
-              });
-              setProfileImgUrl(res.data.url);
-              showNotification(
-                "success",
-                "Profile picture uploaded successfully"
-              );
-            },
-            (errMessage) => {
-              showNotification("error", errMessage);
-              reject(errMessage);
-            }
-          );
-        });
-      },
-    }),
-    []
-  );
-
-  const deleteProfilePicture = async (profileImgUrl: string) => {
-    return new Promise(async (resolve, reject) => {
-      await requestHandler(
-        async () => await fileDeleteRequest([profileImgUrl], "ProfilePictures"),
-        setImageUploadLoading,
-        (res: any) => {
-          setProfileImgUrl("");
-          updateUserDetails({ profilePicture: null });
-          setProfileImgUrl(null);
-          showNotification("success", "Profile picture remove successfully");
-        },
-        (errMessage) => {
-          showNotification("error", errMessage);
-          reject(errMessage);
-        }
+      const url = await uploadFile(
+        file,
+        "ProfilePictures",
+        setImageUploadLoading
       );
-    });
+
+      if (url) {
+        updateUserDetails({
+          profilePicture: url,
+        });
+        showNotification("success", "Profile picture updated successfully");
+        setProfileImgUrl(url);
+      }
+    }
   };
 
   const updateProfileDetails = async (
@@ -201,6 +144,18 @@ const Profile = () => {
   const handleUpdateProfile = async () => {
     setIsOpen(false);
     updateUserDetails(formValues as ProfileType);
+  };
+
+  const handleDelete = async () => {
+    deleteFiles([profileImgUrl], "ProfilePictures", setImageUploadLoading);
+    if (!imageUploadLoading) {
+      updateUserDetails({
+        profilePicture: null,
+      });
+      setProfileImgUrl(null);
+      showNotification("success", "Profile picture deleted successfully");
+      setIsOpenImageModal(false);
+    }
   };
 
   return (
@@ -251,6 +206,7 @@ const Profile = () => {
                           type="file"
                           accept="image/*"
                           onChange={handleFileChange}
+                          onClick={(e: any) => (e.target.value = "")}
                         />
                         <XMarkIcon
                           className="ml-[-10px] cursor-pointer"
@@ -277,6 +233,7 @@ const Profile = () => {
                         type="file"
                         accept="image/*"
                         onChange={handleFileChange}
+                        onClick={(e: any) => (e.target.value = "")}
                       />
                     </>
                   )}
@@ -370,17 +327,6 @@ const Profile = () => {
           onClickOk={() => handleUpdateProfile()}
           loading={updateLoading}
         />
-        {/* // <Modal
-          //   open={isOpenImageModal}
-          //   setIsOpen={setIsOpenImageModal}
-          //   buttonText="OK"
-          //   title="Remove Profile Picture ?"
-          //   onClick={() => {
-          //     setIsOpenImageModal(false);
-          //     setProfileImgUrl(null);
-          //   }}
-          //   loading={loading.profileLoading}
-          // ></Modal> */}
         <AlertModal
           show={isOpenImageModal}
           title={`Remove Profile Picture ?`}
@@ -388,10 +334,7 @@ const Profile = () => {
           onClickCancel={() => setIsOpenImageModal(false)}
           okBtnClassName={"bg-red-600 hover:bg-red-800"}
           spinClassName={"!fill-red-600"}
-          onClickOk={() => {
-            deleteProfilePicture(profileImgUrl);
-            setIsOpenImageModal(false);
-          }}
+          onClickOk={handleDelete}
           loading={imageUploadLoading}
         />
       </div>

@@ -10,36 +10,39 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 type RoadmapColumnPropsType = {
   status: string;
   board: string;
-}
+};
 
-export default function RoadmapColumn(
-  {status, board}: RoadmapColumnPropsType) {
+export default function RoadmapColumn({
+  status,
+  board,
+}: RoadmapColumnPropsType) {
   const { bulletColor, title, bgColor, textColor } = FeedbackStatus[status];
   const { projectName } = useParams();
   const [feedbackPosts, setFeedbackPosts] = useState<FeedbackPostType[]>([]);
   const router = useRouter();
 
-  const fetchFeedbacksByStatus = useCallback(async (board: string) => {
-    const query: FilterType = {
-      feedbackStatus: status,
-      projectName: projectName,
-      skipStatus: true,
-      board
-    };
+  const fetchFeedbacksByStatus = useCallback(
+    async (board: string) => {
+      const query: FilterType = {
+        feedbackStatus: status,
+        projectName: projectName,
+        skipStatus: true,
+        board,
+      };
 
-    const res = await getAllPublicFeedbacksRequest(query);
-    const data = res.data.data;
+      const res = await getAllPublicFeedbacksRequest(query);
+      const data = res.data.data;
 
-    setFeedbackPosts(data?.feedbackPosts);
-  }, [projectName, status]);
+      setFeedbackPosts(data?.feedbackPosts);
+    },
+    [projectName, status]
+  );
 
   useEffect(() => {
     if (projectName && status) {
       fetchFeedbacksByStatus(board!);
     }
   }, [status, projectName, board]);
-
-  const publicLink = `${projectName}/roadmap`;
 
   return (
     <section className="px-4 py-4">
@@ -73,7 +76,11 @@ export default function RoadmapColumn(
             className={classNames(
               "bg-white px-4 py-4 shadow sm:rounded-lg sm:py-5 sm:px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50 cursor-pointer"
             )}
-            onClick={() => router.push(`/${publicLink}/${feedbackPost.id}`)}
+            onClick={() =>
+              router.push(
+                `/${projectName}/roadmap/${feedbackPost.id}?board=${feedbackPost.feedbackBoards?.name}`
+              )
+            }
           >
             <FeedbackCard feedback={feedbackPost} />
           </li>

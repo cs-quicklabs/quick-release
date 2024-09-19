@@ -1,278 +1,175 @@
-/*
-  Warnings:
+-- Check if the ENUM type 'FeedbackStatus' exists, and create if not
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'FeedbackStatus') THEN
+        CREATE TYPE "FeedbackStatus" AS ENUM ('IN_REVIEW', 'PLANNED', 'IN_PROGRESS', 'COMPLETED', 'CLOSED');
+    END IF;
+END $$;
 
-  - You are about to drop the column `isArchived` on the `Log` table. All the data in the column will be lost.
-  - You are about to drop the column `organizationsId` on the `User` table. All the data in the column will be lost.
-  - You are about to drop the `organizations` table. If the table is not empty, all the data it contains will be lost.
-  - A unique constraint covering the columns `[organisationId]` on the table `User` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `organisationId` to the `User` table without a default value. This is not possible if the table is not empty.
+-- Create the enum type VisibilityStatus if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'VisibilityStatus') THEN
+        CREATE TYPE "VisibilityStatus" AS ENUM ('public', 'private');
+    END IF;
+END $$;
 
-*/
--- CreateEnum
-CREATE TYPE "FeedbackStatus" AS ENUM ('IN_REVIEW', 'PLANNED', 'IN_PROGRESS', 'COMPLETED', 'CLOSED');
+-- CreateTable FeedbackBoards if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackBoards') THEN
+        CREATE TABLE "FeedbackBoards" (
+            "id" SERIAL NOT NULL,
+            "cuid" TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "isDefault" BOOLEAN NOT NULL DEFAULT false,
+            "projectsId" INTEGER,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            CONSTRAINT "FeedbackBoards_pkey" PRIMARY KEY ("id")
+        );
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "UsersRoles" (
-    "id" SERIAL NOT NULL,
-    "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
+-- CreateTable FeedbackPosts if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPosts') THEN
+        CREATE TABLE "FeedbackPosts" (
+            "id" SERIAL NOT NULL,
+            "cuid" TEXT NOT NULL,
+            "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            "updatedAt" TIMESTAMP(3) NOT NULL,
+            "title" TEXT NOT NULL,
+            "description" TEXT NOT NULL,
+            "status" "FeedbackStatus" NOT NULL,
+            "releaseETA" TIMESTAMP(3),
+            "createdById" INTEGER,
+            "deletedAt" TIMESTAMP(3),
+            "feedbackBoardsId" INTEGER,
+            "visibilityStatus" "VisibilityStatus" NOT NULL DEFAULT 'private',
+            CONSTRAINT "FeedbackPosts_pkey" PRIMARY KEY ("id")
+        );
+    END IF;
+END $$;
 
-    CONSTRAINT "UsersRoles_pkey" PRIMARY KEY ("id")
-);
+-- CreateTable FeedbackPostReleaseTags if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostReleaseTags') THEN
+        CREATE TABLE "FeedbackPostReleaseTags" (
+            "feedbackPostId" INTEGER NOT NULL,
+            "releaseTagId" INTEGER NOT NULL,
+            CONSTRAINT "FeedbackPostReleaseTags_pkey" PRIMARY KEY ("feedbackPostId", "releaseTagId")
+        );
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "Users" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "firstName" TEXT NOT NULL,
-    "lastName" TEXT NOT NULL,
-    "profilePicture" TEXT,
-    "email" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
-    "resetToken" TEXT,
-    "resetTokenExpiry" TEXT,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-    "isVerified" BOOLEAN NOT NULL DEFAULT false,
-    "verificationToken" TEXT,
-    "verificationTokenExpiry" TEXT,
+-- CreateTable FeedbackPostVotes if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'FeedbackPostVotes') THEN
+        CREATE TABLE "FeedbackPostVotes" (
+            "feedbackPostId" INTEGER NOT NULL,
+            "userId" INTEGER NOT NULL,
+            CONSTRAINT "FeedbackPostVotes_pkey" PRIMARY KEY ("feedbackPostId", "userId")
+        );
+    END IF;
+END $$;
 
-    CONSTRAINT "Users_pkey" PRIMARY KEY ("id")
-);
+-- CreateIndex FeedbackPosts_cuid_key if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'FeedbackPosts_cuid_key') THEN
+        CREATE UNIQUE INDEX "FeedbackPosts_cuid_key" ON "FeedbackPosts"("cuid");
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "Organizations" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "createdById" INTEGER,
-    "name" TEXT NOT NULL,
+-- CreateIndex FeedbackBoards_cuid_key if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'FeedbackBoards_cuid_key') THEN
+        CREATE UNIQUE INDEX "FeedbackBoards_cuid_key" ON "FeedbackBoards"("cuid");
+    END IF;
+END $$;
 
-    CONSTRAINT "Organizations_pkey" PRIMARY KEY ("id")
-);
+-- Add 'slug' column if it does not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Projects' AND column_name = 'slug') THEN
+        ALTER TABLE "Projects" ADD COLUMN "slug" TEXT;
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "OrganizationsUsers" (
-    "organizationsId" INTEGER NOT NULL,
-    "usersId" INTEGER NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT false,
+-- Copy data from 'name' to 'slug' for all records
+DO $$
+BEGIN
+    UPDATE "Projects" SET "slug" = "name" WHERE "slug" IS NULL;
+END $$;
 
-    CONSTRAINT "OrganizationsUsers_pkey" PRIMARY KEY ("organizationsId","usersId")
-);
+-- Add a unique constraint on the 'slug' column if it doesn't already exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'Projects_slug_unique') THEN
+        ALTER TABLE "Projects" ADD CONSTRAINT "Projects_slug_unique" UNIQUE ("slug");
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "Projects" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "name" TEXT NOT NULL,
-    "createdById" INTEGER,
-    "organizationsId" INTEGER,
+-- Add new column 'projectImgUrl' to Projects if not exists
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'Projects' AND column_name = 'projectImgUrl') THEN
+        ALTER TABLE "Projects" ADD COLUMN "projectImgUrl" TEXT;
+    END IF;
+END $$;
 
-    CONSTRAINT "Projects_pkey" PRIMARY KEY ("id")
-);
+-- AddForeignKey constraints if not exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPosts_createdById_fkey') THEN
+        ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "ProjectsUsers" (
-    "projectsId" INTEGER NOT NULL,
-    "usersId" INTEGER NOT NULL,
-    "roleId" INTEGER NOT NULL,
-    "isActive" BOOLEAN NOT NULL DEFAULT false,
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPosts_feedbackBoardsId_fkey') THEN
+        ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_feedbackBoardsId_fkey" FOREIGN KEY ("feedbackBoardsId") REFERENCES "FeedbackBoards"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
 
-    CONSTRAINT "ProjectsUsers_pkey" PRIMARY KEY ("usersId","projectsId","roleId")
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackBoards_projectsId_fkey') THEN
+        ALTER TABLE "FeedbackBoards" ADD CONSTRAINT "FeedbackBoards_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "Changelogs" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "title" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "releaseVersion" TEXT NOT NULL,
-    "projectsId" INTEGER,
-    "scheduledTime" TIMESTAMP(3),
-    "status" TEXT NOT NULL,
-    "createdById" INTEGER NOT NULL,
-    "updatedById" INTEGER NOT NULL,
-    "deletedAt" TIMESTAMP(3),
-    "archivedAt" TIMESTAMP(3),
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostReleaseTags_feedbackPostId_fkey') THEN
+        ALTER TABLE "FeedbackPostReleaseTags" ADD CONSTRAINT "FeedbackPostReleaseTags_feedbackPostId_fkey" FOREIGN KEY ("feedbackPostId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
 
-    CONSTRAINT "Changelogs_pkey" PRIMARY KEY ("id")
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostReleaseTags_releaseTagId_fkey') THEN
+        ALTER TABLE "FeedbackPostReleaseTags" ADD CONSTRAINT "FeedbackPostReleaseTags_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTags"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "ReleaseTags" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "organizationsId" INTEGER NOT NULL,
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostVotes_feedbackPostId_fkey') THEN
+        ALTER TABLE "FeedbackPostVotes" ADD CONSTRAINT "FeedbackPostVotes_feedbackPostId_fkey" FOREIGN KEY ("feedbackPostId") REFERENCES "FeedbackPosts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
 
-    CONSTRAINT "ReleaseTags_pkey" PRIMARY KEY ("id")
-);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.table_constraints WHERE constraint_name = 'FeedbackPostVotes_userId_fkey') THEN
+        ALTER TABLE "FeedbackPostVotes" ADD CONSTRAINT "FeedbackPostVotes_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- CreateTable
-CREATE TABLE "ChangelogReleaseTags" (
-    "logId" INTEGER NOT NULL,
-    "releaseTagId" INTEGER NOT NULL,
-
-    CONSTRAINT "ChangelogReleaseTags_pkey" PRIMARY KEY ("logId","releaseTagId")
-);
-
--- CreateTable
-CREATE TABLE "ReleaseCategories" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "code" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "organizationsId" INTEGER NOT NULL,
-
-    CONSTRAINT "ReleaseCategories_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "ChangelogReleaseCategories" (
-    "logId" INTEGER NOT NULL,
-    "releaseCategoryId" INTEGER NOT NULL,
-
-    CONSTRAINT "ChangelogReleaseCategories_pkey" PRIMARY KEY ("logId","releaseCategoryId")
-);
-
--- CreateTable
-CREATE TABLE "FeedbackPosts" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-    "title" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "status" "FeedbackStatus" NOT NULL,
-    "releaseETA" TIMESTAMP(3) NOT NULL,
-    "createdById" INTEGER NOT NULL,
-    "feedbackBoardsId" INTEGER NOT NULL,
-
-    CONSTRAINT "FeedbackPosts_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "FeedbackBoards" (
-    "id" SERIAL NOT NULL,
-    "cuid" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "isDefault" BOOLEAN NOT NULL,
-    "projectId" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "FeedbackBoards_pkey" PRIMARY KEY ("id")
-);
-
--- CreateIndex
-CREATE UNIQUE INDEX "Users_cuid_key" ON "Users"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Users_resetToken_key" ON "Users"("resetToken");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Users_verificationToken_key" ON "Users"("verificationToken");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Organizations_cuid_key" ON "Organizations"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Projects_cuid_key" ON "Projects"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Changelogs_cuid_key" ON "Changelogs"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ReleaseTags_cuid_key" ON "ReleaseTags"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ReleaseCategories_cuid_key" ON "ReleaseCategories"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "FeedbackPosts_cuid_key" ON "FeedbackPosts"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "FeedbackBoards_cuid_key" ON "FeedbackBoards"("cuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_organisationId_key" ON "User"("organisationId");
-
--- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_organisationId_fkey" FOREIGN KEY ("organisationId") REFERENCES "Organisation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Organizations" ADD CONSTRAINT "Organizations_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OrganizationsUsers" ADD CONSTRAINT "OrganizationsUsers_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OrganizationsUsers" ADD CONSTRAINT "OrganizationsUsers_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Projects" ADD CONSTRAINT "Projects_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Projects" ADD CONSTRAINT "Projects_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ProjectsUsers" ADD CONSTRAINT "ProjectsUsers_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ProjectsUsers" ADD CONSTRAINT "ProjectsUsers_usersId_fkey" FOREIGN KEY ("usersId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ProjectsUsers" ADD CONSTRAINT "ProjectsUsers_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "UsersRoles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_projectsId_fkey" FOREIGN KEY ("projectsId") REFERENCES "Projects"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Changelogs" ADD CONSTRAINT "Changelogs_updatedById_fkey" FOREIGN KEY ("updatedById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ReleaseTags" ADD CONSTRAINT "ReleaseTags_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ChangelogReleaseTags" ADD CONSTRAINT "ChangelogReleaseTags_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Changelogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ChangelogReleaseTags" ADD CONSTRAINT "ChangelogReleaseTags_releaseTagId_fkey" FOREIGN KEY ("releaseTagId") REFERENCES "ReleaseTags"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ReleaseCategories" ADD CONSTRAINT "ReleaseCategories_organizationsId_fkey" FOREIGN KEY ("organizationsId") REFERENCES "Organizations"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ChangelogReleaseCategories" ADD CONSTRAINT "ChangelogReleaseCategories_logId_fkey" FOREIGN KEY ("logId") REFERENCES "Changelogs"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ChangelogReleaseCategories" ADD CONSTRAINT "ChangelogReleaseCategories_releaseCategoryId_fkey" FOREIGN KEY ("releaseCategoryId") REFERENCES "ReleaseCategories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FeedbackPosts" ADD CONSTRAINT "FeedbackPosts_feedbackBoardsId_fkey" FOREIGN KEY ("feedbackBoardsId") REFERENCES "FeedbackBoards"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "FeedbackBoards" ADD CONSTRAINT "FeedbackBoards_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Projects"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

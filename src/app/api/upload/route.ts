@@ -6,7 +6,12 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-const allowedModals = ["ChangeLogs", "ProfilePictures", "Feedbacks"];
+const allowedModals = [
+  "ChangeLogs",
+  "ProfilePictures",
+  "Feedbacks",
+  "ProjectImgs",
+];
 const MAX_FILE_SIZE_MB = 3;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 

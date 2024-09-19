@@ -22,7 +22,8 @@ const ForgotPassword = () => {
       .string()
       .trim()
       .min(1, { message: "Required" })
-      .email({ message: "Invalid email address" }),
+      .email({ message: "Invalid email address" })
+      .transform((value) => value.toLowerCase()),
   });
 
   const {

@@ -9,7 +9,6 @@ import React, { useMemo } from "react";
 
 const FeedbackCardItem: React.FC<{
   feedback?: FeedbackPostType;
-  projectName?: string;
 }> = ({ feedback }) => {
   if (!feedback) return null;
 

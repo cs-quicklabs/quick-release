@@ -7,6 +7,7 @@ import { ArrowLeftIcon } from "@heroicons/react/20/solid";
 import { ChevronUpIcon } from "@heroicons/react/24/solid";
 import { FeedbackStatus } from "@/Utils/constants";
 import { FeedbackPostType } from "@/types";
+import { updateQueryParams } from "@/Utils";
 
 type FeedbackDetailContainerPropsType = {
   feedbackBoards: IFeedbackBoard[];
@@ -18,6 +19,7 @@ export default function FeedbackDetailContainer({
   feedbackPost,
 }: FeedbackDetailContainerPropsType) {
   const searchParams = useSearchParams();
+  const path = usePathname();
   const router = useRouter();
   const board = useMemo(() => {
     const data = searchParams.get("board");
@@ -26,6 +28,22 @@ export default function FeedbackDetailContainer({
     }
     return null;
   }, [searchParams]);
+
+  const search = useMemo(() => {
+    const data = searchParams.get("search");
+    if (data && data !== "") {
+      return searchParams.get("search");
+    }
+    return null;
+  }, [searchParams]);
+
+  const previousPath = useMemo(() => {
+    const queryParams = updateQueryParams(board, search, null);
+    if(!queryParams) {
+      return path.split("/").slice(0, -1).join("/");
+    }
+    return `${path.split("/").slice(0, -1).join("/")}?${queryParams}`
+  }, [path]);
 
   const releaseTags = feedbackPost?.releaseTags
     ? (feedbackPost?.releaseTags as IReleaseTag[]).map((tag) => ({
@@ -64,7 +82,7 @@ export default function FeedbackDetailContainer({
             <div className="flex items-center gap-2">
               <ArrowLeftIcon
                 className="w-4 h-4 cursor-pointer"
-                onClick={() => router.back()}
+                onClick={() => router.push(previousPath)}
               />
               <h1 className="text-lg font-medium text-gray-900">
                 {feedbackPost?.title}

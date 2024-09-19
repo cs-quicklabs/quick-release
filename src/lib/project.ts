@@ -4,8 +4,14 @@ export const getOneProject = async (
   query: { cuid: string } | { name: string }
 ) => {
   try {
+    let queryObj;
+    if ("name" in query) {
+      queryObj = {
+        slug: query.name,
+      }
+    }
     const project = await db.projects.findFirst({
-      where: query,
+      where: queryObj,
       include: {
         organizations: {
           select: {

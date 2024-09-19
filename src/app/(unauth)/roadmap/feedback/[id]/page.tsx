@@ -17,6 +17,7 @@ import { classNames } from "@/lib/utils";
 import { FeedbackStatus, FeedbackVisibilityStatus } from "@/Utils/constants";
 import {
   ArrowLeftIcon,
+  ArrowUpRightIcon,
   ChevronUpIcon,
   EllipsisVerticalIcon,
 } from "@heroicons/react/24/solid";
@@ -24,6 +25,7 @@ import moment from "moment";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import BeatLoader from "react-spinners/BeatLoader";
+import Link from "next/link";
 
 export default function Page() {
   const [loader, setLoader] = useState(false);
@@ -38,7 +40,11 @@ export default function Page() {
     getFeedbackPost,
   } = useFeedbackPostContext();
   const feedbackId = useParams()?.id as string;
-  const { activeProjectId, getActiveProject } = useProjectContext();
+  const {
+    activeProjectId,
+    getActiveProject,
+    map: projectMap,
+  } = useProjectContext();
   const fetchActiveProject = useCallback(async () => {
     if (!activeProjectId) {
       await getActiveProject(setLoader);
@@ -102,6 +108,10 @@ export default function Page() {
   const visibilityStatus =
     FeedbackVisibilityStatus[feedbackPost?.visibilityStatus!];
 
+  const publicLink = `/${
+    projectMap[activeProjectId!]?.slug
+  }/roadmap/${feedbackId}?board=${feedbackPost?.feedbackBoards?.name}`;
+
   return (
     <main className="overflow-hidden border-t border-gray-200">
       <div className="mx-auto max-w-7xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
@@ -134,9 +144,11 @@ export default function Page() {
                     >
                       {visibilityStatus?.title}
                     </span>
-                    {/* <Link href={publicLink}>
-                  <ArrowUpRightIcon className="w-4 h-4 ml-2" />
-                </Link> */}
+                    {visibilityStatus.id === "public" && (
+                      <Link href={publicLink}>
+                        <ArrowUpRightIcon className="w-4 h-4 ml-2" />
+                      </Link>
+                    )}
                   </div>
 
                   <p className="mt-1 truncate text-sm text-gray-500 flex items-center">
@@ -270,7 +282,7 @@ export default function Page() {
         onClickOk={() => {
           deleteFeedbackPost(feedbackId!, activeProjectId!);
           setShowDeleteModal(false);
-          if(!isLoading) router.push("/roadmap");
+          if (!isLoading) router.push("/roadmap");
         }}
         onClickCancel={() => setShowDeleteModal(false)}
         loading={isLoading}

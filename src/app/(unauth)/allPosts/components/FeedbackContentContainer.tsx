@@ -137,7 +137,7 @@ const FeedbackContentContainer = () => {
   const ETA = releaseETA ? moment(releaseETA).format("DD/MM/YYYY") : undefined;
   const visibilityStatus = FeedbackVisibilityStatus[feedback.visibilityStatus!];
 
-  const publicLink = `${projectMap[activeProjectId!]?.name}/feedbacks/${id}`;
+  const publicLink = `/${projectMap[activeProjectId!]?.slug}/feedbacks/${id}?board=${feedbackBoards?.name}`;
 
   return (
     <section

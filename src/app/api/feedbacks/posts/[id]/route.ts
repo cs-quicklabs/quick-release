@@ -222,7 +222,7 @@ export async function PUT(req: NextRequest) {
         releaseETA: body.releaseETA ? new Date(body.releaseETA) : null,
         visibilityStatus: body.visibilityStatus,
         releaseTags: {
-          deleteMany: { feedbackId: feedbackPost?.id },
+          deleteMany: { feedbackPostId: feedbackPost?.id },
           create: releaseTags.map((tag) => ({ releaseTagId: tag.id })),
         },
       },

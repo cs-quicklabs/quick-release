@@ -135,7 +135,7 @@ export async function DELETE(
       where: { releaseTagId: releaseTag?.id },
     });
 
-    await db.releaseTagsOnFeedbacks.deleteMany({
+    await db.feedbackPostReleaseTags.deleteMany({
       where: { releaseTagId: releaseTag?.id },
     });
 

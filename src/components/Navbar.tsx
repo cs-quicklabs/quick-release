@@ -9,7 +9,6 @@ import { useUserContext } from "@/app/context/UserContext";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
-  BellIcon,
   MagnifyingGlassIcon,
   PlusCircleIcon,
   XMarkIcon,
@@ -24,16 +23,24 @@ import * as React from "react";
 import { Fragment } from "react";
 import { Oval } from "react-loader-spinner";
 import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
+import { classNames } from "@/lib/utils";
 
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
-}
+type NavbarProps = {
+  projectName?: string;
+  projectImgUrl?: string;
+  projectSlug?: string;
+  setShowMenuNav?: any;
+};
 
-export function Navbar() {
+export function Navbar({
+  projectName,
+  projectImgUrl,
+  projectSlug,
+  setShowMenuNav,
+}: NavbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams();
-  const { projectName } = params;
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
@@ -70,7 +77,7 @@ export function Navbar() {
   const navigation = useMemo(() => {
     const nav = [];
 
-    if (activeProjectId && loggedInUser && pathname !== "/create-project") {
+    if (activeProjectId && loggedInUser && pathname !== "/create-team") {
       nav.push({
         id: "changelog",
         name: "Changelog",
@@ -94,20 +101,20 @@ export function Navbar() {
       nav.push({
         id: "changelog",
         name: "Changelog",
-        href: `/${projectName}/changelogs`,
+        href: `/${projectSlug}/changelogs`,
         current: false,
       });
 
       nav.push({
         id: "feedback",
         name: "Feedback",
-        href: `/${projectName}/feedbacks`,
+        href: `/${projectSlug}/feedbacks`,
         current: false,
       });
       nav.push({
         id: "roadmap",
         name: "Roadmap",
-        href: `/${projectName}/roadmap`,
+        href: `/${projectSlug}/roadmap`,
         current: false,
       });
     }
@@ -124,9 +131,15 @@ export function Navbar() {
 
   const teamName = projectName
     ? projectName
-    : pathname === "/create-project" || !activeProjectId
+    : pathname === "/create-team" || !activeProjectId
     ? WEB_DETAILS.name
     : projectMap[activeProjectId]?.name;
+
+  const logoSrc = projectImgUrl
+    ? projectImgUrl
+    : projectMap[activeProjectId!]?.projectImgUrl && pathname !== "/create-team"
+    ? projectMap[activeProjectId!]?.projectImgUrl
+    : WEB_DETAILS.logo;
 
   return (
     <>
@@ -145,13 +158,13 @@ export function Navbar() {
           <>
             <div className="px-4 sm:px-6 lg:px-8">
               <div className="relative flex items-center justify-between">
-                <div className="flex items-center lg:hidden py-2 sm:py-4">
+                <div className="flex justify-between w-full items-center lg:hidden py-2 lg:py-4">
                   {/* Mobile menu button*/}
 
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <Image
                       className="h-8 w-auto"
-                      src={WEB_DETAILS.logo}
+                      src={logoSrc!}
                       alt="Your Company"
                       width={40}
                       height={40}
@@ -160,12 +173,34 @@ export function Navbar() {
                       {teamName}
                     </span>
                   </div>
+                  <div>
+                    <Disclosure.Button
+                      onClick={() => setShowMenuNav && setShowMenuNav(!open)}
+                      className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                    >
+                      <span className="absolute -inset-0.5" />
+                      <span className="sr-only" id="Open-main-menu">
+                        {"Open main menu"}
+                      </span>
+                      {open ? (
+                        <XMarkIcon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      ) : (
+                        <Bars3Icon
+                          className="block h-6 w-6"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </Disclosure.Button>
+                  </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
                   <div className="flex flex-shrink-0 items-center gap-2">
                     <Image
                       className="h-8 w-auto"
-                      src={WEB_DETAILS.logo}
+                      src={logoSrc!}
                       alt="Your Company"
                       width={40}
                       height={40}
@@ -345,11 +380,11 @@ export function Navbar() {
                           </Menu.Item>
                           <Menu.Item>
                             <Link
-                              href="/create-project"
+                              href="/create-team"
                               className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                             >
                               <PlusCircleIcon className="h-5 w-5 mr-2" />
-                              {"Add new project"}
+                              {"Add new team"}
                             </Link>
                           </Menu.Item>
 
@@ -459,25 +494,102 @@ export function Navbar() {
                             )}
                           </Menu.Item>
                           {projectList.length > 0 && (
-                            <Menu.Item>
-                              {({ active }) => (
-                                <Link
-                                  href="/settings/team/boards"
-                                  // onClick={handleLogout}
-                                  className={classNames(
-                                    active ? "bg-gray-100" : "",
-                                    "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
-                                  )}
-                                >
-                                  <div
-                                    className="flex  items-center"
-                                    id="team-setting"
+                            <>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href="/settings/team/general"
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
+                                    )}
                                   >
-                                    {"Team Settings"}
-                                  </div>
-                                </Link>
-                              )}
-                            </Menu.Item>
+                                    <div
+                                      className="flex  items-center"
+                                      id="team-setting"
+                                    >
+                                      {"Team Settings"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <div
+                                className={
+                                  "block px-4 py-2 text-sm text-gray-500 font-medium border-t"
+                                }
+                              >
+                                <div
+                                  className="flex  items-center"
+                                  id="support-setting"
+                                >
+                                  {"Support"}
+                                </div>
+                              </div>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/changelogs`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer border-t"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-changelog"
+                                    >
+                                      {"Changelogs"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/feedbacks`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-feedbacks"
+                                    >
+                                      {"Feedbacks"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                              <Menu.Item>
+                                {({ active }) => (
+                                  <Link
+                                    href={`/${
+                                      projectMap[activeProjectId!]?.slug
+                                    }/roadmap`}
+                                    // onClick={handleLogout}
+                                    className={classNames(
+                                      active ? "bg-gray-100" : "",
+                                      "block px-4 py-2 text-sm text-gray-700 cursor-pointer"
+                                    )}
+                                  >
+                                    <div
+                                      className="flex  items-center"
+                                      id="public-roadmap"
+                                    >
+                                      {"Roadmap"}
+                                    </div>
+                                  </Link>
+                                )}
+                              </Menu.Item>
+                            </>
                           )}
                           <Menu.Item>
                             {({ active }) => (
@@ -511,106 +623,158 @@ export function Navbar() {
               </div>
             </div>
 
-            <Disclosure.Panel className="lg:hidden mt-5">
-              <div className="space-y-2 px-2 py-3">
-                {projects.map((item: any) => (
-                  <Disclosure.Button
-                    key={item.name}
-                    as="a"
-                    href={item.href}
-                    className={classNames(
-                      item.id === activeProjectId
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "block rounded-md px-3 py-2 text-base font-medium"
-                    )}
-                    aria-current={
-                      item.id === activeProjectId ? "page" : undefined
-                    }
-                  >
-                    {handleTrancate(item.name, 50)}
-                  </Disclosure.Button>
-                ))}
-              </div>
-              <div className="flex items-center px-4 py-3 gap-4">
-                <div>
-                  <Image
-                    className="h-8 w-8 rounded-full"
-                    src={
-                      (loggedInUser?.profilePicture as string)
-                        ? (loggedInUser?.profilePicture as string)
-                        : WEB_DETAILS.avtar
-                    }
-                    alt={fullName}
-                    width={40}
-                    height={40}
-                  />
+            {loggedInUser ? (
+              <Disclosure.Panel className="lg:hidden mt-5">
+                <div className="space-y-2 px-2 py-3">
+                  {projects.map((item: any) => (
+                    <Disclosure.Button
+                      key={item.name}
+                      as="a"
+                      href={item.href}
+                      className={classNames(
+                        item.id === activeProjectId
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block rounded-md px-3 py-2 text-base font-medium"
+                      )}
+                      aria-current={
+                        item.id === activeProjectId ? "page" : undefined
+                      }
+                    >
+                      {handleTrancate(item.name, 50)}
+                    </Disclosure.Button>
+                  ))}
                 </div>
-                <div className="flex flex-col text-white">
-                  {fullName.length > 18 ? (
-                    <Tooltip placement="left" content={fullName}>
+                <div className="flex items-center px-4 py-3 gap-4">
+                  <div>
+                    <Image
+                      className="h-8 w-8 rounded-full"
+                      src={
+                        (loggedInUser?.profilePicture as string)
+                          ? (loggedInUser?.profilePicture as string)
+                          : WEB_DETAILS.avtar
+                      }
+                      alt={fullName}
+                      width={40}
+                      height={40}
+                    />
+                  </div>
+                  <div className="flex flex-col text-white">
+                    {fullName.length > 18 ? (
+                      <Tooltip placement="left" content={fullName}>
+                        <p className="text-base font-medium text-white">
+                          {handleTrancate(fullName, 100)}
+                        </p>
+                      </Tooltip>
+                    ) : (
                       <p className="text-base font-medium text-white">
-                        {handleTrancate(fullName, 100)}
+                        {fullName}
                       </p>
-                    </Tooltip>
-                  ) : (
-                    <p className="text-base font-medium text-white">
-                      {fullName}
-                    </p>
-                  )}
-                  {email.length > 18 ? (
-                    <Tooltip placement="left" content={email}>
+                    )}
+                    {email.length > 18 ? (
+                      <Tooltip placement="left" content={email}>
+                        <p className="text-sm font-medium text-gray-400">
+                          {handleTrancate(email, 100)}
+                        </p>
+                      </Tooltip>
+                    ) : (
                       <p className="text-sm font-medium text-gray-400">
-                        {handleTrancate(email, 100)}
+                        {fullName}
                       </p>
-                    </Tooltip>
-                  ) : (
-                    <p className="text-sm font-medium text-gray-400">
-                      {fullName}
-                    </p>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="px-2 py-3">
-                <Link
-                  href="/settings/account/tags"
-                  // onClick={handleLogout}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <div className="flex items-center">
-                    <Link href="/settings/team/boards">
-                      {"Account Settings"}
-                    </Link>
-                  </div>
-                </Link>
-                <Link
-                  href="/settings/profile/general"
-                  // onClick={handleLogout}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <div className="flex items-center">
-                    <Link href="/settings/profile/general">
-                      {"Profile Settings"}
-                    </Link>
-                  </div>
-                </Link>
-                <Link
-                  href="/settings/team/boards"
-                  // onClick={handleLogout}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <div className="flex items-center">
-                    <Link href="/settings/team/tags">{"Team Settings"}</Link>
-                  </div>
-                </Link>
-                <a
-                  onClick={() => setOpen(true)}
-                  className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
-                >
-                  <span>Logout</span>
-                </a>
-              </div>
-            </Disclosure.Panel>
+                <div className="px-2 py-3">
+                  <Link
+                    href="/settings/account/tags"
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">
+                      <Link href="/settings/account/tags">
+                        {"Account Settings"}
+                      </Link>
+                    </div>
+                  </Link>
+                  <Link
+                    href="/settings/profile/general"
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">
+                      <Link href="/settings/profile/general">
+                        {"Profile Settings"}
+                      </Link>
+                    </div>
+                  </Link>
+                  <Link
+                    href="/settings/team/general"
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">
+                      <Link href="/settings/team/general">
+                        {"Team Settings"}
+                      </Link>
+                    </div>
+                  </Link>
+                  <Link
+                    href="#"
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base text-white font-medium bg-gray-700"
+                  >
+                    <div className="flex items-center">{"Support"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/changelogs`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Changelogs"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/feedbacks`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Feedbacks"}</div>
+                  </Link>
+                  <Link
+                    href={`/${projectMap[activeProjectId!]?.slug}/roadmap`}
+                    // onClick={handleLogout}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <div className="flex items-center">{"Roadmap"}</div>
+                  </Link>
+                  <a
+                    onClick={() => setOpen(true)}
+                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white"
+                  >
+                    <span>Logout</span>
+                  </a>
+                </div>
+              </Disclosure.Panel>
+            ) : (
+              <Disclosure.Panel className="lg:hidden mt-5">
+                <div className="space-y-2 px-2 py-3">
+                  {navigation.map((item: any) => (
+                    <Disclosure.Button
+                      key={item.name}
+                      as="a"
+                      href={item.href}
+                      className={classNames(
+                        pathname.includes(item.href)
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "block rounded-md px-3 py-2 text-base font-medium"
+                      )}
+                    >
+                      {handleTrancate(item.name, 50)}
+                    </Disclosure.Button>
+                  ))}
+                </div>
+              </Disclosure.Panel>
+            )}
           </>
         )}
       </Disclosure>

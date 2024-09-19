@@ -152,7 +152,6 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
     data: FeedbackPostType,
     setIsLoading: (loading: boolean) => void
   ) => {
-    console.log(data);
     await requestHandler(
       async () => await createFeedbackPostRequest(data),
       setIsLoading,

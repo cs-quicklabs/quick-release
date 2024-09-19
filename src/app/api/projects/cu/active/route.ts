@@ -38,7 +38,7 @@ export async function GET(req: Request, res: Response) {
     });
 
     return NextResponse.json(
-      new ApiResponse(200, privacyResponse(project), "Active project fetched successfully")
+      new ApiResponse(200, privacyResponse(project), "Active team fetched successfully")
     );
   });
 }

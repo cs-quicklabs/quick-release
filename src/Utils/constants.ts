@@ -125,7 +125,7 @@ export const WEB_DETAILS = {
   avtar: "/userAvatar.png",
 };
 export const ChangeLogIncludeDBQuery = {
-  projects: { select: { cuid: true, name: true } },
+  projects: { select: { cuid: true, name: true, slug: true } },
   createdBy: { select: SelectUserDetailsFromDB },
   updatedBy: { select: SelectUserDetailsFromDB },
   releaseTags: {
@@ -166,7 +166,7 @@ export const FeedbackPostIncludeDBQuery = {
       },
     },
   },
-  upvotedFeedbacksByUsers: true,
+  feedbackPostVotes: true,
 };
 
 export const REVALIDATE_API = 10; // revalidate/cache api response for 60 seconds

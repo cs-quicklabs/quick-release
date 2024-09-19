@@ -52,8 +52,6 @@ export default function AllPosts() {
       status: destination.droppableId,
       projectsId: activeProjectId!,
     };
-
-    console.log(feedback);
     updateFeedbackStatus(feedback, setUpdateFeedbackLoading);
     setFeedbackStatusMap(items);
   };
@@ -71,7 +69,7 @@ export default function AllPosts() {
                   key={key}
                   ref={provided.innerRef}
                   {...provided.droppableProps}
-                  className="xl:w-2/3 border border-gray-200 rounded-lg"
+                  className="w-full border border-gray-200 rounded-lg"
                 >
                   <RoadmapColumn
                     status={key}
