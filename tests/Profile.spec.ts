@@ -1,6 +1,7 @@
-import { LoginPage } from "../e2e/Login";
-import { Profiles } from "../e2e/Profiles";
+import { LoginPage } from "../e2e/login";
+import { Profiles } from "../e2e/profiles";
 import { validCredentials } from "../e2e/testData/credential";
+import {ImagePaths} from "../e2e/testData/ImagePath";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(" Verify Admin able login ", async ({ page }) => {
@@ -11,13 +12,13 @@ test.beforeEach(" Verify Admin able login ", async ({ page }) => {
 
 test("should update profile", async ({ page }) => {
   const profiles = new Profiles(page);
-  await profiles.updateProfile("John", "Doe");
+  await profiles.updateProfile();
 });
 
 test("should upload profile avatar", async ({ page }) => {
   const profiles = new Profiles(page);
   await profiles.uploadProfileAvatar(
-    "C:/Users/Admin/OneDrive/Pictures/Screenshots/Test.png"
+  ImagePaths.path
   );
 });
 

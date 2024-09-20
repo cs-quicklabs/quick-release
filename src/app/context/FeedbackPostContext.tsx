@@ -12,6 +12,7 @@ import {
   ApiFilterQueryType,
   FeedbackPostType,
   FeedbackStatusUpdatePayloadType,
+  FilterCountMapType,
 } from "@/types";
 import { requestHandler, showNotification } from "@/Utils";
 import {
@@ -19,6 +20,7 @@ import {
   deleteFeedbackPostRequest,
   getAllFeedbackPostsRequest,
   getAllPublicFeedbacksRequest,
+  getFeedbackFilterCountRequest,
   getOneFeedbackPostRequest,
   updateFeedbackPostRequest,
   updateFeedbackStatusRequest,
@@ -36,6 +38,8 @@ type FeedbackPostContextType = {
   error: string;
   isLoading: boolean;
   map: FeedbackPostMapType;
+  statusCountMap: FilterCountMapType;
+  boardCountMap: FilterCountMapType;
   list: string[] | null;
   metaData: {
     [key: string]: any;
@@ -74,6 +78,7 @@ type FeedbackPostContextType = {
     data: FeedbackStatusUpdatePayloadType,
     setLoading: (loading: boolean) => void
   ) => Promise<void>;
+  getFeedbackFilterCount: (query: ApiFilterQueryType) => Promise<void>;
 };
 
 // Create a context to manage feedback posts-related data and functions
@@ -82,6 +87,8 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
   error: "",
   isLoading: false,
   map: {} as FeedbackPostMapType,
+  statusCountMap: {} as { [key: string]: number },
+  boardCountMap: {} as { [key: string]: number },
   list: [] as string[],
   metaData: {} as { [key: string]: any },
   feedbackSideNav: false,
@@ -110,6 +117,7 @@ const FeedbackPostContext = createContext<FeedbackPostContextType>({
     data: FeedbackStatusUpdatePayloadType,
     setLoading: (loading: boolean) => void
   ) => {},
+  getFeedbackFilterCount: async (query = {}) => {},
 });
 
 // Create a hook to access the FeedbackPostContext
@@ -130,6 +138,12 @@ type BoardMapType = {
 const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [feedbackSideNav, setFeedbackSideNav] = useState(false);
+  const [statusCountMap, setStatusCountMap] = useState<{
+    [key: string]: number;
+  }>({});
+  const [boardCountMap, setBoardCountMap] = useState<{
+    [key: string]: number;
+  }>({});
   const [error, setError] = useState("");
   const [map, setMap] = useState<FeedbackPostMapType>({});
   const [list, setList] = useState<string[] | null>(null);
@@ -169,6 +183,17 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
         setMetaData((prevMetaData) => ({
           ...prevMetaData,
           total: (prevMetaData?.total || 0) + 1,
+        }));
+
+        setStatusCountMap((prevStatusCountMap) => ({
+          ...prevStatusCountMap,
+          [data.status]: (prevStatusCountMap[data.status] || 0) + 1,
+        }));
+
+        setBoardCountMap((prevBoardCountMap) => ({
+          ...prevBoardCountMap,
+          [data.feedbackBoards.name]:
+            (prevBoardCountMap[data.feedbackBoards.name] || 0) + 1,
         }));
 
         sessionStorage.removeItem("activeFeedbackPostId");
@@ -366,8 +391,21 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
       async () => await deleteFeedbackPostRequest(id, projectsId),
       setIsLoading,
       (res: any) => {
-        const { message } = res;
-        const feedbackId = id;
+        const { message, data } = res;
+        const feedbackId = data.id!;
+        const boardName = data.feedbackBoards?.name;
+        console.log("boardName", boardName);
+        const status = data.status;
+
+        setBoardCountMap((prevBoardCountMap) => ({
+          ...prevBoardCountMap,
+          [boardName]: (prevBoardCountMap[boardName] || 0) - 1,
+        }));
+
+        setStatusCountMap((prevStatusCountMap) => ({
+          ...prevStatusCountMap,
+          [status]: (prevStatusCountMap[status] || 0) - 1,
+        }));
 
         setMap((prevMap) => ({
           ...prevMap,
@@ -388,6 +426,21 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
       },
       (errMessage) => {
         showNotification("error", errMessage);
+      }
+    );
+  };
+
+  const getFeedbackFilterCount = async (query: ApiFilterQueryType) => {
+    await requestHandler(
+      async () => await getFeedbackFilterCountRequest(query),
+      setIsLoading,
+      (res) => {
+        const { data } = res;
+        setStatusCountMap(data?.feedbackStatusCountMap);
+        setBoardCountMap(data?.feedbackBoardCountMap);
+      },
+      (err) => {
+        console.log(err);
       }
     );
   };
@@ -428,6 +481,8 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
         error,
         isLoading,
         map,
+        statusCountMap,
+        boardCountMap,
         list,
         metaData: Object.assign({}, metaData, {
           hasProjectFeedbackPosts:
@@ -448,6 +503,7 @@ const FeedbackPostProvider: React.FC<ProviderProps> = ({ children }) => {
         getAllPublicFeedbackPosts,
         loadMorePublicFeedbackPosts,
         updateFeedbackStatus,
+        getFeedbackFilterCount,
       }}
     >
       {children}

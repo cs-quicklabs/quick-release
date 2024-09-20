@@ -1,5 +1,5 @@
-import { LoginPage } from "../e2e/Login";
-import { releaseTags } from "../e2e/Releasetag";
+import { LoginPage } from "../e2e/login";
+import { releaseTags } from "../e2e/releasetag";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
@@ -20,4 +20,9 @@ test("verify user able to Add Tags ", async ({ page }) => {
 test("verify user able to Delete Tags", async ({ page }) => {
   const deletereleasetag = new releaseTags(page);
   await deletereleasetag.deleteReleaseTag();
+});
+
+test("verify user should not able to add Tags with emptyvalue", async ({ page }) => {
+  const addTagsOnlySpaces = new releaseTags(page);
+  await addTagsOnlySpaces.createReleaseTagEmptyValue();
 });

@@ -55,7 +55,10 @@ export default function FeedbackForm({
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
+              <FormLabel>
+                {"Title"}
+                <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter feedback post title"
@@ -63,7 +66,7 @@ export default function FeedbackForm({
                   id="title"
                 />
               </FormControl>
-              <FormMessage className="text-red-600" />
+              <FormMessage className="text-red-600" id="errorTitle" />
             </FormItem>
           )}
         />
@@ -74,7 +77,10 @@ export default function FeedbackForm({
           name="feedbackBoard"
           render={({ field }) => (
             <FormItem className="w-1/2">
-              <FormLabel>{"Feedback Board"}<span className="text-red-600">*</span></FormLabel>
+              <FormLabel>
+                {"Feedback Board"}
+                <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <Controller
                   name="feedbackBoard"
@@ -101,25 +107,35 @@ export default function FeedbackForm({
           name="status"
           render={({ field }) => (
             <FormItem className="w-1/2">
-              <FormLabel>{"Status"}<span className="text-red-600">*</span></FormLabel>
+              <FormLabel>
+                {"Status"}
+                <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <Controller
                   name="status"
                   control={form.control}
-                  render={({ field: { onChange, onBlur, value, name } }) => (
-                    <Select
-                      id="feedback-status-select"
-                      className="basic-single max-w-[32rem]"
-                      classNamePrefix="select"
-                      name={name}
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      value={
-                        value.label !== "" ? value : FeedbackStatusOptions[0]
-                      }
-                      options={FeedbackStatusOptions}
-                    />
-                  )}
+                  render={({ field: { onChange, onBlur, value, name } }) => {
+                    // Filter out the currently selected option
+                    const filteredOptions = FeedbackStatusOptions.filter(
+                      (option) => option.value !== value?.value
+                    );
+
+                    return (
+                      <Select
+                        id="feedback-status-select"
+                        className="basic-single max-w-[32rem]"
+                        classNamePrefix="select"
+                        name={name}
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        value={
+                          value?.label !== "" ? value : FeedbackStatusOptions[0]
+                        }
+                        options={filteredOptions}
+                      />
+                    );
+                  }}
                 />
               </FormControl>
               <FormMessage className="text-red-600" />
@@ -133,7 +149,10 @@ export default function FeedbackForm({
           name="description"
           render={({ field: { value, onChange } }) => (
             <FormItem>
-              <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
+              <FormLabel>
+                {"Description"}
+                <span className="text-red-600">*</span>
+              </FormLabel>
               <FormControl>
                 <RichTextEditor
                   placeholder="Enter feedback post description"
@@ -143,7 +162,7 @@ export default function FeedbackForm({
                   onModal="Feedbacks"
                 />
               </FormControl>
-              <FormMessage className="text-red-600" />
+              <FormMessage className="text-red-600" id="errorDescription"/>
             </FormItem>
           )}
         />

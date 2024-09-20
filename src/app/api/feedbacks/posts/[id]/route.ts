@@ -119,6 +119,7 @@ export async function DELETE(
       data: {
         deletedAt: new Date(),
       },
+      include: FeedbackPostIncludeDBQuery,
     });
 
     if (!deleteFeedbackPost) {
@@ -126,7 +127,7 @@ export async function DELETE(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, null, "Feedback deleted successfully")
+      new ApiResponse(200, privacyResponse(deleteFeedbackPost), "Feedback deleted successfully")
     );
   });
 }

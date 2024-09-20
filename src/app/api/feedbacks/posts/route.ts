@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
         feedbackBoardsId: feedbackBoard?.id,
         createdById: user?.id!,
       },
+      include: FeedbackPostIncludeDBQuery,
     });
 
     if (!newFeedbackPost) {

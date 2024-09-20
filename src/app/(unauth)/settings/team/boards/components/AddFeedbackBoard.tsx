@@ -66,7 +66,7 @@ const AddFeedbackBoard = () => {
           disabled={isSaving}
         />
 
-        <span className="text-red-500 text-xs font-medium">{showError}</span>
+        <span id="errorBoard" className="text-red-500 text-xs font-medium">{showError}</span>
       </div>
 
       <Button

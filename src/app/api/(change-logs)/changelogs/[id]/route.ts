@@ -93,7 +93,7 @@ export async function DELETE(
     }
 
     return NextResponse.json(
-      new ApiResponse(200, null, "Change log deleted successfully")
+      new ApiResponse(200, deleteChangeLog, "Change log deleted successfully")
     );
   });
 }
