@@ -1,4 +1,4 @@
-import { LoginPage } from "../e2e/Login";
+import { LoginPage } from "../e2e/login";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
@@ -14,6 +14,13 @@ test(" verify Username and Password field  with only spaces", async ({
   const login = new LoginPage(page);
   await page.goto("/");
   await login.loginWithWhiteSpaces();
+});
+test(" verify Username and Password field by passing empty value", async ({
+  page,
+}) => {
+  const login = new LoginPage(page);
+  await page.goto("/");
+  await login.loginWithEmptyValue();
 });
 
 test("Verify username field by invalid email", async ({ page }) => {

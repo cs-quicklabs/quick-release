@@ -18,17 +18,38 @@ async filterPublish(){
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
-        await this.click()
+        await this.status.click()
+        await this.publish.click()
         break;
       }
       await new Promise(resolve => setTimeout(resolve, retryInterval)); 
     }
-    await this.status.click()
-    await this.publish.click()
+    
+   if(!isAddNewButtonVisible)
+   {
+    console.log("Changelog not present")
+   }
 }
 
 async filterSaveDraft(){
-    await this.status.click()
-    await this.saveDraft.click()
+  const maxRetries = 10; 
+    const retryInterval = 3000; 
+    
+    let isAddNewButtonVisible = false;
+    
+    for (let i = 0; i < maxRetries; i++) {
+      isAddNewButtonVisible = await this.addNewButton.isVisible();
+      if (isAddNewButtonVisible) {
+        await this.status.click()
+        await this.saveDraft.click()
+        break;
+      }
+      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+    }
+    if(!isAddNewButtonVisible)
+      {
+       console.log("Changelog not present")
+      }
+    
 }
 }
