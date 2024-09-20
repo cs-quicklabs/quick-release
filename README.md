@@ -57,3 +57,39 @@ npm run dev
 After above steps open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
+
+//Setup Playwright
+
+1. Run the package installation cmd.
+```
+npm install
+```
+2. Install Playwright
+```
+
+  npm init playwright@latest
+  ```
+3. Folder Structure
+e2e folder-> contains all test functions
+tests folder-> contains all test scripts
+e2e->testdata folder -> contains All Test data User Need to Update
+
+Playwright.config.ts - User can Change Base Url as per environment(like dev, or local)
+
+4. To run Test All scripts
+  ```
+  npx playwright test tests --project chromium --headed
+  ```
+5.  To run Test one specific file 
+```
+  npx playwright test tests/filename.spec.ts --project chromium --headed
+
+```
+
+
+  
+
+    
+  
+
+
