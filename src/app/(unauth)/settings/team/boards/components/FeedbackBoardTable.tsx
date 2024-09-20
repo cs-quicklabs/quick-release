@@ -140,7 +140,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                         }}
                         disabled={isSaving}
                       />
-                      <span className="text-xs font-medium text-red-500">
+                      <span id="editErrorBoard" className="text-xs font-medium text-red-500">
                         {showErrorMessage}
                       </span>
                     </>

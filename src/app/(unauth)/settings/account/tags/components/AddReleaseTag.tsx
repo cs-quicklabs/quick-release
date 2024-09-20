@@ -68,7 +68,7 @@ const AddReleaseTag = () => {
           }}
           disabled={isSaving}
         />
-        <span className="text-red-500 text-xs font-medium">{showError}</span>
+        <span id="tagerror" className="text-red-500 text-xs font-medium">{showError}</span>
       </div>
 
       <Button

@@ -20,6 +20,9 @@ import Link from "next/link";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { Checkbox } from "flowbite-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { requestHandler } from "@/Utils";
+import { getFeedbackFilterCountRequest } from "@/fetchHandlers/feedbacks";
+import { FilterType } from "@/types";
 
 type SideNavProps = {
   showSideNav: boolean;
@@ -44,12 +47,27 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
   const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
   const [filterTitle, setFilterTitle] = useState<string>("");
   const { map: feedbackBoardsMap } = useFeedbackBoardContext();
+  const { activeProjectId } = useProjectContext();
   const {
     isLoading: isFetchingFeedback,
     metaData: feedbackMetaData,
     list: feedbackList,
     loadMoreFeedbackPosts,
+    getFeedbackFilterCount,
+    statusCountMap,
+    boardCountMap,
   } = useFeedbackPostContext();
+
+  const fetchFilterCount = useCallback(async () => {
+    const query: FilterType = { projectsId: activeProjectId! };
+    getFeedbackFilterCount(query);
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    if (activeProjectId) {
+      fetchFilterCount();
+    }
+  }, [activeProjectId, fetchFilterCount]);
 
   const onSelectBoards = (value: string) => {
     sessionStorage.removeItem("activeFeedbackPostId");
@@ -190,20 +208,25 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                         {() => (
                           <div
                             onClick={() => onSelectBoards(feedbackBoards?.id!)}
-                            className="cursor-pointer text-gray-700 flex justify-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
+                            className="cursor-pointer text-gray-700 flex justify-between px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-4"
                           >
-                            <Checkbox
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
-                              name={feedbackBoards?.id}
-                              checked={selectedBoards.includes(
-                                feedbackBoards?.id!
-                              )}
-                              onChange={() =>
-                                onSelectBoards(feedbackBoards?.id!)
-                              }
-                              readOnly
-                            />
-                            <span>{feedbackBoards?.name}</span>
+                            <div className=" flex items-center gap-2">
+                              <Checkbox
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                                name={feedbackBoards?.id}
+                                checked={selectedBoards.includes(
+                                  feedbackBoards?.id!
+                                )}
+                                onChange={() =>
+                                  onSelectBoards(feedbackBoards?.id!)
+                                }
+                                readOnly
+                              />
+                              <span>{feedbackBoards?.name}</span>
+                            </div>
+                            <div className="text-gray-400">
+                              {boardCountMap[feedbackBoards?.name!] || 0}
+                            </div>
                           </div>
                         )}
                       </Menu.Item>
@@ -224,21 +247,26 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                         {() => (
                           <div
                             onClick={() => onSelectStatus(id)}
-                            className="cursor-pointer text-gray-700 flex justify-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
+                            className="cursor-pointer text-gray-700 flex justify-between items-center gap-4 px-4 py-2 text-sm hover:bg-gray-50"
                           >
-                            <Checkbox
-                              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
-                              name={id}
-                              checked={selectedStatus.includes(id)}
-                              onChange={() => onSelectStatus(id)}
-                              readOnly
-                            />
-                            <span
-                              className={`h-2 w-2 rounded-full ${bulletColor}`}
-                              aria-hidden={true}
-                            />
+                            <div className="flex items-center gap-2">
+                              <Checkbox
+                                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+                                name={id}
+                                checked={selectedStatus.includes(id)}
+                                onChange={() => onSelectStatus(id)}
+                                readOnly
+                              />
+                              <span
+                                className={`h-2 w-2 rounded-full ${bulletColor}`}
+                                aria-hidden={true}
+                              />
 
-                            <span>{title}</span>
+                              <span>{title}</span>
+                            </div>
+                            <div className="text-gray-400">
+                              {statusCountMap[id] || 0}
+                            </div>
                           </div>
                         )}
                       </Menu.Item>

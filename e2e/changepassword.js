@@ -31,7 +31,6 @@ exports.changePassword = class changePassword {
       }
       await new Promise(resolve => setTimeout(resolve, retryInterval)); 
     }
-    
   }
 
   async waitForProfileSettings() {

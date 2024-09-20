@@ -2,6 +2,7 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
+import { Input } from "@/atoms/input";
 import SettingsNav from "@/components/SettingsNav";
 import { changePasswordRequest } from "@/fetchHandlers/authentication";
 import { User } from "@/interfaces";
@@ -83,7 +84,7 @@ const page = () => {
               {"Old Password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
-              <input
+              <Input
                 type={showOldPassword ? "text" : "password"}
                 {...register("oldPassword")}
                 id=""
@@ -115,7 +116,7 @@ const page = () => {
               {"New Password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
-              <input
+              <Input
                 type={showPassword ? "text" : "password"}
                 {...register("password")}
                 id=""
@@ -147,7 +148,7 @@ const page = () => {
               {"Confirm password"}
             </label>{" "}
             <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
-              <input
+              <Input
                 type={showConfirmPassword ? "text" : "password"}
                 {...register("confirmPassword")}
                 id=""

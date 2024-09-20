@@ -4,11 +4,13 @@ exports.createProject = class Project {
     this.page = page;
     this.projectName = "ABCD";
     this.userMenu = this.page.locator("#open-user-menu");
-    this.addNewProjectButton = this.page.locator("text=Add new project");
-    this.projectInput = this.page.locator("#company-website");
+    this.addNewProjectButton = this.page.locator("text=Add new team");
+    this.slugInput = this.page.locator("#company-website");
+    this.projectInput=this.page.locator('#team-name')
     this.saveButton = this.page.locator("text=Save");
     this.toastMessage = this.page.locator("//div[@class='Toastify']");
-    this.emailError = this.page.locator("#email-error");
+    this.teamError = this.page.locator("#errorTeam");
+    this.errorSlug = this.page.locator('#errorSlug')
   }
 
   async openUserMenuAndNavigateToAddProject() {
@@ -31,29 +33,32 @@ exports.createProject = class Project {
   async createProject() {
     const Numeric = await Math.floor(10000 + Math.random() * 90000).toString();
     await this.openUserMenuAndNavigateToAddProject();
-    await this.projectInput.click();
-    await this.projectInput.fill(this.projectName + Numeric);
-    await expect(this.projectInput).toHaveValue(this.projectName + Numeric);
+    await this.projectInput.click()
+    await this.projectInput.fill(this.projectName+Numeric)
+    await this.slugInput.click();
+    await this.slugInput.fill(this.projectName + Numeric);
+    await expect(this.slugInput).toHaveValue(this.projectName + Numeric);
     await this.saveButton.click();
-    await expect(this.toastMessage).toHaveText("Project created successfully");
+    await expect(this.toastMessage).toHaveText("Team created successfully");
   }
 
   async attemptToCreateExistingProject() {
     await this.openUserMenuAndNavigateToAddProject();
+    await this.projectInput.click()
+    await this.projectInput.fill(this.projectName)
+    await this.slugInput.click();
+    await this.slugInput.fill(this.projectName);
     
-    await this.projectInput.click();
-    await this.projectInput.fill(this.projectName);
-    
-    await expect(this.projectInput).toHaveValue(this.projectName);
+    await expect(this.slugInput).toHaveValue(this.projectName);
     
     await this.saveButton.click();
     
     try {
       
-      await expect(this.toastMessage).toHaveText("Project name is already taken", { timeout: 5000 });
+      await expect(this.toastMessage).toHaveText("Project slug is already taken", { timeout: 5000 });
       
     } catch (error) {
-      await expect(this.toastMessage).toHaveText("Project created successfully", { timeout: 5000 });
+      await expect(this.toastMessage).toHaveText("Team created successfully", { timeout: 5000 });
       
     }
   }
@@ -61,9 +66,13 @@ exports.createProject = class Project {
 
   async projectValidationWithEmptyName() {
     await this.openUserMenuAndNavigateToAddProject();
-    await this.projectInput.click();
-    await this.projectInput.fill("   ");
+    await this.projectInput.click()
+    await this.projectInput.fill("")
+    await this.slugInput.click();
+    await this.slugInput.fill("   ");
     await this.saveButton.click();
-    await expect(this.emailError).toHaveText("Required");
+    await expect(this.errorSlug).toHaveText("Required");
+    await expect(this.teamError).toHaveText("Required");
+
   }
 };

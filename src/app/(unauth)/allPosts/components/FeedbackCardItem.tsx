@@ -38,6 +38,7 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
         "relative py-5 px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50",
         id === activeFeedbackPostId ? "bg-gray-50" : "bg-white"
       )}
+      id="postList"
       onClick={() => {
         sessionStorage.removeItem("activeFeedbackPostId");
         setActiveFeedbackPostId(id!);

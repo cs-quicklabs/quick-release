@@ -15,6 +15,7 @@ import { Button } from "@/atoms/button";
 import { ProfileType } from "@/types";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { showNotification } from "@/Utils";
+import { Input } from "@/atoms/input";
 
 const Profile = () => {
   const router = useRouter();
@@ -141,11 +142,6 @@ const Profile = () => {
     }
   };
 
-  const handleUpdateProfile = async () => {
-    setIsOpen(false);
-    updateUserDetails(formValues as ProfileType);
-  };
-
   const handleDelete = async () => {
     deleteFiles([profileImgUrl], "ProfilePictures", setImageUploadLoading);
     if (!imageUploadLoading) {
@@ -243,15 +239,15 @@ const Profile = () => {
           </div>{" "}
           <div className="mb-5 mt-6">
             <label
-              htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               {"First Name"}
             </label>{" "}
-            <input
+            <Input
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="First Name"
+              value={formValues.firstName}
               {...register("firstName")}
             />
             {errors.firstName && (
@@ -262,16 +258,16 @@ const Profile = () => {
           </div>{" "}
           <div className="mb-5">
             <label
-              htmlFor="email"
               className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
             >
               {"Last Name"}
             </label>{" "}
-            <input
+            <Input
               type="text"
-              {...register("lastName")}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Last Name"
+              value={formValues.lastName}
+              {...register("lastName")}
             />
             {errors.lastName && (
               <span className="text-red-600 text-[12px]">
@@ -286,10 +282,12 @@ const Profile = () => {
             >
               {"Email"}
             </label>{" "}
-            <input
+            <Input
               type="email"
+              value={formValues.email}
               {...register("email")}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              disabled
+              className="bg-gray-200 cursor-not-allowed border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="aashish@gmail.com"
             />
             {errors.email && (
@@ -317,7 +315,7 @@ const Profile = () => {
             )}
           </Button>
         </form>
-        <AlertModal
+        {/* <AlertModal
           show={isOpen}
           title={`Re-verification Email`}
           message={"Are you sure you want to change your email address?"}
@@ -326,7 +324,7 @@ const Profile = () => {
           spinClassName={"!fill-red-600"}
           onClickOk={() => handleUpdateProfile()}
           loading={updateLoading}
-        />
+        /> */}
         <AlertModal
           show={isOpenImageModal}
           title={`Remove Profile Picture ?`}

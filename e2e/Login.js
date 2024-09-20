@@ -60,4 +60,10 @@ exports.LoginPage = class LoginPage {
       "Incorrect Credentials!"
     );
   }
+  async loginWithEmptyValue() {
+    await this.fillEmail("");
+    await this.fillPassword("");
+    await this.clickLogin();
+    await expect(this.page.locator(this.loginError)).toHaveText("Required");
+  }
 };
