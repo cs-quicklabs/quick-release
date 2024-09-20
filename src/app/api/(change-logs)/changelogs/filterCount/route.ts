@@ -20,7 +20,11 @@ export async function GET(req: NextRequest) {
     const { searchParams } = req.nextUrl;
     const query: { [key: string]: any } = { deletedAt: null, archivedAt: null };
 
-    const projectId = searchParams.get("projectId");
+    const projectId = searchParams.get("projectsId");
+    if(!projectId) {
+      throw new ApiError(400, "projectId is required");
+    }
+
     if (projectId) {
       const project = await db.projects.findUnique({
         where: {
