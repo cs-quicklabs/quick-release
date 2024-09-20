@@ -69,12 +69,12 @@ npm install
 
   npm init playwright@latest
   ```
-3. Folder Structure
-e2e folder-> contains all test functions
-tests folder-> contains all test scripts
-e2e->testdata folder -> contains All Test data User Need to Update
+3.Folder Structure
+e2e/ - This folder contains all test functions.
+tests/ - This folder contains all test scripts (spec files).
+e2e/testdata/ - Contains all the test data that users need to update.
 
-Playwright.config.ts - User can Change Base Url as per environment(like dev, or local)
+playwright.config.ts file allows users to configure various settings, including the base URL. Users can modify the base URL to match their environment (e.g., development, local) as needed.
 
 4. To run Test All scripts
   ```
