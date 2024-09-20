@@ -14,6 +14,7 @@ import { Tooltip } from "flowbite-react";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import Loading from "@/atoms/Loading";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
+import { Input } from "@/atoms/input";
 
 const GeneralTeamSettings = () => {
   const fileInputRef = useRef(null);
@@ -226,10 +227,11 @@ const GeneralTeamSettings = () => {
             >
               {"Team Name"}
             </label>{" "}
-            <input
+            <Input
               type="text"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Team Name"
+              value={formValues.name}
               {...register("name")}
             />
             {errors.name && (
@@ -260,11 +262,12 @@ const GeneralTeamSettings = () => {
                 <span className="sr-only">Show information</span>
               </button>{" "}
             </label>
-            <input
+            <Input
               type="text"
               disabled
               className="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Slug"
+              value={formValues.slug}
               {...register("slug")}
             />
           </div>{" "}

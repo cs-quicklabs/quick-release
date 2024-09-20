@@ -42,11 +42,13 @@ const SideNav: React.FC<SideNavProps> = ({
   const {
     activeChangeLogId,
     map: changeLogMap,
+    statusCountMap,
     isLoading: isFetchingChangeLogs,
     metaData: changeLogMetaData,
     list: changeLogsList,
     getAllChangeLogs,
     loadMoreChangeLogs,
+    getChangeLogFilterCount,
   } = useChangeLogContext();
 
   const activeChangeLog = useMemo(() => {
@@ -68,6 +70,17 @@ const SideNav: React.FC<SideNavProps> = ({
       fetchAllChangesLogs();
     }
   }, [activeProjectId]);
+
+  const fetchFilterCount = useCallback(async () => {
+    const query: FilterType = { projectsId: activeProjectId! };
+    getChangeLogFilterCount(query);
+  }, [activeProjectId]);
+
+  useEffect(() => {
+    if (activeProjectId) {
+      fetchFilterCount();
+    }
+  }, [activeProjectId, fetchFilterCount]);
 
   useEffect(() => {
     if (isVisible) {
@@ -181,15 +194,20 @@ const SideNav: React.FC<SideNavProps> = ({
                           {() => (
                             <Link
                               href="#"
-                              className="text-gray-700 flex justify-left px-4 py-2 text-sm hover:bg-gray-50"
+                              className="text-gray-700 flex justify-between px-4 py-2 text-sm hover:bg-gray-50"
                               onClick={(e) => onSelectStatus(id)}
                             >
-                              <span
-                                className={`inline-block h-2 w-2 mt-1.5 mr-2 flex-shrink-0 rounded-full ${bulletColor}`}
-                                aria-hidden={true}
-                              />
+                              <div className="flex justify-left gap-2">
+                                <span
+                                  className={`inline-block h-2 w-2 mt-1.5 mr-2 flex-shrink-0 rounded-full ${bulletColor}`}
+                                  aria-hidden={true}
+                                />
 
-                              <span>{title}</span>
+                                <span>{title}</span>
+                              </div>
+                              <div className="text-gray-400">
+                                {statusCountMap[id] || 0}
+                              </div>
                             </Link>
                           )}
                         </Menu.Item>

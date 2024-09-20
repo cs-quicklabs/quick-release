@@ -160,19 +160,20 @@ export function Navbar({
               <div className="relative flex items-center justify-between">
                 <div className="flex justify-between w-full items-center lg:hidden py-2 lg:py-4">
                   {/* Mobile menu button*/}
-
-                  <div className="flex flex-shrink-0 items-center gap-2">
-                    <Image
-                      className="h-8 w-auto"
-                      src={logoSrc!}
-                      alt="Your Company"
-                      width={40}
-                      height={40}
-                    />
-                    <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
-                      {teamName}
-                    </span>
-                  </div>
+                  <Link href={projectSlug ? `/${projectSlug}/changelogs` : `/`}>
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                      <Image
+                        className="h-8 w-auto"
+                        src={logoSrc!}
+                        alt="Your Company"
+                        width={40}
+                        height={40}
+                      />
+                      <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
+                        {teamName}
+                      </span>
+                    </div>
+                  </Link>
                   <div>
                     <Disclosure.Button
                       onClick={() => setShowMenuNav && setShowMenuNav(!open)}
@@ -197,18 +198,20 @@ export function Navbar({
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
-                  <div className="flex flex-shrink-0 items-center gap-2">
-                    <Image
-                      className="h-8 w-auto"
-                      src={logoSrc!}
-                      alt="Your Company"
-                      width={40}
-                      height={40}
-                    />
-                    <h1 className="lg:ml-4 text-white font-extrabold font-mono py-2">
-                      {teamName}
-                    </h1>
-                  </div>
+                  <Link href={projectSlug ? `/${projectSlug}/changelogs` : `/`}>
+                    <div className="flex flex-shrink-0 items-center gap-2">
+                      <Image
+                        className="h-8 w-auto"
+                        src={logoSrc!}
+                        alt="Your Company"
+                        width={40}
+                        height={40}
+                      />
+                      <h1 className="lg:ml-4 text-white font-extrabold font-mono py-2">
+                        {teamName}
+                      </h1>
+                    </div>
+                  </Link>
                   <div className="hidden lg:ml-6 lg:block">
                     <div className="flex items-center space-x-2">
                       {loading.activeProjectLoading ? (
@@ -304,23 +307,6 @@ export function Navbar({
                     </button> */}
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <Disclosure.Button className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
-                          <span className="absolute -inset-0.5" />
-                          <span className="sr-only" id="Open-main-menu">
-                            {"Open main menu"}
-                          </span>
-                          {open ? (
-                            <XMarkIcon
-                              className="block h-6 w-6"
-                              aria-hidden="true"
-                            />
-                          ) : (
-                            <Bars3Icon
-                              className="block h-6 w-6"
-                              aria-hidden="true"
-                            />
-                          )}
-                        </Disclosure.Button>
                         <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only" id="open-user-menu">

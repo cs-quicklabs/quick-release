@@ -91,6 +91,10 @@ export type ProjectDetailsType = {
   projectImgUrl?: string | null;
 }
 
+type FilterCountMapType = {
+  [key: string]: number;
+}
+
 export type FeedbackStatusUpdatePayloadType = {
   id: string;
   status: string;
