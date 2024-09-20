@@ -8,7 +8,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { ChangeLogType } from "@/types";
+import { ApiFilterQueryType, ChangeLogType, FilterCountMapType } from "@/types";
 import { requestHandler, showNotification } from "@/Utils";
 import {
   createChangeLogRequest,
@@ -19,6 +19,7 @@ import {
   toggleArchiveOneChangeLogRequest,
   updateOneChangeLogRequest,
   getAllPublicChangeLogsRequest,
+  getChangelogFilterCountRequest,
 } from "@/fetchHandlers/changelog";
 import { useProjectContext } from "./ProjectContext";
 import { useUserContext } from "./UserContext";
@@ -31,6 +32,7 @@ type ChangeLogContextType = {
   activeChangeLogId: string | null;
   error: string;
   isLoading: boolean;
+  statusCountMap: FilterCountMapType;
   map: ChangeLogMapType;
   list: string[] | null;
   metaData: {
@@ -73,6 +75,7 @@ type ChangeLogContextType = {
     limit?: number
   ) => Promise<void>;
   loadMorePublicChangeLogs: () => Promise<void>;
+  getChangeLogFilterCount: (query: ApiFilterQueryType) => void;
 };
 
 // Create a context to manage change logs-related data and functions
@@ -81,6 +84,7 @@ const ChangeLogContext = createContext<ChangeLogContextType>({
   error: "",
   isLoading: false,
   map: {} as ChangeLogMapType,
+  statusCountMap: {} as FilterCountMapType,
   list: [] as string[],
   metaData: {} as { [key: string]: any },
   createChangeLog: async (
@@ -112,6 +116,7 @@ const ChangeLogContext = createContext<ChangeLogContextType>({
     setIsLoading: (loading: boolean) => void
   ) => {},
   setActiveChangeLogId: (id: string) => {},
+  getChangeLogFilterCount: (query = {}) => {}
 });
 
 // Create a hook to access the ChangeLogContext
@@ -140,6 +145,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
   const [activeChangeLogId, setActiveChangeLogId] = useState<string | null>(
     sessionStorage.getItem("activeChangeLogId") || null
   );
+  const [statusCountMap, setStatusCountMap] = useState<FilterCountMapType>({});
 
   const { activeProjectId } = useProjectContext();
   const { loggedInUser } = useUserContext();
@@ -173,6 +179,10 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         setMetaData((prevMetaData) => ({
           ...prevMetaData,
           total: (prevMetaData?.total || 0) + 1,
+        }));
+        setStatusCountMap((prevStatusCountMap) => ({
+          ...prevStatusCountMap,
+          [data.status]: (prevStatusCountMap[data.status] || 0) + 1,
         }));
         showNotification("success", message);
       },
@@ -212,6 +222,25 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
     data: ChangeLogType,
     setIsLoading: (loading: boolean) => void
   ) => {
+    const changelogId = data.id!;
+    const currentArchived = !!data.archivedAt;
+    const previousArchived = !!map[changelogId]?.archivedAt;
+
+    // Function to update the status count map
+    const updateStatusCount = (prevStatusCountMap: any) => {
+      const prevStatus = map[changelogId]?.status!;
+      const newStatus = data.status;
+
+      return {
+        ...prevStatusCountMap,
+        // Update archived count
+        archived: prevStatusCountMap["archived"] + (currentArchived ? 1 : -1),
+        // Adjust the previous and new status counts
+        [prevStatus]: (prevStatusCountMap[prevStatus] || 1) - 1,
+        [newStatus]: (prevStatusCountMap[newStatus] || 0) + 1,
+      };
+    };
+
     await requestHandler(
       async () =>
         await updateOneChangeLogRequest({
@@ -220,13 +249,22 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         }),
       setIsLoading,
       (res: any) => {
-        const { data, message } = res;
-        const changelogId = data.id!;
+        const { message } = res;
 
+        // Update the status count map
+        setStatusCountMap((prevStatusCountMap) => {
+          if (currentArchived !== previousArchived) {
+            return updateStatusCount(prevStatusCountMap);
+          }
+          return prevStatusCountMap;
+        });
+
+        // Update the changelog map
         setMap((prevMap) => ({
           ...prevMap,
           [changelogId]: data,
         }));
+
         showNotification("success", message);
       },
       (errMessage) => {
@@ -381,6 +419,19 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
           ...prevMap,
           [changeLogId]: data,
         }));
+        if(data.archivedAt) {
+          setStatusCountMap((prevStatusCountMap) => ({
+            ...prevStatusCountMap,
+            [data.status]: (prevStatusCountMap[data.status] || 0) - 1,
+            ["archived"]: (prevStatusCountMap["archived"] || 0) + 1,
+          }))
+        } else {
+          setStatusCountMap((prevStatusCountMap) => ({
+            ...prevStatusCountMap,
+            [data.status]: (prevStatusCountMap[data.status] || 0) + 1,
+            ["archived"]: (prevStatusCountMap["archived"] || 0) - 1,
+          }))
+        }
         showNotification("success", message);
         if (metaData?.prevQuery?.isArchived || metaData?.prevQuery?.status)
           getAllChangeLogs(metaData?.prevQuery!);
@@ -400,9 +451,8 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
       async () => await deleteOneChangeLogRequest(id!),
       setIsLoading,
       (res: any) => {
-        const { message } = res;
+        const { message, data } = res;
         const changeLogId = id;
-
         setMap((prevMap) => ({
           ...prevMap,
           [changeLogId]: null,
@@ -416,11 +466,36 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
           },
           total: (prevMetaData?.total || 1) - 1,
         }));
+        if (data.archivedAt) {
+          setStatusCountMap((prevStatusCountMap) => ({
+            ...prevStatusCountMap,
+            ["archived"]: (prevStatusCountMap["archived"] || 0) - 1,
+          }));
+        } else {
+          setStatusCountMap((prevStatusCountMap) => ({
+            ...prevStatusCountMap,
+            [data.status]: (prevStatusCountMap[data.status] || 0) - 1,
+          }));
+        }
         setActiveChangeLogId(null);
         showNotification("success", message);
       },
       (errMessage) => {
         showNotification("error", errMessage);
+      }
+    );
+  };
+
+  const getChangeLogFilterCount = async (query: ApiFilterQueryType) => {
+    await requestHandler(
+      async () => await getChangelogFilterCountRequest(query),
+      setIsLoading,
+      (res) => {
+        const { data } = res;
+        setStatusCountMap(data);
+      },
+      (err) => {
+        console.log(err);
       }
     );
   };
@@ -446,6 +521,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         error,
         isLoading,
         map,
+        statusCountMap,
         list,
         metaData: Object.assign({}, metaData, {
           hasProjectChangeLogs:
@@ -464,6 +540,7 @@ const ChangeLogProvider: React.FC<ProviderProps> = ({ children }) => {
         toggleArchiveOneChangeLog,
         deleteOneChangeLog,
         setActiveChangeLogId,
+        getChangeLogFilterCount,
       }}
     >
       {children}

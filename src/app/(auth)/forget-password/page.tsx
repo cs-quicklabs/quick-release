@@ -3,6 +3,7 @@
 import { requestHandler, showNotification } from "@/Utils";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { Button } from "@/atoms/button";
+import { Input } from "@/atoms/input";
 import { forgetPasswordRequest } from "@/fetchHandlers/authentication";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
@@ -84,7 +85,7 @@ const ForgotPassword = () => {
               >
                 {"Your email"}
               </label>{" "}
-              <input
+              <Input
                 type="email"
                 {...register("email")}
                 id="email"

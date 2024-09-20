@@ -1,8 +1,11 @@
 "use client";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import RoadmapColumn from "./RoadmapColumn";
 import { IFeedbackBoard } from "@/interfaces";
+import { getAllPublicFeedbacksRequest } from "@/fetchHandlers/feedbacks";
+import { FeedbackPostType } from "@/types";
+import { requestHandler } from "@/Utils";
 
 type FeedbackPublicContentContainerPropsType = {
   feedbackBoards: IFeedbackBoard[];
@@ -13,6 +16,13 @@ export default function RoadmapPublicContentContainer({
 }: FeedbackPublicContentContainerPropsType) {
   const searchParams = useSearchParams();
   const { projectName } = useParams();
+  const [isLoading, setIsLoading] = useState(false);
+  const [feedbackStatusMap, setFeedbackStatusMap] = useState<{
+    [key: string]: FeedbackPostType[];
+  }>({});
+  const [feedbackCount, setFeedbackCount] = useState<{
+    [key: string]: number;
+  }>({});
   const board = useMemo(() => {
     const data = searchParams.get("board");
     if (data && data !== "") {
@@ -22,6 +32,47 @@ export default function RoadmapPublicContentContainer({
   }, [searchParams]);
 
   const feedbackStatus = ["IN_REVIEW", "PLANNED", "IN_PROGRESS"];
+
+  const fetchFeedbacksByStatus = useCallback(async (feedbackBoard: string) => {
+    try {
+      const statusMap: { [key: string]: FeedbackPostType[] } = {};
+      const statusCountMap: { [key: string]: number } = {};
+
+      await Promise.all(
+        feedbackStatus.map(async (status) => {
+          await requestHandler(
+            async () =>
+              await getAllPublicFeedbacksRequest({
+                feedbackStatus: status,
+                projectName: projectName!,
+                board: feedbackBoard,
+                page: 1,
+                limit: 10,
+              }),
+            setIsLoading,
+            (response: any) => {
+              const { data } = response;
+              statusMap[status] = data.feedbackPosts;
+              statusCountMap[status] = data.total;
+            },
+            (error: any) => {
+              console.error("Error fetching feedback posts:", error);
+            }
+          );
+        })
+      );
+      setFeedbackStatusMap(statusMap);
+      setFeedbackCount(statusCountMap);
+    } catch (error) {
+      console.error("Error fetching feedback posts:", error);
+    }
+  }, [projectName, board]);
+
+  useEffect(() => {
+    if(projectName) {
+      fetchFeedbacksByStatus(board!)
+    }
+  }, [projectName, board]);
 
   return (
     <section
@@ -49,7 +100,13 @@ export default function RoadmapPublicContentContainer({
                 key={key}
                 className="w-full border border-gray-200 rounded-lg"
               >
-                <RoadmapColumn status={key} board={board!} />
+                <RoadmapColumn
+                  status={key}
+                  board={board!}
+                  feedbackStatusMap={feedbackStatusMap}
+                  setFeedbackStatusMap={setFeedbackStatusMap}
+                  feedbackCount={feedbackCount}
+                />
               </div>
             ))}
           </div>

@@ -60,6 +60,10 @@ const updateFeedbackStatusRequest = (data: FeedbackStatusUpdatePayloadType) => {
   return apiClient.patch(`/feedbacks/posts/${data.id}`, data);
 };
 
+const getFeedbackFilterCountRequest = (params: ApiFilterQueryType) => {
+  return apiClient.get("/feedbacks/posts/filterCount", { params });
+}
+
 export {
   createFeedbackBoardRequest,
   getAllFeedbackBoardsRequest,
@@ -73,4 +77,5 @@ export {
   upvoteFeedbackRequest,
   getAllPublicFeedbacksRequest,
   updateFeedbackStatusRequest,
+  getFeedbackFilterCountRequest
 };

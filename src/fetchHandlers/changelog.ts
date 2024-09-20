@@ -35,6 +35,10 @@ const createChangeLogRequest = (data: ChangeLogType) => {
     });
   };
 
+  const getChangelogFilterCountRequest = (params: ApiFilterQueryType) => {
+    return apiClient.get("/changelogs/filterCount", { params });
+  }
+
 
   export {
     createChangeLogRequest,
@@ -44,5 +48,6 @@ const createChangeLogRequest = (data: ChangeLogType) => {
     publishOneChangeLogRequest,
     toggleArchiveOneChangeLogRequest,
     deleteOneChangeLogRequest,
-    getAllPublicChangeLogsRequest
+    getAllPublicChangeLogsRequest,
+    getChangelogFilterCountRequest,
   }
