@@ -1,4 +1,4 @@
 export const ImagePaths = {
-    path:"C:/Users/Admin/OneDrive/Pictures/Screenshots/drdoom.jpg"
+    path:"e2e\Images\drdoom.jpg"
   };
   
