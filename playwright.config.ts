@@ -1,4 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
+import path from "path";
 
 /**
  * Read environment variables from file.
@@ -16,7 +17,7 @@ export default defineConfig({
   expect: {
     timeout: 1 * 60 * 1000,
   },
-  testDir: "tests",
+  testDir: path.join(__dirname, "tests"),
   testMatch: "**/*.spec.ts",
   /* Run tests in files in parallel */
   fullyParallel:true,
