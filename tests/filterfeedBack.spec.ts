@@ -19,7 +19,7 @@ test(" Verify user able to filter Feature Requests status", async ({ page }) => 
     await filter.filterFeatureRequest();
     const feedbackItems = page.locator('#postList');  // Adjust this selector based on your DOM structure
     await page.waitForTimeout(10000)
-    const feedbackText = "Feature Request";
+    const feedbackText = "Feature Requests";
     const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
   
     if (feedbackContainsText) {
