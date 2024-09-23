@@ -1,7 +1,7 @@
-import { LoginPage } from "../e2e/login.js";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login.js";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
-import { feedbackPost } from '../e2e/feedbackPost';
+import { feedbackPost } from '@/e2e/feedbackPost';
 
 test.beforeEach("verify user able to add release tags", async ({ page }) => {
     const login = new LoginPage(page);

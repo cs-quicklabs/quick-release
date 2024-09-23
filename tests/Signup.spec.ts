@@ -1,5 +1,5 @@
-import { LoginPage } from "../e2e/login.js";
-import { Signup } from "../e2e/signup";
+import { LoginPage } from "@/e2e/login.js";
+import { Signup } from "@/e2e/signup";
 import { test, expect } from "@playwright/test";
 
 test("verify user able to register account", async ({ page, browser }) => {

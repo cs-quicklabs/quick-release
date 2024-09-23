@@ -1,6 +1,6 @@
-import { LoginPage } from "../e2e/login.js";
-import { Filterstatus } from "../e2e/filterByStatus";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login.js";
+import { Filterstatus } from "@/e2e/filterByStatus";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(

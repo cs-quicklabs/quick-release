@@ -1,6 +1,6 @@
-import { LoginPage } from "../e2e/login.js";
-import { feedback } from "../e2e/FeedbackBoard";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login.js";
+import { feedback } from "@/e2e/FeedbackBoard";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach("verify user able to add release tags", async ({ page }) => {

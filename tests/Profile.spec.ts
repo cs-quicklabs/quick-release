@@ -1,7 +1,7 @@
-import { LoginPage } from "../e2e/login.js";
-import { Profiles } from "../e2e/profiles";
-import { validCredentials } from "../e2e/testData/credential";
-import {ImagePaths} from "../e2e/testData/ImagePath";
+import { LoginPage } from "@/e2e/login.js";
+import { Profiles } from "@/e2e/profiles";
+import { validCredentials } from "@/e2e/testData/credential";
+import {ImagePaths} from "@/e2e/testData/ImagePath";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(" Verify Admin able login ", async ({ page }) => {
