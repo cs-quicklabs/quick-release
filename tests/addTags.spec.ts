@@ -1,5 +1,5 @@
 import { LoginPage } from "../e2e/login";
-import { releaseTags } from "../e2e/releasetag";
+import { releaseTags } from "../e2e/releaseTag";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 

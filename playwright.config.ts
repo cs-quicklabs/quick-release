@@ -12,9 +12,9 @@ import { defineConfig, devices } from "@playwright/test";
  */
 export default defineConfig({
  
-  timeout: 2 * 80 * 1000,
+  timeout: 1 * 60 * 1000,
   expect: {
-    timeout: 2 * 30 * 1000,
+    timeout: 1 * 30 * 1000,
   },
   testDir: "tests",
   testMatch: "**/*.spec.ts",
@@ -29,7 +29,12 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: [
+    ['list'],
+    ['@estruyf/github-actions-reporter'],
+    ['html', { outputFolder: 'my-report'}]
+    
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -95,6 +100,7 @@ export default defineConfig({
     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
     // },
   ],
+ 
 
   /* Run your local dev server before starting the tests */
   // webServer: {

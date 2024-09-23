@@ -1,4 +1,4 @@
-import { changePassword } from "../e2e/ChangePassword";
+import { changePassword } from "../e2e/changePassword";
 import { LoginPage } from "../e2e/login";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
