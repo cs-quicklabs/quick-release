@@ -1,5 +1,5 @@
 import { LoginPage } from "@/e2e/login";
-import { searchChangelog } from "@/e2e/searchLog";
+import { searchChangelog } from "@/e2e/SearchLog";
 import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
