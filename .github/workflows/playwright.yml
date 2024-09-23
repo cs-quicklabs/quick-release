@@ -14,6 +14,9 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
+    - name: Check Current Dir Path
+      run: echo pwd
+
     - name: Run Playwright tests
       run: npx playwright test tests --project "chromium"
       
