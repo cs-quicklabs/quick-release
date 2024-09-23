@@ -15,6 +15,7 @@ import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/fet
 import AlertModal from "./AlertModal";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
+import { Input } from "@/atoms/input";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -146,7 +147,7 @@ export default function LoginForm() {
                 >
                   {"Your email"}
                 </label>{" "}
-                <input
+                <Input
                   type="email"
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -182,7 +183,7 @@ export default function LoginForm() {
                   {"Password"}
                 </label>{" "}
                 <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
-                  <input
+                  <Input
                     type={showPassword ? "text" : "password"}
                     id="password"
                     placeholder="••••••••"
@@ -206,7 +207,7 @@ export default function LoginForm() {
               <div className="flex items-center justify-between">
                 <div className="flex items-start mb-[-2px]">
                   <div className="flex items-center h-5">
-                    <input
+                    <Input
                       id="remember"
                       aria-describedby="remember"
                       type="checkbox"

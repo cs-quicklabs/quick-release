@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/atoms/input";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -77,7 +78,7 @@ const ResendRegisterLink = () => {
               >
                 {"Your email"}
               </label>{" "}
-              <input
+              <Input
                 type="email"
                 {...register("email")}
                 id="email"

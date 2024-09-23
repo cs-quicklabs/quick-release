@@ -17,6 +17,7 @@ import { WEB_DETAILS } from "@/Utils/constants";
 import Image from "next/image";
 import { EyeSlashIcon } from "@heroicons/react/24/outline";
 import { EyeIcon } from "lucide-react";
+import { Input } from "@/atoms/input";
 
 const ResetPassword = ({ params }: { params: { token: string } }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -129,7 +130,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                     {"New Password"}
                   </label>{" "}
                   <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
-                    <input
+                    <Input
                       type={showPassword ? "text" : "password"}
                       id="password"
                       placeholder="••••••••"
@@ -161,7 +162,7 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                   >
                     {"Confirm password"}
                   </label>{" "}
-                  <input
+                  <Input
                     type="password"
                     id="confirm-password"
                     placeholder="••••••••"

@@ -16,6 +16,7 @@ import Image from "next/image";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { showNotification } from "@/Utils";
+import { Input } from "@/atoms/input";
 
 const Project = () => {
   const router = useRouter();
@@ -166,7 +167,7 @@ const Project = () => {
                 >
                   {"Team Name"}
                 </label>{" "}
-                <input
+                <Input
                   type="text"
                   id="team-name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -205,7 +206,7 @@ const Project = () => {
                   <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                     {"release.quicklabs.in/"}
                   </span>{" "}
-                  <input
+                  <Input
                     type="text"
                     {...register("slug")}
                     id="company-website"

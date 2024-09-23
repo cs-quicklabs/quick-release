@@ -48,8 +48,8 @@ exports.feedbackPost = class FeedbackPost{
         await this.submitButton.click()
         await expect(this.titleError).toHaveText('Required')
       }
-      async fillDescriptionWithOnlyspaces(){
-        await this.descriptionEditor.fill('  ')
+      async fillDescriptionWithEmptyValue(){
+        await this.descriptionEditor.fill('')
         await this.submitButton.click()
         await expect(this.descriptionError).toHaveText('Required')
 
@@ -77,6 +77,7 @@ exports.feedbackPost = class FeedbackPost{
       {
         await this.editFeedback.click()
         await this.fillTitle()
+        await this.fillDescription()
         await this.selectStatus('In-Review')
         await this.StatusInput.click();
         const publicOption = this.page.locator(`text=${status}`); 

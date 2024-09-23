@@ -32,12 +32,14 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.fillTitleWithOnlySpaces()
     await feedBackPosts.submitFeedBack()
   });
-  test("verify description field should not accept only spaces", async ({ page }) => {
+  test("verify description field should not accept empty", async ({ page }) => {
     const feedBackPosts = new feedbackPost(page);
     await feedBackPosts.navigateToFeedBack();
     await feedBackPosts.addPosts();
-    await feedBackPosts.fillDescriptionWithOnlyspaces()
+    await feedBackPosts.fillTitle()
+    await feedBackPosts.selectStatus('Planned')
     await feedBackPosts.submitFeedBack()
+    await expect(page.locator('#errorDescription')).toHaveText('Required')
   });
 
   test("verify user able to delete Posts", async ({ page }) => {
@@ -59,6 +61,19 @@ test.beforeEach("verify user able to add release tags", async ({ page }) => {
     await feedBackPosts.addPosts();
     await feedBackPosts.fillTitle()
     await feedBackPosts.fillDescription()
+    await feedBackPosts.selectStatus('Planned')
+    await feedBackPosts.fillDescription()
+    await feedBackPosts.submitFeedBack()
+    await feedBackPosts.clickOpenOptions()
+    await feedBackPosts.editFeedbackPost('Public')
+    await feedBackPosts.submitFeedBack()
+  });
+  test("verify user should able to Edit Feedback with empty description", async ({ page }) => {
+    const feedBackPosts = new feedbackPost(page);
+    await feedBackPosts.navigateToFeedBack();
+    await feedBackPosts.addPosts();
+    await feedBackPosts.fillTitle()
+    await feedBackPosts.fillDescriptionWithEmptyValue()
     await feedBackPosts.selectStatus('Planned')
     await feedBackPosts.fillDescription()
     await feedBackPosts.submitFeedBack()
