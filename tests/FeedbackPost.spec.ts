@@ -1,4 +1,4 @@
-import { LoginPage } from "../e2e/login";
+import { LoginPage } from "../e2e/login.js";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 import { feedbackPost } from '../e2e/feedbackPost';

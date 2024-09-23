@@ -1,5 +1,5 @@
 import { releaseCategory } from "../e2e/category";
-import { LoginPage } from "../e2e/login";
+import { LoginPage } from "../e2e/login.js";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 

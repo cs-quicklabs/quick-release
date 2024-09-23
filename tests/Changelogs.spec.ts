@@ -1,5 +1,5 @@
 import { Changelog } from "../e2e/changelogs";
-import { LoginPage } from "../e2e/login";
+import { LoginPage } from "../e2e/login.js";
 import { validCredentials } from "../e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
