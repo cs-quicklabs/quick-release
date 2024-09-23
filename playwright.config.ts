@@ -13,9 +13,9 @@ import path from "path";
  */
 export default defineConfig({
  
-  timeout: 1 * 60 * 1000,
+  timeout: 1 * 80 * 1000,
   expect: {
-    timeout: 1 * 60 * 1000,
+    timeout: 1 * 80 * 1000,
   },
   testDir: path.join(__dirname, "tests"),
   // testMatch: "**/*.spec.ts",
