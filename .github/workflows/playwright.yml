@@ -16,6 +16,10 @@ jobs:
 
     - name: Run Playwright tests
       run: npx playwright test tests --project "chromium"
+      
+    - name: Clear cache
+      run: rm -rf node_modules
+
 
     - uses: actions/upload-artifact@v3
       if: always()
