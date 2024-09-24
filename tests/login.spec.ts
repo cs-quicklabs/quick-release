@@ -1,5 +1,5 @@
-import { LoginPage } from "../e2e/login";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test("Verify user able to login with valid credential", async ({ page }) => {
