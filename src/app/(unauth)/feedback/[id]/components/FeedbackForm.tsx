@@ -64,6 +64,7 @@ export default function FeedbackForm({
                   placeholder="Enter feedback post title"
                   {...field}
                   id="title"
+                  showClearBtn
                 />
               </FormControl>
               <FormMessage className="text-red-600" id="errorTitle" />
