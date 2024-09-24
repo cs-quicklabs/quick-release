@@ -13,76 +13,113 @@ test.beforeEach(
   }
 );
 
-test(" Verify user able to filter Feature Requests status", async ({ page }) => {
-    const filter = new FilterFeedbackstatus(page);
-    await filter.navigateToFeedBack()
-    await filter.filterFeatureRequest();
-    const feedbackItems = page.locator('#postList');  // Adjust this selector based on your DOM structure
-    await page.waitForTimeout(10000)
-    const feedbackText = "Feature Requests";
-    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
+test("Verify user is able to filter Feature Requests status", async ({ page }) => {
+  const filter = new FilterFeedbackstatus(page);
+  await filter.navigateToFeedBack();
+  await filter.filterFeatureRequest();
   
-    if (feedbackContainsText) {
-      console.log(`Feedback contains the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(true);
+  const feedbackItems = page.locator('#postList');
+  await page.waitForTimeout(10000);
+  
+  const feedbackText = "Feature Requests";
+  const count = await feedbackItems.locator(`text=${feedbackText}`).count();
+  
+  let allItemsContainText = true;
+  
+  for (let i = 0; i < count; i++) {
+    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).nth(i).isVisible();
+    
+    if (!feedbackContainsText) {
+      allItemsContainText = false;
+      console.log(`Feedback item ${i + 1} does NOT contain the text: "${feedbackText}"`);
     } else {
-      console.log(`Feedback does NOT contain the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(false);
+      console.log(`Feedback item ${i + 1} contains the text: "${feedbackText}"`);
     }
-  });
+    expect(feedbackContainsText).toBe(true);
+  }
+  expect(allItemsContainText).toBe(true);
+});
+
   
   test("Verify user is able to filter In-review status and check for specific feedback text", async ({ page }) => {
     const filter = new FilterFeedbackstatus(page);
-    await filter.navigateToFeedBack();
-    await filter.filterInReview();
-    const feedbackItems = page.locator('#postList');
-    await page.waitForTimeout(10000);
-    const feedbackText = "In-Review";
-    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
+  await filter.navigateToFeedBack();
+  await filter.filterFeatureRequest();
   
-    if (feedbackContainsText) {
-      console.log(`Feedback contains the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(true);
+  const feedbackItems = page.locator('#postList');
+  await page.waitForTimeout(10000);
+  
+  const feedbackText = "In-Review";
+  const count = await feedbackItems.locator(`text=${feedbackText}`).count();
+  
+  let allItemsContainText = true;
+  
+  for (let i = 0; i < count; i++) {
+    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).nth(i).isVisible();
+    
+    if (!feedbackContainsText) {
+      allItemsContainText = false;
+      console.log(`Feedback item ${i + 1} does NOT contain the text: "${feedbackText}"`);
     } else {
-      console.log(`Feedback does NOT contain the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(false);
+      console.log(`Feedback item ${i + 1} contains the text: "${feedbackText}"`);
     }
+    expect(feedbackContainsText).toBe(true);
+  }
+  expect(allItemsContainText).toBe(true);
   });
   
 
   test(" Verify user able to filter InProgress status", async ({ page }) => {
     const filter = new FilterFeedbackstatus(page);
     await filter.navigateToFeedBack();
-    await filter.filterInProgress();
+    await filter.filterFeatureRequest();
+    
     const feedbackItems = page.locator('#postList');
     await page.waitForTimeout(10000);
+    
     const feedbackText = "In-Progress";
-    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
-  
-    if (feedbackContainsText) {
-      console.log(`Feedback contains the text: "${feedbackText}"`);
+    const count = await feedbackItems.locator(`text=${feedbackText}`).count();
+    
+    let allItemsContainText = true;
+    
+    for (let i = 0; i < count; i++) {
+      const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).nth(i).isVisible();
+      
+      if (!feedbackContainsText) {
+        allItemsContainText = false;
+        console.log(`Feedback item ${i + 1} does NOT contain the text: "${feedbackText}"`);
+      } else {
+        console.log(`Feedback item ${i + 1} contains the text: "${feedbackText}"`);
+      }
       expect(feedbackContainsText).toBe(true);
-    } else {
-      console.log(`Feedback does NOT contain the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(false);
     }
+    expect(allItemsContainText).toBe(true);
   });
   test(" Verify user able to filter Close status", async ({ page }) => {
-     const filter = new FilterFeedbackstatus(page);
-    await filter.navigateToFeedBack();
-    await filter.filterClosed();
-    const feedbackItems = page.locator('#postList');
-    await page.waitForTimeout(10000);
-    const feedbackText = "Closed";
-    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
+    const filter = new FilterFeedbackstatus(page);
+  await filter.navigateToFeedBack();
+  await filter.filterFeatureRequest();
   
-    if (feedbackContainsText) {
-      console.log(`Feedback contains the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(true);
+  const feedbackItems = page.locator('#postList');
+  await page.waitForTimeout(10000);
+  
+  const feedbackText = "Closed";
+  const count = await feedbackItems.locator(`text=${feedbackText}`).count();
+  
+  let allItemsContainText = true;
+  
+  for (let i = 0; i < count; i++) {
+    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).nth(i).isVisible();
+    
+    if (!feedbackContainsText) {
+      allItemsContainText = false;
+      console.log(`Feedback item ${i + 1} does NOT contain the text: "${feedbackText}"`);
     } else {
-      console.log(`Feedback does NOT contain the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(false);
+      console.log(`Feedback item ${i + 1} contains the text: "${feedbackText}"`);
     }
+    expect(feedbackContainsText).toBe(true);
+  }
+  expect(allItemsContainText).toBe(true);
   });
   test(" Verify user able to filter Completed status", async ({ page }) => {
     const filter = new FilterFeedbackstatus(page);
@@ -103,20 +140,29 @@ test(" Verify user able to filter Feature Requests status", async ({ page }) => 
   });
   test(" Verify user able to filter Planning status", async ({ page }) => {
     const filter = new FilterFeedbackstatus(page);
-    await filter.navigateToFeedBack();
-    await filter.filterInProgress();
-    const feedbackItems = page.locator('#postList');
-    await page.waitForTimeout(10000);
-    const feedbackText = "Planned";
-    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).isVisible();
+  await filter.navigateToFeedBack();
+  await filter.filterFeatureRequest();
   
-    if (feedbackContainsText) {
-      console.log(`Feedback contains the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(true);
+  const feedbackItems = page.locator('#postList');
+  await page.waitForTimeout(10000);
+  
+  const feedbackText = "Planned";
+  const count = await feedbackItems.locator(`text=${feedbackText}`).count();
+  
+  let allItemsContainText = true;
+  
+  for (let i = 0; i < count; i++) {
+    const feedbackContainsText = await feedbackItems.locator(`text=${feedbackText}`).nth(i).isVisible();
+    
+    if (!feedbackContainsText) {
+      allItemsContainText = false;
+      console.log(`Feedback item ${i + 1} does NOT contain the text: "${feedbackText}"`);
     } else {
-      console.log(`Feedback does NOT contain the text: "${feedbackText}"`);
-      expect(feedbackContainsText).toBe(false);
+      console.log(`Feedback item ${i + 1} contains the text: "${feedbackText}"`);
     }
+    expect(feedbackContainsText).toBe(true);
+  }
+  expect(allItemsContainText).toBe(true);
   });
  
  
