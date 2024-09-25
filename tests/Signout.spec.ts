@@ -1,6 +1,6 @@
-import { LoginPage } from "../e2e/login";
-import { Signout } from "../e2e/signout";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login";
+import { Signout } from "@/e2e/Signout";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test("verify user able to  signout ", async ({ page }) => {

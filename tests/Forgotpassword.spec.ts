@@ -1,4 +1,4 @@
-import { ForgotPassword } from "../e2e/forgotPassword";
+import { ForgotPassword } from "@/e2e/forgotPassword";
 import { test, expect } from "@playwright/test";
 
 test("Verify user able reset password", async ({ page }) => {
