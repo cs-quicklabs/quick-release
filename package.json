@@ -11,7 +11,7 @@
     "prebuild": "prisma generate && ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.515.0",
+    "@aws-sdk/client-s3": "^3.658.0",
     "@headlessui/react": "^1.7.18",
     "@hello-pangea/dnd": "^16.6.0",
     "@heroicons/react": "^2.1.1",
@@ -31,7 +31,7 @@
     "@tiptap/starter-kit": "^2.1.13",
     "@types/bcrypt": "^5.0.2",
     "autoprefixer": "^10.4.19",
-    "axios": "^1.6.2",
+    "axios": "^1.7.4",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
