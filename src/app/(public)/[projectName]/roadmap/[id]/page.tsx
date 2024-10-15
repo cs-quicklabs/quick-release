@@ -2,7 +2,7 @@ import React from "react";
 import moment from "moment";
 import { REVALIDATE_API, WEB_DETAILS } from "@/Utils/constants";
 import { notFound } from "next/navigation";
-import { FeedbackPostType } from "@/types";
+import { FeedbackPostType, PagePayloadType } from "@/types";
 import { Metadata, ResolvingMetadata } from "next";
 import FeedbackHeader from "../../(common)/FeedbackHeader";
 import FeedbackPublicSideNav from "../../(common)/FeedbackPublicSideNav";
@@ -10,26 +10,7 @@ import { getOneProject } from "@/lib/project";
 import FeedbackDetailContainer from "../../feedbacks/components/FeedbackDetailContainer";
 import { IFeedbackBoard } from "@/interfaces";
 import { Navbar } from "@/components/Navbar";
-
-type PagePayloadType = {
-  params: {
-    projectName: string;
-    id: string;
-  };
-};
-
-const getOneFeedbackPostDetails = async (
-  projectName: string,
-  id: string
-): Promise<FeedbackPostType | null> => {
-  return fetch(
-    `${process.env.BASEURL}/api/public/projects/${projectName}/feedbacks/${id}`,
-    { next: { revalidate: REVALIDATE_API } }
-  )
-    .then((response) => response.json())
-    .then((resData) => (resData.success ? resData.data : null))
-    .catch(() => null);
-};
+import { getOneFeedbackPostDetails } from "@/lib/feedback";
 
 export async function generateMetadata(
   { params }: PagePayloadType,
@@ -37,32 +18,51 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { id, projectName } = params;
 
-  let feedbackpost;
+  let feedback;
+  let project;
   try {
-    feedbackpost = await getOneFeedbackPostDetails(projectName, id);
+    project = await getOneProject({ name: projectName });
+    feedback = await getOneFeedbackPostDetails(projectName, id);
   } catch (error) {
-    console.error("Error fetching feedbackpost:", error);
+    console.error("Error fetching feedback:", error);
   }
 
-  if (!feedbackpost?.id) {
-    return { title: "FeedbackPost Not Found" };
+  if (!project) {
+    return { title: "Project Not Found" };
+  }
+
+  const logo = project.projectImgUrl?.split("/").slice(-2).join("/");
+
+  if (!feedback?.id) {
+    return { title: "feedback Not Found" };
   }
 
   const previousImages = (await parent).openGraph?.images || [];
-  const fullName = `${feedbackpost.createdBy?.firstName || ""} ${
-    feedbackpost.createdBy?.lastName || ""
+  const fullName = `${feedback.createdBy?.firstName || ""} ${
+    feedback.createdBy?.lastName || ""
   }`.trim();
-  const date = moment(feedbackpost.createdAt).format("MMMM DD, YYYY");
-  const ogDesc = `Feedback posted on ${date} - ${fullName}`;
+  const date = moment(feedback.createdAt).format("MMMM DD, YYYY");
+  const ogDesc = `Feedback published on ${date} - ${fullName}`;
 
   return {
-    title: feedbackpost.title,
-    description: ogDesc,
+    title: project.name,
+    description: feedback.title + " - " + ogDesc,
+    icons: [
+      {
+        rel: "icon",
+        url: project.projectImgUrl || WEB_DETAILS.favicon,
+      },
+    ],
     openGraph: {
-      title: feedbackpost.title,
+      title: feedback.title,
       description: ogDesc,
+      url: `${process.env.BASEURL}/${projectName}/roadmap/${id}`,
       images: [
-        `${process.env.BASEURL}/api/ogImage?title=${feedbackpost.title}&description=${ogDesc}`,
+        `${process.env.BASEURL}/api/ogImage?title=${
+          feedback.title
+        }&description=${ogDesc}&teamName=${project.name}${
+          logo ? "&logo=" + logo : ""
+        }`,
       ],
     },
   };

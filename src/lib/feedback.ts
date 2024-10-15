@@ -1,3 +1,6 @@
+import { FeedbackPostType } from "@/types";
+import { REVALIDATE_API } from "@/Utils/constants";
+
 export const computeFeedback = (feedback: any, userId?: number) => {
   const { feedbackPostVotes, ...rest } = feedback;
   const releaseTags = feedback.releaseTags
@@ -20,4 +23,17 @@ export const computeFeedback = (feedback: any, userId?: number) => {
     upvotedCount,
     isUpvoted,
   });
+};
+
+export const getOneFeedbackPostDetails = async (
+  projectName: string,
+  id: string
+): Promise<FeedbackPostType | null> => {
+  return fetch(
+    `${process.env.BASEURL}/api/public/projects/${projectName}/feedbacks/${id}`,
+    { next: { revalidate: REVALIDATE_API } }
+  )
+    .then((response) => response.json())
+    .then((resData) => (resData.success ? resData.data : null))
+    .catch(() => null);
 };

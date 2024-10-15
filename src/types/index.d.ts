@@ -26,6 +26,13 @@ export type FeedbackPostForm = {
   visibilityStatus?: readonly DropDownOptionType;
 };
 
+export type PagePayloadType = {
+  params: {
+    projectName: string;
+    id: string;
+  };
+};
+
 export type AuthType = {
   email: string;
   password: string;
@@ -89,11 +96,11 @@ export type ProjectDetailsType = {
   name?: string;
   slug?: string;
   projectImgUrl?: string | null;
-}
+};
 
 type FilterCountMapType = {
   [key: string]: number;
-}
+};
 
 export type FeedbackStatusUpdatePayloadType = {
   id: string;
