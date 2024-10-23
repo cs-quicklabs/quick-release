@@ -1,6 +1,6 @@
-import { changePassword } from "../e2e/ChangePassword";
-import { LoginPage } from "../e2e/login";
-import { validCredentials } from "../e2e/testData/credential";
+import { changePassword } from "@/e2e/changepassword";
+import { LoginPage } from "@/e2e/login";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(" Verify Admin able login ", async ({ page }) => {
