@@ -8,9 +8,14 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // Get query parameters
+    // DigitalOcean Spaces URL
+    const DOurl = `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}.${process.env.NEXT_PUBLIC_AWS_S3_REGION}.digitaloceanspaces.com`;
+
+    // Get the search parameters
     const title = searchParams.get("title");
     const description = searchParams.get("description");
+    const teamName = searchParams.get("teamName");
+    const teamlogo = searchParams.get("logo");
 
     // Create a React component with the HTML content
     const ImageContent = () => (
@@ -30,13 +35,13 @@ export async function GET(req: Request) {
         <div style={{ display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <img
-              src={`${process.env.BASEURL}/logo.png`}
+              src={teamlogo ? `${DOurl}/${teamlogo}` : `${process.env.BASEURL}/logo.png`}
               width={60}
               height={60}
               alt="Logo"
             />
             <h1 style={{ fontSize: "3.5rem", color: "#333" }}>
-              {WEB_DETAILS.name}
+              {teamName || WEB_DETAILS.name}
             </h1>
           </div>
           {!title && !description && (

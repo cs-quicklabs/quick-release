@@ -3,10 +3,14 @@ import { cn } from "@/lib/utils";
 import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useState, useEffect } from "react";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
+  showClearBtn?: boolean;
+}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, value, onChange, ...props }, ref) => {
+  ({ className, type, value, onChange, showClearBtn, ...props }, ref) => {
     const [inputValue, setInputValue] = useState(value || "");
 
     // Sync inputValue with external value (from React Hook Form or other sources)
@@ -41,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           value={inputValue}
           onChange={handleChange}
         />
-        {inputValue && !props.disabled && (
+        {inputValue && !props.disabled && showClearBtn && (
           <button
             type="button"
             className="absolute inset-y-0 right-2 flex items-center justify-center text-gray-500 hover:text-gray-700"

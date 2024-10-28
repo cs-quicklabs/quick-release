@@ -6,14 +6,57 @@ import FeedbackPublicContentContainer from "./components/FeedbackPublicContentCo
 import FeedbackHeader from "../(common)/FeedbackHeader";
 import { IFeedbackBoard } from "@/interfaces";
 import { Navbar } from "@/components/Navbar";
+import { Metadata, ResolvingMetadata } from "next";
+import { WEB_DETAILS } from "@/Utils/constants";
+import { PagePayloadType } from "@/types";
 
-type PagePropsType = {
-  params: {
-    projectName: string;
+export async function generateMetadata(
+  { params }: PagePayloadType,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { projectName } = params;
+
+  let project;
+  try {
+    project = await getOneProject({ name: projectName });
+  } catch (error) {
+    console.error("Error fetching feedback:", error);
+  }
+
+  if (!project) {
+    return { title: "Project Not Found" };
+  }
+
+  const title = "Feedback Posts";
+  const ogDesc = "All list of feedbacks";
+
+  const logo = project.projectImgUrl?.split("/").slice(-2).join("/");
+
+  return {
+    title: project.name,
+    description: "All list of feedbacks",
+    icons: [
+      {
+        rel: "icon",
+        url: project.projectImgUrl || WEB_DETAILS.favicon,
+      },
+    ],
+    openGraph: {
+      title,
+      description: ogDesc,
+      url: `${process.env.BASEURL}/${projectName}/feedbacks`,
+      images: [
+        `${
+          process.env.BASEURL
+        }/api/ogImage?title=${title}&description=${ogDesc}&teamName=${
+          project.name
+        }${logo ? "&logo=" + logo : ""}`,
+      ],
+    },
   };
-};
+}
 
-const Page: React.FC<PagePropsType> = async ({ params }) => {
+const Page: React.FC<PagePayloadType> = async ({ params }) => {
   let { projectName } = params;
   projectName = projectName.toLowerCase();
 

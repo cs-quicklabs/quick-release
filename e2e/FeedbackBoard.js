@@ -9,7 +9,8 @@ exports.feedback = class Feedback{
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
     this.teamSetting = this.page.locator("#team-setting");
-    this.heading= this.page.getByRole('heading', { name: 'Feedback Boards' })
+    this.heading= this.page.getByText('heading', { name: 'Team Settings' })
+    this.feedbackboards= this.page.getByText("Feedback Boards");
     this.boardName=this.page.locator("#boardName")
     this.saveButton = this.page.getByText("Save");
     this.editLink= this.page.getByRole("link", { name: "Edit" }).nth(1);
@@ -36,16 +37,10 @@ exports.feedback = class Feedback{
     }
   }
 
-async verifiedHeading()
-  {
-    const headingText = await this.heading.textContent();
-    await expect(headingText).toContain("Feedback Boards");
-  }
-
   async addFeedback()
   {
-    await this.verifiedHeading()
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+    await this.feedbackboards.click()
     
     await this.boardName.fill(this.feedbackname+numeric)
     await this.saveButton.click()
@@ -57,7 +52,7 @@ async verifiedHeading()
 
   async editFeedback()
   {
-    await this.verifiedHeading();
+    await this.feedbackboards.click()
   const numeric = Math.floor(10000 + Math.random() * 90000).toString();
   
   await this.boardName.fill(this.feedbackname + numeric);
@@ -75,7 +70,7 @@ async verifiedHeading()
   } 
   async emptyFeedback()
   {
-    await this.verifiedHeading()
+    await this.feedbackboards.click()
     await this.saveButton.click()
     await expect(this.errorboard).toHaveText(
         "Board name is required"
@@ -85,7 +80,7 @@ async verifiedHeading()
 
   async editFeedBackWithEmptyValue()
   {
-    await this.verifiedHeading();
+    await this.feedbackboards.click()
     await this.editLink.isVisible({ timeout: 5000 });
     await this.editLink.click();
     await this.editfeedbackNameInput.fill('');

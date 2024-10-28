@@ -298,6 +298,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                             placeholder="Enter change log title"
                             {...field}
                             id="title"
+                            showClearBtn
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />

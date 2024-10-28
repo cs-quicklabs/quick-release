@@ -2,35 +2,15 @@ import React from "react";
 import Link from "next/link";
 import moment from "moment";
 import { ArrowLeftIcon } from "@heroicons/react/20/solid";
-import { REVALIDATE_API, WEB_DETAILS } from "@/Utils/constants";
 import { classNames } from "@/lib/utils";
 import { notFound } from "next/navigation";
-import { ChangeLogType } from "@/types";
 import { IReleaseCategory, IReleaseTag } from "@/interfaces";
 import { Metadata, ResolvingMetadata } from "next";
-import NavPublic from "@/components/NavPublic";
 import { Navbar } from "@/components/Navbar";
 import { getOneProject } from "@/lib/project";
-
-type PagePayloadType = {
-  params: {
-    projectName: string;
-    id: string;
-  };
-};
-
-const getOneChangeLogDetails = async (
-  projectName: string,
-  id: string
-): Promise<ChangeLogType | null> => {
-  return fetch(
-    `${process.env.BASEURL}/api/public/projects/${projectName}/changelogs/${id}`,
-    { next: { revalidate: REVALIDATE_API } }
-  )
-    .then((response) => response.json())
-    .then((resData) => (resData.success ? resData.data : null))
-    .catch(() => null);
-};
+import { PagePayloadType } from "@/types";
+import { getOneChangeLogDetails } from "@/lib/changeLog";
+import { WEB_DETAILS } from "@/Utils/constants";
 
 export async function generateMetadata(
   { params }: PagePayloadType,
@@ -39,14 +19,22 @@ export async function generateMetadata(
   const { id, projectName } = params;
 
   let changelog;
+  let project;
   try {
+    project = await getOneProject({ name: projectName });
     changelog = await getOneChangeLogDetails(projectName, id);
   } catch (error) {
     console.error("Error fetching changelog:", error);
   }
 
+  if (!project) {
+    return { title: "Project Not Found" };
+  }
+
+  const logo = project.projectImgUrl?.split("/").slice(-2).join("/");
+
   if (!changelog?.id) {
-    return { title: "Changelog Not Found" };
+    return { title: "changelog Not Found" };
   }
 
   const previousImages = (await parent).openGraph?.images || [];
@@ -54,16 +42,27 @@ export async function generateMetadata(
     changelog.createdBy?.lastName || ""
   }`.trim();
   const date = moment(changelog.createdAt).format("MMMM DD, YYYY");
-  const ogDesc = `Published on ${date} as version ${changelog.releaseVersion} - ${fullName}`;
+  const ogDesc = `Changelog published on ${date} - ${fullName}`;
 
   return {
-    title: changelog.title,
-    description: ogDesc,
+    title: project.name,
+    description: changelog.title + " - " + ogDesc,
+    icons: [
+      {
+        rel: "icon",
+        url: project.projectImgUrl || WEB_DETAILS.favicon,
+      },
+    ],
     openGraph: {
       title: changelog.title,
       description: ogDesc,
+      url: `${process.env.BASEURL}/${projectName}/changelogs/${id}`,
       images: [
-        `${process.env.BASEURL}/api/ogImage?title=${changelog.title}&description=${ogDesc}`,
+        `${process.env.BASEURL}/api/ogImage?title=${
+          changelog.title
+        }&description=${ogDesc}&teamName=${project.name}${
+          logo ? "&logo=" + logo : ""
+        }`,
       ],
     },
   };

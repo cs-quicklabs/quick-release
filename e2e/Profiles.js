@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.Profiles = class Profiles {
+export class Profiles {
   constructor(page) {
     this.page = page;
     this.firstNameInput = 'input[name="firstName"]';

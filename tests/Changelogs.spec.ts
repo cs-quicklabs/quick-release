@@ -1,6 +1,6 @@
-import { Changelog } from "../e2e/Changelogs";
-import { LoginPage } from "../e2e/login";
-import { validCredentials } from "../e2e/testData/credential";
+import { Changelog } from "@/e2e/changelogs";
+import { LoginPage } from "@/e2e/login";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(

@@ -1,6 +1,6 @@
-import { LoginPage } from "../e2e/login";
-import { createProject } from "../e2e/projectsdetails";
-import { validCredentials } from "../e2e/testData/credential";
+import { LoginPage } from "@/e2e/login";
+import { createProject } from "@/e2e/Projectsdetails";
+import { validCredentials } from "@/e2e/testData/credential";
 import { test, expect } from "@playwright/test";
 
 test.beforeEach(

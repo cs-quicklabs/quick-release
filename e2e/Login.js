@@ -1,5 +1,5 @@
 const { test, expect } = require("@playwright/test");
-exports.LoginPage = class LoginPage {
+export class LoginPage {
   constructor(page) {
     this.page = page;
     this.emailInput = 'input[id="email"]';
