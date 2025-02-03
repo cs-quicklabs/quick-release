@@ -66,7 +66,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
 
 export async function sendPasswordUpdatedEmail(email: string, firstName: string): Promise<void> {
   const emailBody = `Hi ${firstName},<br/>
-    Your password has been updated successfully.<br/>,
+    Your password has been updated successfully.<br/>
     <br/>
     <br/>
     Best regards,<br/>
