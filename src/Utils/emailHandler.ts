@@ -34,7 +34,7 @@ export async function sendVerificationEmail(email: string, verificationToken: st
   const emailParams: EmailParams = {
     to: email,
     from: process.env.EMAIL_FROM as string,
-    subject: "Welcome to Quick Release",
+    subject: "Quick Release: Welcome to Quick Release",
     html: emailBody,
   };
 
@@ -57,7 +57,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
   const emailParams: EmailParams = {
     to: email,
     from: process.env.EMAIL_FROM as string,
-    subject: "Reset Password",
+    subject: "Quick Release: Reset Password",
     html: emailBody,
   };
 
@@ -76,7 +76,7 @@ export async function sendPasswordUpdatedEmail(email: string, firstName: string)
   const emailParams: EmailParams = {
     to: email,
     from: process.env.EMAIL_FROM as string,
-    subject: "Password Updated",
+    subject: "Quick Release: Password Updated",
     html: emailBody,
   };
 
