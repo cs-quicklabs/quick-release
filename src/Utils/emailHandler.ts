@@ -24,7 +24,7 @@ export async function sendVerificationEmail(email: string, verificationToken: st
     Welcome to Quicklabs! We're thrilled to have you on board.<br/>
     Our mission is simple: to streamline change log management for all your software releases. With Quicklabs, you'll experience efficiency and clarity like never before.<br/>
     <br/>
-    <a href="${verificationUrl}">Click to verify Account</a>,
+    <a href="${verificationUrl}">Click to verify Account</a>
     <br/>
     <br/>
     Best regards,<br/>
@@ -45,7 +45,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
   const resetUrl = `${process.env.BASEURL}/reset-password?token=${resetToken}`;
   const emailBody = `Hello ${firstName},<br/>
     Someone has requested a link to change your password. You can do this through the link below.<br/>
-    <a href="${resetUrl}">Change my password</a>,<br/>
+    <a href="${resetUrl}">Change my password</a><br/>
     If you didn't request this, please ignore this email.<br/>
     Your password won't change until you access the link above and create a new one.
     <br/>
@@ -66,7 +66,7 @@ export async function sendResetPasswordEmail(email: string, resetToken: string, 
 
 export async function sendPasswordUpdatedEmail(email: string, firstName: string): Promise<void> {
   const emailBody = `Hi ${firstName},<br/>
-    Your password has been updated successfully.<br/>,
+    Your password has been updated successfully.<br/>
     <br/>
     <br/>
     Best regards,<br/>
