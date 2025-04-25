@@ -50,7 +50,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}
@@ -84,7 +84,7 @@ const ChangeLogListItem: React.FC<{ id: string; }> = ({ id }) => {
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}

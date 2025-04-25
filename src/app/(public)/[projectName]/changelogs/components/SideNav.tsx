@@ -121,7 +121,7 @@ const SideNav: React.FC<SideNavProps> = ({
                 >
                   <Checkbox
                     className={
-                      "h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      "h-4 w-4 rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     }
                     name={category.value}
                     checked={selectedCategories.includes(category.value)}
@@ -157,7 +157,7 @@ const SideNav: React.FC<SideNavProps> = ({
                   onClick={() => onSelectTags(tag.value)}
                 >
                   <Checkbox
-                    className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                    className="h-4 w-4 rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-600"
                     name={tag.value}
                     checked={selectedTags.includes(tag.value)}
                     readOnly

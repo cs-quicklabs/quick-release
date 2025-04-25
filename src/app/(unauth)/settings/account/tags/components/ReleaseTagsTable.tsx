@@ -161,7 +161,7 @@ const ReleaseTagsTable = () => {
                     </>
                   ) : (
                     <Button
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveReleaseTag}
                       disabled={isSaving || showError !== ""} 
                        id="editSave"
@@ -180,7 +180,7 @@ const ReleaseTagsTable = () => {
         title="Delete change log"
         message={`Are you sure you want to delete the tag "${releaseTagMap[selectedDeletedReleaseTagId!]?.name}"? This will permanently remove the tag and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => deleteReleaseTag(selectedDeletedReleaseTagId!, setIsLoading)}
         onClickCancel={() => {
           setShowDeleteModal(false)

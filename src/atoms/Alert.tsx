@@ -30,9 +30,9 @@ const Alert: React.FC<AlertPropsType> = ({
   onClickAction,
 }) => {
   return (
-    <li className={classNames("rounded-md p-4 shadow-sm", containerClassName)}>
+    <li className={classNames("rounded-md p-4 shadow-xs", containerClassName)}>
       <div className="flex">
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           <InformationCircleIcon className={classNames("h-5 w-5", iconClassName)} />
         </div>
 

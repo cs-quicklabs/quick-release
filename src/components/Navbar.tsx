@@ -148,7 +148,7 @@ export function Navbar({
         title="Logout"
         message="Are you sure you want to logout?"
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => logout(setIsLogOut)}
         onClickCancel={() => setOpen(false)}
         loading={isLogOut}
@@ -161,7 +161,7 @@ export function Navbar({
                 <div className="flex justify-between w-full items-center lg:hidden py-2 lg:py-4">
                   {/* Mobile menu button*/}
                   <Link href={projectSlug ? `/${projectSlug}/changelogs` : `/`}>
-                    <div className="flex flex-shrink-0 items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                       <Image
                         className="h-8 w-auto"
                         src={logoSrc!}
@@ -177,7 +177,7 @@ export function Navbar({
                   <div>
                     <Disclosure.Button
                       onClick={() => setShowMenuNav && setShowMenuNav(!open)}
-                      className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
+                      className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white"
                     >
                       <span className="absolute -inset-0.5" />
                       <span className="sr-only" id="Open-main-menu">
@@ -199,7 +199,7 @@ export function Navbar({
                 </div>
                 <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
                   <Link href={projectSlug ? `/${projectSlug}/changelogs` : `/`}>
-                    <div className="flex flex-shrink-0 items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                       <Image
                         className="h-8 w-auto"
                         src={logoSrc!}
@@ -273,7 +273,7 @@ export function Navbar({
                             } // Trigger onSearch when Enter is pressed
                             value={searchQuery || ""}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-none focus:ring-white sm:text-sm"
+                            className="hidden lg:block w-full rounded-md border border-transparent bg-gray-700 py-1.5 pl-10 pr-3 leading-5 text-gray-300 placeholder-gray-400 focus:border-white focus:bg-white focus:text-gray-900 focus:outline-hidden focus:ring-white sm:text-sm"
                             placeholder="Search feedbacks"
                           />
 
@@ -300,14 +300,14 @@ export function Navbar({
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 lg:static lg:inset-auto lg:ml-6 lg:pr-0">
                     {/* <button
                       type="button"
-                      className="hidden lg:block flex-shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                      className="hidden lg:block shrink-0 rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     >
                       <span className="sr-only">{"View notifications"}</span>{" "}
                       <BellIcon className="h-6 w-6" aria-hidden="true" />
                     </button> */}
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only" id="open-user-menu">
                             {"Open user menu"}
@@ -334,7 +334,7 @@ export function Navbar({
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden">
                           <Menu.Item>
                             {({ active }) => (
                               <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white">

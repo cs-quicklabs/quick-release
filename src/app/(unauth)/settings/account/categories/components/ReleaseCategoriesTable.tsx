@@ -179,7 +179,7 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
                     </>
                   ) : (
                     <Button
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveReleaseCategory}
                       disabled={isSaving || showError !== ""}
                       id="savecategory"
@@ -200,7 +200,7 @@ const ReleaseCategoriesTable: React.FC<{}> = () => {
           releaseCategoryMap[selectedDeletedReleaseCategoryId!]?.name
         }"? This will permanently remove the category and its associations from all past changelogs.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() =>
           deleteReleaseCategory(selectedDeletedReleaseCategoryId!, setIsLoading)
         }

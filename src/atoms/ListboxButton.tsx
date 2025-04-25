@@ -26,9 +26,9 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onCha
       {({ open }) => (
         <>
           <div className="relative">
-            <div className="inline-flex divide-x divide-indigo-700 rounded-md shadow-sm">
+            <div className="inline-flex divide-x divide-indigo-700 rounded-md shadow-xs">
               <button
-                className="inline-flex items-center gap-x-1.5 rounded-l-md bg-indigo-600 px-3 py-2 text-white shadow-sm"
+                className="inline-flex items-center gap-x-1.5 rounded-l-md bg-indigo-600 px-3 py-2 text-white shadow-xs"
                 type={btnType}
                 disabled={disabled}
               >
@@ -49,7 +49,7 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onCha
                 <p className="text-sm font-semibold">{selected.btnText}</p>
               </button>
 
-              <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-indigo-600 p-2 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-gray-50">
+              <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-indigo-600 p-2 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-gray-50">
                 <span className="sr-only">Change published status</span>
                 <ChevronDownIcon className="h-5 w-5 text-white" aria-hidden="true" />
               </Listbox.Button>
@@ -64,7 +64,7 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onCha
 
             >
               <Listbox.Options
-                className="absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                className="absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden"
 
               >
                 {options.map((option) => (

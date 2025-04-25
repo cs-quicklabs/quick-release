@@ -92,7 +92,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
   return (
     <aside
       className={classNames(
-        "xl:order-first xl:block xl:flex-shrink-0",
+        "xl:order-first xl:block xl:shrink-0",
         "xl:relative xl:h-full  xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
         "fixed top-0 left-0 z-40 lg:z-0 h-screen sm:overflow-y-auto transition-transform w-screen bg-black bg-opacity-35",
         !feedbackSideNav && "-translate-x-full"
@@ -100,7 +100,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
       onClick={() => setFeedbackSideNav(false)}
     >
       <div className="relative flex h-full sm:w-96 flex-col border-r border-gray-200 bg-gray-100">
-        <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
             <span
               className="w-full py-3 text-sm font-medium"
@@ -133,7 +133,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
                 {boardDetails.isDefault && (
                   <span
                     className={classNames(
-                      `inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium`,
+                      `inline-flex items-center rounded-sm px-2.5 py-0.5 text-xs font-medium`,
                       "bg-green-100 text-green-800"
                     )}
                   >

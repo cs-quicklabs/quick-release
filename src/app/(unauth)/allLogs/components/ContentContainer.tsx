@@ -226,7 +226,7 @@ const ContentContainer = () => {
         ref={contentContainerRef}
         className="flex-1 overflow-y-auto pb-10 no-scrollbar"
       >
-        <div className="bg-white pt-5 pb-6 shadow border-b border-gray-200">
+        <div className="bg-white pt-5 pb-6 shadow-sm border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center">
@@ -244,8 +244,8 @@ const ContentContainer = () => {
               </p>
             </div>
 
-            <div className="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
-              <p className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500 mr-2">
+            <div className="mt-4 flex items-center justify-between sm:mt-0 sm:ml-6 sm:shrink-0 sm:justify-start">
+              <p className="shrink-0 whitespace-nowrap text-sm text-gray-500 mr-2">
                 Version {releaseVersion}
               </p>
 
@@ -297,12 +297,12 @@ const ContentContainer = () => {
           className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 sm:px-6 lg:px-8"
           data-svelte-h="svelte-1g1nf9v"
         >
-          <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
-            {releaseCategories.map(({ value, label }) => (
+          <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
+            {releaseCategories.map(({ value, label }, index) => (
               <span
-                key={value}
+                key={`${value} + ${index}`}
                 className={classNames(
-                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}
@@ -321,7 +321,7 @@ const ContentContainer = () => {
             </div>
           </li>
           {!!releaseTags.length && (
-            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+            <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
               <div className="sm:flex sm:items-baseline sm:justify-between">
                 <h3 className="text-base font-medium">
                   <span className="text-gray-900">Release Tags</span>
@@ -333,7 +333,7 @@ const ContentContainer = () => {
                   <span
                     key={value}
                     className={classNames(
-                      "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                      "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                     )}
                   >
                     {label}
@@ -358,7 +358,7 @@ const ContentContainer = () => {
             : "Are you sure you want to delete this change log?"
         }
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => {
           sessionStorage.removeItem("activeChangeLogId");
           deleteOneChangeLog(activeChangeLogId!, setIsLoading);
@@ -379,7 +379,7 @@ const ContentContainer = () => {
         }
         onClickCancel={() => setShowToggleArchivedModal(false)}
         okBtnClassName={!archivedAt ? "bg-red-600 hover:bg-red-800" : undefined}
-        spinClassName={!archivedAt ? "!fill-red-600" : undefined}
+        spinClassName={!archivedAt ? "fill-red-600!" : undefined}
         onClickOk={() =>
           toggleArchiveOneChangeLog(activeChangeLogId!, setIsLoading)
         }

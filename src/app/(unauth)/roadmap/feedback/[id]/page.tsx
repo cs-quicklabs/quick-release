@@ -125,7 +125,7 @@ export default function Page() {
             className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 sm:px-6 lg:px-8"
             data-svelte-h="svelte-1g1nf9v"
           >
-            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-8 flex justify-between">
+            <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-8 flex justify-between">
               <div className="flex items-center gap-4">
                 <ArrowLeftIcon
                   className="w-4 h-4 cursor-pointer"
@@ -138,7 +138,7 @@ export default function Page() {
                     </h1>
                     <span
                       className={classNames(
-                        "inline-flex items-center rounded px-3 py-0.5 text-sm font-medium",
+                        "inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium",
                         `${visibilityStatus?.bgColor} ${visibilityStatus?.textColor}`
                       )}
                     >
@@ -158,10 +158,10 @@ export default function Page() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-center justify-evenly gap-4 sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
+              <div className="mt-4 flex items-center justify-evenly gap-4 sm:mt-0 sm:ml-6 sm:shrink-0 sm:justify-start">
                 <span
                   className={classNames(
-                    "inline-flex items-center rounded px-3 py-0.5 text-sm font-medium",
+                    "inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium",
                     `${feedbackStatus?.bgColor} ${feedbackStatus?.textColor}`
                   )}
                 >
@@ -222,10 +222,10 @@ export default function Page() {
                 </div>
               </div>
             </li>
-            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+            <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
               <span
                 className={classNames(
-                  "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {feedbackPost?.feedbackBoards?.name}
@@ -245,7 +245,7 @@ export default function Page() {
               </div>
             </li>
             {!!releaseTags.length && (
-              <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+              <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
                 <div className="sm:flex sm:items-baseline sm:justify-between pb-2">
                   <h3 className="text-base font-medium">
                     <span className="text-gray-900">{"Tags"}</span>
@@ -257,7 +257,7 @@ export default function Page() {
                     <span
                       key={value}
                       className={classNames(
-                        "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                        "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                       )}
                     >
                       {label}
@@ -278,7 +278,7 @@ export default function Page() {
             : "Are you sure you want to delete this feedback?"
         }
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => {
           deleteFeedbackPost(feedbackId!, activeProjectId!);
           setShowDeleteModal(false);

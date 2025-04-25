@@ -108,7 +108,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
       <main className="max-w-5xl mx-auto p-4 mt-14">
         <Link href={`/${projectName}/changelogs`}>
           <button
-            className="mb-2 inline-flex items-center gap-x-1.5 shadow-sm px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            className="mb-2 inline-flex items-center gap-x-1.5 shadow-xs px-2.5 rounded-md bg-white-600 py-1.5 text-sm font-semibold ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
             type="button"
             id="see-all-changelogs"
           >
@@ -130,7 +130,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
                 <span
                   key={value}
                   className={classNames(
-                    "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                    "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                   )}
                 >
                   {label}
@@ -153,7 +153,7 @@ const Page: React.FC<PagePayloadType> = async ({ params }) => {
               <span
                 key={value}
                 className={classNames(
-                  "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                  "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                 )}
               >
                 {label}

@@ -299,7 +299,7 @@ const Profile = () => {
           <Button
             type="submit"
             disabled={updateLoading || !hasChanged}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full lg:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             {updateLoading ? (
               <div className="flex items-center justify-center gap-4">
@@ -321,7 +321,7 @@ const Profile = () => {
           message={"Are you sure you want to change your email address?"}
           onClickCancel={() => setIsOpen(false)}
           okBtnClassName={"bg-red-600 hover:bg-red-800"}
-          spinClassName={"!fill-red-600"}
+          spinClassName={"fill-red-600!"}
           onClickOk={() => handleUpdateProfile()}
           loading={updateLoading}
         /> */}
@@ -331,7 +331,7 @@ const Profile = () => {
           message={"Are you sure you want to remove your profile picture?"}
           onClickCancel={() => setIsOpenImageModal(false)}
           okBtnClassName={"bg-red-600 hover:bg-red-800"}
-          spinClassName={"!fill-red-600"}
+          spinClassName={"fill-red-600!"}
           onClickOk={handleDelete}
           loading={imageUploadLoading}
         />

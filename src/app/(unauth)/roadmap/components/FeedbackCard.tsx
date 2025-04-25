@@ -13,7 +13,7 @@ export default function FeedbackCard({
       <div className="mt-2 flex items-center gap-2">
         <span
           className={classNames(
-            "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+            "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
           )}
         >
           {feedback.feedbackBoards?.name}

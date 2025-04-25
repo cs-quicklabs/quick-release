@@ -453,7 +453,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
               </CardContent>
               <CardFooter className="justify-end px-0">
                 <Button
-                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
+                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-sm"
                   type="button"
                   onClick={handleCancelButton}
                 >

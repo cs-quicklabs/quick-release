@@ -46,7 +46,7 @@ export default function ChangeLogDetail() {
             </p>
           </div>
 
-          <div className="mt-4 flex items-center justify-between sm:ml-6 sm:mt-0 sm:flex-shrink-0 sm:justify-start">
+          <div className="mt-4 flex items-center justify-between sm:ml-6 sm:mt-0 sm:shrink-0 sm:justify-start">
             <span className="text-gray-600 text-sm">Version 3.1.0</span>
 
             <span className=" rounded-full bg-green-50 px-3 py-1.5 font-medium text-xs text-green-600 hover:bg-gray-100 ml-2">
@@ -54,7 +54,7 @@ export default function ChangeLogDetail() {
             </span>
             <Menu as="div" className="relative ml-3 inline-block text-left">
               <div>
-                <Menu.Button className="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <Menu.Button className="-my-2 flex items-center rounded-full bg-white p-2 text-gray-400 hover:text-gray-600 focus:outline-hidden focus:ring-2 focus:ring-indigo-500">
                   <span className="sr-only">Open options</span>
                   <EllipsisVerticalIcon
                     className="h-5 w-5"
@@ -72,7 +72,7 @@ export default function ChangeLogDetail() {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden">
                   <div className="py-1">
                     <Menu.Item>
                       {({ active }) => (
@@ -112,7 +112,7 @@ export default function ChangeLogDetail() {
         </div>
       </div>
 
-      <div className="max-w-7xl px-4 py-2 m-4 bg-white rounded">
+      <div className="max-w-7xl px-4 py-2 m-4 bg-white rounded-sm">
         <div className="grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16  border-gray-200 pt-1  lg:mx-0 lg:max-w-none lg:grid-cols-1">
           <article
             key={posts[0].id}
@@ -149,7 +149,7 @@ export default function ChangeLogDetail() {
           </article>
         </div>
       </div>
-      <div className="max-w-7xl px-4 py-2 m-4 bg-white rounded">
+      <div className="max-w-7xl px-4 py-2 m-4 bg-white rounded-sm">
         <div className="grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16  border-gray-200 pt-1  lg:mx-0 lg:max-w-none lg:grid-cols-1">
           <article
             key={posts[0].id}

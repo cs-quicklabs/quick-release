@@ -12,7 +12,7 @@ const NavPublic = (
         <div className="relative flex py-3 justify-between">
           <div className="relative z-10 flex px-2 lg:px-0">
             <Link href="/">
-              <div className="flex flex-shrink-0 items-center">
+              <div className="flex shrink-0 items-center">
                 <Image
                   className="block h-8 w-auto"
                   src={WEB_DETAILS.logo}

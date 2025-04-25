@@ -47,13 +47,13 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
       <div className="flex justify-between space-x-3">
         <div className="min-w-0 flex-1">
           <Link
-            className="block focus:outline-none"
+            className="block focus:outline-hidden"
             href="#"
             onClick={(e) => e.preventDefault()}
           >
             <span
               className={classNames(
-                "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
               )}
             >
               {feedbackBoards?.name}
@@ -64,7 +64,7 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
               </p>
               <span
                 className={classNames(
-                  "inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium",
+                  "inline-flex items-center rounded-sm px-2.5 py-0.5 text-xs font-medium",
                   `${feedbackVisibilityStatus?.bgColor} ${feedbackVisibilityStatus?.textColor}`
                 )}
               >
@@ -72,7 +72,7 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
               </span>
             </div>
             <p className="flex truncate text-sm text-gray-500">
-              <span className="truncate flex-shrink mr-1">{fullName}</span>
+              <span className="truncate shrink mr-1">{fullName}</span>
 
               <span>
                 {` on ${
@@ -95,7 +95,7 @@ const FeedbackCardItem: React.FC<{ id?: string | null }> = ({ id = null }) => {
         <div className="mt-2 flex items-center justify-between">
           <span
             className={classNames(
-              `inline-flex items-center rounded px-2.5 py-0.5 text-xs font-medium`,
+              `inline-flex items-center rounded-sm px-2.5 py-0.5 text-xs font-medium`,
               feedbacktatus.bgColor,
               feedbacktatus.textColor
             )}

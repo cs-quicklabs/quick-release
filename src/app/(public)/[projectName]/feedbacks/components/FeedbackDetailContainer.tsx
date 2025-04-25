@@ -60,7 +60,7 @@ export default function FeedbackDetailContainer({
       aria-labelledby="message-heading"
     >
       <div className="flex-1 overflow-y-auto pb-10 no-scrollbar">
-        <div className="bg-white py-4 shadow border-b border-gray-200">
+        <div className="bg-white py-4 shadow-sm border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export default function FeedbackDetailContainer({
           className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 sm:px-6 lg:px-8"
           data-svelte-h="svelte-1g1nf9v"
         >
-          <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6 flex justify-between">
+          <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6 flex justify-between">
             <div className="flex items-center gap-2">
               <ArrowLeftIcon
                 className="w-4 h-4 cursor-pointer"
@@ -89,7 +89,7 @@ export default function FeedbackDetailContainer({
               </h1>
               <span
                 className={classNames(
-                  `inline-flex items-center rounded px-3 py-0.5 text-sm font-medium`,
+                  `inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium`,
                   feedbackStatus.bgColor,
                   feedbackStatus.textColor
                 )}
@@ -110,10 +110,10 @@ export default function FeedbackDetailContainer({
               </span>
             </div>
           </li>
-          <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+          <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
             <span
               className={classNames(
-                "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
               )}
             >
               {feedbackPost?.feedbackBoards?.name}
@@ -131,7 +131,7 @@ export default function FeedbackDetailContainer({
             </div>
           </li>
           {!!releaseTags.length && (
-            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+            <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
               <div className="sm:flex sm:items-baseline sm:justify-between pb-2">
                 <h3 className="text-base font-medium">
                   <span className="text-gray-900">{"Tags"}</span>
@@ -143,7 +143,7 @@ export default function FeedbackDetailContainer({
                   <span
                     key={value}
                     className={classNames(
-                      "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                      "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                     )}
                   >
                     {label}

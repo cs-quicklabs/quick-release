@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma db execute --file ./prisma/migrations/20240805120711_/migration.sql || echo 'Migration file not found, skipping migration'",
+    "postinstall": "prisma db execute --file ./prisma/migrations/20240805120711_/migration.sql || echo 'Migration file not found, skipping migration' && flowbite-react patch",
     "prebuild": "prisma generate && ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
   },
   "dependencies": {
@@ -30,12 +30,12 @@
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "@types/bcrypt": "^5.0.2",
-    "autoprefixer": "^10.4.19",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^3.6.0",
+    "flowbite": "^3.1.2",
     "flowbite-react": "^0.11.7",
     "html-react-parser": "^5.0.11",
     "lucide-react": "^0.397.0",
@@ -64,6 +64,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.47.2",
+    "@tailwindcss/postcss": "^4.1.4",
     "@types/node": "^20.14.11",
     "@types/nodemailer": "^6.4.14",
     "@types/react": "^18.3.3",
@@ -73,7 +74,7 @@
     "eslint-config-next": "14.0.4",
     "postcss": "^8",
     "prisma": "^5.15.0",
-    "tailwindcss": "^3.4.4",
+    "tailwindcss": "^4.1.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.3"
   }
