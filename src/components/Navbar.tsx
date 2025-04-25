@@ -6,7 +6,7 @@ import Loader from "../atoms/Loader";
 import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -307,7 +307,7 @@ export function Navbar({
                     </button> */}
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <Menu.Button className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <MenuButton className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only" id="open-user-menu">
                             {"Open user menu"}
@@ -323,7 +323,7 @@ export function Navbar({
                             width={32}
                             height={32}
                           />
-                        </Menu.Button>
+                        </MenuButton>
                       </div>
                       <Transition
                         as={Fragment}
@@ -334,8 +334,8 @@ export function Navbar({
                         leaveFrom="transform opacity-100 scale-100"
                         leaveTo="transform opacity-0 scale-95"
                       >
-                        <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden">
-                          <Menu.Item>
+                        <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg   focus:outline-hidden">
+                          <MenuItem>
                             {({ active }) => (
                               <div className="pr-4 py-3 text-sm text-gray-900 dark:text-white">
                                 <div className="flex justify-center items-center">
@@ -363,16 +363,16 @@ export function Navbar({
                                 </div>
                               </div>
                             )}
-                          </Menu.Item>
-                          <Menu.Item>
+                          </MenuItem>
+                          <MenuItem>
                             <Link
                               href="/create-team"
-                              className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
+                              className="flex border items-center px-4 py-2 text-sm font-medium text-blue-600  bg-gray-50  hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
                             >
                               <PlusCircleIcon className="h-5 w-5 mr-2" />
                               {"Add new team"}
                             </Link>
-                          </Menu.Item>
+                          </MenuItem>
 
                           {loading.projectLoading ? (
                             <div className="flex items-center justify-center py-2">
@@ -388,7 +388,7 @@ export function Navbar({
                               <div className="max-h-full overflow-y-auto">
                                 {projects.map((item: any) => {
                                   return (
-                                    <Menu.Item
+                                    <MenuItem
                                       key={item.id}
                                       as="div"
                                       onClick={() => {
@@ -435,13 +435,13 @@ export function Navbar({
                                           </div>
                                         )}
                                       </div>
-                                    </Menu.Item>
+                                    </MenuItem>
                                   );
                                 })}
                               </div>
                             </div>
                           )}
-                          <Menu.Item>
+                          <MenuItem>
                             {({ active }) => (
                               <Link
                                 href="/settings/account/tags"
@@ -459,8 +459,8 @@ export function Navbar({
                                 </div>
                               </Link>
                             )}
-                          </Menu.Item>
-                          <Menu.Item>
+                          </MenuItem>
+                          <MenuItem>
                             {({ active }) => (
                               <Link
                                 href="/settings/profile/general"
@@ -478,10 +478,10 @@ export function Navbar({
                                 </div>
                               </Link>
                             )}
-                          </Menu.Item>
+                          </MenuItem>
                           {projectList.length > 0 && (
                             <>
-                              <Menu.Item>
+                              <MenuItem>
                                 {({ active }) => (
                                   <Link
                                     href="/settings/team/general"
@@ -499,7 +499,7 @@ export function Navbar({
                                     </div>
                                   </Link>
                                 )}
-                              </Menu.Item>
+                              </MenuItem>
                               <div
                                 className={
                                   "block px-4 py-2 text-sm text-gray-500 font-medium border-t"
@@ -512,7 +512,7 @@ export function Navbar({
                                   {"Support"}
                                 </div>
                               </div>
-                              <Menu.Item>
+                              <MenuItem>
                                 {({ active }) => (
                                   <Link
                                     href={`/${
@@ -532,8 +532,8 @@ export function Navbar({
                                     </div>
                                   </Link>
                                 )}
-                              </Menu.Item>
-                              <Menu.Item>
+                              </MenuItem>
+                              <MenuItem>
                                 {({ active }) => (
                                   <Link
                                     href={`/${
@@ -553,8 +553,8 @@ export function Navbar({
                                     </div>
                                   </Link>
                                 )}
-                              </Menu.Item>
-                              <Menu.Item>
+                              </MenuItem>
+                              <MenuItem>
                                 {({ active }) => (
                                   <Link
                                     href={`/${
@@ -574,10 +574,10 @@ export function Navbar({
                                     </div>
                                   </Link>
                                 )}
-                              </Menu.Item>
+                              </MenuItem>
                             </>
                           )}
-                          <Menu.Item>
+                          <MenuItem>
                             {({ active }) => (
                               <a
                                 onClick={() => setOpen(true)}
@@ -600,8 +600,8 @@ export function Navbar({
                                 )}
                               </a>
                             )}
-                          </Menu.Item>
-                        </Menu.Items>
+                          </MenuItem>
+                        </MenuItems>
                       </Transition>
                     </Menu>
                   </div>
