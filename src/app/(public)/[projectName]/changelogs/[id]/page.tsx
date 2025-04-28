@@ -12,10 +12,8 @@ import { PagePayloadType } from "@/types";
 import { getOneChangeLogDetails } from "@/lib/changeLog";
 import { WEB_DETAILS } from "@/Utils/constants";
 
-export async function generateMetadata(
-  { params }: PagePayloadType,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(props: PagePayloadType, parent: ResolvingMetadata): Promise<Metadata> {
+  const params = await props.params;
   const { id, projectName } = params;
 
   let changelog;
@@ -68,7 +66,8 @@ export async function generateMetadata(
   };
 }
 
-const Page: React.FC<PagePayloadType> = async ({ params }) => {
+const Page: React.FC<PagePayloadType> = async props => {
+  const params = await props.params;
   const { id, projectName } = params;
 
   let changelog;

@@ -8,7 +8,8 @@ type PagePropsType = {
   };
 };
 
-const Page: React.FC<PagePropsType> = async ({ params }) => {
+const Page: React.FC<PagePropsType> = async props => {
+  const params = await props.params;
   let { projectName } = params;
   projectName = projectName.toLowerCase();
 

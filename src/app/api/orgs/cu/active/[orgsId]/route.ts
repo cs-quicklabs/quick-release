@@ -6,9 +6,13 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function PATCH(req: NextRequest,
-    { params: { orgsId } }: { params: { orgsId: string } }
-) {
+export async function PATCH(req: NextRequest, props: { params: Promise<{ orgsId: string }> }) {
+  const params = await props.params;
+
+  const {
+    orgsId
+  } = params;
+
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
 
