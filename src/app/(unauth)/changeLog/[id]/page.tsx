@@ -40,7 +40,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import React, { useCallback, useEffect, useMemo, useRef, useState, use } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  use,
+} from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
 import { fileDeleteRequest } from "@/fetchHandlers/file";
@@ -287,7 +294,10 @@ const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Title"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -307,14 +317,17 @@ const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Description"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
-                            id="description"
+                            // id="description"
                             value={value}
                             onChange={onChange}
-                            onModal="ChangeLogs"
+                            // onModal="ChangeLogs"
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />
@@ -328,7 +341,10 @@ const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Version"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Release Version"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"

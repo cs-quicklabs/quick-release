@@ -1,18 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import React, { useMemo } from "react";
-import { Quill } from "react-quill";
+import React, { useEffect, useMemo } from "react";
+import { useQuill } from "react-quilljs";
+// or const { useQuill } = require('react-quilljs');
 
-import "react-quill/dist/quill.snow.css";
+import "quill/dist/quill.snow.css"; // Add css for snow theme
 // @ts-ignore
-import ImageUploader from "quill-image-uploader";
 import { requestHandler, showNotification } from "@/Utils";
 import { fileUploadRequest } from "@/fetchHandlers/file";
-
-Quill.register("modules/imageUploader", ImageUploader);
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 type RichTextEditorProps = {
   placeholder?: string;
@@ -29,9 +25,12 @@ const RichTextEditor = ({
   onModal,
   id,
 }: RichTextEditorProps) => {
+  const { quill, quillRef } = useQuill({
+    placeholder,
+  });
   const imageUploader = useMemo(
     () => ({
-      upload: (file: File) => {
+      upload: (file: File): Promise<{ image: string }> => {
         return new Promise(async (resolve, reject) => {
           // check if valid image exists
           const extension = file.name.toLowerCase().split(".").pop();
@@ -56,7 +55,7 @@ const RichTextEditor = ({
             null,
             (res: any) => {
               // console.log("uploaded file details:", res);
-              resolve(res.data.url);
+              resolve({ image: res.data.url });
             },
             (errMessage) => {
               showNotification("error", errMessage);
@@ -69,17 +68,76 @@ const RichTextEditor = ({
     [onModal]
   );
 
+  const insertToEditor = (url: string) => {
+    const range = quill?.getSelection();
+    quill?.insertEmbed(range?.index || 0, "image", url);
+  };
+
+  const saveToServer = async (file: any) => {
+    const body = new FormData();
+    body.append("file", file);
+
+    const uploadRes: { image: string } = await imageUploader.upload(file);
+    console.log({ uploadRes });
+    insertToEditor(uploadRes?.image || "");
+  };
+
+  const selectLocalImage = () => {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = () => {
+      const file = input?.files?.[0];
+      saveToServer(file);
+    };
+  };
+
+  useEffect(() => {
+    if (quill) {
+      // Add custom handler for Image Upload
+      (quill as any).getModule("toolbar").addHandler("image", selectLocalImage);
+    }
+  }, [quill]);
+
+  // Set initial value when editor is ready
+  useEffect(() => {
+    if (quill && value) {
+      quill.clipboard.dangerouslyPasteHTML(value);
+    }
+  }, [quill]);
+
+  // Capture changes
+  useEffect(() => {
+    if (quill && onChange) {
+      const handler = () => {
+        onChange(quill.root.innerHTML);
+      };
+      quill.on("text-change", handler);
+
+      return () => {
+        quill.off("text-change", handler); // clean up on unmount
+      };
+    }
+  }, [quill, onChange]);
+
   return (
-    <ReactQuill
-      theme="snow"
-      className="custom-input-editor w-full rounded-md disabled:cursor-not-allowed disabled:opacity-50"
-      onChange={onChange}
-      value={value}
-      modules={{ ...RichTextEditor.modules, imageUploader }}
-      formats={RichTextEditor.formats}
-      placeholder={placeholder}
-      id={id}
-    />
+    <>
+      <div className="custom-input-editor w-full rounded-md disabled:cursor-not-allowed disabled:opacity-50">
+        <div ref={quillRef} />
+      </div>
+    </>
+    // <ReactQuill
+    //   theme="snow"
+    //   className="custom-input-editor w-full rounded-md disabled:cursor-not-allowed disabled:opacity-50"
+    //   onChange={onChange}
+    //   value={value}
+    //   modules={{ ...RichTextEditor.modules, imageUploader }}
+    //   formats={RichTextEditor.formats}
+    //   placeholder={placeholder}
+    //   id={id}
+    // />
   );
 };
 
