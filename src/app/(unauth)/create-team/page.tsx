@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 import { Button } from "@/atoms/button";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
@@ -17,6 +16,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { showNotification } from "@/Utils";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 const Project = () => {
   const router = useRouter();
@@ -234,12 +234,7 @@ const Project = () => {
               >
                 {loader ? (
                   <div className="flex items-center justify-center gap-4">
-                    <Oval
-                      height={25}
-                      width={25}
-                      color="black"
-                      secondaryColor="white"
-                    />
+                    <Spin className="h-[25px] w-[25px]" />
                   </div>
                 ) : (
                   "Save"

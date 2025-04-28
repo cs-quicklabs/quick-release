@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
@@ -8,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -94,17 +94,13 @@ const ResendRegisterLink = () => {
             <button
               type="submit"
               disabled={loader}
-              className={
-                `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
-              }>
+              className={`w-full mt-4  text-white ${
+                loader ? "bg-blue-400" : "bg-blue-600"
+              } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+            >
               {loader ? (
                 <div className="flex items-center justify-center gap-4">
-                  <Oval
-                    height={25}
-                    width={25}
-                    color="black"
-                    secondaryColor="white"
-                  />
+                  <Spin className="h-[25px] w-[25px]" />
                 </div>
               ) : (
                 "Request Password"

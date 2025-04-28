@@ -3,7 +3,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
@@ -15,6 +14,7 @@ import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
 import Loading from "@/atoms/Loading";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 const GeneralTeamSettings = () => {
   const fileInputRef = useRef(null);
@@ -155,12 +155,7 @@ const GeneralTeamSettings = () => {
             </label>{" "}
             <div className="items-center w-full sm:flex">
               {imageUploadLoading ? (
-                <Oval
-                  height={25}
-                  width={25}
-                  color="black"
-                  secondaryColor="white"
-                />
+                <Spin className="h-[25px] w-[25px]" />
               ) : (
                 <>
                   {teamLogoUrl ? (
@@ -278,12 +273,7 @@ const GeneralTeamSettings = () => {
           >
             {updateLoading ? (
               <div className="flex items-center justify-center gap-4">
-                <Oval
-                  height={25}
-                  width={25}
-                  color="black"
-                  secondaryColor="white"
-                />
+                <Spin className="h-[25px] w-[25px]" />
               </div>
             ) : (
               "Save"

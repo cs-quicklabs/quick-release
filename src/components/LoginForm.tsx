@@ -7,15 +7,18 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { requestHandler, showNotification } from "@/Utils";
-import { resendVerificationLinkRequest, verifyRegisterTokenRequest } from "@/fetchHandlers/authentication";
+import {
+  resendVerificationLinkRequest,
+  verifyRegisterTokenRequest,
+} from "@/fetchHandlers/authentication";
 import AlertModal from "./AlertModal";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -54,7 +57,7 @@ export default function LoginForm() {
     toast.dismiss();
     try {
       setLoader(true);
-      const res = await signIn('credentials', {
+      const res = await signIn("credentials", {
         email: values.email,
         password: values.password,
         redirect: false,
@@ -62,41 +65,41 @@ export default function LoginForm() {
       if (res?.error) {
         handleLoginError(res.error, values.email);
       } else {
-        router.push('/allLogs');
+        router.push("/allLogs");
       }
     } catch (error) {
-      toast.error('Invalid Credentials');
+      toast.error("Invalid Credentials");
     } finally {
       setLoader(false);
     }
   }
-  
+
   function handleLoginError(error: string, email?: string) {
-    if (error === 'Incorrect Credentials!') {
+    if (error === "Incorrect Credentials!") {
       toast.error(error);
-    } else if (error === 'Your Account is not Verified Yet, Check Email') {
+    } else if (error === "Your Account is not Verified Yet, Check Email") {
       setUserEmail(email!);
       setIsOpen(true);
     } else {
-      toast.error('An unknown error occurred');
+      toast.error("An unknown error occurred");
     }
   }
 
   useEffect(() => {
-      if (token) {
-        const verifyToken = async () => {
-          await requestHandler(
-            async () => await verifyRegisterTokenRequest({token}),
-            setLoader,
-            (res: any) => {
-              const { message } = res;
-              showNotification("success", message);
-            },
-            (errMessage) => {
-              showNotification("error", errMessage);
-            }
-          );
-      }
+    if (token) {
+      const verifyToken = async () => {
+        await requestHandler(
+          async () => await verifyRegisterTokenRequest({ token }),
+          setLoader,
+          (res: any) => {
+            const { message } = res;
+            showNotification("success", message);
+          },
+          (errMessage) => {
+            showNotification("error", errMessage);
+          }
+        );
+      };
       verifyToken();
     }
   }, []);
@@ -167,9 +170,8 @@ export default function LoginForm() {
                     okBtnText="Resend Verification Link"
                     cancelBtnText="Cancel"
                     loading={resendLoading}
-                    onClickOk={ async () => {
-                      await resendEmail(),
-                      setIsOpen(false)
+                    onClickOk={async () => {
+                      await resendEmail(), setIsOpen(false);
                     }}
                     onClickCancel={() => setIsOpen(false)}
                   />
@@ -195,7 +197,11 @@ export default function LoginForm() {
                     className="px-4 cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? <EyeIcon className="w-6 h-6" /> : <EyeSlashIcon className="w-6 h-6" />}
+                    {showPassword ? (
+                      <EyeIcon className="w-6 h-6" />
+                    ) : (
+                      <EyeSlashIcon className="w-6 h-6" />
+                    )}
                   </div>
                 </div>
                 {errors.password && (
@@ -236,17 +242,13 @@ export default function LoginForm() {
                 type="submit"
                 id="login"
                 disabled={loader}
-                className={
-                  `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
-                }>
+                className={`w-full mt-4  text-white ${
+                  loader ? "bg-blue-400" : "bg-blue-600"
+                } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+              >
                 {loader ? (
                   <div className="flex items-center justify-center gap-4">
-                    <Oval
-                      height={25}
-                      width={25}
-                      color="black"
-                      secondaryColor="white"
-                    />
+                    <Spin className="h-[25px] w-[25px]" />
                   </div>
                 ) : (
                   "Log in"

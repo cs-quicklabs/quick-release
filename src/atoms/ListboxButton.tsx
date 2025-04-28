@@ -2,7 +2,7 @@ import React, { Fragment } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import { classNames } from "@/lib/utils";
-import { Oval } from "react-loader-spinner";
+import Spin from "./Spin";
 
 export type ListboxOption = {
   id: string;
@@ -41,12 +41,7 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-4">
-                    <Oval
-                      height={25}
-                      width={25}
-                      color="black"
-                      secondaryColor="white"
-                    />
+                    <Spin className="h-[25px] w-[25px]" />
                   </div>
                 ) : (
                   <CheckIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />

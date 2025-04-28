@@ -2,6 +2,7 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { WEB_DETAILS } from "@/Utils/constants";
+import Spin from "@/atoms/Spin";
 import { Input } from "@/atoms/input";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -11,7 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 
 const Register = () => {
@@ -293,7 +293,7 @@ const Register = () => {
                   >
                     {"I accept the "}
                     <a
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                       href="#"
                     >
                       {"Terms and Conditions"}
@@ -316,12 +316,7 @@ const Register = () => {
                 >
                   {loader ? (
                     <div className="flex items-center justify-center gap-4">
-                      <Oval
-                        height={25}
-                        width={25}
-                        color="black"
-                        secondaryColor="white"
-                      />
+                      <Spin className="h-[25px] w-[25px]" />
                     </div>
                   ) : (
                     "Create an account"
@@ -332,7 +327,7 @@ const Register = () => {
                 {"Already have an account? "}
                 <Link
                   href="/"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   {"Login here"}
                 </Link>

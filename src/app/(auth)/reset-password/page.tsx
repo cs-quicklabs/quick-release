@@ -1,7 +1,10 @@
 "use client";
 
 import { requestHandler, showNotification } from "@/Utils";
-import { resetPasswordRequest, verifyResetTokenRequest } from "@/fetchHandlers/authentication";
+import {
+  resetPasswordRequest,
+  verifyResetTokenRequest,
+} from "@/fetchHandlers/authentication";
 import Loading from "@/atoms/Loading";
 import { AuthType } from "@/types";
 import { User } from "@/interfaces";
@@ -10,7 +13,6 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { WEB_DETAILS } from "@/Utils/constants";
@@ -18,6 +20,7 @@ import Image from "next/image";
 import { EyeSlashIcon } from "@heroicons/react/24/outline";
 import { EyeIcon } from "lucide-react";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 const ResetPassword = ({ params }: { params: { token: string } }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -178,18 +181,13 @@ const ResetPassword = ({ params }: { params: { token: string } }) => {
                 <button
                   type="submit"
                   disabled={loader}
-                  className={
-                    `w-full mt-4  text-white ${loader ? "bg-blue-400" : "bg-blue-600"} focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`
-                  }
+                  className={`w-full mt-4  text-white ${
+                    loader ? "bg-blue-400" : "bg-blue-600"
+                  } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
                 >
                   {loader ? (
                     <div className="flex items-center justify-center gap-4">
-                      <Oval
-                        height={25}
-                        width={25}
-                        color="black"
-                        secondaryColor="white"
-                      />
+                      <Spin className="h-[25px] w-[25px]" />
                     </div>
                   ) : (
                     "Set Password"

@@ -6,7 +6,14 @@ import Loader from "../atoms/Loader";
 import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
-import { Disclosure, Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import {
+  Disclosure,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import {
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -21,9 +28,9 @@ import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 import * as React from "react";
 import { Fragment } from "react";
-import { Oval } from "react-loader-spinner";
 import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
 import { classNames } from "@/lib/utils";
+import Spin from "@/atoms/Spin";
 
 type NavbarProps = {
   projectName?: string;
@@ -215,12 +222,7 @@ export function Navbar({
                   <div className="hidden lg:ml-6 lg:block">
                     <div className="flex items-center space-x-2">
                       {loading.activeProjectLoading ? (
-                        <Oval
-                          height={20}
-                          width={20}
-                          color="black"
-                          secondaryColor="white"
-                        />
+                        <Spin className="h-[20px] w-[20px]" />
                       ) : (
                         navigation.map((item) =>
                           item.name ? (
@@ -376,12 +378,7 @@ export function Navbar({
 
                           {loading.projectLoading ? (
                             <div className="flex items-center justify-center py-2">
-                              <Oval
-                                height={25}
-                                width={25}
-                                color="black"
-                                secondaryColor="white"
-                              />
+                              <Spin className="h-[25px] w-[25px]" />
                             </div>
                           ) : (
                             <div className="max-h-64 flex flex-col overflow-hidden">
@@ -426,12 +423,7 @@ export function Navbar({
                                           item.id
                                         ] && (
                                           <div className="flex items-center justify-center py-2">
-                                            <Oval
-                                              height={25}
-                                              width={25}
-                                              color="black"
-                                              secondaryColor="white"
-                                            />
+                                            <Spin className="h-[25px] w-[25px]" />
                                           </div>
                                         )}
                                       </div>

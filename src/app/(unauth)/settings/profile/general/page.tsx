@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
@@ -16,6 +15,7 @@ import { ProfileType } from "@/types";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { showNotification } from "@/Utils";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 const Profile = () => {
   const router = useRouter();
@@ -176,12 +176,7 @@ const Profile = () => {
             </label>{" "}
             <div className="items-center w-full sm:flex">
               {imageUploadLoading ? (
-                <Oval
-                  height={25}
-                  width={25}
-                  color="black"
-                  secondaryColor="white"
-                />
+                <Spin className="h-[25px] w-[25px]" />
               ) : (
                 <>
                   {profileImgUrl ? (
@@ -238,9 +233,7 @@ const Profile = () => {
             </div>
           </div>{" "}
           <div className="mb-5 mt-6">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               {"First Name"}
             </label>{" "}
             <Input
@@ -257,9 +250,7 @@ const Profile = () => {
             )}
           </div>{" "}
           <div className="mb-5">
-            <label
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-            >
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               {"Last Name"}
             </label>{" "}
             <Input
@@ -303,12 +294,7 @@ const Profile = () => {
           >
             {updateLoading ? (
               <div className="flex items-center justify-center gap-4">
-                <Oval
-                  height={25}
-                  width={25}
-                  color="black"
-                  secondaryColor="white"
-                />
+                <Spin className="h-[25px] w-[25px]" />
               </div>
             ) : (
               "Save"
