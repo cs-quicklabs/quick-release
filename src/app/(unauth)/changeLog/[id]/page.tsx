@@ -324,10 +324,10 @@ const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
-                            // id="description"
+                            id="description"
                             value={value}
                             onChange={onChange}
-                            // onModal="ChangeLogs"
+                            onModal="ChangeLogs"
                           />
                         </FormControl>
                         <FormMessage className="text-red-600" />

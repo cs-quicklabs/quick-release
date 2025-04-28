@@ -19,24 +19,26 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
   feedbackBoards,
 }) => {
   const router = useRouter();
+  const fullPathname = usePathname();
   const { projectName } = useParams();
 
   const pathname = useMemo(() => {
     if (
-      usePathname().split("/").pop() !== "feedbacks" &&
-      usePathname().includes("feedbacks")
+      fullPathname.split("/").pop() !== "feedbacks" &&
+      fullPathname.includes("feedbacks")
     ) {
-      return usePathname().split("/").slice(0, -1).join("/");
+      return fullPathname.split("/").slice(0, -1).join("/");
     }
 
     if (
-      usePathname().split("/").pop() !== "roadmap" &&
-      usePathname().includes("roadmap")
+      fullPathname.split("/").pop() !== "roadmap" &&
+      fullPathname.includes("roadmap")
     ) {
-      return usePathname().split("/").slice(0, -1).join("/");
+      return fullPathname.split("/").slice(0, -1).join("/");
     }
-    return usePathname();
-  }, [usePathname()]);
+    return fullPathname;
+  }, [fullPathname]);
+
   const searchParams = useSearchParams();
   const search = useMemo(() => {
     const data = searchParams.get("search");
