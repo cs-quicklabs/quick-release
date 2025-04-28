@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @plugin 'flowbite-react/plugin/tailwindcss';
 @source '../../.flowbite-react/class-list.json';
 
@@ -18,7 +18,7 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentcolor);
+    border-color: var(--color-gray-200, #e2e2e2);
   }
 }
 
@@ -140,10 +140,10 @@ body {
   padding: 0;
 }
 
-.ql-container > .ql-editor{
+.ql-container > .ql-editor {
   font-size: 14px !important;
 }
-.ql-container > .ql-editor{
+.ql-container > .ql-editor {
   min-height: 30rem !important;
 }
 
@@ -158,4 +158,3 @@ body {
 .ql-editor li {
   padding: 0.2rem 0 !important;
 }
-

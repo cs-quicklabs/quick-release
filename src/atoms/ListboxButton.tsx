@@ -20,7 +20,14 @@ interface IListboxButtonProps {
   disabled?: boolean;
 }
 
-const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onChange, btnType, loading = false, disabled = false }) => {
+const ListboxButton: React.FC<IListboxButtonProps> = ({
+  selected,
+  options,
+  onChange,
+  btnType,
+  loading = false,
+  disabled = false,
+}) => {
   return (
     <Listbox value={selected} onChange={onChange} disabled={disabled}>
       {({ open }) => (
@@ -32,26 +39,28 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onCha
                 type={btnType}
                 disabled={disabled}
               >
-                {
-                  loading ? (
-                    <div className="flex items-center justify-center gap-4">
-                      <Oval
-                        height={25}
-                        width={25}
-                        color="black"
-                        secondaryColor="white"
-                      />
-                    </div>
-                  )
-                    : <CheckIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
-                }
+                {loading ? (
+                  <div className="flex items-center justify-center gap-4">
+                    <Oval
+                      height={25}
+                      width={25}
+                      color="black"
+                      secondaryColor="white"
+                    />
+                  </div>
+                ) : (
+                  <CheckIcon className="-ml-0.5 h-5 w-5" aria-hidden="true" />
+                )}
 
                 <p className="text-sm font-semibold">{selected.btnText}</p>
               </button>
 
               <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-indigo-600 p-2 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 focus:ring-offset-gray-50">
                 <span className="sr-only">Change published status</span>
-                <ChevronDownIcon className="h-5 w-5 text-white" aria-hidden="true" />
+                <ChevronDownIcon
+                  className="h-5 w-5 text-white"
+                  aria-hidden="true"
+                />
               </Listbox.Button>
             </div>
 
@@ -61,30 +70,33 @@ const ListboxButton: React.FC<IListboxButtonProps> = ({ selected, options, onCha
               leave="transition ease-in duration-100"
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
-
             >
-              <Listbox.Options
-                className="absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-hidden"
-
-              >
+              <Listbox.Options className="absolute right-0 z-10 mt-2 w-72 origin-top-right divide-y divide-gray-200 overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                 {options.map((option) => (
                   <Listbox.Option
                     key={option.title}
-                    className={
-                      classNames(
-                        "text-gray-900",
-                        "cursor-default select-none p-4 text-sm"
-                      )
-                    }
+                    className={classNames(
+                      "text-gray-900",
+                      "cursor-default select-none p-4 text-sm"
+                    )}
                     value={option}
                   >
                     {({ selected }) => (
                       <div className="flex flex-col">
                         <div className="flex justify-between">
-                          <p className={selected ? "font-semibold" : "font-normal"}>{option.title}</p>
+                          <p
+                            className={
+                              selected ? "font-semibold" : "font-normal"
+                            }
+                          >
+                            {option.title}
+                          </p>
                           {selected ? (
                             <span className={"text-indigo-600"}>
-                              <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                              <CheckIcon
+                                className="h-5 w-5"
+                                aria-hidden="true"
+                              />
                             </span>
                           ) : null}
                         </div>
