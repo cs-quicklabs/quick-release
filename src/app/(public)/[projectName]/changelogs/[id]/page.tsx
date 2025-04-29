@@ -80,7 +80,6 @@ const Page: React.FC<PagePayloadType> = async (props) => {
   try {
     changelog = await getOneChangeLogDetails(projectName, id);
     project = await getOneProject({ name: projectName });
-    console.log({ changelog, project });
   } catch (error) {
     console.error("Error fetching changelog:", error);
   }

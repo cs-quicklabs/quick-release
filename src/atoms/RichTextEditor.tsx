@@ -78,7 +78,6 @@ const RichTextEditor = ({
     body.append("file", file);
 
     const uploadRes: { image: string } = await imageUploader.upload(file);
-    console.log({ uploadRes });
     insertToEditor(uploadRes?.image || "");
   };
 
