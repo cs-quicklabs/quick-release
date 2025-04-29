@@ -36,7 +36,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
         <div
           className={classNames(
             "mx-auto max-w-7xl overflow-hidden lg:py-4 lg:px-8 ",
-            loggedInUser ? "mt-14" : "mt-14 lg:mt-30 "
+            loggedInUser ? "mt-14" : "mt-14 lg:mt-[116px]"
           )}
         >
           <div className="flex flex-col lg:grid lg:grid-cols-12 lg:gap-x-5">
@@ -63,7 +63,7 @@ export default function ChangelogPublicHeader({ project }: { project: any }) {
                 releaseCategories?.length || releaseTags?.length
                   ? "lg:col-span-9"
                   : "lg:col-span-12"
-              } lg:mt-0 ${!loggedInUser && "mt-[18rem]"}`}
+              } lg:mt-0 `}
             >
               <ChangeLogsListContainer />
             </div>
