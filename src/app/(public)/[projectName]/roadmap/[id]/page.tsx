@@ -12,7 +12,10 @@ import { IFeedbackBoard } from "@/interfaces";
 import { Navbar } from "@/components/Navbar";
 import { getOneFeedbackPostDetails } from "@/lib/feedback";
 
-export async function generateMetadata(props: PagePayloadType, parent: ResolvingMetadata): Promise<Metadata> {
+export async function generateMetadata(
+  props: PagePayloadType,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
   const params = await props.params;
   const { id, projectName } = params;
 
@@ -66,7 +69,7 @@ export async function generateMetadata(props: PagePayloadType, parent: Resolving
   };
 }
 
-const Page: React.FC<PagePayloadType> = async props => {
+const Page: React.FC<PagePayloadType> = async (props) => {
   const params = await props.params;
   const { id, projectName } = params;
 

@@ -31,6 +31,7 @@ import { Fragment } from "react";
 import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
 import { classNames } from "@/lib/utils";
 import Spin from "@/atoms/Spin";
+import PublicNavbar from "./PublicNavbar";
 
 type NavbarProps = {
   projectName?: string;
@@ -147,6 +148,16 @@ export function Navbar({
     : projectMap[activeProjectId!]?.projectImgUrl && pathname !== "/create-team"
     ? projectMap[activeProjectId!]?.projectImgUrl
     : WEB_DETAILS.logo;
+
+  if (!loggedInUser) {
+    return (
+      <PublicNavbar
+        pathname={pathname}
+        teamName={teamName || ""}
+        projectSlug={projectSlug}
+      />
+    );
+  }
 
   return (
     <>
