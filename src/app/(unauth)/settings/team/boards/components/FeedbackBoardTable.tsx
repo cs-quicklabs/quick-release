@@ -148,7 +148,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                 </td>
                 <td>
                   {feedbackBoard.isDefault && !isBoardEdit && (
-                    <span className="font-medium text-green-600 bg-green-200 px-2 rounded">
+                    <span className="font-medium text-green-600 bg-green-200 px-2 rounded-sm">
                       Default
                     </span>
                   )}
@@ -181,7 +181,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
                     </div>
                   ) : (
                     <Button
-                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                      className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                       onClick={onSaveFeedbackBoard}
                       disabled={isSaving || showErrorMessage !== ""}
                       id="saveboard"
@@ -202,7 +202,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
         }”?`}
         message={`A board when deleted, will not be visible to public and they can not add feedback in this board.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() =>
           deleteFeedbackBoard(
             selectedDeletedFeedbackBoardId!,
@@ -223,7 +223,7 @@ const FeedbackBoardTable: React.FC<{}> = () => {
         title={`Could not delete board!`}
         message={`Default boards can not be deleted as they are created when a team is created and a team will always have one default board.`}
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => {
           setShowNoActionModal(false);
           setSelectedDeletedFeedbackBoardId(null);

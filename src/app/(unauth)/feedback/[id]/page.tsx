@@ -22,13 +22,7 @@ import BaseTemplate from "@/templates/BaseTemplate";
 import { FeedbackPostForm, FeedbackPostType } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, use } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
 import { fileDeleteRequest } from "@/fetchHandlers/file";
@@ -38,7 +32,8 @@ import moment from "moment";
 import { DropDownOptionType, IReleaseTag } from "@/interfaces";
 import FeedbackForm from "./components/FeedbackForm";
 
-const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
+const AddFeedbackPost = (props: { params: Promise<{ id: string }> }) => {
+  const params = use(props.params);
   const prevProps = useRef({
     isSaving: false,
     loading: false,
@@ -308,7 +303,7 @@ const AddFeedbackPost = ({ params }: { params: { id: string } }) => {
               <CardFooter className="justify-end px-0">
                 <Button
                   id="cancel-btn"
-                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
+                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-sm"
                   type="button"
                   onClick={handleCancelButton}
                 >

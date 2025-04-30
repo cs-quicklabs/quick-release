@@ -99,7 +99,7 @@ export default function FeedbackPublicContentContainer({
       aria-labelledby="message-heading"
     >
       <div className="flex-1 overflow-y-auto pb-10 no-scrollbar">
-        <div className="bg-white py-4 shadow border-b border-gray-200">
+        <div className="bg-white py-4 shadow-sm border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default function FeedbackPublicContentContainer({
           >
             <Button
               ref={loadMoreRef}
-              className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={loadMorePublicFeedbackPosts}
             >
               {"Load More"}

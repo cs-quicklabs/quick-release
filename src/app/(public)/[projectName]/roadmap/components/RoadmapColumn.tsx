@@ -5,7 +5,6 @@ import { FeedbackStatus } from "@/Utils/constants";
 import { useCallback, useEffect, useState, useRef, useMemo } from "react";
 import { classNames } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
-import { Draggable } from "@hello-pangea/dnd";
 import { useOnScreen } from "@/hooks/useOnScreen";
 import Spin from "@/atoms/Spin";
 import { Button } from "@/atoms/button";
@@ -111,7 +110,7 @@ export default function RoadmapColumn({
           (feedbackPost: FeedbackPostType, index: number) => (
             <li
               className={classNames(
-                "bg-white px-4 py-4 shadow sm:rounded-lg sm:py-5 sm:px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50 cursor-pointer"
+                "bg-white px-4 py-4 shadow-sm sm:rounded-lg sm:py-5 sm:px-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-blue-600 hover:bg-gray-50 cursor-pointer"
               )}
               onClick={() =>
                 router.push(`/${projectName}/roadmap/${feedbackPost.id}`)
@@ -130,7 +129,7 @@ export default function RoadmapColumn({
           )}
         >
           <Button
-            className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             onClick={fetchMoreFeedbacks}
           >
             {"Load More"}

@@ -28,7 +28,7 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
       <div className="flex justify-between space-x-3">
         <div className="min-w-0 flex-1">
           <Link
-            className="block focus:outline-none"
+            className="block focus:outline-hidden"
             href="#"
             onClick={(e) => e.preventDefault()}
           >
@@ -40,7 +40,7 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
               {changeLog.title}
             </p>
             <p className="flex truncate text-sm text-gray-500">
-              <span className="truncate flex-shrink mr-1">
+              <span className="truncate shrink mr-1">
                 {fullName}
               </span>
 
@@ -50,7 +50,7 @@ const ChangeLogCardItem: React.FC<{ id?: string | null; }> = ({ id = null }) => 
             </p>
           </Link>
         </div>
-        <p className="flex-shrink-0 whitespace-nowrap text-sm text-gray-500">
+        <p className="shrink-0 whitespace-nowrap text-sm text-gray-500">
           {releaseVersion}
         </p>
       </div>

@@ -13,9 +13,10 @@ import { Navbar } from "@/components/Navbar";
 import { getOneFeedbackPostDetails } from "@/lib/feedback";
 
 export async function generateMetadata(
-  { params }: PagePayloadType,
+  props: PagePayloadType,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await props.params;
   const { id, projectName } = params;
 
   let feedback;
@@ -68,7 +69,8 @@ export async function generateMetadata(
   };
 }
 
-const Page: React.FC<PagePayloadType> = async ({ params }) => {
+const Page: React.FC<PagePayloadType> = async (props) => {
+  const params = await props.params;
   const { id, projectName } = params;
 
   let feedbackpost;

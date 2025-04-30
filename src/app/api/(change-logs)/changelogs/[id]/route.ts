@@ -16,10 +16,8 @@ type ParamsType = {
   id: string;
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
@@ -53,10 +51,8 @@ export async function GET(
   });
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const { id } = params;
 
@@ -98,10 +94,8 @@ export async function DELETE(
   });
 }
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const { id } = params;
     const session = await getServerSession(authOptions);

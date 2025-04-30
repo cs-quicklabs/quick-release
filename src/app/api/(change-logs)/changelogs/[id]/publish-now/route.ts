@@ -13,10 +13,8 @@ type ParamsType = {
   id: string;
 };
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function POST(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const { id } = params;
 

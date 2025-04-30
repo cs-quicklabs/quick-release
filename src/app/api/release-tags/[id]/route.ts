@@ -11,10 +11,8 @@ type ParamsType = {
   id: string;
 };
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function PUT(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const cuid = params.id;
 
@@ -90,10 +88,8 @@ export async function PUT(
   });
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function DELETE(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const cuid = params.id;
 

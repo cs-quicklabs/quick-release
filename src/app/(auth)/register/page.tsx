@@ -2,6 +2,7 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { WEB_DETAILS } from "@/Utils/constants";
+import Spin from "@/atoms/Spin";
 import { Input } from "@/atoms/input";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
@@ -11,7 +12,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 
 const Register = () => {
@@ -118,7 +118,7 @@ const Register = () => {
           />
           {WEB_DETAILS.name}
         </Link>{" "}
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
+        <div className="w-full bg-white rounded-lg shadow-sm dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               {"Create your account"}
@@ -283,7 +283,7 @@ const Register = () => {
                     aria-describedby="terms"
                     type="checkbox"
                     {...register("terms")}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
+                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
                   />
                 </div>{" "}
                 <div className="ml-3 text-sm">
@@ -293,7 +293,7 @@ const Register = () => {
                   >
                     {"I accept the "}
                     <a
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                       href="#"
                     >
                       {"Terms and Conditions"}
@@ -312,16 +312,11 @@ const Register = () => {
                   disabled={loader}
                   className={`w-full mt-4  text-white ${
                     loader ? "bg-blue-400" : "bg-blue-600"
-                  } focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+                  } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
                 >
                   {loader ? (
                     <div className="flex items-center justify-center gap-4">
-                      <Oval
-                        height={25}
-                        width={25}
-                        color="black"
-                        secondaryColor="white"
-                      />
+                      <Spin className="h-[25px] w-[25px]" />
                     </div>
                   ) : (
                     "Create an account"
@@ -332,7 +327,7 @@ const Register = () => {
                 {"Already have an account? "}
                 <Link
                   href="/"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500 text-blue-600"
+                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                 >
                   {"Login here"}
                 </Link>

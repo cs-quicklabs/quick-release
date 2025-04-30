@@ -9,7 +9,13 @@ import React, {
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import ChangeLogCardItem from "./ChangeLogCardItem";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { FunnelIcon, InboxIcon } from "@heroicons/react/20/solid";
 
 import Link from "next/link";
@@ -124,7 +130,7 @@ const SideNav: React.FC<SideNavProps> = ({
   return (
     <aside
       className={classNames(
-        "xl:order-first xl:block xl:flex-shrink-0",
+        "xl:order-first xl:block xl:shrink-0",
         "xl:relative xl:h-full  xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
         "sm:fixed sm:top-0 sm:left-0 sm:z-40 sm:h-screen sm:overflow-y-auto sm:transition-transform sm:w-screen sm:bg-black sm:bg-opacity-35",
         !showSideNav && "sm:-translate-x-full"
@@ -132,7 +138,7 @@ const SideNav: React.FC<SideNavProps> = ({
       onClick={() => setShowSideNav(false)}
     >
       <div className="relative flex h-full w-96 flex-col border-r border-gray-200 bg-gray-100">
-        <div className="flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+        <div className="shrink-0" onClick={(e) => e.stopPropagation()}>
           <div className="flex border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500">
             <span
               className="w-full py-1 text-sm font-medium"
@@ -144,9 +150,9 @@ const SideNav: React.FC<SideNavProps> = ({
             <div className="relative inline-block text-left">
               <Menu as="div" className="relative inline-block text-left">
                 <div>
-                  <Menu.Button
+                  <MenuButton
                     className={classNames(
-                      "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-sm  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
+                      "inline-flex items-center justify-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-xs  focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
                       filterStatus
                         ? `${filterStatus.textColor} ${filterStatus.bgColor} hover:${filterStatus.bgColor}`
                         : "bg-white hover:bg-gray-50 text-gray-400 border-gray-300"
@@ -166,7 +172,7 @@ const SideNav: React.FC<SideNavProps> = ({
                     {filterStatus && (
                       <span className="ml-2">{filterStatus.title}</span>
                     )}
-                  </Menu.Button>
+                  </MenuButton>
                 </div>
 
                 <Transition
@@ -178,7 +184,7 @@ const SideNav: React.FC<SideNavProps> = ({
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5  focus:outline-hidden">
                     <div
                       className="px-4 py-2 border-b border-gray-100"
                       role="none"
@@ -190,7 +196,7 @@ const SideNav: React.FC<SideNavProps> = ({
 
                     {Object.values(ChangeLogsStatus).map(
                       ({ id, title, bulletColor }) => (
-                        <Menu.Item key={id}>
+                        <MenuItem key={id}>
                           {() => (
                             <Link
                               href="#"
@@ -199,7 +205,7 @@ const SideNav: React.FC<SideNavProps> = ({
                             >
                               <div className="flex justify-left gap-2">
                                 <span
-                                  className={`inline-block h-2 w-2 mt-1.5 mr-2 flex-shrink-0 rounded-full ${bulletColor}`}
+                                  className={`inline-block h-2 w-2 mt-1.5 mr-2 shrink-0 rounded-full ${bulletColor}`}
                                   aria-hidden={true}
                                 />
 
@@ -210,7 +216,7 @@ const SideNav: React.FC<SideNavProps> = ({
                               </div>
                             </Link>
                           )}
-                        </Menu.Item>
+                        </MenuItem>
                       )
                     )}
 
@@ -218,14 +224,16 @@ const SideNav: React.FC<SideNavProps> = ({
                       className="px-4 py-2 border-t border-gray-100 hover:bg-gray-50"
                       role="none"
                     >
-                      <Menu.Button
-                        className="text-gray-700 block w-full py-1 text-left text-sm"
-                        onClick={onClearFilter}
-                      >
-                        Clear Filter
-                      </Menu.Button>
+                      <MenuItem>
+                        <button
+                          className="text-gray-700 block w-full py-1 text-left text-sm"
+                          onClick={onClearFilter}
+                        >
+                          Clear Filter
+                        </button>
+                      </MenuItem>
                     </div>
-                  </Menu.Items>
+                  </MenuItems>
                 </Transition>
               </Menu>
             </div>
@@ -270,7 +278,7 @@ const SideNav: React.FC<SideNavProps> = ({
             >
               <Button
                 ref={loadMoreRef}
-                className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="w-full inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 onClick={loadMoreChangeLogs}
               >
                 Load More

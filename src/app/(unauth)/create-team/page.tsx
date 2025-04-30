@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
 import { z } from "zod";
 import { Button } from "@/atoms/button";
 import { QuestionMarkCircleIcon } from "@heroicons/react/20/solid";
@@ -17,6 +16,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { deleteFiles, uploadFile } from "@/fetchHandlers";
 import { showNotification } from "@/Utils";
 import { Input } from "@/atoms/input";
+import Spin from "@/atoms/Spin";
 
 const Project = () => {
   const router = useRouter();
@@ -87,7 +87,7 @@ const Project = () => {
   return (
     <BaseTemplate>
       <main className="mx-auto max-w-4xl pb-10 lg:py-12 lg:px-8 md:py-8 md:px-4">
-        <div className=" shadow sm:rounded-lg bg-white">
+        <div className=" shadow-sm sm:rounded-lg bg-white">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-base font-semibold leading-6 text-gray-900">
               {"Create Your Team"}
@@ -202,7 +202,7 @@ const Project = () => {
                     <span className="sr-only">Show information</span>
                   </button>{" "}
                 </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
+                <div className="mt-1 flex rounded-md shadow-xs">
                   <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
                     {"release.quicklabs.in/"}
                   </span>{" "}
@@ -230,16 +230,11 @@ const Project = () => {
                     : false
                 }
                 id="saveProject"
-                className="text-white bg-blue-700 max-w-[4rem] hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white bg-blue-700 max-w-[4rem] hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 {loader ? (
                   <div className="flex items-center justify-center gap-4">
-                    <Oval
-                      height={25}
-                      width={25}
-                      color="black"
-                      secondaryColor="white"
-                    />
+                    <Spin className="h-[25px] w-[25px]" />
                   </div>
                 ) : (
                   "Save"

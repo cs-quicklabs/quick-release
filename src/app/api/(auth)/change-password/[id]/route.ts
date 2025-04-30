@@ -10,10 +10,8 @@ import { ApiError } from "@/Utils/ApiError";
 import { NextResponse } from "next/server";
 import { privacyResponse } from "@/Utils";
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request, props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
 

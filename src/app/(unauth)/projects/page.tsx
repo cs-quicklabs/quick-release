@@ -1,11 +1,11 @@
 "use client";
 
+import Spin from "@/atoms/Spin";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 
 const Projects = () => {
   const { data } = useSession();
@@ -36,7 +36,7 @@ const Projects = () => {
   return (
     <div className="flex items-center justify-center text-center h-[100vh] gap-5">
       {loading ? (
-        <Oval color="#FFFFFF" secondaryColor="#000000" />
+        <Spin className="h-[25px] w-[25px]" />
       ) : (
         projects?.map((item: any) => {
           return (

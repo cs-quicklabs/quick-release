@@ -148,14 +148,14 @@ const FeedbackContentContainer = () => {
         ref={contentContainerRef}
         className="flex-1 overflow-y-auto pb-10 no-scrollbar"
       >
-        <div className="bg-white pt-5 pb-6 shadow border-b border-gray-200">
+        <div className="bg-white pt-5 pb-6 shadow-sm border-b border-gray-200">
           <div className="px-4 sm:flex sm:items-baseline sm:justify-between sm:px-6 lg:px-8">
             <div className="sm:w-0 sm:flex-1" data-svelte-h="svelte-4musx2">
               <div className="flex items-center gap-2">
                 <h1 className="text-lg font-medium text-gray-900">{title}</h1>
                 <span
                   className={classNames(
-                    "inline-flex items-center rounded px-3 py-0.5 text-sm font-medium",
+                    "inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium",
                     `${visibilityStatus?.bgColor} ${visibilityStatus?.textColor}`
                   )}
                 >
@@ -174,10 +174,10 @@ const FeedbackContentContainer = () => {
               </p>
             </div>
 
-            <div className="mt-4 flex items-center justify-evenly gap-4 sm:mt-0 sm:ml-6 sm:flex-shrink-0 sm:justify-start">
+            <div className="mt-4 flex items-center justify-evenly gap-4 sm:mt-0 sm:ml-6 sm:shrink-0 sm:justify-start">
               <span
                 className={classNames(
-                  "inline-flex items-center rounded px-3 py-0.5 text-sm font-medium",
+                  "inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium",
                   `${feedbackStatus?.bgColor} ${feedbackStatus?.textColor}`
                 )}
               >
@@ -245,10 +245,10 @@ const FeedbackContentContainer = () => {
           className="space-y-2 bg-gray-50 h-screen py-4 sm:space-y-4 sm:px-6 lg:px-8"
           data-svelte-h="svelte-1g1nf9v"
         >
-          <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+          <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
             <span
               className={classNames(
-                "inline-flex items-center bg-gray-100 rounded px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                "inline-flex items-center bg-gray-100 rounded-sm px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
               )}
             >
               {feedbackBoards?.name}
@@ -266,7 +266,7 @@ const FeedbackContentContainer = () => {
             </div>
           </li>
           {!!releaseTags.length && (
-            <li className="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6">
+            <li className="bg-white px-4 py-6 shadow-sm sm:rounded-lg sm:px-6">
               <div className="sm:flex sm:items-baseline sm:justify-between pb-2">
                 <h3 className="text-base font-medium">
                   <span className="text-gray-900">{"Tags"}</span>
@@ -278,7 +278,7 @@ const FeedbackContentContainer = () => {
                   <span
                     key={value}
                     className={classNames(
-                      "inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
+                      "inline-flex items-center rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800 mr-1"
                     )}
                   >
                     {label}
@@ -298,7 +298,7 @@ const FeedbackContentContainer = () => {
             : "Are you sure you want to delete this feedback?"
         }
         okBtnClassName="bg-red-600 hover:bg-red-800"
-        spinClassName="!fill-red-600"
+        spinClassName="fill-red-600!"
         onClickOk={() => {
           sessionStorage.removeItem("activeFeedbackPostId");
           deleteFeedbackPost(activeFeedbackPostId!, activeProjectId!);

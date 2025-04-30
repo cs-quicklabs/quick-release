@@ -46,6 +46,7 @@ import React, {
   useMemo,
   useRef,
   useState,
+  use,
 } from "react";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import * as z from "zod";
@@ -55,7 +56,8 @@ const RichTextEditor = dynamic(() => import("@/atoms/RichTextEditor"), {
   ssr: true,
 });
 
-const AddChangeLog = ({ params }: { params: { id: string } }) => {
+const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
+  const params = use(props.params);
   const prevProps = useRef({
     isSaving: false,
     loading: false,
@@ -292,7 +294,10 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Title"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Title"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter change log title"
@@ -312,7 +317,10 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="description"
                     render={({ field: { value, onChange } }) => (
                       <FormItem>
-                        <FormLabel>{"Description"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Description"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <RichTextEditor
                             placeholder="Enter change log description"
@@ -333,7 +341,10 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
                     name="releaseVersion"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{"Release Version"}<span className="text-red-600">*</span></FormLabel>
+                        <FormLabel>
+                          {"Release Version"}
+                          <span className="text-red-600">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Enter release version"
@@ -453,7 +464,7 @@ const AddChangeLog = ({ params }: { params: { id: string } }) => {
               </CardContent>
               <CardFooter className="justify-end px-0">
                 <Button
-                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded"
+                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-sm"
                   type="button"
                   onClick={handleCancelButton}
                 >

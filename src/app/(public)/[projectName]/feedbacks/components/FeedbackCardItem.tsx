@@ -54,7 +54,7 @@ const FeedbackCardItem: React.FC<{
   return (
     <li
       className={classNames(
-        "py-5 px-6 border border-gray-200 rounded hover:bg-gray-50 bg-white mx-4 sm:mx-0 cursor-pointer"
+        "py-5 px-6 border border-gray-200 rounded-sm hover:bg-gray-50 bg-white mx-4 sm:mx-0 cursor-pointer"
       )}
       onClick={() => router.replace(publicLink)}
     >
@@ -63,7 +63,7 @@ const FeedbackCardItem: React.FC<{
           <div className="flex gap-2 mb-2">
             <span
               className={classNames(
-                `inline-flex items-center rounded px-3 py-0.5 text-sm font-medium`,
+                `inline-flex items-center rounded-sm px-3 py-0.5 text-sm font-medium`,
                 feedbacktatus.bgColor,
                 feedbacktatus.textColor
               )}

@@ -3,7 +3,7 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dispatch, Fragment, SetStateAction, useState } from "react";
-import { Oval } from "react-loader-spinner";
+import Spin from "./Spin";
 
 interface ModalProps {
   open: boolean;
@@ -82,17 +82,12 @@ export default function Modal({
                     <button
                       type="button"
                       disabled={loading}
-                      className="inline-flex  text-white justify-center rounded-md border border-transparent bg-blue-600 px-2 py-2 text-sm font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                      className="inline-flex  text-white justify-center rounded-md border border-transparent bg-blue-600 px-2 py-2 text-sm font-medium focus:outline-hidden focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                       onClick={onClick}
                     >
                       {loading ? (
                         <div className="flex items-center justify-center gap-4">
-                          <Oval
-                            height={25}
-                            width={25}
-                            color="black"
-                            secondaryColor="white"
-                          />
+                          <Spin className="h-[25px] w-[25px]" />
                         </div>
                       ) : (
                         buttonText

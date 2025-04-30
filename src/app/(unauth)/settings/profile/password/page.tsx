@@ -2,18 +2,13 @@
 
 import { requestHandler, showNotification } from "@/Utils";
 import { useUserContext } from "@/app/context/UserContext";
+import Spin from "@/atoms/Spin";
 import { Input } from "@/atoms/input";
-import SettingsNav from "@/components/SettingsNav";
 import { changePasswordRequest } from "@/fetchHandlers/authentication";
-import { User } from "@/interfaces";
-import BaseTemplate from "@/templates/BaseTemplate";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Oval } from "react-loader-spinner";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 const page = () => {
@@ -69,8 +64,11 @@ const page = () => {
   return (
     <main className="pb-12 px-4 col-span-12 lg:col-span-7">
       <div>
-      <h1 className="text-lg font-semibold dark:text-white" id="change-password">
-       {"Change Password"}
+        <h1
+          className="text-lg font-semibold dark:text-white"
+          id="change-password"
+        >
+          {"Change Password"}
         </h1>{" "}
         <p className="text-gray-500 dark:text-gray-400 text-sm">
           {"Please change your password."}
@@ -175,16 +173,11 @@ const page = () => {
           <button
             type="submit"
             disabled={loader}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             {loader ? (
               <div className="flex items-center justify-center gap-4">
-                <Oval
-                  height={25}
-                  width={25}
-                  color="black"
-                  secondaryColor="white"
-                />
+                <Spin className="h-[25px] w-[25px]" />
               </div>
             ) : (
               "Save"

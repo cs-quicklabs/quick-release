@@ -11,9 +11,10 @@ import { WEB_DETAILS } from "@/Utils/constants";
 import { PagePayloadType } from "@/types";
 
 export async function generateMetadata(
-  { params }: PagePayloadType,
+  props: PagePayloadType,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await props.params;
   const { projectName } = params;
 
   let project;
@@ -56,7 +57,8 @@ export async function generateMetadata(
   };
 }
 
-const Page: React.FC<PagePayloadType> = async ({ params }) => {
+const Page: React.FC<PagePayloadType> = async (props) => {
+  const params = await props.params;
   let { projectName } = params;
   projectName = projectName.toLowerCase();
 

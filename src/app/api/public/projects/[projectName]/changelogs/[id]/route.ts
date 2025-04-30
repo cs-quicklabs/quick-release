@@ -15,10 +15,8 @@ type ParamsType = {
   id: string;
 };
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: ParamsType }
-) {
+export async function GET(req: NextRequest, props: { params: Promise<ParamsType> }) {
+  const params = await props.params;
   return asyncHandler(async () => {
     const { projectName, id } = params;
 

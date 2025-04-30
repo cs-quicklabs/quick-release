@@ -15,7 +15,7 @@ const NotFound = () => {
 
         <a href="/">
           <Button
-            className="mt-8 border-transparent bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="mt-8 border-transparent bg-indigo-600 text-white shadow-xs hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" /> <span>Back To Home</span>
           </Button>
