@@ -7,7 +7,7 @@ import { db } from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, res: Response) {
+export async function GET(): Promise<Response> {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
 
@@ -20,7 +20,7 @@ export async function GET(req: Request, res: Response) {
       where: {
         cuid: userId,
       },
-    })
+    });
     const projectUser = await db.projectsUsers.findFirst({
       where: {
         usersId: user?.id,
@@ -38,7 +38,11 @@ export async function GET(req: Request, res: Response) {
     });
 
     return NextResponse.json(
-      new ApiResponse(200, privacyResponse(project), "Active team fetched successfully")
+      new ApiResponse(
+        200,
+        privacyResponse(project),
+        "Active team fetched successfully"
+      )
     );
   });
 }

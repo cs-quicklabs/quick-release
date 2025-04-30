@@ -22,7 +22,7 @@ import { EyeIcon } from "lucide-react";
 import { Input } from "@/atoms/input";
 import Spin from "@/atoms/Spin";
 
-const ResetPassword = ({ params }: { params: { token: string } }) => {
+const ResetPassword = () => {
   const [user, setUser] = useState<User | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const search = useSearchParams();

@@ -27,10 +27,10 @@ export type FeedbackPostForm = {
 };
 
 export type PagePayloadType = {
-  params: {
+  params: Promise<{
     projectName: string;
     id: string;
-  };
+  }>;
 };
 
 export type AuthType = {

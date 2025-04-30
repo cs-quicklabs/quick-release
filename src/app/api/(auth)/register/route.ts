@@ -1,4 +1,3 @@
-import { getRolesCode } from "@/Utils";
 import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
 import { asyncHandler } from "@/Utils/asyncHandler";
@@ -6,10 +5,9 @@ import { sendVerificationEmail } from "@/Utils/emailHandler";
 import { db } from "@/lib/db";
 import { hash } from "bcrypt";
 import crypto from "crypto";
-import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request, res: NextApiResponse) {
+export async function POST(request: Request): Promise<Response> {
   return asyncHandler(async () => {
     const body = await request.json();
     if (
@@ -59,7 +57,7 @@ export async function POST(request: Request, res: NextApiResponse) {
           organizationsId: organizations.id,
           isActive: true,
         },
-      })
+      });
 
       const verificationToken = crypto.randomBytes(20).toString("hex");
       const registerVerificationToken = crypto
