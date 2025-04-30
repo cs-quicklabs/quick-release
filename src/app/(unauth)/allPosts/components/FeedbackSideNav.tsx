@@ -2,13 +2,18 @@ import React, {
   Fragment,
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
 import { useProjectContext } from "@/app/context/ProjectContext";
-import { Menu, Transition } from "@headlessui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+  Transition,
+} from "@headlessui/react";
 import { FunnelIcon, InboxIcon } from "@heroicons/react/20/solid";
 import Spin from "@/atoms/Spin";
 import { useOnScreen } from "@/hooks/useOnScreen";
@@ -16,12 +21,8 @@ import { classNames } from "@/lib/utils";
 import FeedbackCardItem from "./FeedbackCardItem";
 import { Button } from "@/atoms/button";
 import { FeedbackStatus } from "@/Utils/constants";
-import Link from "next/link";
 import { useFeedbackBoardContext } from "@/app/context/FeedbackBoardContext";
 import { Checkbox } from "flowbite-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { requestHandler } from "@/Utils";
-import { getFeedbackFilterCountRequest } from "@/fetchHandlers/feedbacks";
 import { FilterType } from "@/types";
 
 type SideNavProps = {
@@ -158,7 +159,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
             </span>
             <Menu as="div" className="relative w-full flex justify-end">
               <div>
-                <Menu.Button
+                <MenuButton
                   className={classNames(
                     "flex items-center rounded-md border px-2 py-1 text-sm font-medium text-gray-700 shadow-xs focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2",
                     selectedBoards.length > 0 || selectedStatus.length > 0
@@ -180,7 +181,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                   {(selectedBoards.length > 0 || selectedStatus.length > 0) && (
                     <span className={`ml-2`}>{filterTitle}</span>
                   )}
-                </Menu.Button>
+                </MenuButton>
               </div>
 
               <Transition
@@ -192,7 +193,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 z-10 mt-8 w-70 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
+                <MenuItems className="absolute right-0 z-10 mt-8 w-70 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-hidden">
                   <div
                     className="px-4 py-2 border-b border-gray-100"
                     role="none"
@@ -204,7 +205,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
 
                   <div className="max-h-40 overflow-y-auto">
                     {Object.values(feedbackBoardsMap).map((feedbackBoards) => (
-                      <Menu.Item key={feedbackBoards?.id}>
+                      <MenuItem key={feedbackBoards?.id}>
                         {() => (
                           <div
                             onClick={() => onSelectBoards(feedbackBoards?.id!)}
@@ -229,7 +230,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                             </div>
                           </div>
                         )}
-                      </Menu.Item>
+                      </MenuItem>
                     ))}
                   </div>
                   <div
@@ -243,7 +244,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
 
                   {Object.values(FeedbackStatus).map(
                     ({ id, title, bulletColor }) => (
-                      <Menu.Item key={id}>
+                      <MenuItem key={id}>
                         {() => (
                           <div
                             onClick={() => onSelectStatus(id)}
@@ -269,7 +270,7 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                             </div>
                           </div>
                         )}
-                      </Menu.Item>
+                      </MenuItem>
                     )
                   )}
 
@@ -277,14 +278,16 @@ const FeedbackSideNav: React.FC<SideNavProps> = ({
                     className="px-4 py-2 border-t border-gray-100 hover:bg-gray-50"
                     role="none"
                   >
-                    <Menu.Button
-                      className="text-gray-700 block w-full py-1 text-left text-sm"
-                      onClick={onClearFilter}
-                    >
-                      Clear Filter
-                    </Menu.Button>
+                    <MenuItem>
+                      <button
+                        className="text-gray-700 block w-full py-1 text-left text-sm"
+                        onClick={onClearFilter}
+                      >
+                        Clear Filter
+                      </button>
+                    </MenuItem>
                   </div>
-                </Menu.Items>
+                </MenuItems>
               </Transition>
             </Menu>
           </div>
