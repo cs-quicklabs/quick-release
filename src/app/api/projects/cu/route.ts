@@ -8,7 +8,7 @@ import { create } from "domain";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, res: Response) {
+export async function GET(req: Request) {
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
@@ -20,27 +20,28 @@ export async function GET(req: Request, res: Response) {
       where: {
         cuid: userId,
       },
-    })
+    });
     const query: { [key: string]: any } = { createdById: user?.id };
 
-    const projects = await db.projects.findMany({ 
-        where: query,
-        select: {
-          cuid: true,
-          name: true,
-          createdAt: true,
-          updatedAt: true,
-          slug: true,
-          projectImgUrl: true,
-        }
-       });
-    
+    const projects = await db.projects.findMany({
+      where: query,
+      select: {
+        cuid: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+        slug: true,
+        projectImgUrl: true,
+      },
+    });
+
     const sortedProjects = privacyResponseArray(
       projects.sort((a, b) => {
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       })
     );
-
 
     const totalProjects = await db.projects.count({ where: query });
     return NextResponse.json(

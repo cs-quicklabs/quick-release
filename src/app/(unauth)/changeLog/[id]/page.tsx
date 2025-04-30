@@ -4,7 +4,6 @@ import {
   checkRichTextEditorIsEmpty,
   extractImageUrls,
   requestHandler,
-  showNotification,
 } from "@/Utils";
 import { ChangeLogsReleaseActions } from "@/Utils/constants";
 import { useChangeLogContext } from "@/app/context/ChangeLogContext";

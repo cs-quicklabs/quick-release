@@ -3,12 +3,12 @@ import { RedirectType, notFound, redirect } from "next/navigation";
 import { getOneProject } from "@/lib/project";
 
 type PagePropsType = {
-  params: {
+  params: Promise<{
     projectName: string;
-  };
+  }>;
 };
 
-const Page: React.FC<PagePropsType> = async props => {
+const Page: React.FC<PagePropsType> = async (props) => {
   const params = await props.params;
   let { projectName } = params;
   projectName = projectName.toLowerCase();
