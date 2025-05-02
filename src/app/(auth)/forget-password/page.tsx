@@ -88,7 +88,7 @@ const ForgotPassword = () => {
                 type="email"
                 {...register("email")}
                 id="email"
-                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="form-input-field"
                 placeholder="name@company.com"
               />
               {errors.email && (
@@ -99,7 +99,7 @@ const ForgotPassword = () => {
             </div>{" "}
             <Button
               type="submit"
-              disabled={loader || errors.email ? true : false}
+              disabled={loader || !!errors.email}
               className={`w-full mt-4 text-white bg-blue-600 focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
             >
               {loader ? (

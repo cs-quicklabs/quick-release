@@ -22,6 +22,115 @@
   }
 }
 
+@layer components {
+  /** form components start */
+  .form-input-field {
+    @apply appearance-none text-7xl  bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-xs focus:ring-primary-600 focus:border-primary-600 block w-full p-1.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500;
+  }
+
+  .form-input-label {
+    @apply block mb-2 text-sm font-medium text-gray-900 dark:text-white;
+  }
+
+  .form-input-description {
+    @apply text-xs mt-1 text-gray-500 dark:text-gray-400;
+  }
+
+  .form-title {
+    @apply text-lg font-semibold dark:text-white;
+  }
+
+  .form-subtitle {
+    @apply text-gray-500 dark:text-gray-400 text-sm;
+  }
+
+  /** form components end  */
+
+  .btn-primary {
+    @apply cursor-pointer items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-sm bg-primary-700 hover:bg-primary-800 focus:ring-2 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800;
+  }
+
+  .btn-secondary {
+    @apply cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium text-center text-gray-900 focus:outline-none bg-white rounded border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700;
+  }
+
+  .btn-blue {
+    @apply cursor-pointer rounded bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600;
+  }
+
+  .btn-red {
+    @apply border-0 inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:order-1 sm:ml-3 cursor-pointer;
+  }
+
+  .btn-normal {
+    @apply bg-white py-2 px-4 inline-flex border border-gray-300 rounded shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 cursor-pointer;
+  }
+
+  .btn-inline-edit {
+    @apply text-sm text-gray-400 hover:text-blue-600 cursor-pointer;
+  }
+
+  .btn-inline-delete {
+    @apply text-sm text-gray-400 hover:text-red-600 cursor-pointer;
+  }
+
+  .link {
+    @apply text-sm font-medium text-primary-600 hover:underline dark:text-primary-500;
+  }
+
+  .nav-selected {
+    @apply bg-gray-500 text-white hover:bg-gray-500 hover:text-white px-3 py-2 rounded text-sm font-medium;
+  }
+
+  .nav-unselected {
+    @apply text-gray-300 hover:bg-gray-500 hover:text-white px-3 py-2 rounded text-sm font-medium;
+  }
+
+  .svg-icon {
+    @apply text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6;
+  }
+
+  .selected {
+    @apply bg-gray-200 text-gray-900 hover:bg-gray-200 rounded px-3 py-2 flex items-center text-sm font-medium;
+  }
+
+  .unselected {
+    @apply text-gray-900 hover:text-gray-900 hover:bg-gray-50 rounded px-3 py-2 flex items-center text-sm font-medium;
+  }
+
+  .table-head {
+    @apply px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase whitespace-nowrap;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 overflow-auto text-sm text-gray-700 max-w-full;
+  }
+
+  .table {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+
+  .table-body {
+    @apply bg-white divide-y divide-gray-200;
+  }
+
+  .unselected-nav {
+    @apply text-gray-300 hover:bg-gray-500 hover:text-white rounded-sm px-3 py-2 text-sm font-medium;
+  }
+
+  .selected-nav {
+    @apply bg-gray-500 text-white hover:bg-gray-500 hover:text-white rounded-sm px-3 py-2 text-sm font-medium;
+  }
+
+  .selected-tab {
+    @apply block py-3 px-4 border-b-2 text-primary-600 hover:text-primary-600 border-primary-600;
+  }
+
+  .unselected-tab {
+    @apply block py-3 px-4 text-gray-500 dark:text-gray-400 hover:text-primary-600 hover:border-b-2 hover:border-primary-600;
+  }
+}
+
 @utility no-scrollbar {
   /* Hide scrollbar for Chrome, Safari and Opera */
   &::-webkit-scrollbar {

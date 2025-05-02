@@ -21,7 +21,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const handleClear = () => {
       setInputValue("");
       if (onChange) {
-        onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+        onChange({
+          target: { value: "" },
+        } as React.ChangeEvent<HTMLInputElement>);
       }
     };
 
@@ -36,10 +38,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <div className="relative w-full">
         <input
           type={type}
-          className={cn(
-            "bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg outline-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:outline-blue-600",
-            className
-          )}
+          className={cn("form-input-field", className)}
           ref={ref}
           {...props}
           value={inputValue}
