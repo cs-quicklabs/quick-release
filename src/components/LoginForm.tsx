@@ -167,7 +167,8 @@ export default function LoginForm() {
                   cancelBtnText="Cancel"
                   loading={resendLoading}
                   onClickOk={async () => {
-                    await resendEmail(), setIsOpen(false);
+                    await resendEmail();
+                    setIsOpen(false);
                   }}
                   onClickCancel={() => setIsOpen(false)}
                 />
@@ -211,7 +212,7 @@ export default function LoginForm() {
                     aria-describedby="remember"
                     type="checkbox"
                     {...register("remember")}
-                    // className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800  appearance-auto"
                   />
                 </div>{" "}
                 <div className="ml-3 text-sm">
@@ -236,10 +237,9 @@ export default function LoginForm() {
               type="submit"
               id="login"
               disabled={loader}
-              className="btn-primary w-full mt-4"
-              // className={`w-full mt-4  text-white ${
-              //   loader ? "bg-blue-400" : "bg-blue-600"
-              // } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+              className={`btn-primary w-full mt-4 ${
+                loader ? "bg-blue-400" : ""
+              }`}
             >
               {loader ? (
                 <div className="flex items-center justify-center gap-4">
