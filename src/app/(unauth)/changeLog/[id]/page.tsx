@@ -269,223 +269,216 @@ const AddChangeLog = (props: { params: Promise<{ id: string }> }) => {
 
   return (
     <BaseTemplate>
-      <>
-        <div className="mx-auto max-w-5xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleCreatePost)}>
-              <CardHeader className="space-y-1 px-0">
-                <CardTitle className="text-lg font-medium leading-6 text-gray-900">
-                  {params.id === "add"
-                    ? "Add New Change Log"
-                    : "Edit Change Log"}
-                </CardTitle>
-                <CardDescription className="mt-1 text-sm text-gray-500">
-                  {params.id === "add"
-                    ? "Let’s get started by filling in the information below to create your new changelog."
-                    : "Let’s get started by filling in the information below to update your changelog."}
-                </CardDescription>
-              </CardHeader>
+      <div className="mx-auto max-w-5xl px-4 lg:px-0 pt-10 pb-12 lg:pb-16">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleCreatePost)}>
+            <CardHeader className="space-y-1 px-0">
+              <CardTitle className="text-lg font-medium leading-6 text-gray-900">
+                {params.id === "add" ? "Add New Change Log" : "Edit Change Log"}
+              </CardTitle>
+              <CardDescription className="mt-1 text-sm text-gray-500">
+                {params.id === "add"
+                  ? "Let’s get started by filling in the information below to create your new changelog."
+                  : "Let’s get started by filling in the information below to update your changelog."}
+              </CardDescription>
+            </CardHeader>
 
-              <CardContent className="grid gap-4 px-0">
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {"Title"}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter change log title"
-                            {...field}
-                            id="title"
-                            showClearBtn
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field: { value, onChange } }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {"Description"}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <RichTextEditor
-                            placeholder="Enter change log description"
-                            id="description"
-                            value={value}
-                            onChange={onChange}
-                            onModal="ChangeLogs"
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="releaseVersion"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {"Release Version"}
-                          <span className="text-red-600">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Enter release version"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="releaseCategories"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{"Release Categories"}</FormLabel>
-                        <FormControl>
-                          <Controller
-                            name="releaseCategories"
-                            control={form.control}
-                            render={({
-                              field: { onChange, onBlur, value, name },
-                            }) => (
-                              <ReleaseCategorySelectMenu
-                                className="basic-multi-select max-w-5xl"
-                                classNamePrefix="select"
-                                isMulti
-                                name={name}
-                                onBlur={onBlur}
-                                onChange={onChange}
-                                value={value}
-                                menuPlacement="top"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="grid gap-2">
-                  <FormField
-                    control={form.control}
-                    name="releaseTags"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{"Release Tags"}</FormLabel>
-                        <FormControl>
-                          <Controller
-                            name="releaseTags"
-                            control={form.control}
-                            render={({
-                              field: { onChange, onBlur, value, name },
-                            }) => (
-                              <ReleaseTagSelectMenu
-                                className="basic-multi-select max-w-5xl"
-                                classNamePrefix="select"
-                                isMulti
-                                name={name}
-                                onBlur={onBlur}
-                                onChange={onChange}
-                                value={value}
-                                menuPlacement="top"
-                              />
-                            )}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-red-600" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {selectedAction.id === "scheduled" && (
-                  <div className="grid gap-2">
-                    <FormField
-                      control={form.control}
-                      name="scheduledTime"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{"Schedule Release On"}</FormLabel>
-
-                          <div className="grid gap-2 grid-cols-2">
-                            <FormControl>
-                              <DatePicker
-                                className="justify-start bg-white"
-                                {...field}
-                                onChange={(selectedDate) =>
-                                  field.onChange(
-                                    selectedDate ?? moment().toDate()
-                                  )
-                                }
-                              />
-                            </FormControl>
-
-                            <FormControl>
-                              <TimePicker
-                                value={moment(field.value)}
-                                onChange={(value) =>
-                                  field.onChange(value.toDate())
-                                }
-                              />
-                            </FormControl>
-                          </div>
-
-                          <FormMessage className="text-red-600" />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
-              </CardContent>
-              <CardFooter className="justify-end px-0">
-                <Button
-                  className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-sm"
-                  type="button"
-                  onClick={handleCancelButton}
-                >
-                  {"Cancel"}
-                </Button>
-
-                <ListboxButton
-                  selected={selectedAction}
-                  options={actions}
-                  onChange={(value) => {
-                    form.setValue("scheduledTime", moment().toDate());
-                    setSelectedAction(value);
-                  }}
-                  btnType="submit"
-                  loading={isSaving}
-                  disabled={isSaving}
+            <CardContent className="grid gap-4 px-0">
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {"Title"}
+                        <span className="text-red-600">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter change log title"
+                          {...field}
+                          id="title"
+                          showClearBtn
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-600" />
+                    </FormItem>
+                  )}
                 />
-              </CardFooter>
-            </form>
-          </Form>
-        </div>
-      </>
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field: { value, onChange } }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {"Description"}
+                        <span className="text-red-600">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <RichTextEditor
+                          placeholder="Enter change log description"
+                          id="description"
+                          value={value}
+                          onChange={onChange}
+                          onModal="ChangeLogs"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-600" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="releaseVersion"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {"Release Version"}
+                        <span className="text-red-600">*</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter release version" {...field} />
+                      </FormControl>
+                      <FormMessage className="text-red-600" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="releaseCategories"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{"Release Categories"}</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="releaseCategories"
+                          control={form.control}
+                          render={({
+                            field: { onChange, onBlur, value, name },
+                          }) => (
+                            <ReleaseCategorySelectMenu
+                              className="basic-multi-select max-w-5xl"
+                              classNamePrefix="select"
+                              isMulti
+                              name={name}
+                              onBlur={onBlur}
+                              onChange={onChange}
+                              value={value}
+                              menuPlacement="top"
+                            />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-600" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="releaseTags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{"Release Tags"}</FormLabel>
+                      <FormControl>
+                        <Controller
+                          name="releaseTags"
+                          control={form.control}
+                          render={({
+                            field: { onChange, onBlur, value, name },
+                          }) => (
+                            <ReleaseTagSelectMenu
+                              className="basic-multi-select max-w-5xl"
+                              classNamePrefix="select"
+                              isMulti
+                              name={name}
+                              onBlur={onBlur}
+                              onChange={onChange}
+                              value={value}
+                              menuPlacement="top"
+                            />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-600" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {selectedAction.id === "scheduled" && (
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="scheduledTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{"Schedule Release On"}</FormLabel>
+
+                        <div className="grid gap-2 grid-cols-2">
+                          <FormControl>
+                            <DatePicker
+                              className="justify-start bg-white"
+                              {...field}
+                              onChange={(selectedDate) =>
+                                field.onChange(
+                                  selectedDate ?? moment().toDate()
+                                )
+                              }
+                            />
+                          </FormControl>
+
+                          <FormControl>
+                            <TimePicker
+                              value={moment(field.value)}
+                              onChange={(value) =>
+                                field.onChange(value.toDate())
+                              }
+                            />
+                          </FormControl>
+                        </div>
+
+                        <FormMessage className="text-red-600" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+            </CardContent>
+            <CardFooter className="justify-end px-0">
+              <Button
+                className="mr-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4 border border-gray-400 rounded-sm"
+                type="button"
+                onClick={handleCancelButton}
+              >
+                {"Cancel"}
+              </Button>
+
+              <ListboxButton
+                selected={selectedAction}
+                options={actions}
+                onChange={(value) => {
+                  form.setValue("scheduledTime", moment().toDate());
+                  setSelectedAction(value);
+                }}
+                btnType="submit"
+                loading={isSaving}
+                disabled={isSaving}
+              />
+            </CardFooter>
+          </form>
+        </Form>
+      </div>
     </BaseTemplate>
   );
 };
