@@ -1,12 +1,12 @@
 import { LoginPage } from "@/e2e/login";
 import { createProject } from "@/e2e/Projectsdetails";
 import { validCredentials } from "@/e2e/testData/credential";
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 
 test.beforeEach(
   " Verify user able Log in with valid credential",
   async ({ page }) => {
-    const login = new LoginPage(page); 
+    const login = new LoginPage(page);
     await page.goto("/");
     await login.login(validCredentials.mail, validCredentials.password);
   }
