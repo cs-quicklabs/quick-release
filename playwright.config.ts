@@ -12,7 +12,6 @@ import path from "path";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
- 
   timeout: 1 * 80 * 1000,
   expect: {
     timeout: 1 * 80 * 1000,
@@ -20,13 +19,13 @@ export default defineConfig({
   testDir: path.join(__dirname, "tests"),
   // testMatch: "**/*.spec.ts",
   /* Run tests in files in parallel */
-  fullyParallel:true,
+  fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
- 
+
   /* Retry on CI only */
   // retries: process.env.CI ? 2 : 0,
-  retries:3,
+  retries: 3,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -34,22 +33,21 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: "https://quick-release-development.vercel.app",
+    baseURL: "http://localhost:3000",
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     headless: true,
   },
-  
+
   // timeout: 5* 60 * 1000,
   /* Configure projects for major browsers */
   projects: [
-
-
     {
       name: "sanity",
       testDir: "./tests",
-      testMatch: /.*(Login|Changelogs|Profile|Changepasswords|viewpublic|Signout|addaTags|addprojects|Category)\.spec\.ts$/,
+      testMatch:
+        /.*(Login|Changelogs|Profile|Changepasswords|viewpublic|Signout|addaTags|addprojects|Category)\.spec\.ts$/,
     },
     {
       name: "regression",
@@ -103,5 +101,4 @@ export default defineConfig({
   //   url: 'http://localhost:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-  
 });
