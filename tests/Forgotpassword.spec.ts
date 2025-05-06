@@ -3,11 +3,11 @@ import { test } from "@playwright/test";
 
 test("Verify user able reset password", async ({ page }) => {
   await page.goto("/");
-  const email = `jitender@yopmail.com`;
+  const email = `deva@yopmail.com`;
   const forgotPassword = new ForgotPassword(page);
 
   await forgotPassword.clickForgotPassword();
   await forgotPassword.fillEmail(email);
 
-  await forgotPassword.createPassword(email, "password123");
+  await forgotPassword.createPassword(email, "Divanshu@1234");
 });
