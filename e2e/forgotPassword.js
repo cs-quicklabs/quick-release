@@ -1,11 +1,4 @@
 const { expect } = require("@playwright/test");
-const MailosaurClient = require("mailosaur");
-import dotenv from 'dotenv';
-dotenv.config(); // Load variables from .env
-
-const SERVER_ID = process.env.MAILASAUR_SERVERID;
-console.log({ env: process.env });
-const mailosaur = new MailosaurClient(process.env.MAILOSAUR_API_KEY);
 
 export class ForgotPassword {
     constructor(page) {
@@ -13,6 +6,34 @@ export class ForgotPassword {
         this.forgotPasswordLink = this.page.locator("#forget-password");
         this.emailInput = 'input[id="email"]';
         this.recaptcha = ".recaptcha-checkbox-border";
+        this.toastMessage = this.page.locator("//section[@class='Toastify']");
+    }
+
+    async createPassword(email, password) {
+        await this.page.goto('https://www.yopmail.com/en/');
+
+        await this.page.fill('input#login', email);
+        await this.page.click('button[title="Check Inbox @yopmail.com"]');
+
+        await this.page.waitForSelector('iframe#ifinbox', { timeout: 30000 });
+        const inboxFrame = await this.page.frame({ name: 'ifinbox' });
+
+        await inboxFrame.waitForSelector('div.m', { timeout: 30000 });
+        await inboxFrame.click('div.m');
+
+        await this.page.waitForSelector('iframe#ifmail', { timeout: 30000 });
+        const emailFrame = await this.page.frame({ name: 'ifmail' });
+        await emailFrame.waitForSelector('a:has-text("Change my password")', { timeout: 30000 });
+        const [newPage] = await Promise.all([
+            this.page.waitForEvent('popup'),
+            emailFrame.click('a:has-text("Change my password")')
+        ]);
+        await newPage.locator("#password").fill("Divanshu@1234");
+        await newPage.locator("#confirm-password").fill("Divanshu@1234");
+        await newPage.getByText("Set Password").click();
+        await expect(newPage.locator("//section[@class='Toastify']")).toHaveText(
+            "Password reset successfully"
+        );
     }
 
     async clickForgotPassword() {
