@@ -52,7 +52,7 @@ model Organizations {
   cuid               String               @unique @default(cuid())
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  users              Users?               @relation(fields: [createdById], references: [id])
+  users              Users?               @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById        Int?
   name               String
   organizationsUsers OrganizationsUsers[]
