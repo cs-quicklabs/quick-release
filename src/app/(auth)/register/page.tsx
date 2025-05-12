@@ -7,6 +7,7 @@ import { Input } from "@/atoms/input";
 import { registerUserRequest } from "@/fetchHandlers/authentication";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Checkbox } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -259,12 +260,9 @@ const Register = () => {
               </div>{" "}
               <div className="flex items-start">
                 <div className="flex items-center h-5">
-                  <Input
-                    id="terms"
-                    aria-describedby="terms"
-                    type="checkbox"
+                  <Checkbox
+                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 "
                     {...register("terms")}
-                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 appearance-auto"
                   />
                 </div>{" "}
                 <div className="ml-3 text-sm">

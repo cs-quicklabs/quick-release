@@ -19,6 +19,7 @@ import Image from "next/image";
 import { WEB_DETAILS } from "@/Utils/constants";
 import { Input } from "@/atoms/input";
 import Spin from "@/atoms/Spin";
+import { Checkbox } from "flowbite-react";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -123,7 +124,7 @@ export default function LoginForm() {
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
       <Link
         href="/"
-        className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        className="flex items-center mb-6 text-2xl font-semibold text-gray-900 "
       >
         <Image
           className="w-8 h-8 mr-2"
@@ -134,9 +135,9 @@ export default function LoginForm() {
         />
         {WEB_DETAILS.name}
       </Link>
-      <div className="w-full bg-white rounded-xs shadow-sm dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div className="w-full bg-white rounded-xs shadow-sm  md:mt-0 sm:max-w-md xl:p-0 ">
         <div className="p-6 space-y-4 md:space-y-4 sm:p-8">
-          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl ">
             {"Sign in to your account"}
           </h1>{" "}
           <form
@@ -207,19 +208,14 @@ export default function LoginForm() {
             <div className="flex items-center justify-between mb-0">
               <div className="flex items-start">
                 <div className="flex items-center h-5">
-                  <Input
+                  <Checkbox
                     id="remember"
-                    aria-describedby="remember"
-                    type="checkbox"
                     {...register("remember")}
-                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800  appearance-auto"
+                    className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 "
                   />
                 </div>{" "}
                 <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="remember"
-                    className="text-gray-500 dark:text-gray-300"
-                  >
+                  <label htmlFor="remember" className="text-gray-500 ">
                     {"Remember me"}
                   </label>
                 </div>
@@ -227,7 +223,7 @@ export default function LoginForm() {
               <div className="flex items-start"></div>{" "}
               <Link
                 href="/forget-password"
-                className="text-sm font-medium  hover:underline dark:text-primary-500 text-blue-600"
+                className="text-sm font-medium  hover:underline  text-blue-600"
                 id="forget-password"
               >
                 {"Forgot password?"}
@@ -249,11 +245,11 @@ export default function LoginForm() {
                 "Sign in"
               )}
             </button>
-            <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-center">
+            <p className="text-sm font-light text-gray-500  flex justify-center">
               {"Don’t have an account yet? "}&nbsp;
               <Link
                 href="/register"
-                className="font-medium  hover:underline dark:text-primary-500 text-blue-600 text-opacity-[1]"
+                className="font-medium  hover:underline  text-blue-600 text-opacity-[1]"
               >
                 {"Sign up"}
               </Link>
