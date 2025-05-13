@@ -107,7 +107,7 @@ const Register = () => {
     <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto ">
       <Link
         href="/"
-        className="flex items-center mb-6  mt-8 text-2xl font-semibold font-medium text-gray-900 dark:text-white"
+        className="flex items-center mb-6  mt-8 text-2xl font-semibold  text-gray-900 dark:text-white"
       >
         <Image
           className="w-8 h-8 mr-2"
