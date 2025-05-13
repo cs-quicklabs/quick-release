@@ -173,7 +173,7 @@ export async function DELETE(request: NextRequest) {
         console.log("Deleted Organization:", organizationId);
       } else {
         console.warn(
-          "Organization not found. Skipping delete:",
+          "Organization not found. Skipping delete id:",
           organizationId
         );
       }
