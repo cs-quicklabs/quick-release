@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--require=dotenv/config --require=newrelic' next dev --turbopack",
     "build": "next build",
-    "start": "NODE_OPTIONS='--require=newrelic' next start",
+    "start": "NODE_OPTIONS='--require=dotenv/config --require=newrelic' next start",
     "lint": "next lint",
     "postinstall": "prisma db execute --file ./prisma/migrations/20240805120711_/migration.sql || echo 'Migration file not found, skipping migration' && flowbite-react patch",
     "prebuild": "prisma generate && ts-node db/seed.mjs || echo 'Seed file not found, skipping seed'"
