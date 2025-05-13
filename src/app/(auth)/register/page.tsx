@@ -104,97 +104,97 @@ const Register = () => {
     );
   }
   return (
-    <>
-      <div className="flex flex-col items-center justify-center px-6 py-12 mx-auto ">
-        <Link
-          href="/"
-          className="flex items-center mb-6  mt-8 text-2xl font-medium text-gray-900 dark:text-white"
-        >
-          <Image
-            className="w-8 h-8 mr-2"
-            src={WEB_DETAILS.favicon}
-            alt="logo"
-            width={32}
-            height={32}
-          />
-          {WEB_DETAILS.name}
-        </Link>{" "}
-        <div className="w-full bg-white rounded-xs shadow-sm dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700 mb-4">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              {"Create your account"}
-            </h1>{" "}
-            <form
-              className="space-y-4 md:space-y-5"
-              onSubmit={handleSubmit(createUser)}
-            >
-              <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                <div>
-                  <label htmlFor="first-name" className="form-input-label">
-                    {"First Name"}
-                  </label>{" "}
-                  <Input
-                    type="text"
-                    id="first-name"
-                    placeholder="First name"
-                    {...register("firstName")}
-                  />
-                  {errors.firstName && (
-                    <p className="text-red-600 text-[11px] pt-1">
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label htmlFor="last-name" className="form-input-label">
-                    {"Last Name"}
-                  </label>{" "}
-                  <Input
-                    type="text"
-                    id="last-name"
-                    placeholder="Last name"
-                    {...register("lastName")}
-                  />
-                  {errors.lastName && (
-                    <span className="text-red-600 text-[11px] pt-1">
-                      {errors.lastName.message}
-                    </span>
-                  )}
-                </div>
-              </div>{" "}
+    <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto ">
+      <Link
+        href="/"
+        className="flex items-center mb-6  mt-8 text-2xl font-semibold font-medium text-gray-900 dark:text-white"
+      >
+        <Image
+          className="w-8 h-8 mr-2"
+          src={WEB_DETAILS.favicon}
+          alt="logo"
+          width={32}
+          height={32}
+        />
+        {WEB_DETAILS.name}
+      </Link>{" "}
+      <div className="w-full bg-white rounded-sm shadow dark:border md:mt-0 sm:max-w-lg xl:p-0">
+        <div className="p-6 space-y-4 md:space-y-4 sm:p-8">
+          <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            {"Create your account"}
+          </h1>{" "}
+          <form
+            className="space-y-4 md:space-y-4"
+            onSubmit={handleSubmit(createUser)}
+          >
+            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
               <div>
-                <label htmlFor="email" className="form-input-label">
-                  {"Your email"}
-                </label>{" "}
-                <Input
-                  type="email"
-                  id="email"
-                  placeholder="name@company.com"
-                  {...register("email")}
-                />
-                {errors.email && (
-                  <span className="text-red-600 text-[11px] pt-1">
-                    {errors.email.message}
-                  </span>
-                )}
-              </div>{" "}
-              <div>
-                <label htmlFor="company-name" className="form-input-label">
-                  {"Organization Name"}
+                <label htmlFor="first-name" className="form-input-label">
+                  {"First Name"}
                 </label>{" "}
                 <Input
                   type="text"
-                  id="organisation-name"
-                  placeholder="Company name"
-                  {...register("orgName")}
+                  id="first-name"
+                  placeholder="First name"
+                  {...register("firstName")}
                 />
-                {errors.orgName && (
+                {errors.firstName && (
+                  <p className="text-red-600 text-[11px] pt-1">
+                    {errors.firstName.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="last-name" className="form-input-label">
+                  {"Last Name"}
+                </label>{" "}
+                <Input
+                  type="text"
+                  id="last-name"
+                  placeholder="Last name"
+                  {...register("lastName")}
+                />
+                {errors.lastName && (
                   <span className="text-red-600 text-[11px] pt-1">
-                    {errors.orgName.message}
+                    {errors.lastName.message}
                   </span>
                 )}
-              </div>{" "}
+              </div>
+            </div>{" "}
+            <div>
+              <label htmlFor="email" className="form-input-label">
+                {"Your email"}
+              </label>{" "}
+              <Input
+                type="email"
+                id="email"
+                placeholder="name@company.com"
+                {...register("email")}
+              />
+              {errors.email && (
+                <span className="text-red-600 text-[11px] pt-1">
+                  {errors.email.message}
+                </span>
+              )}
+            </div>{" "}
+            <div>
+              <label htmlFor="company-name" className="form-input-label">
+                {"Organization Name"}
+              </label>{" "}
+              <Input
+                type="text"
+                id="organisation-name"
+                placeholder="Company name"
+                {...register("orgName")}
+              />
+              {errors.orgName && (
+                <span className="text-red-600 text-[11px] pt-1">
+                  {errors.orgName.message}
+                </span>
+              )}
+            </div>{" "}
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-6">
               <div>
                 <label
                   htmlFor="password"
@@ -257,64 +257,63 @@ const Register = () => {
                     {errors.confirmPassword.message}
                   </span>
                 )}
+              </div>
+            </div>
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <Checkbox
+                  className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 "
+                  {...register("terms")}
+                />
               </div>{" "}
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <Checkbox
-                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 "
-                    {...register("terms")}
-                  />
-                </div>{" "}
-                <div className="ml-3 text-sm">
-                  <label
-                    htmlFor="terms"
-                    className="font-light text-gray-500 dark:text-gray-300"
+              <div className="ml-3 text-sm">
+                <label
+                  htmlFor="terms"
+                  className="font-light text-gray-500 dark:text-gray-300"
+                >
+                  {"I accept the "}
+                  <a
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    href="#"
                   >
-                    {"I accept the "}
-                    <a
-                      className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                      href="#"
-                    >
-                      {"Terms and Conditions"}
-                    </a>
-                  </label>
-                </div>
-              </div>{" "}
-              {errors.terms && (
-                <span className="text-red-600 text-[11px] pt-1">
-                  {errors.terms.message}
-                </span>
-              )}
-              <a href="/quick-release/signup/team" className="mt-4">
-                <button
-                  type="submit"
-                  disabled={loader}
-                  className={`${
-                    loader ? "bg-blue-400" : ""
-                  } w-full btn-primary`}
-                >
-                  {loader ? (
-                    <div className="flex items-center justify-center gap-4">
-                      <Spin className="h-[25px] w-[25px]" />
-                    </div>
-                  ) : (
-                    "Create an account"
-                  )}
-                </button>
-              </a>
-              <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-center mt-5">
-                <Link
-                  href="/"
-                  className="font-medium text-primary-600 hover:underline dark:text-primary-500"
-                >
-                  {" Return back to Log in"}
-                </Link>
-              </p>
-            </form>
-          </div>
+                    {"Terms and Conditions"}
+                  </a>
+                </label>
+              </div>
+            </div>{" "}
+            {errors.terms && (
+              <span className="text-red-600 text-[11px] pt-1">
+                {errors.terms.message}
+              </span>
+            )}
+            <a href="/quick-release/signup/team" className="mt-4">
+              <button
+                type="submit"
+                disabled={loader}
+                className={`${loader ? "bg-blue-400" : ""} w-full btn-primary`}
+              >
+                {loader ? (
+                  <div className="flex items-center justify-center gap-4">
+                    <Spin className="h-[25px] w-[25px]" />
+                  </div>
+                ) : (
+                  "Create an account"
+                )}
+              </button>
+            </a>
+            <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-center mt-5">
+              Already have an account?
+              <Link
+                href="/"
+                className="ml-2 font-medium text-primary-600 hover:underline dark:text-primary-500"
+              >
+                {"Login"}
+              </Link>
+            </p>
+          </form>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
