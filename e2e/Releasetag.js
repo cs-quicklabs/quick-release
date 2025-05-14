@@ -3,7 +3,7 @@ exports.releaseTags = class releaseTags {
   constructor(page) {
     this.page = page;
     this.tagname = "Test9";
-    this.toastMessage = this.page.locator("//div[@class='Toastify']");
+    this.toastMessage = this.page.locator("//section[@class='Toastify']");
 
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
@@ -14,15 +14,15 @@ exports.releaseTags = class releaseTags {
     this.editSaveButton = this.page.locator("#editSave");
     this.editLink = this.page.getByRole("link", { name: "Edit" }).first();
     this.deleteLink = this.page.getByRole("link", { name: "Delete" }).first();
-    this.error= this.page.locator("#tagerror")
+    this.error = this.page.locator("#tagerror")
   }
 
   async navigateToAccountSetting() {
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isUser = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isUser = await this.userMenu.isVisible();
       if (isUser) {
@@ -30,9 +30,9 @@ exports.releaseTags = class releaseTags {
         await this.accountSetting.click()
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
   }
 
   async createReleaseTag() {
@@ -63,7 +63,7 @@ exports.releaseTags = class releaseTags {
 
   async deleteReleaseTag() {
     await this.navigateToAccountSetting();;
-    await this.deleteLink.waitFor("visible"); 
+    await this.deleteLink.waitFor("visible");
     await this.deleteLink.click();
   }
   async createReleaseTagEmptyValue() {

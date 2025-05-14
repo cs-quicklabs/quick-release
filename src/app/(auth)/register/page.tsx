@@ -67,7 +67,7 @@ const Register = () => {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["terms"],
-          message: "You have to accept terms and condtions",
+          message: "You have to accept terms and conditions",
         });
       }
     });

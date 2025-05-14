@@ -6,26 +6,26 @@ exports.createProject = class Project {
     this.userMenu = this.page.locator("#open-user-menu");
     this.addNewProjectButton = this.page.locator("text=Add new team");
     this.slugInput = this.page.locator("#company-website");
-    this.projectInput=this.page.locator('#team-name')
+    this.projectInput = this.page.locator('#team-name')
     this.saveButton = this.page.locator("text=Save");
-    this.toastMessage = this.page.locator("//div[@class='Toastify']");
+    this.toastMessage = this.page.locator("//section[@class='Toastify']");
     this.teamError = this.page.locator("#errorTeam");
     this.errorSlug = this.page.locator('#errorSlug')
   }
 
   async openUserMenuAndNavigateToAddProject() {
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isUser = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isUser = await this.userMenu.isVisible();
       if (isUser) {
         await this.userMenu.click()
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
     await this.addNewProjectButton.click();
   }
@@ -34,11 +34,12 @@ exports.createProject = class Project {
     const Numeric = await Math.floor(10000 + Math.random() * 90000).toString();
     await this.openUserMenuAndNavigateToAddProject();
     await this.projectInput.click()
-    await this.projectInput.fill(this.projectName+Numeric)
+    await this.projectInput.fill(this.projectName + Numeric)
     await this.slugInput.click();
     await this.slugInput.fill(this.projectName + Numeric);
     await expect(this.slugInput).toHaveValue(this.projectName + Numeric);
     await this.saveButton.click();
+    // await this.page.waitForTimeout(000);
     await expect(this.toastMessage).toHaveText("Team created successfully");
   }
 
@@ -48,21 +49,21 @@ exports.createProject = class Project {
     await this.projectInput.fill(this.projectName)
     await this.slugInput.click();
     await this.slugInput.fill(this.projectName);
-    
+
     await expect(this.slugInput).toHaveValue(this.projectName);
-    
+
     await this.saveButton.click();
-    
+
     try {
-      
+
       await expect(this.toastMessage).toHaveText("Project slug is already taken", { timeout: 5000 });
-      
+
     } catch (error) {
       await expect(this.toastMessage).toHaveText("Team created successfully", { timeout: 5000 });
-      
+
     }
   }
-  
+
 
   async projectValidationWithEmptyName() {
     await this.openUserMenuAndNavigateToAddProject();

@@ -3,7 +3,7 @@ exports.releaseCategory = class releaseCategory {
   constructor(page) {
     this.page = page;
     this.categoryName = "Test9";
-    this.toastMessage = this.page.locator("//div[@class='Toastify']");
+    this.toastMessage = this.page.locator("//section[@class='Toastify']");
 
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
@@ -17,19 +17,19 @@ exports.releaseCategory = class releaseCategory {
     this.deleteLink = this.page.getByRole("link", { name: "Delete" }).first();
   }
 
-  async navigateToAccountSetting(){
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+  async navigateToAccountSetting() {
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isUser = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isUser = await this.userMenu.isVisible();
       if (isUser) {
         await this.userMenu.click()
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
     await this.accountSetting.click()
   }
@@ -67,7 +67,7 @@ exports.releaseCategory = class releaseCategory {
   }
 
 
- 
+
   async deleteCategory() {
     await this.navigateToAccountSetting();
     await this.navigateToCategories();

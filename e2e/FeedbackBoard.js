@@ -1,65 +1,63 @@
 const { test, expect } = require("@playwright/test");
 const { TIMEOUT } = require("dns/promises");
-exports.feedback = class Feedback{
+exports.feedback = class Feedback {
   constructor(page) {
     this.page = page;
     this.feedbackname = "Test9";
-    this.toastMessage = this.page.locator("//div[@class='Toastify']");
+    this.toastMessage = this.page.locator("//section[@class='Toastify']");
 
     // Locators
     this.userMenu = this.page.locator("#open-user-menu");
     this.teamSetting = this.page.locator("#team-setting");
-    this.heading= this.page.getByText('heading', { name: 'Team Settings' })
-    this.feedbackboards= this.page.getByText("Feedback Boards");
-    this.boardName=this.page.locator("#boardName")
+    this.heading = this.page.getByText('heading', { name: 'Team Settings' })
+    this.feedbackboards = this.page.getByText("Feedback Boards");
+    this.boardName = this.page.locator("#boardName")
     this.saveButton = this.page.getByText("Save");
-    this.editLink= this.page.getByRole("link", { name: "Edit" }).nth(1);
-    this.editfeedbackNameInput=this.page.locator("#editBoardName")
-    this.editSaveButton=this.page.locator("#saveboard")
+    this.editLink = this.page.getByRole("link", { name: "Edit" }).nth(1);
+    this.editfeedbackNameInput = this.page.locator("#editBoardName")
+    this.editSaveButton = this.page.locator("#saveboard")
     this.errorboard = this.page.locator("#errorBoard")
-    this.editError= this.page.locator("#editErrorBoard")
+    this.editError = this.page.locator("#editErrorBoard")
 
   }
   async navigateToTeamSetting() {
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isUser = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
-      isUser = await this.userMenu.isVisible({timeout:5000});
+      isUser = await this.userMenu.isVisible({ timeout: 5000 });
       if (isUser) {
         await this.userMenu.click()
         await this.teamSetting.click()
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
   }
 
-  async addFeedback()
-  {
+  async addFeedback() {
     const numeric = Math.floor(10000 + Math.random() * 90000).toString();
     await this.feedbackboards.click()
-    
-    await this.boardName.fill(this.feedbackname+numeric)
+
+    await this.boardName.fill(this.feedbackname + numeric)
     await this.saveButton.click()
     await expect(this.toastMessage).toHaveText(
-        "Feedback board created successfully"
-      );
+      "Feedback board created successfully"
+    );
 
   }
 
-  async editFeedback()
-  {
+  async editFeedback() {
     await this.feedbackboards.click()
-  const numeric = Math.floor(10000 + Math.random() * 90000).toString();
-  
-  await this.boardName.fill(this.feedbackname + numeric);
-  await this.saveButton.click();
-  await expect(this.toastMessage).toHaveText(
-    "Feedback board created successfully"
-  );
+    const numeric = Math.floor(10000 + Math.random() * 90000).toString();
+
+    await this.boardName.fill(this.feedbackname + numeric);
+    await this.saveButton.click();
+    await expect(this.toastMessage).toHaveText(
+      "Feedback board created successfully"
+    );
 
     await this.editLink.isVisible({ timeout: 5000 });
     await this.editLink.click();
@@ -67,19 +65,17 @@ exports.feedback = class Feedback{
     await this.editfeedbackNameInput.press("Backspace");
     await this.editfeedbackNameInput.fill(this.tagname + numeric);
     await this.editSaveButton.click();
-  } 
-  async emptyFeedback()
-  {
+  }
+  async emptyFeedback() {
     await this.feedbackboards.click()
     await this.saveButton.click()
     await expect(this.errorboard).toHaveText(
-        "Board name is required"
-      );
+      "Board name is required"
+    );
 
   }
 
-  async editFeedBackWithEmptyValue()
-  {
+  async editFeedBackWithEmptyValue() {
     await this.feedbackboards.click()
     await this.editLink.isVisible({ timeout: 5000 });
     await this.editLink.click();
