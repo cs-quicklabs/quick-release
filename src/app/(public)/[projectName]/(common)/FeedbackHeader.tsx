@@ -2,11 +2,8 @@
 import { useFeedbackPostContext } from "@/app/context/FeedbackPostContext";
 import { Button } from "@/atoms/button";
 import { Bars3Icon } from "@heroicons/react/24/solid";
-import Link from "next/link";
 
-export default function FeedbackHeader(
-  {title}: {title: string}
-) {
+export default function FeedbackHeader({ title }: { title: string }) {
   const { setFeedbackSideNav } = useFeedbackPostContext();
   return (
     <div
@@ -26,7 +23,7 @@ export default function FeedbackHeader(
             </Button>
           </div>
 
-          <h2 className="text-xl sm:text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+          <h2 className="text-xl font-bold text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
             {title}
           </h2>
         </div>
