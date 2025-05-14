@@ -8,7 +8,7 @@ exports.Changelog = class changelog {
     this.title = "Test";
 
     this.addNewButton = this.page.locator("#add-new");
-    this.quickrelease=this.page.getByText("Quick Release")
+    this.quickrelease = this.page.getByText("Quick Release")
     this.newChangelogButton = this.page.getByRole("button", {
       name: "New Changelog",
     });
@@ -17,9 +17,10 @@ exports.Changelog = class changelog {
     this.descriptionEditor = this.page.locator(".ql-editor");
     this.versionInput = this.page.getByPlaceholder("Enter release version");
     this.newStatusOption = this.page.locator('.release-category-select-menu-prefix > div:nth-child(2)')
-    this.relasetags=this.page.locator('.release-tag-select-menu-prefix > div:nth-child(2)')
+    this.relasetags = this.page.locator('.release-tag-select-menu-prefix > div:nth-child(2)')
     this.cancelButton = this.page.getByText("Cancel");
     this.publishButton = this.page.getByText("Publish Changelog Now");
+    this.publishSelectButton = this.page.getByText("Publish Now");
     this.openOptionsButton = this.page.locator("#open-options");
     this.editChangelogButton = this.page.locator("#edit-changelog");
     this.editChangelogModalTitle = this.page.getByText("Edit Change Log");
@@ -33,7 +34,7 @@ exports.Changelog = class changelog {
     this.saveAsDraftChangelogButton = this.page.getByText(
       "Save as Draft Changelog"
     );
-    this.loadingComponent= this.page.locator("#loading")
+    this.loadingComponent = this.page.locator("#loading")
   }
 
   async waitForTimeout(timeout) {
@@ -62,7 +63,7 @@ exports.Changelog = class changelog {
     await this.titleInput.fill(this.title + Numeric);
   }
 
-  
+
   async clickOpenOptions() {
     await this.openOptionsButton.click();
   }
@@ -107,6 +108,9 @@ exports.Changelog = class changelog {
   async clickChangeStatusButton() {
     await this.changeStatusButton.click();
   }
+  async clickPublishSelectButton() {
+    await this.publishSelectButton.click();
+  }
 
   async clickSaveAsDraftOption() {
     await this.saveAsDraftOption.click();
@@ -118,49 +122,52 @@ exports.Changelog = class changelog {
 
 
   async cancelChangelog() {
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isAddNewButtonVisible = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
         await this.clickAddNewButton();
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
     if (!isAddNewButtonVisible) {
       await this.clickNewChangelogButton();
     }
-    
-    
+
+
     await this.fillTitle();
     await this.fillDescription();
     await this.fillVersion();
     await this.selectStatusCategory();
     await this.selectStatusTags();
     await this.clickChangeStatusButton();
+    console.log('called before')
+    await this.clickPublishSelectButton();
+    console.log('called after')
     await this.clickCancelButton();
   }
 
   async publishChangelog() {
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isAddNewButtonVisible = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
         await this.clickAddNewButton();
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
     if (!isAddNewButtonVisible) {
       await this.clickNewChangelogButton();
     }
@@ -170,26 +177,27 @@ exports.Changelog = class changelog {
     await this.selectStatusCategory();
     await this.selectStatusTags();
     await this.clickChangeStatusButton();
+    await this.clickPublishSelectButton();
     await this.clickPublishButton();
   }
 
-  
+
   async editChangelog() {
-   
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isAddNewButtonVisible = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
         await this.clickAddNewButton();
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
     if (!isAddNewButtonVisible) {
       await this.clickNewChangelogButton();
     }
@@ -207,24 +215,24 @@ exports.Changelog = class changelog {
     await this.clickChangeStatusButton();
     await this.clickSaveAsDraftOption();
     await this.clickSaveAsDraftChangelogButton();
-        
+
   }
   async saveChangelog() {
-   
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isAddNewButtonVisible = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
         await this.clickAddNewButton();
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
     if (!isAddNewButtonVisible) {
       await this.clickNewChangelogButton();
     }
@@ -236,24 +244,24 @@ exports.Changelog = class changelog {
     await this.clickChangeStatusButton();
     await this.clickSaveAsDraftOption();
     await this.clickSaveAsDraftChangelogButton();
-        
+
   }
   async deleteChangelog() {
-   
-    const maxRetries = 10; 
-    const retryInterval = 3000; 
-    
+
+    const maxRetries = 10;
+    const retryInterval = 3000;
+
     let isAddNewButtonVisible = false;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       isAddNewButtonVisible = await this.addNewButton.isVisible();
       if (isAddNewButtonVisible) {
         await this.clickAddNewButton();
         break;
       }
-      await new Promise(resolve => setTimeout(resolve, retryInterval)); 
+      await new Promise(resolve => setTimeout(resolve, retryInterval));
     }
-    
+
     if (!isAddNewButtonVisible) {
       await this.clickNewChangelogButton();
     }
@@ -267,6 +275,6 @@ exports.Changelog = class changelog {
     await this.clickSaveAsDraftChangelogButton();
     await this.clickOpenOptions();
     await this.clickDelete();
-        
+
   }
 };
