@@ -123,7 +123,7 @@ const Page: React.FC<PagePayloadType> = async (props) => {
 
         <div className="md:flex md:items-center md:justify-between">
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight mt-4">
+            <h2 className="text-2xl font-bold  text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight mt-4">
               {title}
             </h2>
 
