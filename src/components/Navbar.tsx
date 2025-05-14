@@ -2,12 +2,13 @@
 
 import { WEB_DETAILS } from "@/Utils/constants";
 import AlertModal from "./AlertModal";
-import Loader from "../atoms/Loader";
 import { handleTrancate } from "@/Utils";
 import { useProjectContext } from "@/app/context/ProjectContext";
 import { useUserContext } from "@/app/context/UserContext";
 import {
   Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
   Menu,
   MenuButton,
   MenuItem,
@@ -23,11 +24,9 @@ import {
 import { Tooltip } from "flowbite-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
-import * as React from "react";
-import { Fragment } from "react";
+import React, { useMemo, useState, Fragment } from "react";
 import CheckCircleIcon from "@/assets/icons/CheckCircleIcon";
 import { classNames } from "@/lib/utils";
 import Spin from "@/atoms/Spin";
@@ -48,7 +47,6 @@ export function Navbar({
 }: NavbarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const params = useParams();
   const pathname = usePathname();
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || null
@@ -187,13 +185,13 @@ export function Navbar({
                         width={40}
                         height={40}
                       />
-                      <span className="text-white text-base rounded-md px-3 py-2 text-sm font-medium">
+                      <span className="text-white  rounded-md px-3 py-2 text-sm font-medium">
                         {teamName}
                       </span>
                     </div>
                   </Link>
                   <div>
-                    <Disclosure.Button
+                    <DisclosureButton
                       onClick={() => setShowMenuNav && setShowMenuNav(!open)}
                       className="relative lg:hidden inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-white"
                     >
@@ -212,7 +210,7 @@ export function Navbar({
                           aria-hidden="true"
                         />
                       )}
-                    </Disclosure.Button>
+                    </DisclosureButton>
                   </div>
                 </div>
                 <div className="hidden lg:flex flex-1 items-center lg:items-stretch lg:justify-start py-2">
@@ -320,7 +318,7 @@ export function Navbar({
                     </button> */}
                     <Menu as="div" className="relative ml-3">
                       <div>
-                        <MenuButton className="relative hidden lg:block flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        <MenuButton className="relative  lg:block flex rounded-full bg-gray-800 text-sm focus:outline-hidden focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                           <span className="absolute -inset-1.5" />
                           <span className="sr-only" id="open-user-menu">
                             {"Open user menu"}
@@ -594,7 +592,7 @@ export function Navbar({
                                     <span className="text-sm font-[490] text-black">
                                       {"Logout"}
                                     </span>
-                                    <Loader width="w-6" color="border-black" />
+                                    <Spin className="h-[25px]" />
                                   </div>
                                 ) : (
                                   <div className="flex  items-center font-[490] text-black text-sm">
@@ -613,10 +611,10 @@ export function Navbar({
             </div>
 
             {loggedInUser ? (
-              <Disclosure.Panel className="lg:hidden mt-5">
+              <DisclosurePanel className="lg:hidden mt-5">
                 <div className="space-y-2 px-2 py-3">
                   {projects.map((item: any) => (
-                    <Disclosure.Button
+                    <DisclosureButton
                       key={item.name}
                       as="a"
                       href={item.href}
@@ -631,7 +629,7 @@ export function Navbar({
                       }
                     >
                       {handleTrancate(item.name, 50)}
-                    </Disclosure.Button>
+                    </DisclosureButton>
                   ))}
                 </div>
                 <div className="flex items-center px-4 py-3 gap-4">
@@ -742,12 +740,12 @@ export function Navbar({
                     <span>Logout</span>
                   </a>
                 </div>
-              </Disclosure.Panel>
+              </DisclosurePanel>
             ) : (
-              <Disclosure.Panel className="lg:hidden mt-5">
+              <DisclosurePanel className="lg:hidden mt-5">
                 <div className="space-y-2 px-2 py-3">
                   {navigation.map((item: any) => (
-                    <Disclosure.Button
+                    <DisclosureButton
                       key={item.name}
                       as="a"
                       href={item.href}
@@ -759,10 +757,10 @@ export function Navbar({
                       )}
                     >
                       {handleTrancate(item.name, 50)}
-                    </Disclosure.Button>
+                    </DisclosureButton>
                   ))}
                 </div>
-              </Disclosure.Panel>
+              </DisclosurePanel>
             )}
           </>
         )}

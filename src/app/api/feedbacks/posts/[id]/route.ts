@@ -14,12 +14,15 @@ type ParamsType = {
   id: string;
 };
 
-export async function GET(req: NextRequest, props: { params: Promise<ParamsType> }) {
+export async function GET(
+  req: NextRequest,
+  props: { params: Promise<ParamsType> }
+) {
   const params = await props.params;
   return asyncHandler(async () => {
     const session = await getServerSession(authOptions);
     // @ts-ignore
-    const userId = session?.user?.id!;
+    const userId = session?.user?.id;
     if (!userId) {
       throw new ApiError(401, "Unauthorized request");
     }
@@ -68,7 +71,10 @@ export async function GET(req: NextRequest, props: { params: Promise<ParamsType>
   });
 }
 
-export async function DELETE(req: NextRequest, props: { params: Promise<ParamsType> }) {
+export async function DELETE(
+  req: NextRequest,
+  props: { params: Promise<ParamsType> }
+) {
   const params = await props.params;
   return asyncHandler(async () => {
     const { id } = params;
@@ -123,7 +129,11 @@ export async function DELETE(req: NextRequest, props: { params: Promise<ParamsTy
     }
 
     return NextResponse.json(
-      new ApiResponse(200, privacyResponse(deleteFeedbackPost), "Feedback deleted successfully")
+      new ApiResponse(
+        200,
+        privacyResponse(deleteFeedbackPost),
+        "Feedback deleted successfully"
+      )
     );
   });
 }

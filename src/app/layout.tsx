@@ -43,11 +43,31 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
+  let browserTimingHeader = "";
+
+  try {
+    const newrelic = require("newrelic");
+    browserTimingHeader = newrelic.getBrowserTimingHeader({
+      hasToRemoveScriptWrapper: true,
+      allowTransactionlessInjection: true,
+    });
+  } catch (e) {
+    console.warn("New Relic not available", e);
+  }
+
   return (
     <html lang="en">
+      <head>
+        {browserTimingHeader && (
+          <script
+            id="new-relic-header"
+            dangerouslySetInnerHTML={{ __html: browserTimingHeader }}
+          />
+        )}
+      </head>
       <body className="bg-gray-50">
         <AuthProvider>
           <Provider>

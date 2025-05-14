@@ -99,7 +99,7 @@ const AlertModal: React.FC<AlertModalProps> = ({
           {loading && (
             <Spin
               className={classNames(
-                "inline w-4 h-4 me-3 text-white animate-spin mr-1.5",
+                "inline w-[18px] h-[18px] me-3 text-white animate-spin mr-1.5",
                 spinClassName
               )}
             />
