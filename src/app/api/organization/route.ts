@@ -20,10 +20,9 @@ export async function DELETE(request: NextRequest) {
       });
 
       const userIds = orgUsers.map((u) => u.usersId);
-      console.log("User IDs:", userIds);
 
       // FeedbackPostVotes (via Boards → Projects → Org)
-      const deletedVotes = await tx.feedbackPostVotes.deleteMany({
+      await tx.feedbackPostVotes.deleteMany({
         where: {
           feedbackPost: {
             feedbackBoards: {
@@ -35,29 +34,21 @@ export async function DELETE(request: NextRequest) {
         },
       });
 
-      console.log("Deleted FeedbackPostVotes:", deletedVotes.count);
-
       // FeedbackPostReleaseTags
-      const feedbackPostReleaseTags =
-        await tx.feedbackPostReleaseTags.deleteMany({
-          where: {
-            feedbackPost: {
-              feedbackBoards: {
-                projects: {
-                  organizationsId: organizationId,
-                },
+      await tx.feedbackPostReleaseTags.deleteMany({
+        where: {
+          feedbackPost: {
+            feedbackBoards: {
+              projects: {
+                organizationsId: organizationId,
               },
             },
           },
-        });
-
-      console.log(
-        "Deleted FeedbackPostReleaseTags:",
-        feedbackPostReleaseTags.count
-      );
+        },
+      });
 
       // FeedbackPosts
-      const feedbackPosts = await tx.feedbackPosts.deleteMany({
+      await tx.feedbackPosts.deleteMany({
         where: {
           feedbackBoards: {
             projects: {
@@ -66,10 +57,9 @@ export async function DELETE(request: NextRequest) {
           },
         },
       });
-      console.log("Deleted FeedbackPosts:", feedbackPosts.count);
 
       // FeedbackBoards
-      const feedbackBoards = await tx.feedbackBoards.deleteMany({
+      await tx.feedbackBoards.deleteMany({
         where: {
           projects: {
             organizationsId: organizationId,
@@ -77,10 +67,8 @@ export async function DELETE(request: NextRequest) {
         },
       });
 
-      console.log("Deleted FeedbackBoards:", feedbackBoards.count);
-
       // ChangelogReleaseTags
-      const changelogReleaseTags = await tx.changelogReleaseTags.deleteMany({
+      await tx.changelogReleaseTags.deleteMany({
         where: {
           log: {
             projects: {
@@ -90,77 +78,62 @@ export async function DELETE(request: NextRequest) {
         },
       });
 
-      console.log("Deleted ChangelogReleaseTags:", changelogReleaseTags.count);
-
       // ChangelogReleaseCategories
-      const changelogReleaseCategories =
-        await tx.changelogReleaseCategories.deleteMany({
-          where: {
-            log: {
-              projects: {
-                organizationsId: organizationId,
-              },
+      await tx.changelogReleaseCategories.deleteMany({
+        where: {
+          log: {
+            projects: {
+              organizationsId: organizationId,
             },
           },
-        });
-
-      console.log(
-        "Deleted ChangelogReleaseCategories:",
-        changelogReleaseCategories.count
-      );
+        },
+      });
 
       // Changelogs
-      const Changelogs = await tx.changelogs.deleteMany({
+      await tx.changelogs.deleteMany({
         where: {
           projects: {
             organizationsId: organizationId,
           },
         },
       });
-      console.log("Deleted Changelogs:", Changelogs.count);
 
       // ProjectsUsers
-      const projectsUsers = await tx.projectsUsers.deleteMany({
+      await tx.projectsUsers.deleteMany({
         where: {
           projects: {
             organizationsId: organizationId,
           },
         },
       });
-      console.log("Deleted ProjectsUsers:", projectsUsers.count);
 
       // Projects
-      const projects = await tx.projects.deleteMany({
+      await tx.projects.deleteMany({
         where: {
           organizationsId: organizationId,
         },
       });
-
-      console.log("Deleted Projects:", projects.count);
 
       // OrganizationsUsers
-      const organizationsUsers = await tx.organizationsUsers.deleteMany({
+      await tx.organizationsUsers.deleteMany({
         where: {
           organizationsId: organizationId,
         },
       });
-      console.log("Deleted OrganizationsUsers:", organizationsUsers.count);
 
       // ReleaseTags
-      const releaseTags = await tx.releaseTags.deleteMany({
+      await tx.releaseTags.deleteMany({
         where: {
           organizationsId: organizationId,
         },
       });
-      console.log("Deleted ReleaseTags:", releaseTags.count);
 
       // ReleaseCategories
-      const releaseCategories = await tx.releaseCategories.deleteMany({
+      await tx.releaseCategories.deleteMany({
         where: {
           organizationsId: organizationId,
         },
       });
-      console.log("Deleted ReleaseCategories:", releaseCategories.count);
 
       const orgExists = await tx.organizations.findUnique({
         where: { id: organizationId },
@@ -170,7 +143,6 @@ export async function DELETE(request: NextRequest) {
         await tx.organizations.delete({
           where: { id: organizationId },
         });
-        console.log("Deleted Organization:", organizationId);
       } else {
         console.warn(
           "Organization not found. Skipping delete id:",
@@ -196,7 +168,6 @@ export async function DELETE(request: NextRequest) {
           await tx.users.delete({
             where: { id: userId },
           });
-          console.log("Deleted userId:", userId);
         }
       }
     });
