@@ -42,7 +42,7 @@ const ResendRegisterLink = () => {
       await axios.post("/api/resend-verification-link", values);
       toast.success("Reset Link Sent Successfully");
       setLoader(false);
-    } catch (e: any) {
+    } catch {
       toast.error("Email not registered");
       setLoader(false);
     }

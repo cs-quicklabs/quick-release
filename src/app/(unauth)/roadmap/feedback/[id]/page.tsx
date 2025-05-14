@@ -8,9 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/atoms/dropdown-menu";
-import Loader from "@/atoms/Loader";
 import Loading from "@/atoms/Loading";
-import ScreenLoader from "@/atoms/ScreenLoader";
 import AlertModal from "@/components/AlertModal";
 import { IReleaseTag } from "@/interfaces";
 import { classNames } from "@/lib/utils";

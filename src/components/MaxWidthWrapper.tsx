@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
-import { ModeToggle } from "./ModeToggle";
 
 const MaxWidthWrapper = ({
   className,

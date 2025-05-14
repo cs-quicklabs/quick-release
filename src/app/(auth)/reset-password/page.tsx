@@ -118,27 +118,24 @@ const ResetPassword = () => {
           </Link>{" "}
           <div className="w-full bg-white rounded-lg shadow-sm dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                {"Set New Password"}
-              </h1>{" "}
+              <h2 className="mb-1 text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                {"Set a new password"}
+              </h2>
               <form
-                className="space-y-4 md:space-y-6"
+                className="mt-4 space-y-4 lg:mt-5 md:space-y-5"
                 onSubmit={handleSubmit(resetPassword)}
               >
                 <div>
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                  >
+                  <label htmlFor="email" className="form-input-label">
                     {"New Password"}
                   </label>{" "}
-                  <div className="flex items-center focus-within:border-2 focus-within:border-blue-600 bg-gray-50 border border-gray-300 rounded-lg">
+                  <div className="flex items-center  bg-gray-50 border border-gray-300 rounded-xs">
                     <Input
                       type={showPassword ? "text" : "password"}
                       id="password"
                       placeholder="••••••••"
                       {...register("password")}
-                      className=" p-[0.70rem] bg-gray-50  border-gray-300 text-gray-900 sm:text-sm rounded-lg border-none focus-within:border-none focus-within:ring-0 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                      className="border-none"
                     />
 
                     <div
@@ -152,25 +149,24 @@ const ResetPassword = () => {
                       )}
                     </div>
                   </div>
+                  {errors.password && (
+                    <span className="text-red-600 text-[12px]">
+                      {errors.password.message}
+                    </span>
+                  )}
                 </div>{" "}
-                {errors.password && (
-                  <span className="text-red-600 text-[12px]">
-                    {errors.password.message}
-                  </span>
-                )}
-                <div>
+                <div className="mb-0">
                   <label
                     htmlFor="confirm-password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="form-input-label"
                   >
-                    {"Confirm password"}
+                    {"Change password"}
                   </label>{" "}
                   <Input
                     type="password"
                     id="confirm-password"
                     placeholder="••••••••"
                     {...register("confirmPassword")}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
                   {errors.confirmPassword && (
                     <p className="text-red-600  text-[11px] pt-1">
@@ -181,9 +177,9 @@ const ResetPassword = () => {
                 <button
                   type="submit"
                   disabled={loader}
-                  className={`w-full mt-4  text-white ${
-                    loader ? "bg-blue-400" : "bg-blue-600"
-                  } focus:ring-4 focus:outline-hidden focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800`}
+                  className={`btn-primary w-full mt-4 mb-5 ${
+                    loader ? "bg-blue-400" : ""
+                  }`}
                 >
                   {loader ? (
                     <div className="flex items-center justify-center gap-4">
@@ -193,6 +189,14 @@ const ResetPassword = () => {
                     "Set Password"
                   )}{" "}
                 </button>
+                <p className="text-sm font-light text-gray-500 dark:text-gray-400 flex justify-center">
+                  <Link
+                    href="/"
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  >
+                    Return back to Log in
+                  </Link>
+                </p>
               </form>
             </div>
           </div>
