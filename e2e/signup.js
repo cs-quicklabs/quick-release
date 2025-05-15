@@ -7,10 +7,11 @@ exports.Signup = class Signup {
     this.firstNameInput = this.page.locator("#first-name");
     this.lastNameInput = this.page.locator("#last-name");
     this.emailInput = this.page.locator("#email");
-    this.companyInput = this.page.locator("#organisation-name");
+    this.companyInput = this.page.locator("#organization-name");
     this.passwordInput = this.page.locator('input[id="password"]').first();
     this.confirmPasswordInput = this.page.locator('input[name="confirmPassword"]');
-    this.termsCheckbox = this.page.getByRole("checkbox", { name: "terms" });
+    this.termsCheckbox = this.page.getByRole("checkbox");
+
     this.createAccountButton = this.page.getByText("Create an account");
     this.toastMessage = this.page.locator(".Toastify");
     this.loginEmailInput = 'input[id="email"]';
@@ -46,9 +47,9 @@ exports.Signup = class Signup {
     await expect(this.toastMessage).toHaveText(expectedMessage);
   }
 
-  async verifyUser(email,password) {
+  async verifyUser(email, password) {
     await this.page.goto('https://www.yopmail.com/en/');
-    
+
     await this.page.fill('input#login', email);
     await this.page.click('button[title="Check Inbox @yopmail.com"]');
 
@@ -70,16 +71,16 @@ exports.Signup = class Signup {
     await newPage.locator(this.loginPasswordInput).fill(password)
     await newPage.locator(this.loginButton).click();
 
-    
+
   }
-  async login(email,password) {
+  async login(email, password) {
     await this.page.locator("#email").fill(email)
     await this.page.locator(this.loginPasswordInput).fill(password)
     await this.page.locator(this.loginButton).click();
 
-    
+
   }
- 
+
 
 
 };
