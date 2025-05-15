@@ -5,13 +5,25 @@ import { NextRequest, NextResponse } from "next/server";
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
-    const { organizationId } = body;
+    const { organizationCuid } = body;
 
-    if (!organizationId) {
+    if (!organizationCuid) {
       return NextResponse.json(
         new ApiResponse(400, null, "Missing organizationId")
       );
     }
+
+    const organization = await db.organizations.findUnique({
+      where: { cuid: organizationCuid },
+    });
+
+    if (!organization) {
+      return NextResponse.json(
+        new ApiResponse(404, null, "Organization not found")
+      );
+    }
+
+    const organizationId = organization.id;
 
     await db.$transaction(async (tx) => {
       const orgUsers = await tx.organizationsUsers.findMany({
