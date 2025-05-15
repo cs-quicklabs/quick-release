@@ -21,6 +21,12 @@ model UsersRoles {
   projectsUsers ProjectsUsers[]
 }
 
+model SystemUsers {
+  id      Int    @id @default(autoincrement())
+  users   Users? @relation(references: [id], fields: [usersId])
+  usersId Int?
+}
+
 model Users {
   id                      Int                  @id @default(autoincrement())
   cuid                    String               @unique @default(cuid())
@@ -45,6 +51,7 @@ model Users {
   updatedLogs             Changelogs[]         @relation("UpdatedLogs")
   feedbackPosts           FeedbackPosts[]
   upvotedFeedbacksByUsers FeedbackPostVotes[]
+  SystemUsers             SystemUsers[]
 }
 
 model Organizations {
@@ -52,7 +59,7 @@ model Organizations {
   cuid               String               @unique @default(cuid())
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  users              Users?               @relation(fields: [createdById], references: [id])
+  users              Users?               @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById        Int?
   name               String
   organizationsUsers OrganizationsUsers[]
