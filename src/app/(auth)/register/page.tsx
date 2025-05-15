@@ -184,8 +184,8 @@ const Register = () => {
               </label>{" "}
               <Input
                 type="text"
-                id="organisation-name"
-                placeholder="Company name"
+                id="organization-name"
+                placeholder="Organization name"
                 {...register("orgName")}
               />
               {errors.orgName && (
