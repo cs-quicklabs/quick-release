@@ -1,11 +1,36 @@
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { ApiError } from "@/Utils/ApiError";
 import { ApiResponse } from "@/Utils/ApiResponse";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(request: NextRequest) {
   try {
     const body = await request.json();
     const { organizationCuid } = body;
+
+    const session = (await getServerSession(authOptions)) as any;
+
+    const userId = session?.user?.id;
+    if (!userId) {
+      throw new ApiError(401, "Unauthorized request");
+    }
+
+    const isSystemAdmin = await db.systemUsers.findFirst({
+      where: {
+        users: {
+          cuid: userId,
+        },
+      },
+      include: {
+        users: true,
+      },
+    });
+
+    if (!isSystemAdmin) {
+      throw new ApiError(401, "Unauthorized request");
+    }
 
     if (!organizationCuid) {
       return NextResponse.json(
@@ -32,6 +57,18 @@ export async function DELETE(request: NextRequest) {
       });
 
       const userIds = orgUsers.map((u) => u.usersId);
+
+      const systemUsersStillExist = await tx.systemUsers.findFirst({
+        where: {
+          usersId: { in: userIds },
+        },
+      });
+
+      if (systemUsersStillExist) {
+        throw new Error(
+          `Cannot delete organization: one or more users are still marked as SystemUsers`
+        );
+      }
 
       // FeedbackPostVotes (via Boards → Projects → Org)
       await tx.feedbackPostVotes.deleteMany({
@@ -188,9 +225,12 @@ export async function DELETE(request: NextRequest) {
       new ApiResponse(200, null, "Organization and related data deleted")
     );
   } catch (error: any) {
-    console.error("Delete Org Error:", error);
     return NextResponse.json(
-      new ApiResponse(500, null, "Failed to delete organization")
+      new ApiResponse(
+        500,
+        null,
+        error?.message ?? "Failed to delete organization"
+      )
     );
   }
 }
