@@ -96,7 +96,7 @@ const FeedbackPublicSideNav: React.FC<FeedbackPublicSideNavPropsType> = ({
       className={classNames(
         "xl:order-first xl:block xl:shrink-0",
         "xl:relative xl:h-full  xl:overflow-y-hidden xl:transition-none xl:translate-x-0 xl:w-96",
-        "fixed top-0 left-0 z-40 lg:z-0 h-screen sm:overflow-y-auto transition-transform w-screen bg-black bg-opacity-35",
+        "fixed top-0 left-0 z-40 lg:z-0 h-screen sm:overflow-y-auto transition-transform w-screen bg-black/35",
         !feedbackSideNav && "-translate-x-full"
       )}
       onClick={() => setFeedbackSideNav(false)}

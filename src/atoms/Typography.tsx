@@ -84,8 +84,6 @@ export function TypographyP({
   className?: string;
 }) {
   return (
-    <p className={cn("leading-7 mt-1 text-base font-light", className)}>
-      {children}
-    </p>
+    <p className={cn("mt-1 text-base font-light", className)}>{children}</p>
   );
 }
