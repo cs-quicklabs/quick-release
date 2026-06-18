@@ -22,6 +22,9 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, #e2e2e2);
   }
+  button {
+    @apply cursor-pointer;
+  }
 }
 
 @layer components {
